@@ -174,7 +174,7 @@ $$P(X | Y) = \frac{P(X, Y)}{P(Y)}$$
 
 In English: "$X$ given $Y$" = "both" divided by "$Y$ alone." This obvious-looking formula is the key to Bayes' theorem next.
 
-**Independence.** $X$ and $Y$ are independent ($X \perp Y$) iff knowing one tells you nothing about the other. Equivalently: $P(X | Y) = P(X)$, or $P(X, Y) = P(X)P(Y)$.
+**Independence.** $X$ and $Y$ are independent ($X \perp Y$) if knowing one tells you nothing about the other. Equivalently: $P(X | Y) = P(X)$, or $P(X, Y) = P(X)P(Y)$.
 
 **Expectation.** The "average value" of a random variable, weighted by its probabilities:
 $$E[X] = \sum_x x \cdot P(X = x) \quad \text{or} \quad \int x f(x)\,dx$$
