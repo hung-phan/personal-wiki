@@ -38,7 +38,7 @@ tags: [rust, ownership, borrowing, lifetimes, generics, traits, closures, iterat
 - [§2. Borrowing](#2-borrowing--lending-without-giving-up-ownership) — `&T` / `&mut T` and the one rule
 - [§3. Lifetimes](#3-lifetimes--naming-how-long-is-this-borrow-valid) — `<'a>`, `'static`, dangling, cleanup
 - [§4. Pattern Matching Beyond Basics](#4-pattern-matching-beyond-basics) — `if let`, guards, `@`, refutable patterns
-- [§5. Error Handling](#5-error-handling--option-result-and-the--operator) — `Option`, `Result`, `?`, `thiserror`, `anyhow`, best practices
+- [§5. Error Handling](#5-error-handling--option-result-and-the--operator) — `Option`/`Result` symmetry, `?`, alternatives to `.unwrap()`, `thiserror`, `anyhow`, best practices
 - [§6. Generics and Traits](#6-generics-and-traits--the-weird-t-syntax) — `<T>`, bounds, derives, `Sized` / `?Sized`
 - [§7. Trait Objects (`dyn`)](#7-trait-objects--dyn-trait-static-vs-dynamic-dispatch) — static vs dynamic dispatch, reading `Box<dyn FnOnce() + Send + 'static>`
 - [§8. Closures and `Fn` / `FnMut` / `FnOnce`](#8-closures-and-fn--fnmut--fnonce) — what the three traits actually mean
@@ -589,75 +589,47 @@ Two ways `'static` shows up:
 
 ### What "dangle" means (and why `'static` exists)
 
-A **dangling reference** is a pointer to memory that has already been freed. The address still looks valid; the data is gone (or reused for something else). Reading from it is undefined behavior — sometimes the old data is still there, sometimes you get garbage, sometimes you segfault. **Every lifetime rule in Rust exists to prevent this.**
+A **dangling reference** is a pointer to memory that has already been freed. The address still looks valid; the data is gone (or reused). Reading from it is undefined behavior — sometimes you get the old data, sometimes garbage, sometimes a segfault. **Every lifetime rule in Rust exists to prevent this.**
 
-#### The C version — what we're avoiding
+In C, this compiles and crashes randomly:
 
 ```c
 char* greet() {
-    char buf[] = "hello";   // lives on this function's stack frame
-    return buf;              // return pointer to buf
-}                            // buf is freed HERE
-
-char* p = greet();
-printf("%s", p);             // ⚠️ undefined behavior — reading freed memory
+    char buf[] = "hello";   // on this function's stack frame
+    return buf;              // returns pointer to buf
+}                            // buf freed HERE — pointer now dangles
 ```
 
-`p` is dangling. Compiles fine. Runs sometimes. Crashes sometimes. Silent corruption sometimes.
-
-#### The Rust version — caught at compile time
+In Rust, the equivalent is a compile error:
 
 ```rust
 fn greet() -> &str {
     let s = String::from("hello");
     &s   // ERROR: cannot return reference to local variable `s`
-}        // s is dropped HERE
+}        // s dropped HERE
 ```
 
-The compiler reasons: "the returned reference points into `s`; `s` dies at function exit; the reference would outlive its target." Refuses to compile. **You get a friendly red squiggle instead of a 3am crash.**
+The compiler reasons: "the returned reference points into `s`; `s` dies at function exit; the reference would outlive its target." **You get a red squiggle instead of a 3am crash.**
 
-#### Where `'static` connects
-
-When you spawn a thread, the closure might run *much later* — possibly after the function that captured the variables has returned:
+**Where `'static` enters.** When you spawn a thread, the closure might run *much later* — possibly after the surrounding function has returned:
 
 ```rust
 fn make_greeter() {
     let name = String::from("Alice");
     thread::spawn(|| println!("{}", name));   // ERROR: `name` may not live long enough
-}   // `name` dropped here — but the thread might still be running!
+}   // `name` dropped here — but the thread might still be running
 ```
 
-If this were allowed, the thread could print `name` *after* it's been freed — a dangling reference, exactly the C bug. So `thread::spawn` requires `'static`: "I'll only accept closures whose data won't dangle no matter how long I wait."
-
-The fix is `move`, which transfers ownership into the closure so `name` lives *inside* the closure rather than being borrowed from outside:
+If allowed, the thread would print `name` *after* it's been freed — a dangling reference. So `thread::spawn` requires `'static`: "I'll only accept closures whose data won't dangle no matter how long I wait." The fix is `move`, which transfers ownership into the closure:
 
 ```rust
 fn make_greeter() {
     let name = String::from("Alice");
-    thread::spawn(move || println!("{}", name));   // OK — name moved into closure
-}   // local `name` is gone, but the closure carries its own copy
-```
-
-Now `name` lives as long as the closure does. Nothing to dangle.
-
-#### Another dangling example — inner scope dies first
-
-```rust
-fn main() {
-    let r;
-    {
-        let x = 42;
-        r = &x;     // r borrows x
-    }               // x dropped here
-    println!("{}", r);  // ERROR: would read freed memory
+    thread::spawn(move || println!("{}", name));   // OK — name now lives inside the closure
 }
 ```
 
-`x` died at the inner brace; `r` would point at a dead stack slot. The compiler tracks that `r`'s lifetime can't extend past `x`'s.
-
-#### Mental model
-
-> **"Dangle" = a reference that outlives the thing it points to.** Every `<'a>` annotation and every `'static` bound is the compiler asking *"can I prove this reference can't outlive its target?"* If yes, compiles. If not, error.
+> **"Dangle" = a reference that outlives the thing it points to.** Every `<'a>` annotation and every `'static` bound is the compiler asking *"can I prove this reference can't outlive its target?"*
 
 A common trap:
 
@@ -741,26 +713,20 @@ Used when one buffer is reused across many calls.
 
 **The mistake to avoid.** Reaching for `Box::leak` to "satisfy" the `'static` requirement on `thread::spawn` is almost always the wrong fix. `thread::spawn` wants `'static` so the captured data *can't dangle* — and `move`-ing an owned `String` into the closure achieves that without leaking anything. The data lives inside the closure; the thread fully owns it. Reach for `Box::leak` only when you genuinely need a `&'static T` *outside* any single closure.
 
-### `'static` is a *bound*, not a *lifetime extender* — how does cleanup actually happen?
+### `'static` is a bound, not a lifetime extender — how does cleanup happen?
 
 A common confusion: "if `'static` makes data live forever, won't Tokio leak memory for every small task?"
 
-**`'static` is not a cleanup instruction.** It's a compile-time *bound* — a promise the borrow checker enforces. Cleanup is a completely separate mechanism: **`Drop`**.
+**`'static` is not a cleanup instruction.** It's a compile-time bound — a structural promise the borrow checker enforces. Cleanup is a completely separate mechanism: **`Drop`**. They live on different axes:
 
-#### What `'static` actually means
+| Axis | Mechanism | When |
+|---|---|---|
+| **Validity** (can I read this without UB?) | lifetimes, `'static` | checked at compile time |
+| **Cleanup** (when is memory freed?) | `Drop` | runs at owner's end of scope |
 
-`'static` on a generic — `T: 'static` — says: "the data inside this value has no references that could go bad. It's either fully owned, or it borrows only from things that live forever (like string literals)."
+`T: 'static` says: "the data inside this value has no references that could go bad — it's owned, or borrows only from `'static` data." It does **not** say "this value will live forever." An owned `String`, a `Vec<u8>`, an `i32` — all satisfy `T: 'static` and all get freed by ordinary ownership the moment their owner drops.
 
-It does **not** say:
-- "this value will live forever"
-- "this value won't be freed"
-- "the runtime must keep it alive"
-
-An owned `String`, a `Vec<u8>`, an `i32`, a `(String, u64)` tuple — all satisfy `T: 'static` because none of them holds short-lived references. They're freed by ordinary ownership, no special treatment.
-
-#### Cleanup happens via `Drop`
-
-When a value's owner goes out of scope, Rust runs cleanup — automatically and **deterministically**:
+**Drop runs deterministically.** When a value's owner goes out of scope, cleanup runs *now* — no GC sweep, no finalisation queue:
 
 ```rust
 fn demo() {
@@ -769,64 +735,29 @@ fn demo() {
 }
 ```
 
-No GC sweep, no finalisation queue. Owner ends, drop runs. Now.
+For non-trivial types, you can implement `Drop::drop` to close a file, release a handle, etc. — and it'll fire at the same moment.
 
-For non-trivial types, the compiler synthesises (or you implement) `Drop`:
+**Why Tokio still requires `'static`.** The runtime might run a spawned task *much later*, on *any* worker thread, for *however long it takes*. If the future borrowed `&data` from your `main` function, that borrow could outlive `main`'s frame — dangling. `'static` is the minimum-duration promise that rules this out. It's not a "keep this alive forever" request — it's a "your data structure is safe to run for any duration" assertion.
 
-```rust
-impl Drop for MyType {
-    fn drop(&mut self) {
-        // close file, free handle, decrement counter, etc.
-    }
-}
-```
-
-#### Tokio doesn't need to "know when to clean up"
-
-The task's data is owned by the task itself. When the task finishes, its future is dropped. When the future is dropped, **every field inside it — your `String`, your `Vec`, every captured variable — drops in turn**. That's the same ownership rule from §1, applied to async tasks.
+Once the task finishes, the future drops, and every captured field inside it drops in turn — same ownership rule from §1, applied to async tasks:
 
 ```rust
 tokio::spawn(async move {
-    let s = String::from("hello");   // s is owned by this task
+    let s = String::from("hello");   // s owned by this task
     println!("{}", s);
     // task ends → future dropped → s dropped → heap freed
 });
 ```
 
-| Step | What lives where | When freed |
-|---|---|---|
-| `String::from("hello")` | heap, owned by the future's state machine | when the future drops |
-| The future itself | inside the Tokio task slot | when the task completes |
-| The `JoinHandle` | stack of the caller | when its scope ends |
+Spawning a million one-shot tasks doesn't leak. Each task owns its captures; when the task ends, the captures drop.
 
-Tokio polls → future returns `Poll::Ready(value)` → task marked complete → Tokio drops the future → cascade of drops inside it → done. **No leak. No reference counting. No "keep this alive forever" semantics.**
+**Memory genuinely lives forever only when you opt in:**
 
-#### So why does `tokio::spawn` need `'static`?
+- `static FOO: ... = ...` — placed in a `static` slot at program start, never freed
+- `Box::leak(value)` — intentional heap leak, returns `&'static mut T`
+- `Rc`/`Arc` reference cycles — strong counts never reach zero (use `Weak` to break)
 
-Because the runtime might run the task *much later*, *on any worker thread*, for *as long as it takes*. Until the task finishes, the future must remain valid. If the future borrowed `&data` from your `main` function, that borrow could outlive `main`'s frame — dangling. So Tokio insists: **all your data must be self-contained, so the task is safe to run for any duration.** That's exactly what `'static` enforces.
-
-It's a *minimum-duration promise about your data's structure*, not a *forever-keep-this-alive request*.
-
-#### The two axes
-
-> Validity and cleanup live on different axes.
-
-| Axis | Mechanism | When |
-|---|---|---|
-| **Validity** (can I read this without UB?) | lifetimes, `'static` | checked at compile time |
-| **Cleanup** (when is memory freed?) | `Drop` | runs at owner's end of scope |
-
-`'static` doesn't reach into the runtime. It just gates what you're allowed to compile. Cleanup is ordinary ownership doing its thing.
-
-#### When you *do* leak
-
-Memory genuinely lives forever only when you opt into it:
-
-- **`static FOO: ... = ...`** — stored in a `static` slot at program start, never freed
-- **`Box::leak(value)`** — intentional heap leak, returns `&'static mut T`
-- **`Rc`/`Arc` reference cycles** — strong counts never reach zero (use `Weak` to break)
-
-Spawning a million one-shot Tokio tasks does *not* leak. Each task owns its captures; when the task finishes, the captures drop. Memory reclaimed.
+If you didn't write one of those, you didn't leak.
 
 ---
 
@@ -1019,47 +950,207 @@ Now `?` on any `io::Error`-returning call auto-converts to `ConfigError::Io`.
 - **`thiserror`** — for *library* code. Define a precise error enum so callers can `match` on variants.
 - **`anyhow`** — for *application* code. Use `anyhow::Result<T>` and `.context("doing X")` for human-readable error chains. Don't expose `anyhow::Error` from a library — callers can't programmatically distinguish causes.
 
-### Useful combinators
+### `Option` and `Result` are symmetric
+
+The two types deliberately mirror each other. Same vocabulary, same `?` operator. Most methods exist on both:
+
+| Method | `Option<T>` | `Result<T, E>` | Notes |
+|---|---|---|---|
+| `unwrap` / `expect` | ✅ | ✅ | panic on absence/error |
+| `unwrap_or(d)` / `unwrap_or_else(\|...\| ...)` / `unwrap_or_default()` | ✅ | ✅ | supply a default |
+| `map(\|t\| ...)` | ✅ | ✅ | transform the success side |
+| `and_then(\|t\| ...)` | ✅ | ✅ | flat-map; chain ops that themselves return `Option`/`Result` |
+| `is_some` / `is_none` | ✅ | as `is_ok` / `is_err` | predicate checks |
+| `as_ref` / `as_mut` | ✅ | ✅ | borrow the inside without consuming |
+| `?` operator | ✅ | ✅ | propagates `None`/`Err` from a matching-return function |
+
+Diverging: `Result` has `map_err`, `unwrap_err`, `expect_err`, `err()`, `ok()`; `Option` has `ok_or`, `ok_or_else`, `take`, `replace`, `filter`.
+
+**Bridging.** The two everyday converters:
 
 ```rust
-// Option
-opt.unwrap_or(default)
-opt.unwrap_or_else(|| compute_default())
-opt.map(|x| x + 1)              // Option<T> → Option<U>
-opt.and_then(|x| maybe(x))      // flatten nested Option
-opt.ok_or(MyError::Missing)     // Option<T> → Result<T, E>
-opt.filter(|x| *x > 0)
-
-// Result
-res.map(|v| v + 1)              // transform Ok side
-res.map_err(|e| MyError::from(e))   // transform Err side
-res.and_then(|v| do_more(v))    // chain Result-returning ops
-res.unwrap_or_default()
-res.ok()                        // Result<T,E> → Option<T>
+let id   = headers.get("X-User-Id").ok_or(MyError::Missing)?;   // Option → Result
+let port = "8080".parse::<u16>().ok();                          // Result → Option (drops the error)
 ```
+
+Mental model: **`Result<T, E>` is `Option<T>` with a reason for the absence.** Anything `Option` can do, `Result` can do — plus carry the error.
 
 ### Collecting many errors
 
 If you want all errors at once (a config validator, say) instead of stopping at the first, return `Result<(), Vec<MyError>>` and accumulate. `?` is biased toward fail-fast — sometimes that's wrong.
 
-### Best practices
+### Alternatives to `.unwrap()` — what to use instead
 
-A handful of rules that separate "code that compiles" from "code you'd want to debug at 3am":
+`.unwrap()` works but has two problems: it discards *why* the invariant should hold, and it conflates "this shouldn't happen" with "I don't want to think about it." Pick a replacement based on what you actually meant.
 
-**1. `expect` over `unwrap` — and use the message as a proof.**
+#### Taxonomy
 
-Both panic on failure. The difference is what shows up in the panic message. Read `.expect("X")` as "I'm asserting X holds; if it doesn't, this is a bug." The message should explain *why* the invariant should hold, not what failed:
+| What you really meant | Use this instead |
+|---|---|
+| "This **can't** be `None`/`Err`; if it is, my program is buggy" | `.expect("invariant: …")` |
+| "If it's missing, give me a default" | `.unwrap_or(d)` / `.unwrap_or_else(\|\| …)` / `.unwrap_or_default()` |
+| "If it fails, give up this function" | `?` |
+| "If it's missing, return/break early" | `let Some(x) = opt else { return; }` |
+| "Do X if present, Y if absent" | `match` / `if let` |
+| "Transform if present" | `.map()` / `.and_then()` |
+| "Turn `Option` into `Result` so I can `?`" | `.ok_or(err)` / `.ok_or_else(\|\| err)` |
+
+#### 1. `.expect("...")` — assertions with documentation
+
+Both `unwrap` and `expect` panic on `None`/`Err`. The difference is the panic message — `expect` lets you record *why* you believed the invariant held:
 
 ```rust
-let port: u16 = env::var("PORT")?.parse()
-    .expect("PORT env var should be a valid u16 — checked at startup");
+let port: u16 = env::var("PORT")
+    .expect("PORT env var must be set (checked at startup)")
+    .parse()
+    .expect("PORT env var should be a valid u16");
 ```
 
-A reader of the panic immediately sees what assumption broke. `.unwrap()` is acceptable in tests and quick scripts; in production code, prefer `.expect("...")`.
+If the panic fires, the message tells future-you exactly which assumption broke. **Rule of thumb: when you really *do* want to crash, use `.expect("...")` not `.unwrap()`. The message is a comment that has to be there.**
 
-**2. Don't `unwrap` / `expect` on user-controlled input.** That's a denial-of-service. Reserve panics for *your* invariants — wrong input is an `Err`, not a panic.
+#### 2. Defaults — the `unwrap_or` family
 
-**3. Add context as you bubble up.** A bare `Err(io::Error)` tells you "file not found" but not *which* file. With `anyhow`:
+```rust
+let name = maybe_name.unwrap_or(String::from("anonymous"));   // eager
+let name = maybe_name.unwrap_or_else(|| compute_default());   // lazy — runs only on None
+let count = maybe_count.unwrap_or_default();                   // T::default()
+```
+
+`unwrap_or` evaluates its argument eagerly. `unwrap_or_else` takes a closure, so the default only runs when needed — important when constructing it is expensive (allocation, DB query).
+
+#### 3. `?` — propagate the failure
+
+If failure is plausible, push the decision upward:
+
+```rust
+fn load(path: &str) -> Result<Config, MyError> {
+    let s = std::fs::read_to_string(path)?;
+    let cfg = toml::from_str(&s)?;
+    Ok(cfg)
+}
+```
+
+The caller decides what to do — retry, log, return a 500. Your function just declares "I might fail with `MyError`."
+
+#### 4. `let ... else` — early-exit on absence
+
+When `None` means "skip this path," this is cleaner than `unwrap` + branching:
+
+```rust
+fn process(req: &Request) -> Result<(), MyError> {
+    let Some(user_id) = req.headers.get("X-User-Id") else {
+        return Err(MyError::Unauthenticated);
+    };
+    do_work(user_id)
+}
+```
+
+The `else` branch must diverge (`return`, `break`, `continue`, `panic!`, `loop`). Keeps the happy path flat.
+
+#### 5. `match` / `if let` — handle both cases
+
+When you genuinely need different behaviour for each branch:
+
+```rust
+match cache.get(&key) {
+    Some(v) => use_cached(v),
+    None => {
+        let v = compute();
+        cache.insert(key, v.clone());
+        use_cached(v);
+    }
+}
+```
+
+Or just one branch:
+
+```rust
+if let Some(v) = cache.get(&key) {
+    use_cached(v);
+}
+```
+
+#### 6. `.map()` / `.and_then()` — transform without unwrapping
+
+Stay inside `Option`/`Result` and let the transform run only on the success path:
+
+```rust
+// Verbose
+let upper = match maybe_name {
+    Some(n) => Some(n.to_uppercase()),
+    None    => None,
+};
+
+// Idiomatic
+let upper = maybe_name.map(|n| n.to_uppercase());
+
+// When the transform itself returns Option/Result, use and_then to avoid nesting:
+let first_word = maybe_text
+    .and_then(|s| s.split_whitespace().next().map(String::from));
+```
+
+`map` for plain transforms, `and_then` (flatMap) when the transform itself returns `Option`/`Result`.
+
+#### 7. `.ok_or()` — lift `Option` to `Result` so you can `?`
+
+```rust
+fn find(name: &str) -> Result<User, MyError> {
+    let row = db.query("…")?;
+    let user = row.get("user").ok_or(MyError::NotFound)?;
+    Ok(user)
+}
+```
+
+`.ok_or(err)` evaluates `err` eagerly. `.ok_or_else(|| err)` is lazy — use when constructing the error is non-trivial. `.ok()` does the reverse (`Result<T, E> → Option<T>`, drops the error).
+
+#### 8. Combinator chains for terse pipelines
+
+```rust
+fn extract_port(s: &str) -> Option<u16> {
+    s.split(':')
+        .nth(1)                          // Option<&str>
+        .and_then(|p| p.parse().ok())    // Option<u16>
+}
+```
+
+#### When `.unwrap()` is fine
+
+Three cases where it's idiomatic:
+
+1. **In tests** — if it fails, the test fails. That's what you wanted.
+2. **In examples / quick scripts** — crashing is acceptable.
+3. **Immediately after a hardcoded input** — `Regex::new(r"\d+").unwrap()` is fine because the regex is constant and CI would catch a typo. But `.expect("hardcoded regex must compile")` is one keystroke better.
+
+In production library / binary code: prefer `expect`, `?`, or a combinator.
+
+#### The mental flow
+
+When you're about to type `.unwrap()`, ask:
+
+```
+Is failure possible at runtime?
+├── No — it's a programmer-asserted invariant
+│      → .expect("why this should hold")
+└── Yes
+    ├── I have a sensible default
+    │      → .unwrap_or / .unwrap_or_else / .unwrap_or_default
+    ├── I want to give up this function
+    │      → ?
+    ├── I want to early-return only on None
+    │      → let Some(x) = opt else { return; }
+    ├── I want to handle both branches differently
+    │      → match / if let
+    └── I want to keep transforming
+           → .map / .and_then / .ok_or / .ok / .filter
+```
+
+### Best practices
+
+The `.unwrap()` discussion above covers when *not* to crash. These cover everything else:
+
+**1. Don't `unwrap`/`expect` on user-controlled input.** That's a denial-of-service. Reserve panics for *your* invariants — wrong input is an `Err`, not a panic.
+
+**2. Add context as you bubble up.** A bare `Err(io::Error)` tells you "file not found" but not *which* file. With `anyhow`:
 
 ```rust
 use anyhow::Context;
@@ -1075,7 +1166,7 @@ fn load_config(path: &Path) -> anyhow::Result<Config> {
 
 When this fails, the user sees a chain: `parsing config at /etc/app.toml` → `caused by: expected value at line 7`. With `thiserror`, you do the same by including the path in your error variant: `Parse { path: PathBuf, source: toml::de::Error }`.
 
-**4. Distinguish "library" from "application" errors.**
+**3. Pick the right error tool for the call site.**
 
 | Kind | Tool | Why |
 |---|---|---|
@@ -1085,7 +1176,7 @@ When this fails, the user sees a chain: `parsing config at /etc/app.toml` → `c
 
 Never expose `anyhow::Error` from a library — callers can't programmatically distinguish causes.
 
-**5. Use `#[from]` for natural conversions, custom variants for context-rich ones.** `#[from]` is great when the source error already carries all the context you need (`io::Error`). When you want to attach extra info (which file, which line, which user), make it a struct variant:
+**4. Use `#[from]` for natural conversions, custom variants for context-rich ones.** `#[from]` is great when the source error already carries all the context you need (`io::Error`). When you want to attach extra info (which file, which line, which user), make it a struct variant:
 
 ```rust
 #[derive(thiserror::Error, Debug)]
@@ -1100,7 +1191,7 @@ enum AppError {
 
 `#[error(transparent)]` defers to the inner error's `Display` — useful for "I just want to wrap this."
 
-**6. Make invalid states unrepresentable so you don't need an error.** The best error handling is no error. If a function "can't fail because the inputs were already validated," reflect that in types:
+**5. Make invalid states unrepresentable so you don't need an error.** The best error handling is no error. If a function "can't fail because the inputs were already validated," reflect that in types:
 
 ```rust
 // Instead of: fn send(email: &str) -> Result<(), InvalidEmail>
@@ -1114,27 +1205,11 @@ fn send(email: &ValidEmail) { /* infallible */ }
 
 This is the "parse, don't validate" idiom. It pushes failures to the boundary and shrinks the rest of the codebase's error surface.
 
-**7. `?` works on `Option` too — but mixing requires conversion.**
+**6. Don't `panic!` to skip work in async / threaded code.** A panicked task or thread is *captured* (you'll get an `Err` from `join`/`await`), but the rest of the runtime keeps going. That's not "graceful failure" — it's a silent bug waiting to surprise you. Return errors instead.
 
-```rust
-fn first_word(s: &str) -> Result<&str, MyError> {
-    let i = s.find(' ').ok_or(MyError::NoSpace)?;  // Option → Result
-    Ok(&s[..i])
-}
+**7. Turn on backtraces in development.** Set `RUST_BACKTRACE=1` (or `RUST_BACKTRACE=full`) before running. With `anyhow`, the backtrace is captured automatically and prints with the error chain. Don't add manual backtraces to error types unless profiling shows they matter — they're not free.
 
-fn parse(s: &str) -> Option<i32> {
-    let trimmed = s.trim().strip_prefix("0x")?;     // Option in an Option-returning fn
-    i32::from_str_radix(trimmed, 16).ok()
-}
-```
-
-`.ok_or(err)` / `.ok_or_else(|| err)` lift `Option` → `Result`. `.ok()` does the reverse, dropping the error.
-
-**8. Don't `panic!` to skip work in async / threaded code.** A panicked task or thread is *captured* (you'll get an `Err` from `join`/`await`), but the rest of the runtime keeps going. That's not "graceful failure" — it's a silent bug waiting to surprise you. Return errors instead.
-
-**9. Turn on backtraces in development.** Set `RUST_BACKTRACE=1` (or `RUST_BACKTRACE=full`) before running. With `anyhow`, the backtrace is captured automatically and prints with the error chain. Don't add manual backtraces to error types unless profiling shows they matter — they're not free.
-
-**10. Log at the boundary, not at every layer.** Logging an error at every `?` site clutters output and obscures the real chain. Let `?` propagate; log once at the place that decides what to do (request handler, top-level CLI, retry loop).
+**8. Log at the boundary, not at every layer.** Logging an error at every `?` site clutters output and obscures the real chain. Let `?` propagate; log once at the place that decides what to do (request handler, top-level CLI, retry loop).
 
 ---
 
@@ -1342,19 +1417,17 @@ You can't write `Vec<T: Card>` — `T` would have to be one specific type for th
 
 ### Reading `Box<dyn FnOnce() + Send + 'static>` slowly
 
-This appears all over async/threading code. Decode from the inside:
+This shows up all over async/threading code. Decode from the inside out:
 
-- `FnOnce()` — a closure callable once, no args, returns `()`
-- `+ Send` — also implements `Send` (transferable between threads)
-- `+ 'static` — contains no references with non-static lifetimes (no dangling possible)
-- `dyn FnOnce() + Send + 'static` — a trait object combining all three constraints
-- `Box<...>` — heap-allocated, single owner, type-erased
+- `FnOnce` — a **trait** (not a function), implemented by closures callable exactly once. The `()` is its parameter list (sugar for `<()>`), and a missing `-> T` means it returns `()`. So `FnOnce()` = "callable once, no args, returns unit." (Full trait family in §8.)
+- `+ Send` — *also* `Send`-safe (transferable between threads).
+- `+ 'static` — contains no short-lived references (no dangling possible).
+- `dyn FnOnce() + Send + 'static` — a trait object combining those constraints into one virtual type.
+- `Box<...>` — heap-allocated, single owner, type-erased.
 
-Plain English: "a heap-stored, thread-transferable, dangling-free closure that can be called once." Once you see this pattern, you'll spot it everywhere.
+Plain English: **"a heap-stored, thread-transferable, dangling-free closure that can be called once."** That's the workhorse type for thread pools: worker receives the job → calls it once → may consume its captures → done.
 
-#### "Does `dyn` apply to all three, or only `FnOnce`?"
-
-Only to `FnOnce`. `Send` and `'static` are **additional bounds** on the same trait object, not separate `dyn`s. Mentally parenthesise it like this:
+**`dyn` applies only to the trait part.** `Send` and `'static` are additional bounds on the *same* trait object, not separate `dyn`s. Parenthesise it mentally:
 
 ```
 Box< dyn (FnOnce()) + Send + 'static >
@@ -1364,40 +1437,17 @@ Box< dyn (FnOnce()) + Send + 'static >
        dyn'd
 ```
 
-The rule: a trait object can contain **only one method-bearing trait**. Everything after the `+` must be either:
+The rule: **a trait object can contain only one method-bearing trait.** Everything after the `+` must be either:
 
-- an **auto trait** — `Send`, `Sync`, `Unpin` (markers, no methods); attached as constraints
-- a **lifetime bound** — `'static`, `'a` (how long the object is valid)
+- an **auto trait** — `Send`, `Sync`, `Unpin` (no methods, just markers)
+- a **lifetime bound** — `'static`, `'a`
 
-That's why `dyn FnOnce() + Read` would be illegal — two method-bearing traits at once. Rust wouldn't know how to lay out a single vtable for both. The workaround is to define a combined trait and `dyn` *that*:
+That's why `dyn FnOnce() + Read` is illegal — two method-bearing traits at once; Rust can't lay out a single vtable for both. Workaround: define a combined trait and `dyn` that:
 
 ```rust
 trait MyJob: FnOnce() + Read {}     // new trait requiring both
 // then: Box<dyn MyJob>
 ```
-
-#### "Why is `dyn` on `FnOnce`? Isn't that a function?"
-
-`FnOnce` is **not a function** — it's a **trait**. Specifically, it's the trait that closures and function pointers implement. Closures aren't a first-class type in Rust; each closure gets its own compiler-generated anonymous type that implements one or more of three traits:
-
-| Trait | Means "can be called..." |
-|---|---|
-| `Fn` | many times, via shared ref (only reads captures) |
-| `FnMut` | many times, via mutable ref (can mutate captures) |
-| `FnOnce` | exactly **once**, by value (can consume/drop captures) |
-
-The `()` after `FnOnce` is *not* "call the function." It's the trait's parameter list, spelled with parentheses instead of angle brackets as syntactic sugar:
-
-```
-FnOnce()                       // takes no args, returns ()
-FnOnce(i32)                    // takes one i32 arg, returns ()
-FnOnce() -> bool               // no args, returns bool
-FnOnce(&str, u32) -> Result<(), Error>
-```
-
-> **"Doesn't return" is a misread.** With no explicit `-> T`, the return type defaults to `()` — Rust's unit type, "no useful value." `FnOnce()` returns `()`. `FnOnce() -> i32` returns `i32`.
-
-So `dyn FnOnce()` is "a trait object for any closure that takes no args, returns `()`, and is callable exactly once." Wrap that in `Box<...> + Send + 'static` and you get the workhorse type for thread pools: a worker thread receives the job → calls it once → it might consume its captures → done.
 
 ---
 
@@ -1407,18 +1457,18 @@ So `dyn FnOnce()` is "a trait object for any closure that takes no args, returns
 
 ### Syntax
 
+A closure is an anonymous function that can capture variables from its environment. `|...|` is the param list, just like `(...)` for functions.
+
 ```rust
-let add_one = |n| n + 1;                       // inferred types
-let add    = |a: i32, b: i32| -> i32 { a + b }; // explicit param + return types
-let greet  = || println!("hi");                // no params
+let add_one = |n| n + 1;                        // inferred types
+let add     = |a: i32, b: i32| -> i32 { a + b }; // explicit param + return
+let greet   = || println!("hi");                // no params
 
 // single expression: braces optional
 // multi-statement: braces required
 ```
 
-Closures have anonymous types you can't name directly. To annotate the *binding's* type, use a trait: `let add: fn(i32, i32) -> i32 = |a, b| a + b;` (function-pointer type, works only for closures that capture nothing), or `let add: Box<dyn Fn(i32, i32) -> i32> = Box::new(|a, b| a + b);`.
-
-A closure is "an anonymous function that can capture variables from its environment." `|...|` is the param list, just like `(...)` for functions.
+Each closure has its own anonymous type you can't name directly. To annotate the *binding's* type, go through a trait — `let add: fn(i32, i32) -> i32 = |a, b| a + b;` (function-pointer type, only works for closures with no captures), or `let add: Box<dyn Fn(i32, i32) -> i32> = Box::new(|a, b| a + b);`.
 
 ### The three closure traits — what they actually mean
 
@@ -2026,4 +2076,4 @@ Once one function is `async fn`, everything that calls it must be `async` too (o
 
 ## See Also
 
-- (none yet — this is the first Rust note)
+- [rust-macros](rust-macros.md) — declarative `macro_rules!`, derive macros, attribute/function-like proc macros. This note covers what macros are *used for* (`#[derive(thiserror::Error)]` in §5, `Box<dyn FnOnce() + Send + 'static>` in §7, `#[tokio::main]` in §12); `rust-macros` covers how they're built.
