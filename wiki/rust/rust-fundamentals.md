@@ -556,6 +556,78 @@ Two ways `'static` shows up:
 - **As a reference lifetime:** `&'static str` — the data lives forever (literals, leaked allocations, lazy_static).
 - **As a bound on a generic:** `T: 'static` means `T` contains no references with shorter lifetimes (it's owned data, or only `'static` references). This is what `tokio::spawn`, `thread::spawn`, and `Box<dyn Trait + 'static>` require — the runtime needs to know your value won't dangle.
 
+### What "dangle" means (and why `'static` exists)
+
+A **dangling reference** is a pointer to memory that has already been freed. The address still looks valid; the data is gone (or reused for something else). Reading from it is undefined behavior — sometimes the old data is still there, sometimes you get garbage, sometimes you segfault. **Every lifetime rule in Rust exists to prevent this.**
+
+#### The C version — what we're avoiding
+
+```c
+char* greet() {
+    char buf[] = "hello";   // lives on this function's stack frame
+    return buf;              // return pointer to buf
+}                            // buf is freed HERE
+
+char* p = greet();
+printf("%s", p);             // ⚠️ undefined behavior — reading freed memory
+```
+
+`p` is dangling. Compiles fine. Runs sometimes. Crashes sometimes. Silent corruption sometimes.
+
+#### The Rust version — caught at compile time
+
+```rust
+fn greet() -> &str {
+    let s = String::from("hello");
+    &s   // ERROR: cannot return reference to local variable `s`
+}        // s is dropped HERE
+```
+
+The compiler reasons: "the returned reference points into `s`; `s` dies at function exit; the reference would outlive its target." Refuses to compile. **You get a friendly red squiggle instead of a 3am crash.**
+
+#### Where `'static` connects
+
+When you spawn a thread, the closure might run *much later* — possibly after the function that captured the variables has returned:
+
+```rust
+fn make_greeter() {
+    let name = String::from("Alice");
+    thread::spawn(|| println!("{}", name));   // ERROR: `name` may not live long enough
+}   // `name` dropped here — but the thread might still be running!
+```
+
+If this were allowed, the thread could print `name` *after* it's been freed — a dangling reference, exactly the C bug. So `thread::spawn` requires `'static`: "I'll only accept closures whose data won't dangle no matter how long I wait."
+
+The fix is `move`, which transfers ownership into the closure so `name` lives *inside* the closure rather than being borrowed from outside:
+
+```rust
+fn make_greeter() {
+    let name = String::from("Alice");
+    thread::spawn(move || println!("{}", name));   // OK — name moved into closure
+}   // local `name` is gone, but the closure carries its own copy
+```
+
+Now `name` lives as long as the closure does. Nothing to dangle.
+
+#### Another dangling example — inner scope dies first
+
+```rust
+fn main() {
+    let r;
+    {
+        let x = 42;
+        r = &x;     // r borrows x
+    }               // x dropped here
+    println!("{}", r);  // ERROR: would read freed memory
+}
+```
+
+`x` died at the inner brace; `r` would point at a dead stack slot. The compiler tracks that `r`'s lifetime can't extend past `x`'s.
+
+#### Mental model
+
+> **"Dangle" = a reference that outlives the thing it points to.** Every `<'a>` annotation and every `'static` bound is the compiler asking *"can I prove this reference can't outlive its target?"* If yes, compiles. If not, error.
+
 A common trap:
 
 ```rust
@@ -565,7 +637,78 @@ fn make_string() -> &'static str {
 }
 ```
 
-The `String` is freed at function exit; you can't promise `'static` for it. Either return the owned `String`, or use a literal.
+The `String` is freed at function exit; you can't promise `'static` for it. Five fixes, ordered from "almost always right" to "use sparingly":
+
+#### Fix 1: Return an owned `String` (almost always the answer)
+
+```rust
+fn make_string() -> String {
+    String::from("hello")
+}
+```
+
+Caller owns it; freed when their binding drops. No `'static` needed.
+
+#### Fix 2: Return a literal (if the content is fixed at compile time)
+
+```rust
+fn make_string() -> &'static str {
+    "hello"          // baked into the binary's .rodata
+}
+```
+
+The literal *is* the `'static` reference. No allocation, no `String`.
+
+#### Fix 3: `Box::leak` (only when you genuinely need program-long lifetime)
+
+```rust
+fn make_string() -> &'static str {
+    let s = String::from("hello");
+    Box::leak(s.into_boxed_str())   // intentional, controlled leak
+}
+```
+
+**Never freed.** Use only when you mean it (globals, lazy singletons). Don't reach for this just to satisfy a `'static` bound — there's almost always a better answer.
+
+#### Fix 4: `LazyLock` for "compute once, keep forever"
+
+```rust
+use std::sync::LazyLock;
+
+static GREETING: LazyLock<String> = LazyLock::new(|| {
+    String::from("hello")    // computed on first access
+});
+
+fn make_string() -> &'static str {
+    &GREETING                 // &String → &str via deref coercion
+}
+```
+
+Lives in a `static` slot, so a reference into it is `'static`. Thread-safe and lazy. Idiomatic since Rust 1.80.
+
+#### Fix 5: Caller-provided buffer (no-allocation hot path)
+
+```rust
+fn make_string(out: &mut String) {
+    out.clear();
+    out.push_str("hello");
+}
+```
+
+Used when one buffer is reused across many calls.
+
+#### Which one?
+
+| Situation | Fix |
+|---|---|
+| Built at runtime, caller will use and drop | **#1 — `String`** |
+| Content is a compile-time literal | **#2 — literal `"hello"`** |
+| Need `'static` for `thread::spawn`/`tokio::spawn` | usually **#1 + `move`** into the closure, not `'static` |
+| Program-long lifetime, computed once at startup | **#4 — `LazyLock`** |
+| Same, but can't use `LazyLock` (e.g. one-off, key derived at runtime) | **#3 — `Box::leak`** |
+| Hot path, reuse one buffer | **#5 — `&mut String` out-param** |
+
+**The mistake to avoid.** Reaching for `Box::leak` to "satisfy" the `'static` requirement on `thread::spawn` is almost always the wrong fix. `thread::spawn` wants `'static` so the captured data *can't dangle* — and `move`-ing an owned `String` into the closure achieves that without leaking anything. The data lives inside the closure; the thread fully owns it. Reach for `Box::leak` only when you genuinely need a `&'static T` *outside* any single closure.
 
 ---
 
@@ -1075,13 +1218,60 @@ You can't write `Vec<T: Card>` — `T` would have to be one specific type for th
 
 This appears all over async/threading code. Decode from the inside:
 
-- `FnOnce()` — a closure callable once, no args, no return
+- `FnOnce()` — a closure callable once, no args, returns `()`
 - `+ Send` — also implements `Send` (transferable between threads)
 - `+ 'static` — contains no references with non-static lifetimes (no dangling possible)
 - `dyn FnOnce() + Send + 'static` — a trait object combining all three constraints
 - `Box<...>` — heap-allocated, single owner, type-erased
 
 Plain English: "a heap-stored, thread-transferable, dangling-free closure that can be called once." Once you see this pattern, you'll spot it everywhere.
+
+#### "Does `dyn` apply to all three, or only `FnOnce`?"
+
+Only to `FnOnce`. `Send` and `'static` are **additional bounds** on the same trait object, not separate `dyn`s. Mentally parenthesise it like this:
+
+```
+Box< dyn (FnOnce()) + Send + 'static >
+       └────┬────┘   └──┬──┘   └──┬──┘
+       the trait     extra      lifetime
+       being         bound      bound
+       dyn'd
+```
+
+The rule: a trait object can contain **only one method-bearing trait**. Everything after the `+` must be either:
+
+- an **auto trait** — `Send`, `Sync`, `Unpin` (markers, no methods); attached as constraints
+- a **lifetime bound** — `'static`, `'a` (how long the object is valid)
+
+That's why `dyn FnOnce() + Read` would be illegal — two method-bearing traits at once. Rust wouldn't know how to lay out a single vtable for both. The workaround is to define a combined trait and `dyn` *that*:
+
+```rust
+trait MyJob: FnOnce() + Read {}     // new trait requiring both
+// then: Box<dyn MyJob>
+```
+
+#### "Why is `dyn` on `FnOnce`? Isn't that a function?"
+
+`FnOnce` is **not a function** — it's a **trait**. Specifically, it's the trait that closures and function pointers implement. Closures aren't a first-class type in Rust; each closure gets its own compiler-generated anonymous type that implements one or more of three traits:
+
+| Trait | Means "can be called..." |
+|---|---|
+| `Fn` | many times, via shared ref (only reads captures) |
+| `FnMut` | many times, via mutable ref (can mutate captures) |
+| `FnOnce` | exactly **once**, by value (can consume/drop captures) |
+
+The `()` after `FnOnce` is *not* "call the function." It's the trait's parameter list, spelled with parentheses instead of angle brackets as syntactic sugar:
+
+```
+FnOnce()                       // takes no args, returns ()
+FnOnce(i32)                    // takes one i32 arg, returns ()
+FnOnce() -> bool               // no args, returns bool
+FnOnce(&str, u32) -> Result<(), Error>
+```
+
+> **"Doesn't return" is a misread.** With no explicit `-> T`, the return type defaults to `()` — Rust's unit type, "no useful value." `FnOnce()` returns `()`. `FnOnce() -> i32` returns `i32`.
+
+So `dyn FnOnce()` is "a trait object for any closure that takes no args, returns `()`, and is callable exactly once." Wrap that in `Box<...> + Send + 'static` and you get the workhorse type for thread pools: a worker thread receives the job → calls it once → it might consume its captures → done.
 
 ---
 
