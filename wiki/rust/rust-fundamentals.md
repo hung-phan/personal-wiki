@@ -3,6 +3,7 @@ name: rust-fundamentals
 description: Rust learning note. Cheatsheet for the easy stuff (Cargo, types, control flow, structs, enums, HashMap, basic iterators, ?-operator) and a teaching journey for the hard stuff — ownership, moves, borrowing, lifetimes & 'static, generic <T>/<'a> syntax, dyn trait objects, closures with Fn/FnMut/FnOnce, smart pointers (Box, Rc, Arc, RefCell, Mutex, Weak), threads with Send/Sync, async/await + tokio. Reach for this when "why does the borrow checker hate me", "what does <'a> / dyn / Arc<Mutex<T>> mean", or "Fn vs FnMut vs FnOnce" comes up.
 created: 2026-06-19
 updated: 2026-06-19
+
 tags: [rust, ownership, borrowing, lifetimes, generics, traits, closures, iterators, error-handling, async, tokio, concurrency]
 ---
 
@@ -140,6 +141,8 @@ for c in "abc".chars() { ... }   // iterate chars
 ```
 
 **Always prefer `&str` for read-only string params** — accepts both literals and `&String`.
+
+(You can't return or hold a bare `str` — it's an unsized type. See §6 "Sized, ?Sized, and why you can't return `str`" for why.)
 
 ### Control flow
 
@@ -774,6 +777,100 @@ res.ok()                        // Result<T,E> → Option<T>
 
 If you want all errors at once (a config validator, say) instead of stopping at the first, return `Result<(), Vec<MyError>>` and accumulate. `?` is biased toward fail-fast — sometimes that's wrong.
 
+### Best practices
+
+A handful of rules that separate "code that compiles" from "code you'd want to debug at 3am":
+
+**1. `expect` over `unwrap` — and use the message as a proof.**
+
+Both panic on failure. The difference is what shows up in the panic message. Read `.expect("X")` as "I'm asserting X holds; if it doesn't, this is a bug." The message should explain *why* the invariant should hold, not what failed:
+
+```rust
+let port: u16 = env::var("PORT")?.parse()
+    .expect("PORT env var should be a valid u16 — checked at startup");
+```
+
+A reader of the panic immediately sees what assumption broke. `.unwrap()` is acceptable in tests and quick scripts; in production code, prefer `.expect("...")`.
+
+**2. Don't `unwrap` / `expect` on user-controlled input.** That's a denial-of-service. Reserve panics for *your* invariants — wrong input is an `Err`, not a panic.
+
+**3. Add context as you bubble up.** A bare `Err(io::Error)` tells you "file not found" but not *which* file. With `anyhow`:
+
+```rust
+use anyhow::Context;
+
+fn load_config(path: &Path) -> anyhow::Result<Config> {
+    let s = std::fs::read_to_string(path)
+        .with_context(|| format!("reading config at {}", path.display()))?;
+    let cfg: Config = toml::from_str(&s)
+        .with_context(|| format!("parsing config at {}", path.display()))?;
+    Ok(cfg)
+}
+```
+
+When this fails, the user sees a chain: `parsing config at /etc/app.toml` → `caused by: expected value at line 7`. With `thiserror`, you do the same by including the path in your error variant: `Parse { path: PathBuf, source: toml::de::Error }`.
+
+**4. Distinguish "library" from "application" errors.**
+
+| Kind | Tool | Why |
+|---|---|---|
+| Library that callers will `match` on | `thiserror` enum | Variants are the public API |
+| Application (binary, script, internal tool) | `anyhow::Result` | Just chain context, easy to use |
+| Quick prototype / test | `Box<dyn Error>` | No deps; works with `?` |
+
+Never expose `anyhow::Error` from a library — callers can't programmatically distinguish causes.
+
+**5. Use `#[from]` for natural conversions, custom variants for context-rich ones.** `#[from]` is great when the source error already carries all the context you need (`io::Error`). When you want to attach extra info (which file, which line, which user), make it a struct variant:
+
+```rust
+#[derive(thiserror::Error, Debug)]
+enum AppError {
+    #[error(transparent)]                              // bare wrap
+    Io(#[from] std::io::Error),
+
+    #[error("loading user {user_id}")]                 // adds context
+    LoadUser { user_id: u64, source: sqlx::Error },
+}
+```
+
+`#[error(transparent)]` defers to the inner error's `Display` — useful for "I just want to wrap this."
+
+**6. Make invalid states unrepresentable so you don't need an error.** The best error handling is no error. If a function "can't fail because the inputs were already validated," reflect that in types:
+
+```rust
+// Instead of: fn send(email: &str) -> Result<(), InvalidEmail>
+// Validate once at the boundary, then pass a typed state:
+struct ValidEmail(String);
+impl ValidEmail {
+    fn parse(s: &str) -> Result<Self, InvalidEmail> { ... }
+}
+fn send(email: &ValidEmail) { /* infallible */ }
+```
+
+This is the "parse, don't validate" idiom. It pushes failures to the boundary and shrinks the rest of the codebase's error surface.
+
+**7. `?` works on `Option` too — but mixing requires conversion.**
+
+```rust
+fn first_word(s: &str) -> Result<&str, MyError> {
+    let i = s.find(' ').ok_or(MyError::NoSpace)?;  // Option → Result
+    Ok(&s[..i])
+}
+
+fn parse(s: &str) -> Option<i32> {
+    let trimmed = s.trim().strip_prefix("0x")?;     // Option in an Option-returning fn
+    i32::from_str_radix(trimmed, 16).ok()
+}
+```
+
+`.ok_or(err)` / `.ok_or_else(|| err)` lift `Option` → `Result`. `.ok()` does the reverse, dropping the error.
+
+**8. Don't `panic!` to skip work in async / threaded code.** A panicked task or thread is *captured* (you'll get an `Err` from `join`/`await`), but the rest of the runtime keeps going. That's not "graceful failure" — it's a silent bug waiting to surprise you. Return errors instead.
+
+**9. Turn on backtraces in development.** Set `RUST_BACKTRACE=1` (or `RUST_BACKTRACE=full`) before running. With `anyhow`, the backtrace is captured automatically and prints with the error chain. Don't add manual backtraces to error types unless profiling shows they matter — they're not free.
+
+**10. Log at the boundary, not at every layer.** Logging an error at every `?` site clutters output and obscures the real chain. Let `?` propagate; log once at the place that decides what to do (request handler, top-level CLI, retry loop).
+
 ---
 
 ## 6. Generics and Traits — The "Weird `<T>` Syntax"
@@ -886,6 +983,62 @@ impl Deck<PokerCard> {
 ```
 
 The pattern: keep the engine generic (`impl<T> Deck<T>`), but place type-specific construction on a non-generic block (`impl Deck<PokerCard>`). `Deck::<UnoCard>::new()` then won't compile — exactly what you want.
+
+### `Sized`, `?Sized`, and why you can't return `str`
+
+Every value the compiler handles "directly" — function arguments, return values, locals, array elements — must have a size known at compile time. That's how it lays out stack frames and chooses calling conventions.
+
+**The implicit `Sized` bound.** Every generic has one for free:
+
+```rust
+fn id<T>(x: T) -> T { x }
+// is actually:
+fn id<T: Sized>(x: T) -> T { x }
+```
+
+So `T` can be `i32`, `String`, `Vec<u8>` — but not `str`, `[u8]`, or `dyn Trait`. Those are **dynamically sized types (DSTs)** — their length isn't known until runtime.
+
+**Why `fn bad() -> str { ... }` doesn't compile.** `str` is a sequence of UTF-8 bytes of unknown length. There's no "size of a `str`" the compiler can use to allocate the return slot. The fix is to put it behind a pointer (which is itself sized):
+
+| Type | What it is | Size on the stack |
+|---|---|---|
+| `&str` | fat pointer: address + length | 16 bytes (on 64-bit) |
+| `&'static str` | same, with `'static` lifetime | 16 bytes |
+| `Box<str>` | heap-owned, fat pointer | 16 bytes |
+| `String` | heap-owned: ptr + len + capacity | 24 bytes |
+
+Same shape for slices (`&[T]`, `Vec<T>`, `Box<[T]>` — never bare `[T]`) and trait objects (`&dyn Trait`, `Box<dyn Trait>` — never bare `dyn Trait`).
+
+**Opting out with `?Sized` ("maybe sized").** When a generic should accept DSTs too, relax the bound — but then you can only use the type *behind a pointer*:
+
+```rust
+fn print<T: ?Sized + std::fmt::Display>(x: &T) {  // &T, not T
+    println!("{}", x);
+}
+
+print("hello");   // T = str
+print(&42);       // T = i32
+```
+
+This is exactly how `&str` and `&dyn Trait` work under the hood — they're `&T` where `T: ?Sized`.
+
+**Where `Sized` is required vs optional:**
+
+| Position | Must be `Sized`? |
+|---|---|
+| Function parameter (by value) | yes |
+| Function return (by value) | yes |
+| Local variable | yes |
+| Struct field (any but the last) | yes |
+| Last field of a struct | no — DSTs allowed |
+| Array element `[T; N]` | yes |
+| Behind a pointer (`&T`, `Box<T>`, `Rc<T>`, ...) | no |
+
+The "last field can be unsized" rule is how `Box<str>` works internally — the box knows the length, the bytes follow.
+
+**Mental model.** The compiler builds stack frames at compile time. It needs every directly-held value's size in advance. Pointers sidestep this by being a fixed size themselves (one or two words); the variable-length data they point to lives somewhere else.
+
+> **`str` is the data; `&str` / `String` / `Box<str>` are the handles.** You move handles around because they're a known size.
 
 ---
 
