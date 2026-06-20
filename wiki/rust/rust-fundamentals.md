@@ -30,6 +30,29 @@ tags: [rust, ownership, borrowing, lifetimes, generics, traits, closures, iterat
 
 ---
 
+## Table of Contents
+
+- [Diagrams](#diagrams) — the one-picture mental models
+- [§0. Quick Reference (Cheatsheet)](#0-quick-reference-cheatsheet) — Cargo, types, control flow, structs, enums, match, HashMap, iterators (one-pager)
+- [§1. Ownership and Moves](#1-ownership-and-moves) — why moves exist
+- [§2. Borrowing](#2-borrowing--lending-without-giving-up-ownership) — `&T` / `&mut T` and the one rule
+- [§3. Lifetimes](#3-lifetimes--naming-how-long-is-this-borrow-valid) — `<'a>`, `'static`, dangling, cleanup
+- [§4. Pattern Matching Beyond Basics](#4-pattern-matching-beyond-basics) — `if let`, guards, `@`, refutable patterns
+- [§5. Error Handling](#5-error-handling--option-result-and-the--operator) — `Option`, `Result`, `?`, `thiserror`, `anyhow`, best practices
+- [§6. Generics and Traits](#6-generics-and-traits--the-weird-t-syntax) — `<T>`, bounds, derives, `Sized` / `?Sized`
+- [§7. Trait Objects (`dyn`)](#7-trait-objects--dyn-trait-static-vs-dynamic-dispatch) — static vs dynamic dispatch, reading `Box<dyn FnOnce() + Send + 'static>`
+- [§8. Closures and `Fn` / `FnMut` / `FnOnce`](#8-closures-and-fn--fnmut--fnonce) — what the three traits actually mean
+- [§9. Iterators in Depth](#9-iterators-in-depth) — laziness, `iter` / `iter_mut` / `into_iter`, `collect` tricks
+- [§10. Smart Pointers](#10-smart-pointers--when-one-owner-isnt-enough) — `Box`, `Rc`, `Arc`, `RefCell`, `Mutex`, `Weak`
+- [§11. Threads, `Send`, `Sync`, Channels](#11-threads-send-sync-and-channels) — `move`, `mpsc`, thread pool
+- [§12. Async/Await and Tokio](#12-asyncawait-and-tokio) — lazy futures, `tokio::spawn`, `join!`, `select!`
+- [Trade-offs](#trade-offs) — what you give up by picking each tool
+- [Common Pitfalls](#common-pitfalls) — failure modes with fixes
+- [Decision Table](#decision-table) — scenario → recommendation matrix
+- [References](#references) — primary sources
+
+---
+
 ## Diagrams
 
 ### The unifying picture
@@ -66,6 +89,8 @@ When `s1` is dropped, the stack frame goes away *and* the heap bytes are freed. 
 ---
 
 ## 0. Quick Reference (Cheatsheet)
+
+> *Use this section as a lookup, not a read-through. Skip ahead to §1+ for the teaching content.*
 
 ### Cargo
 
@@ -350,6 +375,8 @@ res.map(|x| ...) / .map_err(|e| ...)
 
 ## 1. Ownership and Moves
 
+> *TL;DR — every value has exactly one owner; when the owner ends, the value is freed. Assignment **moves** ownership for heap-owning types; for stack-only primitives that implement `Copy`, it copies.*
+
 ### The problem
 
 Two languages you already know:
@@ -406,6 +433,8 @@ You almost never want functions to permanently consume their args. The fix is bo
 ---
 
 ## 2. Borrowing — Lending Without Giving Up Ownership
+
+> *TL;DR — `&T` shares, `&mut T` excludes. At any moment, **either many shared borrows OR one exclusive borrow** — never both. The compiler enforces this to eliminate data races and dangling slices.*
 
 ### Shared (`&T`) and exclusive (`&mut T`) references
 
@@ -472,6 +501,8 @@ Older Rust would have rejected this. Modern Rust is friendlier than the textbook
 ---
 
 ## 3. Lifetimes — Naming "How Long Is This Borrow Valid?"
+
+> *TL;DR — `<'a>` names a duration the compiler can reason about; it doesn't extend anything. `'static` means "no short-lived references inside" — a structural promise, not a cleanup directive. Cleanup is `Drop`, separately.*
 
 ### The problem they solve
 
@@ -710,9 +741,98 @@ Used when one buffer is reused across many calls.
 
 **The mistake to avoid.** Reaching for `Box::leak` to "satisfy" the `'static` requirement on `thread::spawn` is almost always the wrong fix. `thread::spawn` wants `'static` so the captured data *can't dangle* — and `move`-ing an owned `String` into the closure achieves that without leaking anything. The data lives inside the closure; the thread fully owns it. Reach for `Box::leak` only when you genuinely need a `&'static T` *outside* any single closure.
 
+### `'static` is a *bound*, not a *lifetime extender* — how does cleanup actually happen?
+
+A common confusion: "if `'static` makes data live forever, won't Tokio leak memory for every small task?"
+
+**`'static` is not a cleanup instruction.** It's a compile-time *bound* — a promise the borrow checker enforces. Cleanup is a completely separate mechanism: **`Drop`**.
+
+#### What `'static` actually means
+
+`'static` on a generic — `T: 'static` — says: "the data inside this value has no references that could go bad. It's either fully owned, or it borrows only from things that live forever (like string literals)."
+
+It does **not** say:
+- "this value will live forever"
+- "this value won't be freed"
+- "the runtime must keep it alive"
+
+An owned `String`, a `Vec<u8>`, an `i32`, a `(String, u64)` tuple — all satisfy `T: 'static` because none of them holds short-lived references. They're freed by ordinary ownership, no special treatment.
+
+#### Cleanup happens via `Drop`
+
+When a value's owner goes out of scope, Rust runs cleanup — automatically and **deterministically**:
+
+```rust
+fn demo() {
+    let s = String::from("hello");
+    // s goes out of scope here → drop(s) runs → heap freed
+}
+```
+
+No GC sweep, no finalisation queue. Owner ends, drop runs. Now.
+
+For non-trivial types, the compiler synthesises (or you implement) `Drop`:
+
+```rust
+impl Drop for MyType {
+    fn drop(&mut self) {
+        // close file, free handle, decrement counter, etc.
+    }
+}
+```
+
+#### Tokio doesn't need to "know when to clean up"
+
+The task's data is owned by the task itself. When the task finishes, its future is dropped. When the future is dropped, **every field inside it — your `String`, your `Vec`, every captured variable — drops in turn**. That's the same ownership rule from §1, applied to async tasks.
+
+```rust
+tokio::spawn(async move {
+    let s = String::from("hello");   // s is owned by this task
+    println!("{}", s);
+    // task ends → future dropped → s dropped → heap freed
+});
+```
+
+| Step | What lives where | When freed |
+|---|---|---|
+| `String::from("hello")` | heap, owned by the future's state machine | when the future drops |
+| The future itself | inside the Tokio task slot | when the task completes |
+| The `JoinHandle` | stack of the caller | when its scope ends |
+
+Tokio polls → future returns `Poll::Ready(value)` → task marked complete → Tokio drops the future → cascade of drops inside it → done. **No leak. No reference counting. No "keep this alive forever" semantics.**
+
+#### So why does `tokio::spawn` need `'static`?
+
+Because the runtime might run the task *much later*, *on any worker thread*, for *as long as it takes*. Until the task finishes, the future must remain valid. If the future borrowed `&data` from your `main` function, that borrow could outlive `main`'s frame — dangling. So Tokio insists: **all your data must be self-contained, so the task is safe to run for any duration.** That's exactly what `'static` enforces.
+
+It's a *minimum-duration promise about your data's structure*, not a *forever-keep-this-alive request*.
+
+#### The two axes
+
+> Validity and cleanup live on different axes.
+
+| Axis | Mechanism | When |
+|---|---|---|
+| **Validity** (can I read this without UB?) | lifetimes, `'static` | checked at compile time |
+| **Cleanup** (when is memory freed?) | `Drop` | runs at owner's end of scope |
+
+`'static` doesn't reach into the runtime. It just gates what you're allowed to compile. Cleanup is ordinary ownership doing its thing.
+
+#### When you *do* leak
+
+Memory genuinely lives forever only when you opt into it:
+
+- **`static FOO: ... = ...`** — stored in a `static` slot at program start, never freed
+- **`Box::leak(value)`** — intentional heap leak, returns `&'static mut T`
+- **`Rc`/`Arc` reference cycles** — strong counts never reach zero (use `Weak` to break)
+
+Spawning a million one-shot Tokio tasks does *not* leak. Each task owns its captures; when the task finishes, the captures drop. Memory reclaimed.
+
 ---
 
 ## 4. Pattern Matching Beyond Basics
+
+> *TL;DR — `if let` / `while let` for single-variant cases, guards for runtime conditions, `@` to test and capture in one go, `let ... else` to early-exit on refutable patterns.*
 
 `match` shows up everywhere in Rust — destructuring `Option`, `Result`, enums, tuples, structs. The basics are in §0; this section covers the parts that surprise people.
 
@@ -817,6 +937,8 @@ println!("{}", value);   // value is in scope from here on
 ---
 
 ## 5. Error Handling — `Option`, `Result`, and the `?` Operator
+
+> *TL;DR — `panic!` for programmer bugs, `Result` for expected failures. `?` propagates errors and auto-converts via `From`. Libraries use `thiserror` enums; apps use `anyhow` with `.context()`. Log once at the boundary.*
 
 ### Two failure modes, two types
 
@@ -1018,6 +1140,8 @@ fn parse(s: &str) -> Option<i32> {
 
 ## 6. Generics and Traits — The "Weird `<T>` Syntax"
 
+> *TL;DR — `<T>` is a type placeholder filled at compile time (monomorphization, zero runtime cost). Traits are contracts; use `T: Trait` bounds to call methods on a generic. `Sized` is implicit; opt out with `?Sized` to accept DSTs through a reference.*
+
 ### Why generics exist
 
 You write the same function twice for `i32` and `f64`. Generics let you write it once:
@@ -1187,6 +1311,8 @@ The "last field can be unsized" rule is how `Box<str>` works internally — the 
 
 ## 7. Trait Objects — `dyn Trait`, Static vs Dynamic Dispatch
 
+> *TL;DR — `<T: Trait>` is static dispatch (fast, type-known); `dyn Trait` is dynamic dispatch (fat pointer + vtable). Use `dyn` to store mixed concrete types in one collection. After `+` you can stack auto traits (`Send`, `Sync`) and lifetimes (`'static`) — but only one method-bearing trait.*
+
 ### Two ways to use a trait
 
 When a function "takes any type that implements `Card`", Rust offers two paths:
@@ -1277,17 +1403,20 @@ So `dyn FnOnce()` is "a trait object for any closure that takes no args, returns
 
 ## 8. Closures and `Fn` / `FnMut` / `FnOnce`
 
+> *TL;DR — closures package code + captured state. `Fn` reads captures, `FnMut` mutates them, `FnOnce` consumes them. Pick the **loosest** bound that still fits — it accepts more callers. `move` shifts where captures live; the trait is determined by what the body does.*
+
 ### Syntax
 
 ```rust
-let add_one = |n| n + 1;          // inferred types
-let add: |a: i32, b: i32| -> i32 = |a, b| a + b;  // (illegal — closures aren't typed this way)
-let add = |a: i32, b: i32| -> i32 { a + b };      // explicit
-let greet = || println!("hi");    // no params
+let add_one = |n| n + 1;                       // inferred types
+let add    = |a: i32, b: i32| -> i32 { a + b }; // explicit param + return types
+let greet  = || println!("hi");                // no params
 
 // single expression: braces optional
 // multi-statement: braces required
 ```
+
+Closures have anonymous types you can't name directly. To annotate the *binding's* type, use a trait: `let add: fn(i32, i32) -> i32 = |a, b| a + b;` (function-pointer type, works only for closures that capture nothing), or `let add: Box<dyn Fn(i32, i32) -> i32> = Box::new(|a, b| a + b);`.
 
 A closure is "an anonymous function that can capture variables from its environment." `|...|` is the param list, just like `(...)` for functions.
 
@@ -1401,6 +1530,8 @@ let rules: Vec<Box<dyn Fn(&str) -> bool>> = vec![Box::new(c1), Box::new(c2)];
 
 ## 9. Iterators in Depth
 
+> *TL;DR — an iterator is anything with `.next() -> Option<Item>`. Adapters are **lazy** — nothing runs until a consumer (`collect`, `for`, `sum`, …) pulls. `collect` is polymorphic; the turbofish (`::<Vec<_>>()`) picks the container.*
+
 The cheatsheet in §0 lists the adapters. The teaching parts are below.
 
 ### What an iterator actually is
@@ -1476,6 +1607,8 @@ Same trick works for `Option<Vec<T>>`. This is one of those moments where Rust f
 ---
 
 ## 10. Smart Pointers — When "One Owner" Isn't Enough
+
+> *TL;DR — `Box` (heap, single owner), `Rc`/`Arc` (shared ownership, single-thread / multi-thread), `RefCell`/`Mutex` (mutate through shared ref, runtime checking, single-thread / multi-thread), `Weak` (non-owning back-edge, breaks cycles).*
 
 A smart pointer is a struct that wraps data and adds management. `String` and `Vec<T>` are technically smart pointers. The library types you'll meet:
 
@@ -1635,6 +1768,8 @@ println!("{}", *counter.lock().unwrap()); // 5
 
 ## 11. Threads, `Send`, `Sync`, and Channels
 
+> *TL;DR — `thread::spawn(move || ...)`. `Send` = safe to move to another thread; `Sync` = safe to share `&T` across threads. Communicate with `mpsc` channels rather than shared mutable state when you can.*
+
 ### `thread::spawn` and `move`
 
 ```rust
@@ -1695,6 +1830,8 @@ Why `Arc<Mutex<Receiver>>`? `Receiver` is `!Sync` — receiving is stateful, onl
 ---
 
 ## 12. Async/Await and Tokio
+
+> *TL;DR — async functions are **lazy**: calling one returns a `Future`; nothing runs until something polls it (via `.await`). Tokio is a runtime: reactor + executor. `tokio::spawn` places a task (not a thread). `join!` waits for all, `select!` waits for the first.*
 
 ### Mental model: waiter, not chefs
 
