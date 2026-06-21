@@ -258,16 +258,30 @@ So **how many CW vs. CCW notes a scale contains literally measures its brightnes
 
 Re-sort those by pitch and you have C–D–E–F–G–A–B — the C major scale, derived purely from circle positions, no memorization. The five leftover slots {F♯, C♯, G♯, D♯, A♯} form the F♯ major pentatonic — the piano's black keys. The map isn't a lookup table; it's a *generator* for scales, modes, and key signatures.
 
-**4. Distance on the map = how related two keys are.** Adjacent positions share 6 of 7 scale notes; opposite positions share only 2. That's why composers historically modulate to "closely related keys" — circle adjacency *is* tonal closeness:
+**4. Distance on the map = how related two keys are.** Every major key uses exactly **7 notes** — its scale. C major = `C D E F G A B`. G major = `G A B C D E F♯`. Lay them side-by-side:
 
-| Steps apart  | Shared notes (out of 7) | Modulation feel |
-|---|---|---|
-| 1 (C ↔ G)   | 6 | smooth, near-invisible |
-| 2 (C ↔ D)   | 5 | smooth                  |
-| 3 (C ↔ A)   | 4 | noticeable shift        |
-| 6 (C ↔ F♯)  | 2 | maximally distant — the "tritone modulation" used for shock (bridge of *Sweet Child O' Mine*, B section of *Maria* from West Side Story) |
+| Note in C major | Same note in G major? |
+|---|---|
+| C | ✓ C |
+| D | ✓ D |
+| E | ✓ E |
+| **F** | ✗ — G major has **F♯** instead |
+| G | ✓ G |
+| A | ✓ A |
+| B | ✓ B |
 
-This also predicts which **modulating chords** work as pivots: chords that exist in both the source and destination keys (because they share many notes), and those are most plentiful when the keys are neighbors.
+**Six of the seven notes are identical. Only one note differs** (F flips to F♯). That's what "share 6 of 7 scale notes" means — and it's no accident: one CW step on the circle of fifths *mechanically* raises one note of the previous key by a semitone (the old key's 4th degree becomes the new key's 7th, the leading tone). One circle step = one altered note.
+
+Walk further around the circle and the count of altered notes climbs in lockstep:
+
+| Circle steps apart | Notes shared with C major (out of 7) | Notes that changed | Modulation feel |
+|---|---|---|---|
+| **1** (C ↔ G)  | 6 — {C D E G A B} | F → F♯           | smooth, near-invisible |
+| **2** (C ↔ D)  | 5 — {D E G A B}   | F → F♯, C → C♯   | smooth |
+| **3** (C ↔ A)  | 4 — {E A B} + D from C-major minus C... | F→F♯ C→C♯ G→G♯ | noticeable shift |
+| **6** (C ↔ F♯) | 2 — {B, F=E♯ enharmonically} | every other note | maximally distant — the "tritone modulation" used for shock (bridge of *Sweet Child O' Mine*, B section of *Maria* from West Side Story) |
+
+**Why this matters in practice:** modulation feels *smooth* exactly when the two keys share many notes, because the listener's ear is already comfortable with most of the new key's pitch material — only one or two notes feel "new." That's also why **pivot chords** work: a chord that exists in both keys lets you slip from one to the other without any note feeling foreign. Adjacent circle positions have the most pivot-chord candidates (because they share 6 notes, hence ~5 in-common chords); opposite positions have almost none, which is why a tritone modulation jolts the ear.
 
 ### 3. Chord-shape matrix — which clock positions light up
 
@@ -724,36 +738,36 @@ On the fretboard, "up a fifth" has a memorable shape: same fret, **one string hi
 
   <!-- Fretboard, frets 0-12, low E top -->
   <!-- nut at x=70, fret centers every 50 px: 1=110, 2=160, …, 12=620, last line x=645 -->
-  <line x1="70" y1="70" x2="70" y2="220" stroke="#1f2937" stroke-width="5"/>
+  <line x1="70" y1="220" x2="70" y2="70" stroke="#1f2937" stroke-width="5"/>
   <g stroke="#9aa0a6" stroke-width="1.5">
-    <line x1="135" y1="70" x2="135" y2="220"/>
-    <line x1="185" y1="70" x2="185" y2="220"/>
-    <line x1="235" y1="70" x2="235" y2="220"/>
-    <line x1="285" y1="70" x2="285" y2="220"/>
-    <line x1="335" y1="70" x2="335" y2="220"/>
-    <line x1="385" y1="70" x2="385" y2="220"/>
-    <line x1="435" y1="70" x2="435" y2="220"/>
-    <line x1="485" y1="70" x2="485" y2="220"/>
-    <line x1="535" y1="70" x2="535" y2="220"/>
-    <line x1="585" y1="70" x2="585" y2="220"/>
-    <line x1="635" y1="70" x2="635" y2="220"/>
-    <line x1="685" y1="70" x2="685" y2="220"/>
+    <line x1="135" y1="220" x2="135" y2="70"/>
+    <line x1="185" y1="220" x2="185" y2="70"/>
+    <line x1="235" y1="220" x2="235" y2="70"/>
+    <line x1="285" y1="220" x2="285" y2="70"/>
+    <line x1="335" y1="220" x2="335" y2="70"/>
+    <line x1="385" y1="220" x2="385" y2="70"/>
+    <line x1="435" y1="220" x2="435" y2="70"/>
+    <line x1="485" y1="220" x2="485" y2="70"/>
+    <line x1="535" y1="220" x2="535" y2="70"/>
+    <line x1="585" y1="220" x2="585" y2="70"/>
+    <line x1="635" y1="220" x2="635" y2="70"/>
+    <line x1="685" y1="220" x2="685" y2="70"/>
   </g>
   <!-- 6 strings -->
-  <line x1="70" y1="70"  x2="685" y2="70"  stroke="#1f2937" stroke-width="2.4"/>
-  <line x1="70" y1="100" x2="685" y2="100" stroke="#1f2937" stroke-width="2.2"/>
-  <line x1="70" y1="130" x2="685" y2="130" stroke="#1f2937" stroke-width="2.0"/>
-  <line x1="70" y1="160" x2="685" y2="160" stroke="#1f2937" stroke-width="1.8"/>
-  <line x1="70" y1="190" x2="685" y2="190" stroke="#1f2937" stroke-width="1.6"/>
-  <line x1="70" y1="220" x2="685" y2="220" stroke="#1f2937" stroke-width="1.4"/>
+  <line x1="70" y1="220"  x2="685" y2="220"  stroke="#1f2937" stroke-width="2.4"/>
+  <line x1="70" y1="190" x2="685" y2="190" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="70" y1="160" x2="685" y2="160" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="70" y1="130" x2="685" y2="130" stroke="#1f2937" stroke-width="1.8"/>
+  <line x1="70" y1="100" x2="685" y2="100" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="70" y1="70" x2="685" y2="70" stroke="#1f2937" stroke-width="1.4"/>
   <!-- string labels -->
   <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="12" font-weight="800" fill="#1f2937">
-    <text x="60" y="70">E</text>
-    <text x="60" y="100">A</text>
-    <text x="60" y="130">D</text>
-    <text x="60" y="160">G</text>
-    <text x="60" y="190">B</text>
-    <text x="60" y="220">e</text>
+    <text x="60" y="220">E</text>
+    <text x="60" y="190">A</text>
+    <text x="60" y="160">D</text>
+    <text x="60" y="130">G</text>
+    <text x="60" y="100">B</text>
+    <text x="60" y="70">e</text>
   </g>
   <!-- fret-number labels (selected) -->
   <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="10" font-weight="700" fill="#6b7280">
@@ -770,11 +784,11 @@ On the fretboard, "up a fifth" has a memorable shape: same fret, **one string hi
        open E  →  fret 7 B  = a perfect FIFTH
        ============================================================ -->
   <!-- open E -->
-  <circle cx="50" cy="70" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
-  <text x="50" y="70" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">E</text>
+  <circle cx="50" cy="220" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="50" y="220" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">E</text>
   <!-- B at fret 7 -->
-  <circle cx="410" cy="70" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
-  <text x="410" y="70" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">B</text>
+  <circle cx="410" cy="220" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="410" y="220" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">B</text>
   <!-- arrow over the low-E string -->
   <path d="M 65 56 Q 240 38 396 56" fill="none" stroke="#d97757" stroke-width="2.2" marker-end="url(#a5th)" opacity="0.9"/>
   <!-- caption tucked just under the arrow, above the fretboard -->
@@ -787,12 +801,12 @@ On the fretboard, "up a fifth" has a memorable shape: same fret, **one string hi
        These are the bass strings tuned in 4ths (= CCW around the circle)
        ============================================================ -->
   <!-- emphasize open strings 5,4,3 -->
-  <circle cx="50" cy="100" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-  <text x="50" y="100" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">A</text>
-  <circle cx="50" cy="130" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-  <text x="50" y="130" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">D</text>
+  <circle cx="50" cy="190" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="50" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">A</text>
   <circle cx="50" cy="160" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-  <text x="50" y="160" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
+  <text x="50" y="160" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">D</text>
+  <circle cx="50" cy="130" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="50" y="130" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
 
   <!-- arrows down the strings -->
   <path d="M 50 84 L 50 88" stroke="#3b82c4" stroke-width="2"/>
@@ -806,16 +820,14 @@ On the fretboard, "up a fifth" has a memorable shape: same fret, **one string hi
 
   <!-- right-side callouts -->
   <g font-family="ui-sans-serif, system-ui, sans-serif">
-    <rect x="470" y="100" width="230" height="120" rx="8" fill="#3b82c4"/>
     <text x="585" y="120" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">Bass strings = circle of 4ths</text>
     <text x="585" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">E → A → D → G  (each +5 st)</text>
-    <text x="585" y="160" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Same direction as CCW on circle.</text>
+    <text x="585" y="130" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Same direction as CCW on circle.</text>
     <text x="585" y="184" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">A 4th up = a 5th down.</text>
-    <text x="585" y="204" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">The tuning IS the circle.</text>
   </g>
 
   <!-- B / e strings note -->
-  <text x="585" y="245" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#6b7280">(B string breaks the pattern — it's a 3rd up from G, not a 4th)</text>
+  <text x="500" y="250" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#6b7280">(B string breaks the pattern — it's a 3rd up from G, not a 4th)</text>
 
   <defs>
     <marker id="a5th" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -880,237 +892,298 @@ So G major's diatonic chords are: **G, Am, Bm, C, D, Em, F#dim**. That's "Wonder
 ### What "in the key of G" actually looks like on the neck
 
 The six main chords (I, ii, iii, IV, V, vi) drawn as open-position chord boxes. Every dot is one of the seven notes of **G major: G A B C D E F♯**. No accidentals appear anywhere — that's literally what "diatonic to G" means.
-
-<svg viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto;border-radius:12px">
-  <rect width="720" height="480" rx="12" fill="#fdfcf7"/>
-  <rect width="720" height="480" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+<svg viewBox="0 0 720 600" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto;border-radius:12px">
+  <rect width="720" height="600" rx="12" fill="#fdfcf7"/>
+  <rect width="720" height="600" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
   <text x="360" y="28" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="15" font-weight="800" fill="#1f2937">Diatonic chords of G major — every note is G A B C D E F♯</text>
 
-  <!--
-    Chord-box layout: 2 rows × 3 cols.  Each box ≈ 200×190 starting at:
-      Col x = 40, 250, 480
-      Row y = 60, 270
-    Inside each box: nut (left thick bar), 3 frets, 6 strings.
-    Box internal coords:
-      nut at x_box+50, fret 1 = x_box+95, fret 2 = x_box+140, fret 3 = x_box+185 (centers)
-      vertical lines at x_box+50, x_box+72, x_box+117, x_box+162, x_box+207  (5 frets including nut)
-      strings at y_box+30..y_box+105 step 15
-      string labels at left
-    Open-string circles (above the nut) at x_box+38
+  <!-- =================================================================
+       HORIZONTAL layout, TAB ORDER:
+         string order TOP → BOTTOM = e, B, G, D, A, E (string 1 on top)
+         nut on the LEFT (thick vertical), frets running L→R
+       Internal per mini-fretboard (200 × 165):
+         nut at x=24
+         fret lines at x = 64, 104, 144, 184  (frets 1..4)
+         fret centers (dots) at x = 44, 84, 124, 164
+         string y positions: e=8, B=32, G=56, D=80, A=104, E=128
+         open-string markers at x=6 (small ring) or × for muted
+       Grid: 2 rows × 3 cols.  col x: 30 / 270 / 510 ; row y: 60 / 300
+       I-IV-V = warm orange #d97757,  ii-iii-vi = cool blue #3b82c4
+       Root marker = red ring (#dc2626) around chord-color fill
+       ================================================================= -->
 
-    Color: I/IV/V = warm orange, ii/iii/vi = cool blue (matches the circle's outer/inner ring)
-  -->
-
-  <!-- Common rendering helpers via reusable template? SVG has no for-loops, write inline. -->
-
-  <!-- ============================ G  (I) — open: 320003 ============================ -->
-  <g transform="translate(40,60)">
-    <!-- frame -->
-    <line x1="50" y1="30" x2="50" y2="105" stroke="#1f2937" stroke-width="4"/>
-    <line x1="95" y1="30" x2="95" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="140" y1="30" x2="140" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="185" y1="30" x2="185" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="50" y1="30"  x2="185" y2="30"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="45"  x2="185" y2="45"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="60"  x2="185" y2="60"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="75"  x2="185" y2="75"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="90"  x2="185" y2="90"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="105" x2="185" y2="105" stroke="#1f2937" stroke-width="1.4"/>
-    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">
-      <text x="44" y="30">E</text><text x="44" y="45">A</text><text x="44" y="60">D</text>
-      <text x="44" y="75">G</text><text x="44" y="90">B</text><text x="44" y="105">e</text>
+  <!-- ============================ G (I)  3 2 0 0 0 3 ============================ -->
+  <g transform="translate(30,60)">
+    <!-- nut + frets -->
+    <line x1="24" y1="8" x2="24" y2="128" stroke="#1f2937" stroke-width="4.5"/>
+    <line x1="64"  y1="8" x2="64"  y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="104" y1="8" x2="104" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="144" y1="8" x2="144" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="184" y1="8" x2="184" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <!-- strings (top → bottom = e, B, G, D, A, E) -->
+    <line x1="24" y1="8"   x2="184" y2="8"   stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="24" y1="32"  x2="184" y2="32"  stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="24" y1="56"  x2="184" y2="56"  stroke="#1f2937" stroke-width="1.6"/>
+    <line x1="24" y1="80"  x2="184" y2="80"  stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="24" y1="104" x2="184" y2="104" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="24" y1="128" x2="184" y2="128" stroke="#1f2937" stroke-width="2"/>
+    <!-- string labels (left of nut) -->
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">
+      <text x="20" y="8">e</text><text x="20" y="32">B</text><text x="20" y="56">G</text>
+      <text x="20" y="80">D</text><text x="20" y="104">A</text><text x="20" y="128">E</text>
     </g>
-    <!-- G(3-2-0-0-0-3): E3(G), A2(B), D0, G0, B0, e3(G) -->
-    <circle cx="162" cy="30" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="162" y="30" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
-    <circle cx="117" cy="45" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
-    <circle cx="35" cy="60" r="8" fill="none" stroke="#d97757" stroke-width="2"/>
-    <text x="35" y="60" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#d97757">D</text>
-    <circle cx="35" cy="75" r="8" fill="none" stroke="#d97757" stroke-width="2"/>
-    <text x="35" y="75" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#d97757">G</text>
-    <circle cx="35" cy="90" r="8" fill="none" stroke="#d97757" stroke-width="2"/>
-    <text x="35" y="90" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#d97757">B</text>
-    <circle cx="162" cy="105" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="162" y="105" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
-    <!-- label -->
-    <rect x="20" y="130" width="195" height="40" rx="6" fill="#d97757"/>
-    <text x="117" y="148" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">G    (I)</text>
-    <text x="117" y="164" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">G B D · tonic</text>
-  </g>
-
-  <!-- ============================ C  (IV) — open: x32010 ============================ -->
-  <g transform="translate(250,60)">
-    <line x1="50" y1="30" x2="50" y2="105" stroke="#1f2937" stroke-width="4"/>
-    <line x1="95" y1="30" x2="95" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="140" y1="30" x2="140" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="185" y1="30" x2="185" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="50" y1="30"  x2="185" y2="30"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="45"  x2="185" y2="45"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="60"  x2="185" y2="60"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="75"  x2="185" y2="75"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="90"  x2="185" y2="90"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="105" x2="185" y2="105" stroke="#1f2937" stroke-width="1.4"/>
-    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">
-      <text x="44" y="30">E</text><text x="44" y="45">A</text><text x="44" y="60">D</text>
-      <text x="44" y="75">G</text><text x="44" y="90">B</text><text x="44" y="105">e</text>
+    <!-- e (top): fret 3 = G (root) -->
+    <circle cx="124" cy="8" r="9" fill="#d97757" stroke="#dc2626" stroke-width="2"/>
+    <text x="124" y="8" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">G</text>
+    <!-- B open: B -->
+    <circle cx="6" cy="32" r="6" fill="none" stroke="#d97757" stroke-width="1.6"/>
+    <text x="6" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#d97757">B</text>
+    <!-- G open: G (root) -->
+    <circle cx="6" cy="56" r="6" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+    <text x="6" y="56" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#dc2626">G</text>
+    <!-- D open: D -->
+    <circle cx="6" cy="80" r="6" fill="none" stroke="#d97757" stroke-width="1.6"/>
+    <text x="6" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#d97757">D</text>
+    <!-- A fret 2 = B -->
+    <circle cx="84" cy="104" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">B</text>
+    <!-- E (bottom) fret 3 = G (root) -->
+    <circle cx="124" cy="128" r="9" fill="#d97757" stroke="#dc2626" stroke-width="2"/>
+    <text x="124" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">G</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#9aa0a6">
+      <text x="44" y="144">1</text><text x="84" y="144">2</text><text x="124" y="144">3</text><text x="164" y="144">4</text>
     </g>
-    <!-- C(x-3-2-0-1-0): A3(C), D2(E), G0(G), B1(C), e0(E) -->
-    <text x="35" y="30" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#9aa0a6">×</text>
-    <circle cx="162" cy="45" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="162" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">C</text>
-    <circle cx="117" cy="60" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="60" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E</text>
-    <circle cx="35" cy="75" r="8" fill="none" stroke="#d97757" stroke-width="2"/>
-    <text x="35" y="75" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#d97757">G</text>
-    <circle cx="72" cy="90" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="72" y="90" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">C</text>
-    <circle cx="35" cy="105" r="8" fill="none" stroke="#d97757" stroke-width="2"/>
-    <text x="35" y="105" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#d97757">E</text>
-    <rect x="20" y="130" width="195" height="40" rx="6" fill="#d97757"/>
-    <text x="117" y="148" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">C    (IV)</text>
-    <text x="117" y="164" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">C E G · subdominant</text>
+    <rect x="0" y="160" width="200" height="36" rx="6" fill="#d97757"/>
+    <text x="100" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#fff">G   (I)</text>
+    <text x="100" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff">G B D · tonic</text>
   </g>
 
-  <!-- ============================ D  (V) — open: xx0232 ============================ -->
-  <g transform="translate(480,60)">
-    <line x1="50" y1="30" x2="50" y2="105" stroke="#1f2937" stroke-width="4"/>
-    <line x1="95" y1="30" x2="95" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="140" y1="30" x2="140" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="185" y1="30" x2="185" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="50" y1="30"  x2="185" y2="30"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="45"  x2="185" y2="45"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="60"  x2="185" y2="60"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="75"  x2="185" y2="75"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="90"  x2="185" y2="90"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="105" x2="185" y2="105" stroke="#1f2937" stroke-width="1.4"/>
-    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">
-      <text x="44" y="30">E</text><text x="44" y="45">A</text><text x="44" y="60">D</text>
-      <text x="44" y="75">G</text><text x="44" y="90">B</text><text x="44" y="105">e</text>
+  <!-- ============================ C (IV)  x 3 2 0 1 0 ============================ -->
+  <g transform="translate(270,60)">
+    <line x1="24" y1="8" x2="24" y2="128" stroke="#1f2937" stroke-width="4.5"/>
+    <line x1="64"  y1="8" x2="64"  y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="104" y1="8" x2="104" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="144" y1="8" x2="144" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="184" y1="8" x2="184" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="24" y1="8"   x2="184" y2="8"   stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="24" y1="32"  x2="184" y2="32"  stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="24" y1="56"  x2="184" y2="56"  stroke="#1f2937" stroke-width="1.6"/>
+    <line x1="24" y1="80"  x2="184" y2="80"  stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="24" y1="104" x2="184" y2="104" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="24" y1="128" x2="184" y2="128" stroke="#1f2937" stroke-width="2"/>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">
+      <text x="20" y="8">e</text><text x="20" y="32">B</text><text x="20" y="56">G</text>
+      <text x="20" y="80">D</text><text x="20" y="104">A</text><text x="20" y="128">E</text>
     </g>
-    <!-- D(x-x-0-2-3-2): D0, G2(A), B3(D), e2(F#) -->
-    <text x="35" y="30" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#9aa0a6">×</text>
-    <text x="35" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#9aa0a6">×</text>
-    <circle cx="35" cy="60" r="8" fill="none" stroke="#d97757" stroke-width="2"/>
-    <text x="35" y="60" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#d97757">D</text>
-    <circle cx="117" cy="75" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="75" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A</text>
-    <circle cx="162" cy="90" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="162" y="90" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">D</text>
-    <circle cx="117" cy="105" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="105" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F♯</text>
-    <rect x="20" y="130" width="195" height="40" rx="6" fill="#d97757"/>
-    <text x="117" y="148" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">D    (V)</text>
-    <text x="117" y="164" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">D F♯ A · dominant</text>
-  </g>
-
-  <!-- ============================ Em  (vi) — open: 022000 ============================ -->
-  <g transform="translate(40,270)">
-    <line x1="50" y1="30" x2="50" y2="105" stroke="#1f2937" stroke-width="4"/>
-    <line x1="95" y1="30" x2="95" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="140" y1="30" x2="140" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="185" y1="30" x2="185" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="50" y1="30"  x2="185" y2="30"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="45"  x2="185" y2="45"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="60"  x2="185" y2="60"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="75"  x2="185" y2="75"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="90"  x2="185" y2="90"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="105" x2="185" y2="105" stroke="#1f2937" stroke-width="1.4"/>
-    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">
-      <text x="44" y="30">E</text><text x="44" y="45">A</text><text x="44" y="60">D</text>
-      <text x="44" y="75">G</text><text x="44" y="90">B</text><text x="44" y="105">e</text>
+    <!-- e open: E -->
+    <circle cx="6" cy="8" r="6" fill="none" stroke="#d97757" stroke-width="1.6"/>
+    <text x="6" y="8" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#d97757">E</text>
+    <!-- B fret 1 = C (root) -->
+    <circle cx="44" cy="32" r="9" fill="#d97757" stroke="#dc2626" stroke-width="2"/>
+    <text x="44" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">C</text>
+    <!-- G open: G -->
+    <circle cx="6" cy="56" r="6" fill="none" stroke="#d97757" stroke-width="1.6"/>
+    <text x="6" y="56" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#d97757">G</text>
+    <!-- D fret 2 = E -->
+    <circle cx="84" cy="80" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">E</text>
+    <!-- A fret 3 = C (root) -->
+    <circle cx="124" cy="104" r="9" fill="#d97757" stroke="#dc2626" stroke-width="2"/>
+    <text x="124" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">C</text>
+    <!-- E (bottom) muted -->
+    <text x="6" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">×</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#9aa0a6">
+      <text x="44" y="144">1</text><text x="84" y="144">2</text><text x="124" y="144">3</text><text x="164" y="144">4</text>
     </g>
-    <!-- Em(0-2-2-0-0-0): E0, A2(B), D2(E), G0, B0, e0 -->
-    <circle cx="35" cy="30" r="8" fill="none" stroke="#3b82c4" stroke-width="2"/>
-    <text x="35" y="30" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#3b82c4">E</text>
-    <circle cx="117" cy="45" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
-    <circle cx="117" cy="60" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="60" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E</text>
-    <circle cx="35" cy="75" r="8" fill="none" stroke="#3b82c4" stroke-width="2"/>
-    <text x="35" y="75" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#3b82c4">G</text>
-    <circle cx="35" cy="90" r="8" fill="none" stroke="#3b82c4" stroke-width="2"/>
-    <text x="35" y="90" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#3b82c4">B</text>
-    <circle cx="35" cy="105" r="8" fill="none" stroke="#3b82c4" stroke-width="2"/>
-    <text x="35" y="105" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#3b82c4">E</text>
-    <rect x="20" y="130" width="195" height="40" rx="6" fill="#3b82c4"/>
-    <text x="117" y="148" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">Em    (vi)</text>
-    <text x="117" y="164" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">E G B · relative minor</text>
+    <rect x="0" y="160" width="200" height="36" rx="6" fill="#d97757"/>
+    <text x="100" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#fff">C   (IV)</text>
+    <text x="100" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff">C E G · subdominant</text>
   </g>
 
-  <!-- ============================ Am  (ii) — open: x02210 ============================ -->
-  <g transform="translate(250,270)">
-    <line x1="50" y1="30" x2="50" y2="105" stroke="#1f2937" stroke-width="4"/>
-    <line x1="95" y1="30" x2="95" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="140" y1="30" x2="140" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="185" y1="30" x2="185" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="50" y1="30"  x2="185" y2="30"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="45"  x2="185" y2="45"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="60"  x2="185" y2="60"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="75"  x2="185" y2="75"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="90"  x2="185" y2="90"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="105" x2="185" y2="105" stroke="#1f2937" stroke-width="1.4"/>
-    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">
-      <text x="44" y="30">E</text><text x="44" y="45">A</text><text x="44" y="60">D</text>
-      <text x="44" y="75">G</text><text x="44" y="90">B</text><text x="44" y="105">e</text>
+  <!-- ============================ D (V)  x x 0 2 3 2 ============================ -->
+  <g transform="translate(510,60)">
+    <line x1="24" y1="8" x2="24" y2="128" stroke="#1f2937" stroke-width="4.5"/>
+    <line x1="64"  y1="8" x2="64"  y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="104" y1="8" x2="104" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="144" y1="8" x2="144" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="184" y1="8" x2="184" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="24" y1="8"   x2="184" y2="8"   stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="24" y1="32"  x2="184" y2="32"  stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="24" y1="56"  x2="184" y2="56"  stroke="#1f2937" stroke-width="1.6"/>
+    <line x1="24" y1="80"  x2="184" y2="80"  stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="24" y1="104" x2="184" y2="104" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="24" y1="128" x2="184" y2="128" stroke="#1f2937" stroke-width="2"/>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">
+      <text x="20" y="8">e</text><text x="20" y="32">B</text><text x="20" y="56">G</text>
+      <text x="20" y="80">D</text><text x="20" y="104">A</text><text x="20" y="128">E</text>
     </g>
-    <!-- Am(x-0-2-2-1-0): A0, D2(E), G2(A), B1(C), e0(E) -->
-    <text x="35" y="30" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#9aa0a6">×</text>
-    <circle cx="35" cy="45" r="8" fill="none" stroke="#3b82c4" stroke-width="2"/>
-    <text x="35" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#3b82c4">A</text>
-    <circle cx="117" cy="60" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="60" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E</text>
-    <circle cx="117" cy="75" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="75" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A</text>
-    <circle cx="72" cy="90" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="72" y="90" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">C</text>
-    <circle cx="35" cy="105" r="8" fill="none" stroke="#3b82c4" stroke-width="2"/>
-    <text x="35" y="105" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#3b82c4">E</text>
-    <rect x="20" y="130" width="195" height="40" rx="6" fill="#3b82c4"/>
-    <text x="117" y="148" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">Am    (ii)</text>
-    <text x="117" y="164" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">A C E · supertonic</text>
-  </g>
-
-  <!-- ============================ Bm  (iii) — barre: x24432 ============================ -->
-  <g transform="translate(480,270)">
-    <line x1="50" y1="30" x2="50" y2="105" stroke="#1f2937" stroke-width="4"/>
-    <line x1="95" y1="30" x2="95" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="140" y1="30" x2="140" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="185" y1="30" x2="185" y2="105" stroke="#9aa0a6" stroke-width="1.6"/>
-    <line x1="50" y1="30"  x2="185" y2="30"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="45"  x2="185" y2="45"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="60"  x2="185" y2="60"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="75"  x2="185" y2="75"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="90"  x2="185" y2="90"  stroke="#1f2937" stroke-width="1.4"/>
-    <line x1="50" y1="105" x2="185" y2="105" stroke="#1f2937" stroke-width="1.4"/>
-    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">
-      <text x="44" y="30">E</text><text x="44" y="45">A</text><text x="44" y="60">D</text>
-      <text x="44" y="75">G</text><text x="44" y="90">B</text><text x="44" y="105">e</text>
+    <!-- e fret 2 = F♯ -->
+    <circle cx="84" cy="8" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="8" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">F♯</text>
+    <!-- B fret 3 = D (root) -->
+    <circle cx="124" cy="32" r="9" fill="#d97757" stroke="#dc2626" stroke-width="2"/>
+    <text x="124" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">D</text>
+    <!-- G fret 2 = A -->
+    <circle cx="84" cy="56" r="9" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="56" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">A</text>
+    <!-- D open: D (root) -->
+    <circle cx="6" cy="80" r="6" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+    <text x="6" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#dc2626">D</text>
+    <!-- A muted -->
+    <text x="6" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">×</text>
+    <!-- E (bottom) muted -->
+    <text x="6" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">×</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#9aa0a6">
+      <text x="44" y="144">1</text><text x="84" y="144">2</text><text x="124" y="144">3</text><text x="164" y="144">4</text>
     </g>
-    <!-- Bm(x-2-4-4-3-2): A2(B), D4(F#), G4(B), B3(D), e2(F#) -->
-    <text x="35" y="30" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#9aa0a6">×</text>
-    <circle cx="72" cy="45" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="72" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
-    <circle cx="162" cy="60" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="162" y="60" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F♯</text>
-    <circle cx="162" cy="75" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="162" y="75" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
-    <circle cx="117" cy="90" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="117" y="90" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">D</text>
-    <circle cx="72" cy="105" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="72" y="105" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F♯</text>
-    <text x="225" y="45" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">fr 2</text>
-    <rect x="20" y="130" width="195" height="40" rx="6" fill="#3b82c4"/>
-    <text x="117" y="148" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">Bm    (iii)</text>
-    <text x="117" y="164" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">B D F♯ · mediant</text>
+    <rect x="0" y="160" width="200" height="36" rx="6" fill="#d97757"/>
+    <text x="100" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#fff">D   (V)</text>
+    <text x="100" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff">D F♯ A · dominant</text>
   </g>
 
-  <!-- Legend / takeaway -->
-  <g transform="translate(360,460)" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">
-    <text x="0" y="0">All seven notes used (G A B C D E F♯) = the G major scale.  No accidentals appear anywhere.</text>
+  <!-- ============================ Em (vi)  0 2 2 0 0 0 ============================ -->
+  <g transform="translate(30,300)">
+    <line x1="24" y1="8" x2="24" y2="128" stroke="#1f2937" stroke-width="4.5"/>
+    <line x1="64"  y1="8" x2="64"  y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="104" y1="8" x2="104" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="144" y1="8" x2="144" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="184" y1="8" x2="184" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="24" y1="8"   x2="184" y2="8"   stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="24" y1="32"  x2="184" y2="32"  stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="24" y1="56"  x2="184" y2="56"  stroke="#1f2937" stroke-width="1.6"/>
+    <line x1="24" y1="80"  x2="184" y2="80"  stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="24" y1="104" x2="184" y2="104" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="24" y1="128" x2="184" y2="128" stroke="#1f2937" stroke-width="2"/>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">
+      <text x="20" y="8">e</text><text x="20" y="32">B</text><text x="20" y="56">G</text>
+      <text x="20" y="80">D</text><text x="20" y="104">A</text><text x="20" y="128">E</text>
+    </g>
+    <!-- e open: E (root) -->
+    <circle cx="6" cy="8" r="6" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+    <text x="6" y="8" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#dc2626">E</text>
+    <!-- B open: B -->
+    <circle cx="6" cy="32" r="6" fill="none" stroke="#3b82c4" stroke-width="1.6"/>
+    <text x="6" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#3b82c4">B</text>
+    <!-- G open: G -->
+    <circle cx="6" cy="56" r="6" fill="none" stroke="#3b82c4" stroke-width="1.6"/>
+    <text x="6" y="56" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#3b82c4">G</text>
+    <!-- D fret 2 = E (root) -->
+    <circle cx="84" cy="80" r="9" fill="#3b82c4" stroke="#dc2626" stroke-width="2"/>
+    <text x="84" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">E</text>
+    <!-- A fret 2 = B -->
+    <circle cx="84" cy="104" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">B</text>
+    <!-- E (bottom) open: E (root) -->
+    <circle cx="6" cy="128" r="6" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+    <text x="6" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#dc2626">E</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#9aa0a6">
+      <text x="44" y="144">1</text><text x="84" y="144">2</text><text x="124" y="144">3</text><text x="164" y="144">4</text>
+    </g>
+    <rect x="0" y="160" width="200" height="36" rx="6" fill="#3b82c4"/>
+    <text x="100" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#fff">Em   (vi)</text>
+    <text x="100" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff">E G B · relative minor</text>
   </g>
+
+  <!-- ============================ Am (ii)  x 0 2 2 1 0 ============================ -->
+  <g transform="translate(270,300)">
+    <line x1="24" y1="8" x2="24" y2="128" stroke="#1f2937" stroke-width="4.5"/>
+    <line x1="64"  y1="8" x2="64"  y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="104" y1="8" x2="104" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="144" y1="8" x2="144" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="184" y1="8" x2="184" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="24" y1="8"   x2="184" y2="8"   stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="24" y1="32"  x2="184" y2="32"  stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="24" y1="56"  x2="184" y2="56"  stroke="#1f2937" stroke-width="1.6"/>
+    <line x1="24" y1="80"  x2="184" y2="80"  stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="24" y1="104" x2="184" y2="104" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="24" y1="128" x2="184" y2="128" stroke="#1f2937" stroke-width="2"/>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">
+      <text x="20" y="8">e</text><text x="20" y="32">B</text><text x="20" y="56">G</text>
+      <text x="20" y="80">D</text><text x="20" y="104">A</text><text x="20" y="128">E</text>
+    </g>
+    <!-- e open: E -->
+    <circle cx="6" cy="8" r="6" fill="none" stroke="#3b82c4" stroke-width="1.6"/>
+    <text x="6" y="8" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#3b82c4">E</text>
+    <!-- B fret 1 = C -->
+    <circle cx="44" cy="32" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="44" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">C</text>
+    <!-- G fret 2 = A (root) -->
+    <circle cx="84" cy="56" r="9" fill="#3b82c4" stroke="#dc2626" stroke-width="2"/>
+    <text x="84" y="56" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">A</text>
+    <!-- D fret 2 = E -->
+    <circle cx="84" cy="80" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">E</text>
+    <!-- A open: A (root) -->
+    <circle cx="6" cy="104" r="6" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+    <text x="6" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="6" font-weight="800" fill="#dc2626">A</text>
+    <!-- E (bottom) muted -->
+    <text x="6" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">×</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#9aa0a6">
+      <text x="44" y="144">1</text><text x="84" y="144">2</text><text x="124" y="144">3</text><text x="164" y="144">4</text>
+    </g>
+    <rect x="0" y="160" width="200" height="36" rx="6" fill="#3b82c4"/>
+    <text x="100" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#fff">Am   (ii)</text>
+    <text x="100" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff">A C E · supertonic</text>
+  </g>
+
+  <!-- ============================ Bm (iii)  x 2 4 4 3 2  (frets 2-4) ============================ -->
+  <g transform="translate(510,300)">
+    <!-- Bm starts at fret 2 - leftmost vertical is fret 2's line, not the nut (drawn thin) -->
+    <line x1="24" y1="8" x2="24" y2="128" stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="64"  y1="8" x2="64"  y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="104" y1="8" x2="104" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="144" y1="8" x2="144" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="184" y1="8" x2="184" y2="128" stroke="#9aa0a6" stroke-width="1.4"/>
+    <line x1="24" y1="8"   x2="184" y2="8"   stroke="#1f2937" stroke-width="1.4"/>
+    <line x1="24" y1="32"  x2="184" y2="32"  stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="24" y1="56"  x2="184" y2="56"  stroke="#1f2937" stroke-width="1.6"/>
+    <line x1="24" y1="80"  x2="184" y2="80"  stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="24" y1="104" x2="184" y2="104" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="24" y1="128" x2="184" y2="128" stroke="#1f2937" stroke-width="2"/>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" fill="#6b7280">
+      <text x="20" y="8">e</text><text x="20" y="32">B</text><text x="20" y="56">G</text>
+      <text x="20" y="80">D</text><text x="20" y="104">A</text><text x="20" y="128">E</text>
+    </g>
+    <!-- fr 2 indicator -->
+    <text x="44" y="-4" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#6b7280">fr 2</text>
+    <!-- e fret 2 (visible slot 1, x=44) = F♯ -->
+    <circle cx="44" cy="8" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="44" y="8" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">F♯</text>
+    <!-- B fret 3 (slot 2, x=84) = D -->
+    <circle cx="84" cy="32" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="84" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">D</text>
+    <!-- G fret 4 (slot 3, x=124) = B (root) -->
+    <circle cx="124" cy="56" r="9" fill="#3b82c4" stroke="#dc2626" stroke-width="2"/>
+    <text x="124" y="56" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">B</text>
+    <!-- D fret 4 = F♯ -->
+    <circle cx="124" cy="80" r="9" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="124" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">F♯</text>
+    <!-- A fret 2 = B (root) -->
+    <circle cx="44" cy="104" r="9" fill="#3b82c4" stroke="#dc2626" stroke-width="2"/>
+    <text x="44" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="800" fill="#fff">B</text>
+    <!-- E (bottom) muted -->
+    <text x="6" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">×</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="9" font-weight="700" fill="#9aa0a6">
+      <text x="44" y="144">2</text><text x="84" y="144">3</text><text x="124" y="144">4</text><text x="164" y="144">5</text>
+    </g>
+    <rect x="0" y="160" width="200" height="36" rx="6" fill="#3b82c4"/>
+    <text x="100" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#fff">Bm   (iii)</text>
+    <text x="100" y="190" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff">B D F♯ · mediant</text>
+  </g>
+
+  <!-- legend strip -->
+  <g transform="translate(70,560)" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="700" fill="#1f2937">
+    <circle cx="0" cy="0" r="6" fill="#d97757" stroke="#dc2626" stroke-width="2"/>
+    <text x="14" y="0" text-anchor="start" dominant-baseline="central">major chord (I-IV-V)</text>
+    <circle cx="180" cy="0" r="6" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="194" y="0" text-anchor="start" dominant-baseline="central">minor chord (ii-iii-vi)</text>
+    <circle cx="360" cy="0" r="6" fill="#fff" stroke="#dc2626" stroke-width="2.4"/>
+    <text x="374" y="0" text-anchor="start" dominant-baseline="central">red ring = root note</text>
+  </g>
+
+  <!-- takeaway -->
+  <text x="360" y="590" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">All seven notes used (G A B C D E F♯) = the G major scale.  No accidentals appear anywhere.</text>
 </svg>
-
 > **What to look at.** Every dot on every fretboard is one of *seven* notes — G, A, B, C, D, E, F♯. No sharps or flats outside that set show up, which is the literal meaning of "diatonic to G." Warm orange = the I–IV–V majors (the three CW-adjacent positions on the circle); cool blue = the ii–iii–vi minors (their relative-minor partners). Switch any two of these chords in any order and you've written a song in G.
 
 ### Common progressions, decoded
@@ -1182,46 +1255,46 @@ On the fretboard, that "3rd flip" is one finger moving by one fret. Watch:
          e:3 (G)
   -->
   <g transform="translate(0,0)">
-    <line x1="80" y1="80" x2="80" y2="200" stroke="#1f2937" stroke-width="5"/>
-    <line x1="150" y1="80" x2="150" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="220" y1="80" x2="220" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="290" y1="80" x2="290" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="360" y1="80" x2="360" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="80" y1="80"  x2="360" y2="80"  stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.45"/>
-    <line x1="80" y1="104" x2="360" y2="104" stroke="#1f2937" stroke-width="2"/>
-    <line x1="80" y1="128" x2="360" y2="128" stroke="#1f2937" stroke-width="2"/>
-    <line x1="80" y1="152" x2="360" y2="152" stroke="#1f2937" stroke-width="1.9"/>
-    <line x1="80" y1="176" x2="360" y2="176" stroke="#1f2937" stroke-width="1.7"/>
-    <line x1="80" y1="200" x2="360" y2="200" stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="80" y1="200" x2="80" y2="80" stroke="#1f2937" stroke-width="5"/>
+    <line x1="150" y1="200" x2="150" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="220" y1="200" x2="220" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="290" y1="200" x2="290" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="360" y1="200" x2="360" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="80" y1="200"  x2="360" y2="200"  stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.45"/>
+    <line x1="80" y1="176" x2="360" y2="176" stroke="#1f2937" stroke-width="2"/>
+    <line x1="80" y1="152" x2="360" y2="152" stroke="#1f2937" stroke-width="2"/>
+    <line x1="80" y1="128" x2="360" y2="128" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="80" y1="104" x2="360" y2="104" stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="80" y1="80" x2="360" y2="80" stroke="#1f2937" stroke-width="1.5"/>
     <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">
-      <text x="70" y="80">E×</text>
+      <text x="70" y="200">E×</text>
     </g>
     <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="12" font-weight="800" fill="#1f2937">
-      <text x="70" y="104">A</text>
-      <text x="70" y="128">D</text>
-      <text x="70" y="152">G</text>
-      <text x="70" y="176">B</text>
-      <text x="70" y="200">e</text>
+      <text x="70" y="176">A</text>
+      <text x="70" y="152">D</text>
+      <text x="70" y="128">G</text>
+      <text x="70" y="104">B</text>
+      <text x="70" y="80">e</text>
     </g>
     <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="10" font-weight="700" fill="#6b7280">
       <text x="115" y="218">3</text><text x="185" y="218">4</text><text x="255" y="218">5</text>
     </g>
 
     <!-- C (root) at A:3 -->
-    <circle cx="115" cy="104" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="115" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
+    <circle cx="115" cy="176" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="115" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
     <!-- G (5th) at D:5 -->
-    <circle cx="255" cy="128" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="255" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
-    <!-- C (root oct) at G:5 -->
     <circle cx="255" cy="152" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="255" y="152" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
+    <text x="255" y="152" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
+    <!-- C (root oct) at G:5 -->
+    <circle cx="255" cy="128" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="255" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
     <!-- E (3rd) at B:5 -- THE NOTE THAT FLIPS -->
-    <circle cx="255" cy="176" r="14" fill="#dc2626" stroke="#fff" stroke-width="2.5"/>
-    <text x="255" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">E</text>
+    <circle cx="255" cy="104" r="14" fill="#dc2626" stroke="#fff" stroke-width="2.5"/>
+    <text x="255" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">E</text>
     <!-- G (5th oct) at e:3 -->
-    <circle cx="115" cy="200" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
-    <text x="115" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
+    <circle cx="115" cy="80" r="12" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text x="115" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
 
     <!-- label -->
     <rect x="80" y="240" width="280" height="46" rx="8" fill="#d97757"/>
@@ -1233,47 +1306,47 @@ On the fretboard, that "3rd flip" is one finger moving by one fret. Watch:
        Same voicing EXCEPT B string drops to fret 4 (E♭ instead of E)
   -->
   <g transform="translate(360,0)">
-    <line x1="80" y1="80" x2="80" y2="200" stroke="#1f2937" stroke-width="5"/>
-    <line x1="150" y1="80" x2="150" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="220" y1="80" x2="220" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="290" y1="80" x2="290" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="360" y1="80" x2="360" y2="200" stroke="#9aa0a6" stroke-width="2"/>
-    <line x1="80" y1="80"  x2="360" y2="80"  stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.45"/>
-    <line x1="80" y1="104" x2="360" y2="104" stroke="#1f2937" stroke-width="2"/>
-    <line x1="80" y1="128" x2="360" y2="128" stroke="#1f2937" stroke-width="2"/>
-    <line x1="80" y1="152" x2="360" y2="152" stroke="#1f2937" stroke-width="1.9"/>
-    <line x1="80" y1="176" x2="360" y2="176" stroke="#1f2937" stroke-width="1.7"/>
-    <line x1="80" y1="200" x2="360" y2="200" stroke="#1f2937" stroke-width="1.5"/>
+    <line x1="80" y1="200" x2="80" y2="80" stroke="#1f2937" stroke-width="5"/>
+    <line x1="150" y1="200" x2="150" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="220" y1="200" x2="220" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="290" y1="200" x2="290" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="360" y1="200" x2="360" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+    <line x1="80" y1="200"  x2="360" y2="200"  stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.45"/>
+    <line x1="80" y1="176" x2="360" y2="176" stroke="#1f2937" stroke-width="2"/>
+    <line x1="80" y1="152" x2="360" y2="152" stroke="#1f2937" stroke-width="2"/>
+    <line x1="80" y1="128" x2="360" y2="128" stroke="#1f2937" stroke-width="1.9"/>
+    <line x1="80" y1="104" x2="360" y2="104" stroke="#1f2937" stroke-width="1.7"/>
+    <line x1="80" y1="80" x2="360" y2="80" stroke="#1f2937" stroke-width="1.5"/>
     <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="11" font-weight="800" fill="#9aa0a6">
-      <text x="70" y="80">E×</text>
+      <text x="70" y="200">E×</text>
     </g>
     <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="12" font-weight="800" fill="#1f2937">
-      <text x="70" y="104">A</text>
-      <text x="70" y="128">D</text>
-      <text x="70" y="152">G</text>
-      <text x="70" y="176">B</text>
-      <text x="70" y="200">e</text>
+      <text x="70" y="176">A</text>
+      <text x="70" y="152">D</text>
+      <text x="70" y="128">G</text>
+      <text x="70" y="104">B</text>
+      <text x="70" y="80">e</text>
     </g>
     <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="10" font-weight="700" fill="#6b7280">
       <text x="115" y="218">3</text><text x="185" y="218">4</text><text x="255" y="218">5</text>
     </g>
 
     <!-- same root, fifth, octave -->
-    <circle cx="115" cy="104" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="115" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
-    <circle cx="255" cy="128" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="255" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
+    <circle cx="115" cy="176" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="115" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
     <circle cx="255" cy="152" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="255" y="152" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
+    <text x="255" y="152" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
+    <circle cx="255" cy="128" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="255" y="128" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">C</text>
     <!-- ♭3 (E♭) at B:4  -- one fret LOWER than the major -->
-    <circle cx="185" cy="176" r="14" fill="#dc2626" stroke="#fff" stroke-width="2.5"/>
-    <text x="185" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">E♭</text>
-    <circle cx="115" cy="200" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-    <text x="115" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
+    <circle cx="185" cy="104" r="14" fill="#dc2626" stroke="#fff" stroke-width="2.5"/>
+    <text x="185" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">E♭</text>
+    <circle cx="115" cy="80" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text x="115" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">G</text>
 
     <!-- ghost: where the major's 3rd WAS -->
-    <circle cx="255" cy="176" r="12" fill="none" stroke="#9aa0a6" stroke-width="1.5" stroke-dasharray="3 2"/>
-    <text x="255" y="176" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">E</text>
+    <circle cx="255" cy="104" r="12" fill="none" stroke="#9aa0a6" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <text x="255" y="104" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#9aa0a6">E</text>
     <!-- arrow: E (fret 5) → E♭ (fret 4) -->
     <path d="M 244 176 L 198 176" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#arrFlip)" opacity="0.9"/>
 
@@ -1341,21 +1414,370 @@ dim7      {0, −3, +6, +3}          square — only 3 distinct chords exist
 ```
 
 **The whole logic in one line:** flipping the 3rd's direction (CW ↔ CCW) is major ↔ minor; replacing the 5th with the diameter point (+6) is *5 → b5* (diminished family); adding the −2 CCW slot is *adding the b7* (dominant / minor-7 / half-dim family); the +5 CW slot is the *major 7th* (only mixes with major).
+## Scales and Progressions — How to Solo Over Chords
 
-### Guitar fretboard echo
+A scale is a *menu of notes that match*. A chord is a *snapshot* of three or four of those notes ringing together. A progression is a sequence of those snapshots. Soloing = walking the scale while the snapshots underneath you change. Here's the operating manual.
 
-The single-fret moves on the neck mirror the single-step moves on the circle:
+### The one-scale rule for major keys
 
-| Chord | Open shape | What changed from C |
+> **A song in the key of G major → solo using the G major scale.**
+
+That single sentence covers ~80% of pop, folk, country, rock, and blues. Every diatonic chord in G — G, Am, Bm, C, D, Em, F♯dim — is built **entirely from notes in the G major scale**. So whatever chord is underneath you, every note of G major is "safe."
+
+The reason works through the circle: those seven chords use only the seven notes G A B C D E F♯ (no accidentals). The scale contains every chord tone of every diatonic chord, so you can't actually leave the harmony as long as you stay in the scale.
+
+### The G major scale on the neck (position 2 — "the G shape")
+
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto;border-radius:12px">
+  <rect width="720" height="320" rx="12" fill="#fdfcf7"/>
+  <rect width="720" height="320" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+  <text x="360" y="28" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="15" font-weight="800" fill="#1f2937">G major scale — frets 2–5  ·  red = root (G), blue = scale tones</text>
+
+  <line x1="70" y1="230" x2="70" y2="80" stroke="#1f2937" stroke-width="5"/>
+  <g stroke="#9aa0a6" stroke-width="1.5">
+    <line x1="135" y1="230" x2="135" y2="80"/>
+    <line x1="185" y1="230" x2="185" y2="80"/>
+    <line x1="235" y1="230" x2="235" y2="80"/>
+    <line x1="285" y1="230" x2="285" y2="80"/>
+    <line x1="335" y1="230" x2="335" y2="80"/>
+    <line x1="385" y1="230" x2="385" y2="80"/>
+    <line x1="435" y1="230" x2="435" y2="80"/>
+  </g>
+  <line x1="70" y1="230"  x2="435" y2="230"  stroke="#1f2937" stroke-width="2.4"/>
+  <line x1="70" y1="200" x2="435" y2="200" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="70" y1="170" x2="435" y2="170" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="70" y1="140" x2="435" y2="140" stroke="#1f2937" stroke-width="1.8"/>
+  <line x1="70" y1="110" x2="435" y2="110" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="70" y1="80" x2="435" y2="80" stroke="#1f2937" stroke-width="1.4"/>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937">
+    <text x="60" y="230">E</text>
+    <text x="60" y="200">A</text>
+    <text x="60" y="170">D</text>
+    <text x="60" y="140">G</text>
+    <text x="60" y="110">B</text>
+    <text x="60" y="80">e</text>
+  </g>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">
+    <text x="110" y="250">1</text><text x="160" y="250">2</text>
+    <text x="210" y="250">3</text><text x="260" y="250">4</text>
+    <text x="310" y="250">5</text><text x="360" y="250">6</text>
+    <text x="410" y="250">7</text>
+  </g>
+
+  <circle cx="210" cy="230" r="11" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="210" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
+  <circle cx="310" cy="230" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A</text>
+  <circle cx="160" cy="200" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
+  <circle cx="210" cy="200" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="210" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">C</text>
+  <circle cx="310" cy="200" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">D</text>
+  <circle cx="160" cy="170" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E</text>
+  <circle cx="260" cy="170" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F♯</text>
+  <circle cx="310" cy="170" r="11" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
+  <circle cx="160" cy="140" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A</text>
+  <circle cx="260" cy="140" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
+  <circle cx="310" cy="140" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">C</text>
+  <circle cx="210" cy="110" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="210" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">D</text>
+  <circle cx="310" cy="110" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E</text>
+  <circle cx="160" cy="80" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F♯</text>
+  <circle cx="210" cy="80" r="11" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="210" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
+  <circle cx="310" cy="80" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A</text>
+  <circle cx="410" cy="80" r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="410" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="470" y="230" width="230" height="170" rx="8" fill="#3b82c4"/>
+    <text x="585" y="100" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">The "G shape" position</text>
+    <text x="585" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Anchor on G at low-E fret 3.</text>
+    <text x="585" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Three roots in the box —</text>
+    <text x="585" y="158" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">always know where home is.</text>
+    <text x="585" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Slide same shape up 5 frets</text>
+    <text x="585" y="204" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">→ C major scale</text>
+    <text x="585" y="222" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Slide up 7 frets</text>
+    <text x="585" y="240" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">→ D major scale</text>
+  </g>
+
+  <g transform="translate(70,290)" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="700" fill="#1f2937">
+    <circle cx="0"   cy="0" r="6" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+    <text   x="14"   y="0" text-anchor="start" dominant-baseline="central">root (G)</text>
+    <circle cx="100" cy="0" r="6" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text   x="114"  y="0" text-anchor="start" dominant-baseline="central">other scale notes</text>
+  </g>
+</svg>
+
+> Memorize **one** box like this and you can play any major key — the shape is movable. The whole pattern translates as a rigid unit; only the starting fret changes. Same shape at fret 3 = G major; fret 8 = C major; fret 10 = D major.
+
+### Applying scale to chord — three levels of targeting
+
+The scale is *safe* but not *strong*. The art is choosing **which note of the scale to land on when each chord plays**. Three levels of sophistication:
+
+**Level 1 — Stay in the scale, ignore the chord.** Play any G-major note over any G-major chord. It will sound fine and never "wrong." This is how most beginning lead playing works, and it's perfectly listenable. The harmony does the work for you.
+
+**Level 2 — Target chord tones on the downbeat.** When the chord changes, *land on a note from that chord* on beat 1. The other beats can drift through the scale. Example over a `G – C – D` progression:
+
+```
+Chord:    G       |  C        |  D       |  G
+Land on:  G/B/D   |  C/E/G    |  D/F♯/A  |  G/B/D
+Fill with: any G-major notes in between.
+```
+
+This is what makes a lead line feel **melodic** rather than scalar. You're not "shredding the scale" — you're outlining the chord progression with melody. Bach, the Beatles, and Stevie Wonder all do this. It's the single biggest jump in expressiveness.
+
+**Level 3 — Target the moving voice.** When the chord changes, identify the *one note that's actually new* and land on it. Going from G to C, the new note is C (G shares G and B with C major). Landing on C the moment the chord hits C makes the change feel inevitable. This is "voice leading" at the soloist's level.
+
+### Putting it together: a worked example
+
+Say a song loops `G – Em – C – D` (a I–vi–IV–V — the same chords as *Mr. Brightside*, *Take On Me*, and hundreds of others). Here's what each level sounds like:
+
+| Bar | Chord | L1 (scale only) | L2 (target chord tone) | L3 (target the change) |
+|---|---|---|---|---|
+| 1 | G  | any G-major notes | land on G or B  | land on G  (still I)        |
+| 2 | Em | any G-major notes | land on E or G  | land on **E**  (new note)    |
+| 3 | C  | any G-major notes | land on C or E  | land on **C**  (new note)    |
+| 4 | D  | any G-major notes | land on D or F♯ | land on **F♯** (the leading tone — pulls back to G) |
+
+Every level uses the **same seven notes**. The difference is *which note arrives on each beat 1.* That single choice is what separates "noodling" from "soloing."
+
+### Minor keys — same notes, different home
+
+A minor key is the *vi degree* of its relative major elevated to "home." E minor and G major share the same 7 notes (G A B C D E F♯); the difference is where the gravity lives. So:
+
+> **Song in E minor → solo with the E natural minor scale.**
+
+E natural minor is the **same fretboard shape as G major**, just renamed with E as root. The diatonic chords come from the same circle slice (one CCW step from G, then 4 CW steps), now relabeled:
+
+| Roman numeral | Quality | In E minor |
 |---|---|---|
-| C       | `x32010` | baseline (1–3–5) |
-| Cm      | `x35543` | E → Eb on the 2nd string (3rd flipped CW→CCW) |
-| Cmaj7   | `x32000` | high C → B (5 CW: added M7) |
-| C7      | `x32310` | high C → Bb (−2 CCW: added b7) |
-| Cm7     | `x31313` | Cm + the same Bb |
-| Cdim    | `x3424x` | 3rd flat *and* 5th flat |
-| Cm7b5   | `x3434x` | one note different from Cm7 — the 5th drops to Gb |
-| C°7     | `x3424x` | symmetric — slides up 3 frets to the same chord |
+| i        | min | Em |
+| ii°      | dim | F♯dim |
+| ♭III     | maj | G |
+| iv       | min | Am |
+| v        | min | Bm |
+| ♭VI      | maj | C |
+| ♭VII     | maj | D |
+
+Notice the v chord is a **minor** (Bm), not a dominant. That's why pure natural minor songs feel modal and "unresolved" — there's no leading tone pulling back to the tonic. Which leads to…
+
+### The three minor scales
+
+Minor isn't one scale, it's three — each fixes a specific weakness of natural minor.
+
+| Scale | Notes (E root) | What it fixes | When to use |
+|---|---|---|---|
+| **Natural minor** (Aeolian) | E F♯ G A B C D | (baseline)    | Folk, rock, modal pop. Gives the moody, "no V→i pull" feel |
+| **Harmonic minor**          | E F♯ G A B C **D♯** | Raises the 7th → creates a *leading tone* and lets you build a dominant V7 (B7) over the v position | Flamenco, classical minor, anywhere you want a strong V7→i cadence in a minor key |
+| **Melodic minor** (jazz form, asc + desc) | E F♯ G A B **C♯ D♯** | Raises both 6 and 7 → fixes the awkward augmented-2nd interval in harmonic minor (between ♭6 and ♯7) | Jazz; modern soloing over minor chords; the parent of several "altered" scales |
+
+A useful way to think about melodic minor: **it's a major scale with a flat 3rd**. Compare E melodic minor (E F♯ G A B C♯ D♯) to E major (E F♯ G♯ A B C♯ D♯) — only one note different. That's why melodic minor sounds "ambiguous" — three of its four upper notes are major-key brightness, while the ♭3 keeps the minor flavor.
+
+### Melodic minor: two jazz applications
+
+Melodic minor earns its keep beyond minor-key songs. Two specific tricks every jazz player learns:
+
+**Trick 1 — Altered scale over a V7 (the famous one).** In C major, when **G7 → C**, instead of playing G mixolydian (the "in-key" scale for G7), play **G♯ melodic minor** (= A♭ melodic minor, enharmonic spelling).
+
+Why it works: A♭ melodic minor = A♭ B♭ C♭ D♭ E♭ F G. Against G7 (G B D F):
+
+| A♭ mel-min note | Spelled vs. G | Role over G7 |
+|---|---|---|
+| **G**  | root         | chord tone |
+| A♭     | ♭9          | altered tension |
+| B♭     | ♯9          | altered tension |
+| **C♭ (=B)** | 3      | chord tone |
+| D♭     | ♭5 / ♯11    | altered tension |
+| E♭     | ♯5 / ♭13    | altered tension |
+| **F**  | ♭7          | chord tone |
+
+You get **3 of G7's chord tones** (G, B, F — including the resolving tritone B↔F) plus **all four altered tensions** (♭9, ♯9, ♭5, ♯5). Played over G7 → C, every alteration screams to resolve down a half-step to a C-major chord tone:
+
+- A♭ → G (resolves to the 5 of C)
+- B♭ → A (resolves to the 13 of C, or moves up to B as the 7)
+- D♭ → C (resolves to the root!)
+- E♭ → E (resolves to the 3rd of C)
+
+That's why this scale is called the **altered scale** (or "Super Locrian") and why it's the single most common scale-over-V7 choice in jazz.
+
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto;border-radius:12px">
+  <rect width="720" height="320" rx="12" fill="#fdfcf7"/>
+  <rect width="720" height="320" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+  <text x="360" y="28" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="15" font-weight="800" fill="#1f2937">A♭ melodic minor over G7 — frets 3–8  ·  the "altered scale"</text>
+
+  <!-- nut at x=70, fret lines at 110, 160, 210, 260, 310, 360, 410 (centers 85, 135, 185, 235, 285, 335, 385) -->
+  <!-- using same layout as the G major scale diagram earlier:
+       nut at 70, frets at 135, 185, 235, 285, 335, 385, 435
+       fret centers (between lines) at 110, 160, 210, 260, 310, 360, 410
+       Frets labeled 1..7 below.  For Ab melodic minor we display absolute frets 3..8.
+       I'll redraw fresh with 6 fret slots showing frets 3..8 mapped to those positions.
+       Map: visual fret 1 = real fret 3, visual fret 2 = real fret 4, ... visual fret 6 = real fret 8.
+       fret-number labels (real): 3, 4, 5, 6, 7, 8 below positions 110, 160, 210, 260, 310, 360.
+  -->
+  <line x1="70" y1="230" x2="70" y2="80" stroke="#1f2937" stroke-width="5"/>
+  <g stroke="#9aa0a6" stroke-width="1.5">
+    <line x1="135" y1="230" x2="135" y2="80"/>
+    <line x1="185" y1="230" x2="185" y2="80"/>
+    <line x1="235" y1="230" x2="235" y2="80"/>
+    <line x1="285" y1="230" x2="285" y2="80"/>
+    <line x1="335" y1="230" x2="335" y2="80"/>
+    <line x1="385" y1="230" x2="385" y2="80"/>
+  </g>
+  <line x1="70" y1="230"  x2="385" y2="230"  stroke="#1f2937" stroke-width="2.4"/>
+  <line x1="70" y1="200" x2="385" y2="200" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="70" y1="170" x2="385" y2="170" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="70" y1="140" x2="385" y2="140" stroke="#1f2937" stroke-width="1.8"/>
+  <line x1="70" y1="110" x2="385" y2="110" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="70" y1="80" x2="385" y2="80" stroke="#1f2937" stroke-width="1.4"/>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937">
+    <text x="60" y="230">E</text>
+    <text x="60" y="200">A</text>
+    <text x="60" y="170">D</text>
+    <text x="60" y="140">G</text>
+    <text x="60" y="110">B</text>
+    <text x="60" y="80">e</text>
+  </g>
+  <!-- fret number labels (REAL frets 3..8) -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">
+    <text x="110" y="250">3</text><text x="160" y="250">4</text>
+    <text x="210" y="250">5</text><text x="260" y="250">6</text>
+    <text x="310" y="250">7</text><text x="360" y="250">8</text>
+  </g>
+
+  <!-- ============================================================
+       Notes — visual fret center N corresponds to real fret (N+2)
+       Map: visual1=fret3 (x=110), visual2=fret4 (160), visual3=fret5 (210),
+            visual4=fret6 (260), visual5=fret7 (310), visual6=fret8 (360)
+       
+       A♭ melodic minor in frets 3-8 (low E=80, A=110, D=140, G=170, B=200, e=230):
+       Low E (E):  fret4=A♭(tension,b9)  fret6=B♭(tension,#9)  fret7=Cb=B(chord 3)
+       A (A):      fret4=Db(tension,b5)  fret6=Eb(tension,#5)  fret8=F(chord b7)
+       D (D):      fret5=G(chord root)   fret6=A♭(tension,b9)  fret8=B♭(tension,#9)
+       G (G):      fret4=B(chord 3)      fret6=Db(tension,b5)  fret8=Eb(tension,#5)
+       B (B):      fret4=Eb(tension,#5)  fret6=F(chord b7)     fret8=G(chord root)
+       e (E):      fret4=A♭(tension,b9)  fret6=Bb(tension,#9)  fret7=B(chord 3)
+       
+       Chord tones (G, B, F) -> warm orange.  Altered tensions -> cool blue.
+       ============================================================ -->
+
+  <!-- Low E string -->
+  <!-- fret 4 = Ab (b9) -->
+  <circle cx="160" cy="230" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A♭</text>
+  <!-- fret 6 = Bb (#9) -->
+  <circle cx="260" cy="230" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B♭</text>
+  <!-- fret 7 = B (chord 3) -->
+  <circle cx="310" cy="230" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
+
+  <!-- A string -->
+  <circle cx="160" cy="200" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">D♭</text>
+  <circle cx="260" cy="200" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E♭</text>
+  <circle cx="360" cy="200" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="360" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F</text>
+
+  <!-- D string -->
+  <circle cx="210" cy="170" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="210" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
+  <circle cx="260" cy="170" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A♭</text>
+  <circle cx="360" cy="170" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="360" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B♭</text>
+
+  <!-- G string -->
+  <circle cx="160" cy="140" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
+  <circle cx="260" cy="140" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">D♭</text>
+  <circle cx="360" cy="140" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="360" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E♭</text>
+
+  <!-- B string -->
+  <circle cx="160" cy="110" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">E♭</text>
+  <circle cx="260" cy="110" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">F</text>
+  <circle cx="360" cy="110" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="360" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">G</text>
+
+  <!-- high e string -->
+  <circle cx="160" cy="80" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">A♭</text>
+  <circle cx="260" cy="80" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="260" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B♭</text>
+  <circle cx="310" cy="80" r="11" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="310" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="800" fill="#fff">B</text>
+
+  <!-- side panel -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="430" y="80" width="270" height="200" rx="8" fill="#fdfcf7" stroke="#bfb8a3" stroke-width="1.2"/>
+    <text x="565" y="104" text-anchor="middle" font-size="13" font-weight="800" fill="#1f2937">Over G7 → C, play A♭ mel-min</text>
+    <text x="565" y="132" text-anchor="middle" font-size="11" font-weight="800" fill="#d97757">orange = chord tones (G B F)</text>
+    <text x="565" y="148" text-anchor="middle" font-size="11" font-weight="600" fill="#6b7280">consonant against G7</text>
+    <text x="565" y="174" text-anchor="middle" font-size="11" font-weight="800" fill="#3b82c4">blue = altered tensions</text>
+    <text x="565" y="192" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">♭9 (A♭) · ♯9 (B♭)</text>
+    <text x="565" y="208" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">♭5 (D♭) · ♯5 (E♭)</text>
+    <text x="565" y="240" text-anchor="middle" font-size="10" font-weight="600" fill="#6b7280">every tension resolves down</text>
+    <text x="565" y="256" text-anchor="middle" font-size="10" font-weight="600" fill="#6b7280">a half-step into C major</text>
+  </g>
+
+  <!-- legend -->
+  <g transform="translate(70,290)" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="700" fill="#1f2937">
+    <circle cx="0" cy="0" r="6" fill="#d97757" stroke="#fff" stroke-width="2"/>
+    <text   x="14" y="0" text-anchor="start" dominant-baseline="central">G7 chord tone</text>
+    <circle cx="160" cy="0" r="6" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+    <text   x="174" y="0" text-anchor="start" dominant-baseline="central">altered tension (♭9 ♯9 ♭5 ♯5)</text>
+  </g>
+</svg>
+
+> **Why melodic minor and not "G altered"?** Because they're the same notes — just relabeled. Calling it "A♭ melodic minor" lets you fall back on a shape and fingering you already practice. The melodic-minor parent scale is the most economical way to memorize all seven modes-of-melodic-minor (altered, Lydian-♭7, Locrian-♮2, etc.). Learn one shape, deploy seven sounds.
+
+**Trick 2 — Melodic minor over iv minor (the "Beatles ballad" sound).** In C major, the iv chord borrowed from C minor is **Fm**. Over that Fm, play **F melodic minor** = F G A♭ B♭ C D **E**. The 7th degree is **E natural**, the major 7 of F — and crucially, E is also **the major 3rd of C**.
+
+So when the progression moves `Fm → C`:
+
+- During Fm: play F melodic minor; **land on E** as the chord settles. Against Fm, the E is the major 7 — a sweet, longing tension.
+- When the chord changes to C: that same E becomes the chord 3 of C major. Smooth common-tone landing — no need to move your finger.
+
+That's the trick the user is asking about. The whole sequence sounds like *"Yesterday"*, *"Norwegian Wood"*, or the bridge of *"While My Guitar Gently Weeps"* — that bittersweet "borrowed minor that leans home" feeling. Mechanically it's just: when the chord is iv-minor, raise the 6th and 7th of natural minor, then resolve to the I.
+
+A useful generalization: **any minor chord borrowed from the parallel minor key (iv, ii°, ♭VI, etc.) can be soloed with melodic minor built off that chord's root.** Doing so adds the major 7 of that chord, which is often a chord tone of the I — giving you built-in voice leading back home.
+
+### When you can leave the major scale
+
+The G-major-scale-over-G-key rule covers the diatonic case. Three common exceptions:
+
+- **Blues in G** — use the **G minor pentatonic** (G B♭ C D F) over major chords for the "bluesy" rub. The B♭ and F are *outside* G major; they create the characteristic blue notes against the major harmony. Many guitarists toggle between G major pentatonic and G minor pentatonic in real time.
+- **Secondary dominants** — when an unexpected dominant 7 appears (like `A7` in a song in C major, leading to Dm), borrow notes from that chord momentarily. A7 contains C♯, which isn't in C major — but for the one bar A7 is playing, treating it as "the dominant of D" gives you a temporary D-minor scale to draw from.
+- **Modal interchange chords** — if the song borrows from G minor (like a bVII = F major or iv = Cm), use the G *minor* scale over those bars. Switch back to G major when the borrowed chord ends.
+
+### How the circle informs your scale choice
+
+Here's the meta-rule that ties everything in this note together: **the scale you solo with should match the section of the circle the chords live in.** All diatonic chords sit within 5 adjacent circle positions (one CCW + tonic + three CW). The major scale is *exactly* those 7 notes. So:
+
+| The chords are clustered in… | Use this scale |
+|---|---|
+| 5 consecutive circle positions, major tonic | major scale of that tonic |
+| 5 consecutive circle positions, minor tonic (vi-centered) | natural minor scale of that tonic |
+| Reaches one CCW step further (adds bVII) | Mixolydian or major-with-bVII |
+| Reaches one CW step further (adds ♯4) | Lydian |
+| Spans more than 6 positions | the song is modulating — switch scales when the chords switch zones |
+
+Scale choice isn't a separate skill from harmony — it's **the same circle, read horizontally instead of vertically**. The chord tells you *which* slice of the circle is sounding right now; the scale tells you *which seven notes* fill in around it.
 
 ## V → I: The Engine
 
@@ -1374,19 +1796,19 @@ The resolution `G7 → C` is two single-fret moves happening simultaneously. The
 
   <!-- Single fretboard, frets 0-3, low E on top -->
   <!-- nut at x=100, fret centers: 1=170, 2=260, 3=350; line ends at x=410 -->
-  <line x1="100" y1="80" x2="100" y2="230" stroke="#1f2937" stroke-width="5"/>
-  <line x1="220" y1="80" x2="220" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="340" y1="80" x2="340" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="460" y1="80" x2="460" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="100" y1="80"  x2="460" y2="80"  stroke="#1f2937" stroke-width="2.4"/>
-  <line x1="100" y1="110" x2="460" y2="110" stroke="#1f2937" stroke-width="2.2"/>
-  <line x1="100" y1="140" x2="460" y2="140" stroke="#1f2937" stroke-width="2.0"/>
-  <line x1="100" y1="170" x2="460" y2="170" stroke="#1f2937" stroke-width="1.8"/>
-  <line x1="100" y1="200" x2="460" y2="200" stroke="#1f2937" stroke-width="1.6"/>
-  <line x1="100" y1="230" x2="460" y2="230" stroke="#1f2937" stroke-width="1.4"/>
+  <line x1="100" y1="230" x2="100" y2="80" stroke="#1f2937" stroke-width="5"/>
+  <line x1="220" y1="230" x2="220" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="340" y1="230" x2="340" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="460" y1="230" x2="460" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="100" y1="230"  x2="460" y2="230"  stroke="#1f2937" stroke-width="2.4"/>
+  <line x1="100" y1="200" x2="460" y2="200" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="100" y1="170" x2="460" y2="170" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="100" y1="140" x2="460" y2="140" stroke="#1f2937" stroke-width="1.8"/>
+  <line x1="100" y1="110" x2="460" y2="110" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="100" y1="80" x2="460" y2="80" stroke="#1f2937" stroke-width="1.4"/>
   <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="12" font-weight="800" fill="#1f2937">
-    <text x="84" y="80">E</text><text x="84" y="110">A</text><text x="84" y="140">D</text>
-    <text x="84" y="170">G</text><text x="84" y="200">B</text><text x="84" y="230">e</text>
+    <text x="84" y="230">E</text><text x="84" y="200">A</text><text x="84" y="170">D</text>
+    <text x="84" y="140">G</text><text x="84" y="110">B</text><text x="84" y="80">e</text>
   </g>
   <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">
     <text x="160" y="252">1</text><text x="280" y="252">2</text><text x="400" y="252">3</text>
@@ -1396,20 +1818,20 @@ The resolution `G7 → C` is two single-fret moves happening simultaneously. The
   <!-- C voicing: C at A-string fret 3; E at high-e fret 0 (open) -->
 
   <!-- B (G7's leading tone) -->
-  <circle cx="280" cy="110" r="13" fill="#d97757" stroke="#fff" stroke-width="2"/>
-  <text x="280" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">B</text>
+  <circle cx="280" cy="200" r="13" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="280" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">B</text>
   <!-- C (target) on same string -->
-  <circle cx="400" cy="110" r="13" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-  <text x="400" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">C</text>
+  <circle cx="400" cy="200" r="13" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="400" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">C</text>
   <!-- arrow B -> C : climbs one fret -->
   <path d="M 296 100 Q 340 75 384 100" fill="none" stroke="#1f2937" stroke-width="2" marker-end="url(#arrUp)" opacity="0.85"/>
 
   <!-- F (G7 chord seventh) -->
-  <circle cx="160" cy="230" r="13" fill="#d97757" stroke="#fff" stroke-width="2"/>
-  <text x="160" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">F</text>
+  <circle cx="160" cy="80" r="13" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="160" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">F</text>
   <!-- E (target) -- open high-e string -->
-  <circle cx="84" cy="230" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
-  <text x="84" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">E</text>
+  <circle cx="84" cy="80" r="11" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="84" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">E</text>
   <!-- arrow F -> E : releases one fret -->
   <path d="M 144 244 Q 120 268 100 244" fill="none" stroke="#1f2937" stroke-width="2" marker-end="url(#arrDn)" opacity="0.85"/>
 
@@ -1424,7 +1846,7 @@ The resolution `G7 → C` is two single-fret moves happening simultaneously. The
 
   <!-- callouts -->
   <g font-family="ui-sans-serif, system-ui, sans-serif">
-    <rect x="500" y="80" width="200" height="50" rx="8" fill="#d97757"/>
+    <rect x="500" y="230" width="200" height="50" rx="8" fill="#d97757"/>
     <text x="600" y="100" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">G7  (V of C)</text>
     <text x="600" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">B = leading tone · F = ♭7</text>
 
@@ -1570,30 +1992,30 @@ Drawn on the fretboard (frets 1–5, low E at top → high E at bottom):
        ============================================================ -->
 
   <!-- nut (thick) -->
-  <line x1="80" y1="80" x2="80" y2="230" stroke="#1f2937" stroke-width="5"/>
+  <line x1="80" y1="230" x2="80" y2="80" stroke="#1f2937" stroke-width="5"/>
   <!-- frets -->
-  <line x1="180" y1="80" x2="180" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="280" y1="80" x2="280" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="380" y1="80" x2="380" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="480" y1="80" x2="480" y2="230" stroke="#9aa0a6" stroke-width="2"/>
-  <line x1="580" y1="80" x2="580" y2="230" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="180" y1="230" x2="180" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="280" y1="230" x2="280" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="380" y1="230" x2="380" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="480" y1="230" x2="480" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="580" y1="230" x2="580" y2="80" stroke="#9aa0a6" stroke-width="2"/>
 
   <!-- strings (thickness from low to high) -->
-  <line x1="80" y1="80"  x2="580" y2="80"  stroke="#1f2937" stroke-width="2.4"/>
-  <line x1="80" y1="110" x2="580" y2="110" stroke="#1f2937" stroke-width="2.2"/>
-  <line x1="80" y1="140" x2="580" y2="140" stroke="#1f2937" stroke-width="2.0"/>
-  <line x1="80" y1="170" x2="580" y2="170" stroke="#1f2937" stroke-width="1.8"/>
-  <line x1="80" y1="200" x2="580" y2="200" stroke="#1f2937" stroke-width="1.6"/>
-  <line x1="80" y1="230" x2="580" y2="230" stroke="#1f2937" stroke-width="1.4"/>
+  <line x1="80" y1="230"  x2="580" y2="230"  stroke="#1f2937" stroke-width="2.4"/>
+  <line x1="80" y1="200" x2="580" y2="200" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="80" y1="170" x2="580" y2="170" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="80" y1="140" x2="580" y2="140" stroke="#1f2937" stroke-width="1.8"/>
+  <line x1="80" y1="110" x2="580" y2="110" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="80" y1="80" x2="580" y2="80" stroke="#1f2937" stroke-width="1.4"/>
 
   <!-- string labels (left) -->
   <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937">
-    <text x="60" y="80">E (low)</text>
-    <text x="60" y="110">A</text>
-    <text x="60" y="140">D</text>
-    <text x="60" y="170">G</text>
-    <text x="60" y="200">B</text>
-    <text x="60" y="230">e (high)</text>
+    <text x="60" y="230">E (low)</text>
+    <text x="60" y="200">A</text>
+    <text x="60" y="170">D</text>
+    <text x="60" y="140">G</text>
+    <text x="60" y="110">B</text>
+    <text x="60" y="80">e (high)</text>
   </g>
 
   <!-- fret number labels (below) -->
@@ -1610,35 +2032,35 @@ Drawn on the fretboard (frets 1–5, low E at top → high E at bottom):
        This makes the tritone B(string 5 fret 2) ↔ F(string 1 fret 1) visible. -->
 
   <!-- G  on low E, fret 3 -->
-  <circle cx="330" cy="80" r="14" fill="#d97757" stroke="#fff" stroke-width="2"/>
-  <text x="330" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">G</text>
+  <circle cx="330" cy="230" r="14" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="330" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">G</text>
 
   <!-- B  on A, fret 2 -- TRITONE -->
-  <circle cx="230" cy="110" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
-  <text x="230" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">B</text>
+  <circle cx="230" cy="200" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="230" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">B</text>
 
   <!-- D  open string D -->
-  <circle cx="50" cy="140" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
-  <text x="50" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">D</text>
+  <circle cx="50" cy="170" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
+  <text x="50" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">D</text>
 
   <!-- G  open string G (use small 'o' marker style on the same string line) -->
-  <circle cx="50" cy="170" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
-  <text x="50" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">G</text>
+  <circle cx="50" cy="140" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
+  <text x="50" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">G</text>
 
   <!-- B  open string B -- the open-B is part of G7 (still a chord tone), but the tritone B is the fretted one at string A, fret 2 -->
-  <circle cx="50" cy="200" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
-  <text x="50" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">B</text>
+  <circle cx="50" cy="110" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
+  <text x="50" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">B</text>
 
   <!-- F  on high e, fret 1 -- TRITONE -->
-  <circle cx="130" cy="230" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
-  <text x="130" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">F</text>
+  <circle cx="130" cy="80" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="130" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">F</text>
 
   <!-- highlight the tritone with a connecting line -->
-  <line x1="230" y1="110" x2="130" y2="230" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" opacity="0.7"/>
+  <line x1="230" y1="200" x2="130" y2="80" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" opacity="0.7"/>
 
   <!-- label -->
   <g font-family="ui-sans-serif, system-ui, sans-serif">
-    <rect x="600" y="80" width="100" height="60" rx="8" fill="#d97757"/>
+    <rect x="600" y="230" width="100" height="60" rx="8" fill="#d97757"/>
     <text x="650" y="100" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">G7</text>
     <text x="650" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3 2 0 0 0 1</text>
     <text x="650" y="132" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">V of C major</text>
