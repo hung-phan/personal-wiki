@@ -2,7 +2,7 @@
 name: linear-algebra
 description: Linear algebra foundations for ML — scalars, vectors, matrices, tensors, dot product, norms (L1, L2, Lp, Frobenius), matrix multiplication, transpose, inverse, determinant, trace, rank, linear independence, span, basis, vector spaces, subspaces, four fundamental subspaces, orthogonality, projection, Gram-Schmidt, eigenvalues and eigenvectors, eigendecomposition, diagonalization, SVD (Singular Value Decomposition), Principal Component Analysis (PCA), positive definite matrices, matrix calculus identities, numerical conditioning.
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-07-01
 tags: [linear-algebra, math, machine-learning, foundations, vectors, matrices, eigenvalues, svd, pca, tensors, learning-journey]
 ---
 
@@ -109,6 +109,8 @@ Plot all vectors with norm = 1.
 
 These pictures *explain* why L1 induces sparsity and L2 doesn't. When you minimize a loss subject to "norm of weights ≤ some constant," the optimum tends to land on a *corner* of the constraint region. The L1 ball has corners *on the axes*, meaning some components are exactly zero. The L2 ball has no corners, so the optimum is generically off-axis (all components are nonzero, just small).
 
+![L2 circle, L1 diamond, and L∞ square unit balls. Loss contours grazing the L1 diamond snap to an axis corner, forcing x₁ = 0.|697](assets/norm-balls-l1-l2-linf.svg)
+
 This is why **lasso (L1) does feature selection** and **ridge (L2) only shrinks**.
 
 ### Comparing two vectors: dot product
@@ -148,6 +150,8 @@ You can describe a linear transformation entirely by where it sends the standard
 $$A = [\,\mathbf{a}_1\, |\, \mathbf{a}_2\, |\, \dots\, |\, \mathbf{a}_n\,], \quad A\mathbf{e}_j = \mathbf{a}_j$$
 
 The $j$-th column of $A$ is "where the $j$-th basis vector lands after $A$ is applied." Once you see that, $A\mathbf{x}$ becomes natural: $\mathbf{x}$ is a recipe for combining basis vectors, and $A\mathbf{x}$ is the same recipe applied to where they landed.
+
+![Standard grid with basis vectors e₁, e₂ on the left; on the right the same grid warped by A, with the parallelogram spanned by A's columns a₁, a₂. A point x = 1.5·e₁ + 0.5·e₂ maps to Ax = 1.5·a₁ + 0.5·a₂.|697](assets/matrix-as-transformation.svg)
 
 This is the central idea of 3Blue1Brown's *Essence of Linear Algebra*. It single-handedly transforms linear algebra from "manipulating grids of numbers" to "manipulating space."
 
@@ -267,6 +271,8 @@ $$\text{proj} = A(A^TA)^{-1}A^T\mathbf{b}$$
 
 This is *exactly* OLS regression. You're projecting your target onto the subspace of vectors your model can express. The residual lives in the *left null space* — orthogonal to your model's column space, hence the model can't capture it. That orthogonality is what "least squares" buys you geometrically.
 
+![A tilted plane through the origin (Col(A)) with columns a₁, a₂ lying in it, target b floating above, projection Aĥx lying in the plane below b, and a residual b − Aĥx perpendicular to the plane.|697](assets/projection-column-space.svg)
+
 ## 6. Eigenvalues and eigenvectors: directions a transformation respects
 
 ### The problem
@@ -289,11 +295,13 @@ That's it. The whole concept is in the equation $A\mathbf{v} = \lambda\mathbf{v}
 
 Imagine $A$ is a rubber sheet stretching transformation. Most arrows on the sheet, after stretching, point a different direction. But two specific arrows (the eigenvectors) keep pointing the same way — they only get longer or shorter (by the eigenvalues). Those two directions *are* the natural axes of the stretch.
 
+![Eight unit vectors before A on the left, all length 1; after A on the right, gray vectors have rotated and rescaled, but the red (v₁) and blue (v₂) eigenvectors still lie on the same lines through the origin, only stretched by λ₁ = 3 and λ₂ = 2.](assets/eigenvectors-directions-preserved.svg)
+
 ### Why ML cares
 
 - Eigenvalues of repeated matrices control growth/decay. RNN gradients pass through the same weight matrix many times. If eigenvalues > 1, gradients explode. If < 1, gradients vanish. Decades of recurrent network design (LSTMs, GRUs, careful init) are about controlling these eigenvalues.
 - For *symmetric* matrices, eigenvectors are orthogonal — they form a perfect coordinate system. Covariance matrices, Hessians, kernel matrices, normal-equation matrices — all symmetric. Their eigendecompositions reveal structure cleanly.
-- The Hessian's eigenvalues at a critical point of a loss function tell you whether you're at a local min, max, or saddle. See [calculus](calculus.md).
+- **The Hessian is where eigenvalues meet optimization.** The Hessian $H$ is the local quadratic approximation of a loss surface — think of it as an ellipsoid bowl (or saddle) fitted to the loss at a point. Its **eigenvectors are the axes of that bowl**, and its **eigenvalues are the curvature along each axis**. All positive → bowl (local min). All negative → dome (local max). Mixed signs → saddle. This is why second-order optimizers (Newton, natural gradient) *rescale* gradients by $H^{-1}$: they stretch the bowl into a sphere so gradient descent takes uniform steps in every direction. See [calculus](calculus.md).
 - PCA literally finds eigenvectors of the covariance matrix.
 
 ### How they're computed (in principle)
@@ -335,6 +343,8 @@ Every linear transformation, no matter how complicated, is just three steps:
 3. **$U$** — rotate again.
 
 Three operations. Universal. Works on rectangular, singular, anything.
+
+![A unit circle with tilted axes v₁ (red) and v₂ (blue) at step 1; rotated by Vᵀ so the axes align at step 2; stretched by Σ into an axis-aligned ellipse with radii σ₁, σ₂ at step 3; rotated by U into the final tilted ellipse with axes u₁, u₂ at step 4.|697](assets/svd-three-steps.svg)
 
 ### The killer application: low-rank approximation
 

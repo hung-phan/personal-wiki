@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 780" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ring1 { fill: #fee2e2; stroke: #ef4444; stroke-width: 1; }
+    .ring2 { fill: #fef3c7; stroke: #f59e0b; stroke-width: 1; }
+    .ring3 { fill: #dbeafe; stroke: #3b82f6; stroke-width: 1; }
+    .ring4 { fill: #e0e7ff; stroke: #6366f1; stroke-width: 1; }
+    .bulls { fill: #dc2626; }
+    .dart  { fill: #059669; stroke: #064e3b; stroke-width: 1; }
+    .txt   { fill: #0f172a; }
+    .title { font-weight: 700; font-size: 18px; fill: #0f172a; }
+    .subttl{ font-weight: 700; font-size: 15px; fill: #0f172a; }
+    .axlbl { font-weight: 700; font-size: 15px; fill: #0f172a; }
+    .note  { fill: #475569; font-size: 12px; }
+    .arrow { stroke: #0f172a; stroke-width: 2; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .ring1 { fill: #7f1d1d; stroke: #f87171; opacity: 0.6;}
+      .ring2 { fill: #78350f; stroke: #fbbf24; opacity: 0.6;}
+      .ring3 { fill: #1e3a8a; stroke: #60a5fa; opacity: 0.6;}
+      .ring4 { fill: #312e81; stroke: #a78bfa; opacity: 0.6;}
+      .bulls { fill: #f87171; }
+      .dart  { fill: #6ee7b7; stroke: #d1fae5; }
+      .txt, .title, .subttl, .axlbl { fill: #e2e8f0; }
+      .note { fill: #cbd5e1; }
+      .arrow { stroke: #e2e8f0; }
+    }
+  </style>
+
+  <text class="title" x="360" y="28" text-anchor="middle">Bias &amp; Variance — the four ways a model can miss</text>
+  <text class="note"  x="360" y="48" text-anchor="middle">Bullseye = truth.  Darts = one model trained on one dataset (repeated over many datasets).</text>
+
+  <!-- Column axis: "Bias" -->
+  <text class="axlbl" x="360" y="80" text-anchor="middle">Bias  →</text>
+  <text class="note"  x="200" y="102" text-anchor="middle">low bias  (darts centered on truth)</text>
+  <text class="note"  x="520" y="102" text-anchor="middle">high bias  (darts systematically off)</text>
+
+  <!-- Row axis label (rotated) -->
+  <text class="axlbl" x="30" y="420" text-anchor="middle" transform="rotate(-90 30,420)">Variance  ↓</text>
+  <text class="note"  x="60" y="265" text-anchor="start" transform="rotate(-90 60,265)">low variance  (tight cluster)</text>
+  <text class="note"  x="60" y="590" text-anchor="start" transform="rotate(-90 60,590)">high variance  (scattered)</text>
+
+  <!-- ============ TOP-LEFT: low bias, low variance (ideal) ============ -->
+  <g transform="translate(200,260)">
+    <circle class="ring4" r="115"/>
+    <circle class="ring3" r="85"/>
+    <circle class="ring2" r="55"/>
+    <circle class="ring1" r="28"/>
+    <circle class="bulls" r="6"/>
+    <!-- 10 darts tightly around center -->
+    <circle class="dart" cx="4"  cy="-6"  r="4"/>
+    <circle class="dart" cx="-3" cy="-4"  r="4"/>
+    <circle class="dart" cx="7"  cy="3"   r="4"/>
+    <circle class="dart" cx="-5" cy="5"   r="4"/>
+    <circle class="dart" cx="0"  cy="-9"  r="4"/>
+    <circle class="dart" cx="-8" cy="0"   r="4"/>
+    <circle class="dart" cx="6"  cy="-3"  r="4"/>
+    <circle class="dart" cx="3"  cy="8"   r="4"/>
+    <circle class="dart" cx="-6" cy="-8"  r="4"/>
+    <circle class="dart" cx="9"  cy="6"   r="4"/>
+    <text class="subttl" x="0" y="145" text-anchor="middle">Low bias · Low variance</text>
+    <text class="note"   x="0" y="163" text-anchor="middle">the ideal — a well-tuned model</text>
+  </g>
+
+  <!-- ============ TOP-RIGHT: high bias, low variance (underfit) ============ -->
+  <g transform="translate(520,260)">
+    <circle class="ring4" r="115"/>
+    <circle class="ring3" r="85"/>
+    <circle class="ring2" r="55"/>
+    <circle class="ring1" r="28"/>
+    <circle class="bulls" r="6"/>
+    <!-- 10 darts tightly clustered off-center (up-right) -->
+    <circle class="dart" cx="65" cy="-60" r="4"/>
+    <circle class="dart" cx="70" cy="-56" r="4"/>
+    <circle class="dart" cx="62" cy="-52" r="4"/>
+    <circle class="dart" cx="75" cy="-63" r="4"/>
+    <circle class="dart" cx="60" cy="-58" r="4"/>
+    <circle class="dart" cx="68" cy="-70" r="4"/>
+    <circle class="dart" cx="72" cy="-48" r="4"/>
+    <circle class="dart" cx="66" cy="-45" r="4"/>
+    <circle class="dart" cx="58" cy="-65" r="4"/>
+    <circle class="dart" cx="78" cy="-55" r="4"/>
+    <text class="subttl" x="0" y="145" text-anchor="middle">High bias · Low variance</text>
+    <text class="note"   x="0" y="163" text-anchor="middle">underfit — too simple, systematically off</text>
+  </g>
+
+  <!-- ============ BOTTOM-LEFT: low bias, high variance (overfit) ============ -->
+  <g transform="translate(200,580)">
+    <circle class="ring4" r="115"/>
+    <circle class="ring3" r="85"/>
+    <circle class="ring2" r="55"/>
+    <circle class="ring1" r="28"/>
+    <circle class="bulls" r="6"/>
+    <!-- 10 darts scattered around center -->
+    <circle class="dart" cx="45"  cy="-50" r="4"/>
+    <circle class="dart" cx="-60" cy="30"  r="4"/>
+    <circle class="dart" cx="20"  cy="70"  r="4"/>
+    <circle class="dart" cx="-40" cy="-60" r="4"/>
+    <circle class="dart" cx="70"  cy="20"  r="4"/>
+    <circle class="dart" cx="-30" cy="50"  r="4"/>
+    <circle class="dart" cx="60"  cy="-30" r="4"/>
+    <circle class="dart" cx="-70" cy="-20" r="4"/>
+    <circle class="dart" cx="30"  cy="-70" r="4"/>
+    <circle class="dart" cx="-20" cy="80"  r="4"/>
+    <text class="subttl" x="0" y="145" text-anchor="middle">Low bias · High variance</text>
+    <text class="note"   x="0" y="163" text-anchor="middle">overfit — right on average, wildly unstable</text>
+  </g>
+
+  <!-- ============ BOTTOM-RIGHT: high bias, high variance (worst) ============ -->
+  <g transform="translate(520,580)">
+    <circle class="ring4" r="115"/>
+    <circle class="ring3" r="85"/>
+    <circle class="ring2" r="55"/>
+    <circle class="ring1" r="28"/>
+    <circle class="bulls" r="6"/>
+    <!-- 10 darts scattered AND off-center (upper-right) -->
+    <circle class="dart" cx="55"  cy="-40" r="4"/>
+    <circle class="dart" cx="80"  cy="-70" r="4"/>
+    <circle class="dart" cx="90"  cy="-30" r="4"/>
+    <circle class="dart" cx="40"  cy="-80" r="4"/>
+    <circle class="dart" cx="30"  cy="-45" r="4"/>
+    <circle class="dart" cx="95"  cy="-55" r="4"/>
+    <circle class="dart" cx="45"  cy="-25" r="4"/>
+    <circle class="dart" cx="70"  cy="-90" r="4"/>
+    <circle class="dart" cx="100" cy="-20" r="4"/>
+    <circle class="dart" cx="20"  cy="-60" r="4"/>
+    <text class="subttl" x="0" y="145" text-anchor="middle">High bias · High variance</text>
+    <text class="note"   x="0" y="163" text-anchor="middle">the worst of both — wrong and unstable</text>
+  </g>
+
+  <!-- Bottom summary -->
+  <text class="note" x="360" y="740" text-anchor="middle">Bias = distance from bullseye  (are the darts centered on truth?).   Variance = spread of the darts  (do repeated trainings agree?).</text>
+  <text class="note" x="360" y="758" text-anchor="middle">More model complexity ↓ bias, ↑ variance.  Regularization / more data ↓ variance.  The trick is finding the middle.</text>
+</svg>

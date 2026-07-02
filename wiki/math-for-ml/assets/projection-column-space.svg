@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .plane { fill: #60a5fa; opacity: 0.20; stroke: #2563eb; stroke-width: 1.5; }
+    .plane-grid { stroke: #2563eb; stroke-width: 0.7; opacity: 0.35; }
+    .a1    { stroke: #dc2626; stroke-width: 3; fill: none; }
+    .a2    { stroke: #059669; stroke-width: 3; fill: none; }
+    .b     { stroke: #f97316; stroke-width: 3; fill: none; }
+    .proj  { stroke: #7c3aed; stroke-width: 3; fill: none; }
+    .resid { stroke: #b91c1c; stroke-width: 2.5; fill: none; stroke-dasharray: 5 3; }
+    .drop  { stroke: #94a3b8; stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+    .txt   { fill: #0f172a; }
+    .title { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .sub   { font-size: 12px; fill: #475569; }
+    .lbl-a1  { fill: #b91c1c; font-weight: 700; }
+    .lbl-a2  { fill: #047857; font-weight: 700; }
+    .lbl-b   { fill: #c2410c; font-weight: 700; }
+    .lbl-pr  { fill: #6d28d9; font-weight: 700; }
+    .lbl-res { fill: #991b1b; font-weight: 700; }
+    @media (prefers-color-scheme: dark) {
+      .plane { fill: #60a5fa; opacity: 0.24; stroke: #93c5fd; }
+      .plane-grid { stroke: #93c5fd; }
+      .a1 { stroke: #f87171; }
+      .a2 { stroke: #6ee7b7; }
+      .b { stroke: #fb923c; }
+      .proj { stroke: #c4b5fd; }
+      .resid { stroke: #fca5a5; }
+      .drop { stroke: #cbd5e1; }
+      .txt, .title { fill: #e2e8f0; }
+      .sub { fill: #cbd5e1; }
+      .lbl-a1  { fill: #fca5a5; }
+      .lbl-a2  { fill: #6ee7b7; }
+      .lbl-b   { fill: #fdba74; }
+      .lbl-pr  { fill: #c4b5fd; }
+      .lbl-res { fill: #fca5a5; }
+    }
+  </style>
+  <defs>
+    <marker id="m-a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="m-a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/>
+    </marker>
+    <marker id="m-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316"/>
+    </marker>
+    <marker id="m-proj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="360" y="26" text-anchor="middle">Least-squares projection — the residual is perpendicular to Col(A)</text>
+
+  <!-- Tilted parallelogram = Col(A) plane. Corners chosen for a nice iso view. -->
+  <!--
+    Plane corners (parallelogram):
+      P0 = (120, 320)   left-front
+      P1 = (500, 380)   right-front
+      P2 = (600, 200)   right-back
+      P3 = (220, 140)   left-back
+    Origin O at plane center ~ (360, 260).
+  -->
+  <polygon class="plane" points="120,320 500,380 600,200 220,140"/>
+
+  <!-- plane grid lines (light) -->
+  <line class="plane-grid" x1="180"  y1="290" x2="560"  y2="350"/>
+  <line class="plane-grid" x1="240"  y1="260" x2="620"  y2="320"/>
+  <line class="plane-grid" x1="300"  y1="230" x2="680"  y2="290"/>
+  <line class="plane-grid" x1="360"  y1="200" x2="640"  y2="240"/>
+  <line class="plane-grid" x1="190"  y1="310" x2="290"  y2="150"/>
+  <line class="plane-grid" x1="260"  y1="330" x2="360"  y2="170"/>
+  <line class="plane-grid" x1="330"  y1="350" x2="430"  y2="190"/>
+  <line class="plane-grid" x1="400"  y1="370" x2="500"  y2="210"/>
+
+  <!-- Origin (on the plane) -->
+  <circle cx="360" cy="260" r="4" fill="#0f172a"/>
+  <text class="sub" x="345" y="278">0</text>
+
+  <!-- Column vectors a1 and a2 lying in the plane -->
+  <!-- a1: origin (360,260) → (520, 300)  (along right-front direction) -->
+  <line class="a1" x1="360" y1="260" x2="520" y2="300" marker-end="url(#m-a1)"/>
+  <text class="lbl-a1" x="528" y="298">a₁  (column 1)</text>
+  <!-- a2: origin → (410, 180)  (along back direction) -->
+  <line class="a2" x1="360" y1="260" x2="410" y2="180" marker-end="url(#m-a2)"/>
+  <text class="lbl-a2" x="415" y="176">a₂  (column 2)</text>
+
+  <!-- Foot of the perpendicular: projection point on plane, choose (455, 235) -->
+  <!-- b: floating vector from origin, going up above the plane -->
+  <!-- b endpoint above plane: (455, 105).  Foot (Aĥx) on plane at (455, 235). -->
+  <line class="b" x1="360" y1="260" x2="455" y2="105" marker-end="url(#m-b)"/>
+  <text class="lbl-b" x="462" y="103">b  (target)</text>
+
+  <!-- Projection Aĥx: from origin along the plane to foot (455,235) -->
+  <line class="proj" x1="360" y1="260" x2="455" y2="235" marker-end="url(#m-proj)"/>
+  <text class="lbl-pr" x="378" y="255">Aĥx  (projection)</text>
+
+  <!-- Residual: from foot (455,235) up to b (455,105) — vertical-ish, perpendicular to plane -->
+  <line class="resid" x1="455" y1="235" x2="455" y2="115"/>
+  <!-- Right-angle marker at the foot: small square lying in / perpendicular to plane -->
+  <!-- Approx local plane tangent direction at foot: same as a1 direction (160,40) normalized ≈ (0.97,0.24)
+       Perp (in projection plane appearance) approx (0, -1) up.
+       Draw a small right-angle L: two 12 px segments -->
+  <path d="M 443 231  L 443 219  L 455 219" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+
+  <!-- Dashed drop line to emphasize where b sits above -->
+  <line class="drop" x1="455" y1="105" x2="455" y2="235"/>
+
+  <!-- Foot marker -->
+  <circle cx="455" cy="235" r="3.5" fill="#7c3aed"/>
+
+  <!-- Residual label -->
+  <text class="lbl-res" x="465" y="170">residual  b − Aĥx</text>
+  <text class="sub"     x="465" y="185">⟂ column space</text>
+
+  <!-- Column space label -->
+  <text class="lbl-b" fill="#1d4ed8" x="130" y="365" font-weight="700">Col(A) — plane your model can reach</text>
+
+  <!-- Bottom explanation -->
+  <text class="sub" x="360" y="425" text-anchor="middle">
+    OLS solves  min ‖b − Ax‖²  →  Aĥx is the closest point in Col(A);  the residual is orthogonal to every column of A.
+  </text>
+  <text class="sub" x="360" y="442" text-anchor="middle">
+    Normal equation Aᵀ(b − Aĥx) = 0  is exactly this orthogonality, written algebraically.
+  </text>
+</svg>

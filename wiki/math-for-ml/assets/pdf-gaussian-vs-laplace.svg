@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .gauss  { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .laplace{ stroke: #dc2626; stroke-width: 3; fill: none; }
+    .gauss-fill  { fill: #2563eb; opacity: 0.10; }
+    .laplace-fill{ fill: #dc2626; opacity: 0.10; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 12px; }
+    .title  { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .note   { fill: #475569; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .gauss { stroke: #60a5fa; }
+      .laplace { stroke: #f87171; }
+      .gauss-fill { fill: #60a5fa; opacity: 0.18; }
+      .laplace-fill { fill: #f87171; opacity: 0.18; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="360" y="30" text-anchor="middle">Gaussian vs. Laplace — how the tails behave</text>
+
+  <line class="ax" x1="60" y1="340" x2="660" y2="340"/>
+  <line class="ax" x1="360" y1="60" x2="360" y2="345"/>
+
+  <g>
+    <line class="grid" x1="110" y1="70" x2="110" y2="340"/>
+    <text class="tick" x="110" y="358" text-anchor="middle">−5</text>
+    <line class="grid" x1="160" y1="70" x2="160" y2="340"/>
+    <text class="tick" x="160" y="358" text-anchor="middle">−4</text>
+    <line class="grid" x1="210" y1="70" x2="210" y2="340"/>
+    <text class="tick" x="210" y="358" text-anchor="middle">−3</text>
+    <line class="grid" x1="260" y1="70" x2="260" y2="340"/>
+    <text class="tick" x="260" y="358" text-anchor="middle">−2</text>
+    <line class="grid" x1="310" y1="70" x2="310" y2="340"/>
+    <text class="tick" x="310" y="358" text-anchor="middle">−1</text>
+    <text class="tick" x="360" y="358" text-anchor="middle">0</text>
+    <line class="grid" x1="410" y1="70" x2="410" y2="340"/>
+    <text class="tick" x="410" y="358" text-anchor="middle">1</text>
+    <line class="grid" x1="460" y1="70" x2="460" y2="340"/>
+    <text class="tick" x="460" y="358" text-anchor="middle">2</text>
+    <line class="grid" x1="510" y1="70" x2="510" y2="340"/>
+    <text class="tick" x="510" y="358" text-anchor="middle">3</text>
+    <line class="grid" x1="560" y1="70" x2="560" y2="340"/>
+    <text class="tick" x="560" y="358" text-anchor="middle">4</text>
+    <line class="grid" x1="610" y1="70" x2="610" y2="340"/>
+    <text class="tick" x="610" y="358" text-anchor="middle">5</text>
+  </g>
+  <text class="tick" x="670" y="345" text-anchor="start">r</text>
+
+  <line class="grid" x1="60" y1="70"  x2="660" y2="70"/>
+  <text class="tick" x="55" y="75"  text-anchor="end">1.00</text>
+  <line class="grid" x1="60" y1="205" x2="660" y2="205"/>
+  <text class="tick" x="55" y="210" text-anchor="end">0.50</text>
+  <text class="tick" x="55" y="345" text-anchor="end">0</text>
+  <text class="tick" x="45" y="200" text-anchor="end" transform="rotate(-90 45,200)">rel. density</text>
+
+  <path class="gauss-fill" d="
+    M 60 340
+    L 60 339.99999
+    L 110 339.9993
+    L 160 339.909
+    L 210 337.032
+    L 260 303.55
+    L 310 176.19
+    L 360 70.0
+    L 410 176.19
+    L 460 303.55
+    L 510 337.032
+    L 560 339.909
+    L 610 339.9993
+    L 660 339.99999
+    L 660 340 Z
+  "/>
+  <path class="gauss" d="
+    M 60 339.99999
+    L 110 339.9993
+    L 160 339.909
+    L 210 337.032
+    L 260 303.55
+    L 310 176.19
+    L 360 70.0
+    L 410 176.19
+    L 460 303.55
+    L 510 337.032
+    L 560 339.909
+    L 610 339.9993
+    L 660 339.99999
+  "/>
+
+  <path class="laplace-fill" d="
+    M 60 340
+    L 60 339.181
+    L 110 338.181
+    L 160 335.062
+    L 210 326.564
+    L 260 303.062
+    L 310 240.634
+    L 360 70.0
+    L 410 240.634
+    L 460 303.062
+    L 510 326.564
+    L 560 335.062
+    L 610 338.181
+    L 660 339.181
+    L 660 340 Z
+  "/>
+  <path class="laplace" d="
+    M 60 339.181
+    L 110 338.181
+    L 160 335.062
+    L 210 326.564
+    L 260 303.062
+    L 310 240.634
+    L 360 70.0
+    L 410 240.634
+    L 460 303.062
+    L 510 326.564
+    L 560 335.062
+    L 610 338.181
+    L 660 339.181
+  "/>
+
+  <rect x="470" y="90" width="180" height="55" rx="6" fill="rgba(255,255,255,0.85)" stroke="#cbd5e1"/>
+  <line class="gauss"   x1="485" y1="106" x2="515" y2="106"/>
+  <text class="txt" x="525" y="110">Gaussian (thin tails)</text>
+  <line class="laplace" x1="485" y1="130" x2="515" y2="130"/>
+  <text class="txt" x="525" y="134">Laplace (heavy tails)</text>
+
+  <line class="grid" x1="510" y1="240" x2="510" y2="326" stroke="#94a3b8"/>
+  <text class="note" x="516" y="245">at r = 3:</text>
+  <text class="note" x="516" y="260">Gaussian ≈ 0.011</text>
+  <text class="note" x="516" y="274">Laplace  ≈ 0.050  (~4.5× larger)</text>
+</svg>

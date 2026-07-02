@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 540" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="15">
+  <style>
+    .start   { fill: #eef2ff; stroke: #3730a3; stroke-width: 2; }
+    .question{ fill: #fef3c7; stroke: #b45309; stroke-width: 2; }
+    .leaf    { fill: #d1fae5; stroke: #047857; stroke-width: 2; }
+    .txt     { fill: #0f172a; }
+    .head    { font-weight: 700; }
+    .arrow   { stroke: #475569; stroke-width: 2.2; fill: none; }
+    .edgeLbl { fill: #475569; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      .start { fill: #1e1b4b; stroke: #a5b4fc; }
+      .question { fill: #422006; stroke: #fde68a; }
+      .leaf { fill: #064e3b; stroke: #6ee7b7; }
+      .txt { fill: #e2e8f0; }
+      .arrow { stroke: #cbd5e1; }
+      .edgeLbl { fill: #cbd5e1; }
+    }
+  </style>
+  <defs>
+    <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect class="start" x="330" y="20" width="240" height="70" rx="12"/>
+  <text class="txt head" x="450" y="50" text-anchor="middle">Start</text>
+  <text class="txt"      x="450" y="72" text-anchor="middle">Plot residuals after a first fit</text>
+
+  <rect class="question" x="310" y="140" width="280" height="70" rx="12"/>
+  <text class="txt head" x="450" y="170" text-anchor="middle">Bell-shaped, thin tails?</text>
+  <text class="txt"      x="450" y="192" text-anchor="middle">(Gaussian is honest here)</text>
+
+  <path class="arrow" d="M 450 90 L 450 140" marker-end="url(#ah3)"/>
+
+  <rect class="leaf" x="20" y="260" width="220" height="70" rx="12"/>
+  <text class="txt head" x="130" y="290" text-anchor="middle">Use MSE</text>
+  <text class="txt"      x="130" y="312" text-anchor="middle">Gaussian assumption</text>
+
+  <path class="arrow" d="M 350 210 L 175 260" marker-end="url(#ah3)"/>
+  <text class="edgeLbl" x="235" y="238" text-anchor="middle">YES</text>
+
+  <rect class="question" x="530" y="260" width="340" height="70" rx="12"/>
+  <text class="txt head" x="700" y="290" text-anchor="middle">What shape are the residuals?</text>
+  <text class="txt"      x="700" y="312" text-anchor="middle">(or what kind of target?)</text>
+
+  <path class="arrow" d="M 550 210 L 690 260" marker-end="url(#ah3)"/>
+  <text class="edgeLbl" x="640" y="238" text-anchor="middle">NO</text>
+
+  <rect class="leaf" x="20"  y="410" width="200" height="90" rx="12"/>
+  <text class="txt head" x="120" y="440" text-anchor="middle">MAE</text>
+  <text class="txt"      x="120" y="462" text-anchor="middle">fat tails, tolerate</text>
+  <text class="txt"      x="120" y="480" text-anchor="middle">outliers  (Laplace)</text>
+
+  <rect class="leaf" x="245" y="410" width="200" height="90" rx="12"/>
+  <text class="txt head" x="345" y="440" text-anchor="middle">Huber</text>
+  <text class="txt"      x="345" y="462" text-anchor="middle">mostly clean,</text>
+  <text class="txt"      x="345" y="480" text-anchor="middle">few outliers</text>
+
+  <rect class="leaf" x="470" y="410" width="200" height="90" rx="12"/>
+  <text class="txt head" x="570" y="440" text-anchor="middle">Poisson NLL</text>
+  <text class="txt"      x="570" y="462" text-anchor="middle">target is a count</text>
+
+  <rect class="leaf" x="695" y="410" width="180" height="90" rx="12"/>
+  <text class="txt head" x="785" y="440" text-anchor="middle">Cross-entropy</text>
+  <text class="txt"      x="785" y="462" text-anchor="middle">binary or</text>
+  <text class="txt"      x="785" y="480" text-anchor="middle">multiclass target</text>
+
+  <path class="arrow" d="M 620 330 L 200 410" marker-end="url(#ah3)"/>
+  <path class="arrow" d="M 660 330 L 380 410" marker-end="url(#ah3)"/>
+  <path class="arrow" d="M 720 330 L 560 410" marker-end="url(#ah3)"/>
+  <path class="arrow" d="M 780 330 L 780 410" marker-end="url(#ah3)"/>
+</svg>

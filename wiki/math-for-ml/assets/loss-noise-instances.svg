@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="15">
+  <style>
+    .noise    { fill: #ecfeff; stroke: #0e7490; stroke-width: 2; }
+    .pdf      { fill: #fefce8; stroke: #a16207; stroke-width: 2; }
+    .loss     { fill: #ecfdf5; stroke: #047857; stroke-width: 2; }
+    .txt      { fill: #0f172a; }
+    .head     { font-weight: 700; }
+    .arrow    { stroke: #475569; stroke-width: 2.5; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .noise { fill: #164e63; stroke: #67e8f9; }
+      .pdf   { fill: #422006; stroke: #fde68a; }
+      .loss  { fill: #064e3b; stroke: #6ee7b7; }
+      .txt   { fill: #e2e8f0; }
+      .arrow { stroke: #cbd5e1; }
+    }
+  </style>
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect class="noise" x="20"  y="30" width="220" height="70" rx="10"/>
+  <text class="txt head" x="130" y="60" text-anchor="middle">Gaussian</text>
+  <text class="txt"      x="130" y="82" text-anchor="middle" font-style="italic">ε ~ N(0, σ²)</text>
+
+  <rect class="pdf" x="290" y="30" width="290" height="70" rx="10"/>
+  <text class="txt head" x="435" y="60" text-anchor="middle">PDF</text>
+  <text class="txt"      x="435" y="82" text-anchor="middle">∝ exp(− r² / 2σ²)</text>
+
+  <rect class="loss" x="630" y="30" width="290" height="70" rx="10"/>
+  <text class="txt head" x="775" y="60" text-anchor="middle">Loss</text>
+  <text class="txt"      x="775" y="82" text-anchor="middle">MSE = Σ r²</text>
+
+  <path class="arrow" d="M 240 65 L 290 65" marker-end="url(#ah2)"/>
+  <path class="arrow" d="M 580 65 L 630 65" marker-end="url(#ah2)"/>
+
+  <rect class="noise" x="20"  y="140" width="220" height="70" rx="10"/>
+  <text class="txt head" x="130" y="170" text-anchor="middle">Laplace</text>
+  <text class="txt"      x="130" y="192" text-anchor="middle" font-style="italic">ε ~ Lap(0, b)</text>
+
+  <rect class="pdf" x="290" y="140" width="290" height="70" rx="10"/>
+  <text class="txt head" x="435" y="170" text-anchor="middle">PDF</text>
+  <text class="txt"      x="435" y="192" text-anchor="middle">∝ exp(− |r| / b)</text>
+
+  <rect class="loss" x="630" y="140" width="290" height="70" rx="10"/>
+  <text class="txt head" x="775" y="170" text-anchor="middle">Loss</text>
+  <text class="txt"      x="775" y="192" text-anchor="middle">MAE = Σ |r|</text>
+
+  <path class="arrow" d="M 240 175 L 290 175" marker-end="url(#ah2)"/>
+  <path class="arrow" d="M 580 175 L 630 175" marker-end="url(#ah2)"/>
+
+  <rect class="noise" x="20"  y="250" width="220" height="70" rx="10"/>
+  <text class="txt head" x="130" y="280" text-anchor="middle">Bernoulli</text>
+  <text class="txt"      x="130" y="302" text-anchor="middle" font-style="italic">y ∈ {0, 1}</text>
+
+  <rect class="pdf" x="290" y="250" width="290" height="70" rx="10"/>
+  <text class="txt head" x="435" y="280" text-anchor="middle">PDF</text>
+  <text class="txt"      x="435" y="302" text-anchor="middle">p^y · (1 − p)^(1 − y)</text>
+
+  <rect class="loss" x="630" y="250" width="290" height="70" rx="10"/>
+  <text class="txt head" x="775" y="280" text-anchor="middle">Loss</text>
+  <text class="txt"      x="775" y="302" text-anchor="middle">Binary cross-entropy</text>
+
+  <path class="arrow" d="M 240 285 L 290 285" marker-end="url(#ah2)"/>
+  <path class="arrow" d="M 580 285 L 630 285" marker-end="url(#ah2)"/>
+</svg>

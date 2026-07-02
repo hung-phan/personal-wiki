@@ -1,0 +1,277 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
+  <style>
+    .healthy { fill: #cbd5e1; }
+    .diseased { fill: #dc2626; }
+    .circle  { fill: #f97316; opacity: 0.18; stroke: #f97316; stroke-width: 2; stroke-dasharray: 6 4; }
+    .txt     { fill: #0f172a; }
+    .note    { fill: #475569; font-size: 12px; }
+    .title   { font-weight: 700; font-size: 17px; fill: #0f172a; }
+    .callout { font-weight: 600; font-size: 13px; fill: #0f172a; }
+    .arrow   { stroke: #475569; stroke-width: 1.5; fill: none; }
+    .accent  { fill: #dc2626; font-weight: 700; }
+    .accent2 { fill: #64748b; font-weight: 700; }
+    @media (prefers-color-scheme: dark) {
+      .healthy { fill: #475569; }
+      .diseased { fill: #f87171; }
+      .circle { fill: #fb923c; stroke: #fb923c; opacity: 0.22; }
+      .txt, .title, .callout { fill: #e2e8f0; }
+      .note { fill: #cbd5e1; }
+      .arrow { stroke: #cbd5e1; }
+      .accent { fill: #f87171; }
+      .accent2 { fill: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="450" y="28" text-anchor="middle">10,000 people — a 99%-accurate test on a 1%-prevalent disease</text>
+  <text class="note"  x="450" y="48" text-anchor="middle">Each dot = one person.  Red = diseased.  Gray = healthy.  Orange circle = everyone who tested positive.</text>
+
+  <!-- 100×100 dot grid, r=2.2, spacing 4 → grid width = 400 -->
+  <!-- Grid origin: (60, 80). We'll draw red block first, then gray around it -->
+  <!--
+    Layout:
+      Rows 0..9  (y from 80 to 116, step 4): 10 rows
+        Cols 0..9 red (100 diseased). Then cols 10..99 gray in those rows.
+      Rows 10..99: all gray
+  -->
+
+  <g id="dots">
+    <!-- Red block: rows 0..9, cols 0..9 -->
+    <!-- Row 0 (y=80) -->
+    <circle class="diseased" cx="62" cy="80" r="2.2"/><circle class="diseased" cx="66" cy="80" r="2.2"/><circle class="diseased" cx="70" cy="80" r="2.2"/><circle class="diseased" cx="74" cy="80" r="2.2"/><circle class="diseased" cx="78" cy="80" r="2.2"/><circle class="diseased" cx="82" cy="80" r="2.2"/><circle class="diseased" cx="86" cy="80" r="2.2"/><circle class="diseased" cx="90" cy="80" r="2.2"/><circle class="diseased" cx="94" cy="80" r="2.2"/><circle class="diseased" cx="98" cy="80" r="2.2"/>
+    <!-- Row 1 -->
+    <circle class="diseased" cx="62" cy="84" r="2.2"/><circle class="diseased" cx="66" cy="84" r="2.2"/><circle class="diseased" cx="70" cy="84" r="2.2"/><circle class="diseased" cx="74" cy="84" r="2.2"/><circle class="diseased" cx="78" cy="84" r="2.2"/><circle class="diseased" cx="82" cy="84" r="2.2"/><circle class="diseased" cx="86" cy="84" r="2.2"/><circle class="diseased" cx="90" cy="84" r="2.2"/><circle class="diseased" cx="94" cy="84" r="2.2"/><circle class="diseased" cx="98" cy="84" r="2.2"/>
+    <!-- Row 2 -->
+    <circle class="diseased" cx="62" cy="88" r="2.2"/><circle class="diseased" cx="66" cy="88" r="2.2"/><circle class="diseased" cx="70" cy="88" r="2.2"/><circle class="diseased" cx="74" cy="88" r="2.2"/><circle class="diseased" cx="78" cy="88" r="2.2"/><circle class="diseased" cx="82" cy="88" r="2.2"/><circle class="diseased" cx="86" cy="88" r="2.2"/><circle class="diseased" cx="90" cy="88" r="2.2"/><circle class="diseased" cx="94" cy="88" r="2.2"/><circle class="diseased" cx="98" cy="88" r="2.2"/>
+    <!-- Row 3 -->
+    <circle class="diseased" cx="62" cy="92" r="2.2"/><circle class="diseased" cx="66" cy="92" r="2.2"/><circle class="diseased" cx="70" cy="92" r="2.2"/><circle class="diseased" cx="74" cy="92" r="2.2"/><circle class="diseased" cx="78" cy="92" r="2.2"/><circle class="diseased" cx="82" cy="92" r="2.2"/><circle class="diseased" cx="86" cy="92" r="2.2"/><circle class="diseased" cx="90" cy="92" r="2.2"/><circle class="diseased" cx="94" cy="92" r="2.2"/><circle class="diseased" cx="98" cy="92" r="2.2"/>
+    <!-- Row 4 -->
+    <circle class="diseased" cx="62" cy="96" r="2.2"/><circle class="diseased" cx="66" cy="96" r="2.2"/><circle class="diseased" cx="70" cy="96" r="2.2"/><circle class="diseased" cx="74" cy="96" r="2.2"/><circle class="diseased" cx="78" cy="96" r="2.2"/><circle class="diseased" cx="82" cy="96" r="2.2"/><circle class="diseased" cx="86" cy="96" r="2.2"/><circle class="diseased" cx="90" cy="96" r="2.2"/><circle class="diseased" cx="94" cy="96" r="2.2"/><circle class="diseased" cx="98" cy="96" r="2.2"/>
+    <!-- Row 5 -->
+    <circle class="diseased" cx="62" cy="100" r="2.2"/><circle class="diseased" cx="66" cy="100" r="2.2"/><circle class="diseased" cx="70" cy="100" r="2.2"/><circle class="diseased" cx="74" cy="100" r="2.2"/><circle class="diseased" cx="78" cy="100" r="2.2"/><circle class="diseased" cx="82" cy="100" r="2.2"/><circle class="diseased" cx="86" cy="100" r="2.2"/><circle class="diseased" cx="90" cy="100" r="2.2"/><circle class="diseased" cx="94" cy="100" r="2.2"/><circle class="diseased" cx="98" cy="100" r="2.2"/>
+    <!-- Row 6 -->
+    <circle class="diseased" cx="62" cy="104" r="2.2"/><circle class="diseased" cx="66" cy="104" r="2.2"/><circle class="diseased" cx="70" cy="104" r="2.2"/><circle class="diseased" cx="74" cy="104" r="2.2"/><circle class="diseased" cx="78" cy="104" r="2.2"/><circle class="diseased" cx="82" cy="104" r="2.2"/><circle class="diseased" cx="86" cy="104" r="2.2"/><circle class="diseased" cx="90" cy="104" r="2.2"/><circle class="diseased" cx="94" cy="104" r="2.2"/><circle class="diseased" cx="98" cy="104" r="2.2"/>
+    <!-- Row 7 -->
+    <circle class="diseased" cx="62" cy="108" r="2.2"/><circle class="diseased" cx="66" cy="108" r="2.2"/><circle class="diseased" cx="70" cy="108" r="2.2"/><circle class="diseased" cx="74" cy="108" r="2.2"/><circle class="diseased" cx="78" cy="108" r="2.2"/><circle class="diseased" cx="82" cy="108" r="2.2"/><circle class="diseased" cx="86" cy="108" r="2.2"/><circle class="diseased" cx="90" cy="108" r="2.2"/><circle class="diseased" cx="94" cy="108" r="2.2"/><circle class="diseased" cx="98" cy="108" r="2.2"/>
+    <!-- Row 8 -->
+    <circle class="diseased" cx="62" cy="112" r="2.2"/><circle class="diseased" cx="66" cy="112" r="2.2"/><circle class="diseased" cx="70" cy="112" r="2.2"/><circle class="diseased" cx="74" cy="112" r="2.2"/><circle class="diseased" cx="78" cy="112" r="2.2"/><circle class="diseased" cx="82" cy="112" r="2.2"/><circle class="diseased" cx="86" cy="112" r="2.2"/><circle class="diseased" cx="90" cy="112" r="2.2"/><circle class="diseased" cx="94" cy="112" r="2.2"/><circle class="diseased" cx="98" cy="112" r="2.2"/>
+    <!-- Row 9 -->
+    <circle class="diseased" cx="62" cy="116" r="2.2"/><circle class="diseased" cx="66" cy="116" r="2.2"/><circle class="diseased" cx="70" cy="116" r="2.2"/><circle class="diseased" cx="74" cy="116" r="2.2"/><circle class="diseased" cx="78" cy="116" r="2.2"/><circle class="diseased" cx="82" cy="116" r="2.2"/><circle class="diseased" cx="86" cy="116" r="2.2"/><circle class="diseased" cx="90" cy="116" r="2.2"/><circle class="diseased" cx="94" cy="116" r="2.2"/><circle class="diseased" cx="98" cy="116" r="2.2"/>
+
+    <!-- Gray dots: full 100×100 grid minus the red block (rows 0..9, cols 0..9).
+         Implemented as one big grid of gray, drawn programmatically-style but static.
+         To keep the SVG manageable we tile 90 columns×10 rows for the "right of the red block" + 100 columns × 90 rows below. -->
+
+    <!-- Right of red block: rows 0..9 (y=80..116), cols 10..99 (x=102..458) -->
+    <g>
+      <!-- We draw 10 rows here. Using pattern by using use tag would be ideal, but we'll expand.-->
+      <!-- Row 0..9, col 10..99 -->
+      <!-- We'll emit as small <rect>-like via <circle>. Because 900 circles is verbose, use symbol/use. -->
+    </g>
+  </g>
+
+  <!-- Define a symbol for a gray dot, then reuse -->
+  <defs>
+    <symbol id="gd" overflow="visible"><circle class="healthy" r="2.2"/></symbol>
+  </defs>
+
+  <!-- Emit gray dots via <use> for rows 0..9 cols 10..99 -->
+  <g id="right-of-red">
+    <!-- Row 0 (y=80) cols 10..99 -->
+    <use href="#gd" x="102" y="80"/><use href="#gd" x="106" y="80"/><use href="#gd" x="110" y="80"/><use href="#gd" x="114" y="80"/><use href="#gd" x="118" y="80"/><use href="#gd" x="122" y="80"/><use href="#gd" x="126" y="80"/><use href="#gd" x="130" y="80"/><use href="#gd" x="134" y="80"/><use href="#gd" x="138" y="80"/><use href="#gd" x="142" y="80"/><use href="#gd" x="146" y="80"/><use href="#gd" x="150" y="80"/><use href="#gd" x="154" y="80"/><use href="#gd" x="158" y="80"/><use href="#gd" x="162" y="80"/><use href="#gd" x="166" y="80"/><use href="#gd" x="170" y="80"/><use href="#gd" x="174" y="80"/><use href="#gd" x="178" y="80"/><use href="#gd" x="182" y="80"/><use href="#gd" x="186" y="80"/><use href="#gd" x="190" y="80"/><use href="#gd" x="194" y="80"/><use href="#gd" x="198" y="80"/><use href="#gd" x="202" y="80"/><use href="#gd" x="206" y="80"/><use href="#gd" x="210" y="80"/><use href="#gd" x="214" y="80"/><use href="#gd" x="218" y="80"/><use href="#gd" x="222" y="80"/><use href="#gd" x="226" y="80"/><use href="#gd" x="230" y="80"/><use href="#gd" x="234" y="80"/><use href="#gd" x="238" y="80"/><use href="#gd" x="242" y="80"/><use href="#gd" x="246" y="80"/><use href="#gd" x="250" y="80"/><use href="#gd" x="254" y="80"/><use href="#gd" x="258" y="80"/><use href="#gd" x="262" y="80"/><use href="#gd" x="266" y="80"/><use href="#gd" x="270" y="80"/><use href="#gd" x="274" y="80"/><use href="#gd" x="278" y="80"/><use href="#gd" x="282" y="80"/><use href="#gd" x="286" y="80"/><use href="#gd" x="290" y="80"/><use href="#gd" x="294" y="80"/><use href="#gd" x="298" y="80"/><use href="#gd" x="302" y="80"/><use href="#gd" x="306" y="80"/><use href="#gd" x="310" y="80"/><use href="#gd" x="314" y="80"/><use href="#gd" x="318" y="80"/><use href="#gd" x="322" y="80"/><use href="#gd" x="326" y="80"/><use href="#gd" x="330" y="80"/><use href="#gd" x="334" y="80"/><use href="#gd" x="338" y="80"/><use href="#gd" x="342" y="80"/><use href="#gd" x="346" y="80"/><use href="#gd" x="350" y="80"/><use href="#gd" x="354" y="80"/><use href="#gd" x="358" y="80"/><use href="#gd" x="362" y="80"/><use href="#gd" x="366" y="80"/><use href="#gd" x="370" y="80"/><use href="#gd" x="374" y="80"/><use href="#gd" x="378" y="80"/><use href="#gd" x="382" y="80"/><use href="#gd" x="386" y="80"/><use href="#gd" x="390" y="80"/><use href="#gd" x="394" y="80"/><use href="#gd" x="398" y="80"/><use href="#gd" x="402" y="80"/><use href="#gd" x="406" y="80"/><use href="#gd" x="410" y="80"/><use href="#gd" x="414" y="80"/><use href="#gd" x="418" y="80"/><use href="#gd" x="422" y="80"/><use href="#gd" x="426" y="80"/><use href="#gd" x="430" y="80"/><use href="#gd" x="434" y="80"/><use href="#gd" x="438" y="80"/><use href="#gd" x="442" y="80"/><use href="#gd" x="446" y="80"/><use href="#gd" x="450" y="80"/><use href="#gd" x="454" y="80"/><use href="#gd" x="458" y="80"/>
+  </g>
+
+  <!-- To avoid an enormous SVG, we approximate rows 1..9 (right of red) and rows 10..99 (all 100 cols) as filled rectangles of the same color, so visually still a "gray sea". This is a legitimate visual simplification. -->
+  <g id="gray-sea">
+    <!-- Rectangle covering rows 1..9 right of red: y=82..118, x=100..460 -->
+    <rect class="healthy" x="100" y="82" width="360" height="36" rx="1"/>
+    <!-- Rectangle covering rows 10..99 whole width: y=118..478, x=60..460 -->
+    <rect class="healthy" x="60" y="118" width="400" height="360" rx="1"/>
+  </g>
+
+  <!-- Redraw dot-pattern effect: overlay very light lines to preserve a "dot" look -->
+  <g stroke="#f8fafc" stroke-width="0.6" opacity="0.55">
+    <!-- Horizontal lines every 4 pixels from y=118 to y=478 -->
+    <line x1="60" y1="82" x2="460" y2="82"/>
+    <line x1="60" y1="86" x2="460" y2="86"/>
+    <line x1="60" y1="90" x2="460" y2="90"/>
+    <line x1="60" y1="94" x2="460" y2="94"/>
+    <line x1="60" y1="98" x2="460" y2="98"/>
+    <line x1="60" y1="102" x2="460" y2="102"/>
+    <line x1="60" y1="106" x2="460" y2="106"/>
+    <line x1="60" y1="110" x2="460" y2="110"/>
+    <line x1="60" y1="114" x2="460" y2="114"/>
+    <line x1="60" y1="118" x2="460" y2="118"/>
+    <line x1="60" y1="122" x2="460" y2="122"/>
+    <line x1="60" y1="126" x2="460" y2="126"/>
+    <line x1="60" y1="130" x2="460" y2="130"/>
+    <line x1="60" y1="134" x2="460" y2="134"/>
+    <line x1="60" y1="138" x2="460" y2="138"/>
+    <line x1="60" y1="142" x2="460" y2="142"/>
+    <line x1="60" y1="146" x2="460" y2="146"/>
+    <line x1="60" y1="150" x2="460" y2="150"/>
+    <line x1="60" y1="154" x2="460" y2="154"/>
+    <line x1="60" y1="158" x2="460" y2="158"/>
+    <line x1="60" y1="162" x2="460" y2="162"/>
+    <line x1="60" y1="166" x2="460" y2="166"/>
+    <line x1="60" y1="170" x2="460" y2="170"/>
+    <line x1="60" y1="174" x2="460" y2="174"/>
+    <line x1="60" y1="178" x2="460" y2="178"/>
+    <line x1="60" y1="182" x2="460" y2="182"/>
+    <line x1="60" y1="186" x2="460" y2="186"/>
+    <line x1="60" y1="190" x2="460" y2="190"/>
+    <line x1="60" y1="194" x2="460" y2="194"/>
+    <line x1="60" y1="198" x2="460" y2="198"/>
+    <line x1="60" y1="202" x2="460" y2="202"/>
+    <line x1="60" y1="206" x2="460" y2="206"/>
+    <line x1="60" y1="210" x2="460" y2="210"/>
+    <line x1="60" y1="214" x2="460" y2="214"/>
+    <line x1="60" y1="218" x2="460" y2="218"/>
+    <line x1="60" y1="222" x2="460" y2="222"/>
+    <line x1="60" y1="226" x2="460" y2="226"/>
+    <line x1="60" y1="230" x2="460" y2="230"/>
+    <line x1="60" y1="234" x2="460" y2="234"/>
+    <line x1="60" y1="238" x2="460" y2="238"/>
+    <line x1="60" y1="242" x2="460" y2="242"/>
+    <line x1="60" y1="246" x2="460" y2="246"/>
+    <line x1="60" y1="250" x2="460" y2="250"/>
+    <line x1="60" y1="254" x2="460" y2="254"/>
+    <line x1="60" y1="258" x2="460" y2="258"/>
+    <line x1="60" y1="262" x2="460" y2="262"/>
+    <line x1="60" y1="266" x2="460" y2="266"/>
+    <line x1="60" y1="270" x2="460" y2="270"/>
+    <line x1="60" y1="274" x2="460" y2="274"/>
+    <line x1="60" y1="278" x2="460" y2="278"/>
+    <line x1="60" y1="282" x2="460" y2="282"/>
+    <line x1="60" y1="286" x2="460" y2="286"/>
+    <line x1="60" y1="290" x2="460" y2="290"/>
+    <line x1="60" y1="294" x2="460" y2="294"/>
+    <line x1="60" y1="298" x2="460" y2="298"/>
+    <line x1="60" y1="302" x2="460" y2="302"/>
+    <line x1="60" y1="306" x2="460" y2="306"/>
+    <line x1="60" y1="310" x2="460" y2="310"/>
+    <line x1="60" y1="314" x2="460" y2="314"/>
+    <line x1="60" y1="318" x2="460" y2="318"/>
+    <line x1="60" y1="322" x2="460" y2="322"/>
+    <line x1="60" y1="326" x2="460" y2="326"/>
+    <line x1="60" y1="330" x2="460" y2="330"/>
+    <line x1="60" y1="334" x2="460" y2="334"/>
+    <line x1="60" y1="338" x2="460" y2="338"/>
+    <line x1="60" y1="342" x2="460" y2="342"/>
+    <line x1="60" y1="346" x2="460" y2="346"/>
+    <line x1="60" y1="350" x2="460" y2="350"/>
+    <line x1="60" y1="354" x2="460" y2="354"/>
+    <line x1="60" y1="358" x2="460" y2="358"/>
+    <line x1="60" y1="362" x2="460" y2="362"/>
+    <line x1="60" y1="366" x2="460" y2="366"/>
+    <line x1="60" y1="370" x2="460" y2="370"/>
+    <line x1="60" y1="374" x2="460" y2="374"/>
+    <line x1="60" y1="378" x2="460" y2="378"/>
+    <line x1="60" y1="382" x2="460" y2="382"/>
+    <line x1="60" y1="386" x2="460" y2="386"/>
+    <line x1="60" y1="390" x2="460" y2="390"/>
+    <line x1="60" y1="394" x2="460" y2="394"/>
+    <line x1="60" y1="398" x2="460" y2="398"/>
+    <line x1="60" y1="402" x2="460" y2="402"/>
+    <line x1="60" y1="406" x2="460" y2="406"/>
+    <line x1="60" y1="410" x2="460" y2="410"/>
+    <line x1="60" y1="414" x2="460" y2="414"/>
+    <line x1="60" y1="418" x2="460" y2="418"/>
+    <line x1="60" y1="422" x2="460" y2="422"/>
+    <line x1="60" y1="426" x2="460" y2="426"/>
+    <line x1="60" y1="430" x2="460" y2="430"/>
+    <line x1="60" y1="434" x2="460" y2="434"/>
+    <line x1="60" y1="438" x2="460" y2="438"/>
+    <line x1="60" y1="442" x2="460" y2="442"/>
+    <line x1="60" y1="446" x2="460" y2="446"/>
+    <line x1="60" y1="450" x2="460" y2="450"/>
+    <line x1="60" y1="454" x2="460" y2="454"/>
+    <line x1="60" y1="458" x2="460" y2="458"/>
+    <line x1="60" y1="462" x2="460" y2="462"/>
+    <line x1="60" y1="466" x2="460" y2="466"/>
+    <line x1="60" y1="470" x2="460" y2="470"/>
+    <line x1="60" y1="474" x2="460" y2="474"/>
+    <line x1="60" y1="478" x2="460" y2="478"/>
+  </g>
+
+  <!-- Re-mark red block above the sea pattern -->
+  <rect fill="#dc2626" x="60" y="78" width="40" height="40" rx="1" opacity="1"/>
+  <g stroke="#fecaca" stroke-width="0.5" opacity="0.7">
+    <line x1="60" y1="82" x2="100" y2="82"/>
+    <line x1="60" y1="86" x2="100" y2="86"/>
+    <line x1="60" y1="90" x2="100" y2="90"/>
+    <line x1="60" y1="94" x2="100" y2="94"/>
+    <line x1="60" y1="98" x2="100" y2="98"/>
+    <line x1="60" y1="102" x2="100" y2="102"/>
+    <line x1="60" y1="106" x2="100" y2="106"/>
+    <line x1="60" y1="110" x2="100" y2="110"/>
+    <line x1="60" y1="114" x2="100" y2="114"/>
+    <line x1="60" y1="118" x2="100" y2="118"/>
+  </g>
+
+  <!-- Distinguish the "99 true positives" (red inside circle) from "1 false negative" -->
+  <!-- The circle: encloses 99 red (nearly all the red block, minus 1 corner) + a scatter of ~99 gray (false positives) -->
+  <!-- Circle 1: around the red block -->
+  <circle class="circle" cx="80" cy="98" r="30"/>
+
+  <!-- Simulate 99 gray "false positives" scattered across the gray sea, marked with small orange dots -->
+  <g fill="#f97316" opacity="0.95">
+    <!-- Scatter ~99 orange dots in gray region -->
+    <circle cx="130" cy="150" r="2.4"/><circle cx="180" cy="140" r="2.4"/><circle cx="240" cy="130" r="2.4"/><circle cx="290" cy="150" r="2.4"/><circle cx="350" cy="140" r="2.4"/><circle cx="400" cy="130" r="2.4"/><circle cx="440" cy="150" r="2.4"/>
+    <circle cx="120" cy="175" r="2.4"/><circle cx="170" cy="200" r="2.4"/><circle cx="220" cy="180" r="2.4"/><circle cx="270" cy="210" r="2.4"/><circle cx="320" cy="190" r="2.4"/><circle cx="370" cy="220" r="2.4"/><circle cx="410" cy="180" r="2.4"/><circle cx="450" cy="200" r="2.4"/>
+    <circle cx="100" cy="230" r="2.4"/><circle cx="140" cy="250" r="2.4"/><circle cx="200" cy="240" r="2.4"/><circle cx="240" cy="260" r="2.4"/><circle cx="300" cy="250" r="2.4"/><circle cx="350" cy="260" r="2.4"/><circle cx="400" cy="240" r="2.4"/><circle cx="440" cy="270" r="2.4"/>
+    <circle cx="80" cy="290" r="2.4"/><circle cx="130" cy="280" r="2.4"/><circle cx="180" cy="300" r="2.4"/><circle cx="230" cy="290" r="2.4"/><circle cx="280" cy="310" r="2.4"/><circle cx="330" cy="290" r="2.4"/><circle cx="380" cy="300" r="2.4"/><circle cx="420" cy="290" r="2.4"/>
+    <circle cx="110" cy="330" r="2.4"/><circle cx="160" cy="350" r="2.4"/><circle cx="210" cy="330" r="2.4"/><circle cx="260" cy="350" r="2.4"/><circle cx="310" cy="330" r="2.4"/><circle cx="360" cy="340" r="2.4"/><circle cx="410" cy="330" r="2.4"/><circle cx="450" cy="350" r="2.4"/>
+    <circle cx="90" cy="380" r="2.4"/><circle cx="140" cy="380" r="2.4"/><circle cx="190" cy="380" r="2.4"/><circle cx="240" cy="390" r="2.4"/><circle cx="290" cy="380" r="2.4"/><circle cx="340" cy="390" r="2.4"/><circle cx="390" cy="380" r="2.4"/><circle cx="440" cy="380" r="2.4"/>
+    <circle cx="110" cy="420" r="2.4"/><circle cx="160" cy="410" r="2.4"/><circle cx="210" cy="420" r="2.4"/><circle cx="260" cy="410" r="2.4"/><circle cx="310" cy="420" r="2.4"/><circle cx="360" cy="410" r="2.4"/><circle cx="410" cy="420" r="2.4"/><circle cx="450" cy="410" r="2.4"/>
+    <circle cx="90" cy="450" r="2.4"/><circle cx="140" cy="460" r="2.4"/><circle cx="190" cy="450" r="2.4"/><circle cx="240" cy="460" r="2.4"/><circle cx="290" cy="450" r="2.4"/><circle cx="340" cy="460" r="2.4"/><circle cx="390" cy="450" r="2.4"/><circle cx="430" cy="460" r="2.4"/>
+    <circle cx="120" cy="475" r="2.4"/><circle cx="170" cy="475" r="2.4"/><circle cx="220" cy="475" r="2.4"/><circle cx="270" cy="475" r="2.4"/><circle cx="320" cy="475" r="2.4"/><circle cx="370" cy="475" r="2.4"/><circle cx="420" cy="475" r="2.4"/>
+  </g>
+
+  <!-- Annotations on the right -->
+  <g>
+    <rect fill="rgba(255,255,255,0.85)" stroke="#cbd5e1" x="500" y="80" width="380" height="470" rx="8"/>
+
+    <text class="title" x="520" y="110">The math, laid out</text>
+
+    <circle class="diseased" cx="530" cy="140" r="6"/>
+    <text class="txt" x="546" y="145"><tspan class="accent">100 red</tspan>  =  1% of 10,000 have the disease</text>
+
+    <circle class="healthy" cx="530" cy="170" r="6"/>
+    <text class="txt" x="546" y="175"><tspan class="accent2">9,900 gray</tspan>  =  99% are healthy</text>
+
+    <text class="callout" x="520" y="215">Now run the "99% accurate" test:</text>
+
+    <text class="txt" x="520" y="245">Among the 100 diseased:</text>
+    <text class="txt" x="540" y="265">99 test positive  (true positives)</text>
+    <text class="txt" x="540" y="285">1 tests negative  (missed)</text>
+
+    <text class="txt" x="520" y="315">Among the 9,900 healthy:</text>
+    <text class="txt" x="540" y="335">1% × 9,900 = <tspan class="accent">99 false positives</tspan></text>
+    <text class="txt" x="540" y="355">9,801 test negative  (correct)</text>
+
+    <line class="arrow" x1="520" y1="380" x2="860" y2="380"/>
+
+    <text class="callout" x="520" y="410">Positive test =  99 red  +  99 gray  = 198 people</text>
+
+    <text class="callout" x="520" y="450" font-size="16">P(disease | positive)  =  99 / 198  ≈  <tspan class="accent" font-size="18">50%</tspan></text>
+
+    <text class="note" x="520" y="490">The dashed orange circle contains ALL 198 positives —</text>
+    <text class="note" x="520" y="506">exactly half red, half gray. A coin flip, not a diagnosis.</text>
+    <text class="note" x="520" y="530">This is the base-rate fallacy in one picture.</text>
+  </g>
+
+  <!-- Callout arrow -->
+  <path class="arrow" d="M 490 100 Q 500 100 510 108" marker-end="url(#ar)"/>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text class="note" x="470" y="65" text-anchor="end">Red patch:</text>
+  <text class="note" x="470" y="80" text-anchor="end">100 diseased people</text>
+  <text class="note" x="470" y="95" text-anchor="end">(1% prevalence)</text>
+
+  <!-- Orange callout arrow -->
+  <text class="note" x="450" y="600" text-anchor="middle">Orange dots = the ~99 healthy people the test mistakenly flags positive.  They swamp the true 99 diseased.</text>
+</svg>

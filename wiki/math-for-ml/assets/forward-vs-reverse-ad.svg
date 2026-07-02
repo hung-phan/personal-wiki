@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .node    { fill: #eef2ff; stroke: #3730a3; stroke-width: 2; }
+    .node-txt{ fill: #1e1b4b; font-weight: 700; }
+    .fwd     { stroke: #059669; stroke-width: 2.5; fill: none; }
+    .rev     { stroke: #ea580c; stroke-width: 2.5; fill: none; }
+    .panel-title { font-weight: 700; font-size: 15px; fill: #0f172a; }
+    .caption { fill: #475569; font-size: 13px; }
+    .title   { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .fwd-txt { fill: #059669; font-weight: 700; }
+    .rev-txt { fill: #ea580c; font-weight: 700; }
+    .divider { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 4 4; }
+    .kicker  { fill: #0f172a; font-weight: 700; font-size: 15px; }
+    @media (prefers-color-scheme: dark) {
+      .node    { fill: #1e1b4b; stroke: #a5b4fc; }
+      .node-txt{ fill: #e0e7ff; }
+      .fwd     { stroke: #6ee7b7; }
+      .rev     { stroke: #fdba74; }
+      .panel-title, .title, .kicker { fill: #e2e8f0; }
+      .caption { fill: #cbd5e1; }
+      .fwd-txt { fill: #6ee7b7; }
+      .rev-txt { fill: #fdba74; }
+      .divider { stroke: #475569; }
+    }
+  </style>
+
+  <defs>
+    <marker id="ah-fwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/>
+    </marker>
+    <marker id="ah-rev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="450" y="26" text-anchor="middle">Forward-mode vs. reverse-mode autodiff — which sweep is cheaper?</text>
+
+  <!-- Divider -->
+  <line class="divider" x1="450" y1="55" x2="450" y2="330"/>
+
+  <!-- === Left panel: Forward mode === -->
+  <text class="panel-title" x="220" y="65" text-anchor="middle">Forward mode</text>
+
+  <!-- Nodes at y=140 -->
+  <circle class="node" cx="70"  cy="140" r="26"/>
+  <text class="node-txt" x="70"  y="145" text-anchor="middle">x</text>
+
+  <circle class="node" cx="170" cy="140" r="26"/>
+  <text class="node-txt" x="170" y="145" text-anchor="middle">h₁</text>
+
+  <circle class="node" cx="270" cy="140" r="26"/>
+  <text class="node-txt" x="270" y="145" text-anchor="middle">h₂</text>
+
+  <circle class="node" cx="370" cy="140" r="26"/>
+  <text class="node-txt" x="370" y="145" text-anchor="middle">L</text>
+
+  <!-- Green arrows left-to-right -->
+  <line class="fwd" x1="96"  y1="140" x2="144" y2="140" marker-end="url(#ah-fwd)"/>
+  <line class="fwd" x1="196" y1="140" x2="244" y2="140" marker-end="url(#ah-fwd)"/>
+  <line class="fwd" x1="296" y1="140" x2="344" y2="140" marker-end="url(#ah-fwd)"/>
+
+  <!-- Labels above arrows -->
+  <text class="fwd-txt" x="120" y="128" text-anchor="middle" font-size="12">∂h₁/∂x</text>
+  <text class="fwd-txt" x="220" y="128" text-anchor="middle" font-size="12">∂h₂/∂h₁</text>
+  <text class="fwd-txt" x="320" y="128" text-anchor="middle" font-size="12">∂L/∂h₂</text>
+
+  <text class="caption" x="220" y="180" text-anchor="middle">Propagate tangent (dx) forward through the chain.</text>
+  <text class="caption" x="220" y="200" text-anchor="middle">Each sweep gives ∂L/∂x for ONE input dimension.</text>
+  <text class="caption" x="220" y="220" text-anchor="middle" font-weight="700">Cost ∝ n (number of inputs)</text>
+
+  <!-- Illustration: n sweeps needed -->
+  <text class="caption" x="220" y="260" text-anchor="middle" font-style="italic">For n inputs: repeat sweep n times</text>
+  <g transform="translate(120,275)">
+    <line class="fwd" x1="0"  y1="0" x2="30" y2="0" marker-end="url(#ah-fwd)"/>
+    <line class="fwd" x1="50" y1="0" x2="80" y2="0" marker-end="url(#ah-fwd)"/>
+    <line class="fwd" x1="100" y1="0" x2="130" y2="0" marker-end="url(#ah-fwd)"/>
+    <text class="fwd-txt" x="150" y="4">×n</text>
+  </g>
+
+  <!-- === Right panel: Reverse mode === -->
+  <text class="panel-title" x="680" y="65" text-anchor="middle">Reverse mode (backprop)</text>
+
+  <circle class="node" cx="530" cy="140" r="26"/>
+  <text class="node-txt" x="530" y="145" text-anchor="middle">x</text>
+
+  <circle class="node" cx="630" cy="140" r="26"/>
+  <text class="node-txt" x="630" y="145" text-anchor="middle">h₁</text>
+
+  <circle class="node" cx="730" cy="140" r="26"/>
+  <text class="node-txt" x="730" y="145" text-anchor="middle">h₂</text>
+
+  <circle class="node" cx="830" cy="140" r="26"/>
+  <text class="node-txt" x="830" y="145" text-anchor="middle">L</text>
+
+  <!-- Orange arrows right-to-left -->
+  <line class="rev" x1="804" y1="140" x2="756" y2="140" marker-end="url(#ah-rev)"/>
+  <line class="rev" x1="704" y1="140" x2="656" y2="140" marker-end="url(#ah-rev)"/>
+  <line class="rev" x1="604" y1="140" x2="556" y2="140" marker-end="url(#ah-rev)"/>
+
+  <text class="rev-txt" x="780" y="128" text-anchor="middle" font-size="12">∂L/∂h₂</text>
+  <text class="rev-txt" x="680" y="128" text-anchor="middle" font-size="12">∂L/∂h₁</text>
+  <text class="rev-txt" x="580" y="128" text-anchor="middle" font-size="12">∂L/∂x</text>
+
+  <text class="caption" x="680" y="180" text-anchor="middle">Propagate cotangent (dL) backward from the output.</text>
+  <text class="caption" x="680" y="200" text-anchor="middle">One sweep gives ∂L/∂• for ALL inputs at once.</text>
+  <text class="caption" x="680" y="220" text-anchor="middle" font-weight="700">Cost ∝ m (number of outputs)</text>
+
+  <text class="caption" x="680" y="260" text-anchor="middle" font-style="italic">For m outputs: repeat sweep m times</text>
+  <g transform="translate(580,275)">
+    <line class="rev" x1="130" y1="0" x2="100" y2="0" marker-end="url(#ah-rev)"/>
+    <text class="rev-txt" x="150" y="4">×m</text>
+  </g>
+
+  <!-- Kicker below both panels -->
+  <text class="kicker" x="450" y="340" text-anchor="middle">Deep net: n ≈ 10⁹ parameters, m = 1 scalar loss  →  reverse mode is ~10⁹× cheaper</text>
+</svg>

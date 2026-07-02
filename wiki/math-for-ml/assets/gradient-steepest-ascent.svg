@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax      { stroke: #64748b; stroke-width: 1.5; }
+    .grid    { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .contour { stroke: #cbd5e1; stroke-width: 1.5; fill: none; }
+    .grad    { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .neg     { stroke: #dc2626; stroke-width: 3; fill: none; }
+    .other   { stroke: #94a3b8; stroke-width: 1.5; fill: none; }
+    .dot     { fill: #0f172a; }
+    .txt     { fill: #0f172a; }
+    .tick    { fill: #475569; font-size: 12px; }
+    .title   { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .caption { fill: #475569; font-size: 13px; font-style: italic; }
+    .grad-txt{ fill: #2563eb; font-weight: 700; }
+    .neg-txt { fill: #dc2626; font-weight: 700; }
+    .other-txt { fill: #64748b; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ax      { stroke: #94a3b8; }
+      .grid    { stroke: #475569; }
+      .contour { stroke: #475569; }
+      .grad    { stroke: #60a5fa; }
+      .neg     { stroke: #f87171; }
+      .other   { stroke: #64748b; }
+      .dot     { fill: #e2e8f0; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .caption { fill: #cbd5e1; }
+      .grad-txt { fill: #60a5fa; }
+      .neg-txt  { fill: #f87171; }
+      .other-txt { fill: #94a3b8; }
+    }
+  </style>
+
+  <defs>
+    <marker id="ah-grad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="ah-neg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="ah-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="360" y="30" text-anchor="middle">Why the gradient points in the direction of steepest ascent</text>
+
+  <!-- Axes -->
+  <line class="ax" x1="60" y1="400" x2="660" y2="400"/>
+  <line class="ax" x1="360" y1="60" x2="360" y2="405"/>
+  <text class="tick" x="665" y="405">x</text>
+  <text class="tick" x="360" y="55" text-anchor="middle">y</text>
+
+  <!-- Concentric ellipses for f(x,y) = x^2 + 2y^2, center (360, 230). Ratio 1:sqrt(2). -->
+  <ellipse class="contour" cx="360" cy="230" rx="60"  ry="42"/>
+  <ellipse class="contour" cx="360" cy="230" rx="110" ry="78"/>
+  <ellipse class="contour" cx="360" cy="230" rx="160" ry="113"/>
+  <ellipse class="contour" cx="360" cy="230" rx="210" ry="148"/>
+  <ellipse class="contour" cx="360" cy="230" rx="260" ry="184"/>
+
+  <!-- Level-set labels -->
+  <text class="tick" x="360" y="228" text-anchor="middle">f = 1</text>
+  <text class="tick" x="360" y="150" text-anchor="middle">f = 4</text>
+  <text class="tick" x="360" y="85" text-anchor="middle">f = 9</text>
+
+  <!-- Point P at (x=1.4, y=0.9). Gradient there is (2x, 4y) = (2.8, 3.6), normalized direction. -->
+  <!-- On screen: center (360,230); scale x = 50 units per '1', y = -35 units per '1' (y-axis flipped). -->
+  <!-- P screen coords: (360 + 1.4*50, 230 - 0.9*35) = (430, 198.5) -->
+  <circle class="dot" cx="430" cy="198.5" r="5"/>
+  <text class="txt" x="440" y="215">P</text>
+
+  <!-- Gradient direction: (2.8, 3.6) normalized = (0.614, 0.789). Screen: (0.614*50, -0.789*35) = (30.7, -27.6). Scale by 3 for a nice long arrow. -->
+  <!-- Length ~92 in x, ~83 in y. End at (430+92, 198.5-83) = (522, 115.5). -->
+  <line class="grad" x1="430" y1="198.5" x2="522" y2="115.5" marker-end="url(#ah-grad)"/>
+  <text class="grad-txt" x="530" y="105">∇f (steepest ascent)</text>
+
+  <!-- Negative gradient: mirror across P -->
+  <line class="neg" x1="430" y1="198.5" x2="338" y2="281.5" marker-end="url(#ah-neg)"/>
+  <text class="neg-txt" x="245" y="298">−∇f (steepest descent)</text>
+
+  <!-- Three gray arrows at other angles from P, with cos θ labels shrinking with angle -->
+  <!-- Rotate ∇f direction (0.614, -0.789 on screen if we treat "up" as -y) by +30°, +60°, +90° -->
+  <!-- Base direction on screen: dx=0.744 (i.e., 92/123.5), dy=-0.671 (i.e., -83/123.5). Actually normalize: length=sqrt(92^2+83^2)=124. u=(0.742, -0.669). -->
+  <!-- Rotate by θ CCW: (u.x cos θ - u.y sin θ, u.x sin θ + u.y cos θ). Arrow length = 70. -->
+  <!-- θ = 30°: cos=0.866, sin=0.5. new=(0.742*0.866 - (-0.669)*0.5, 0.742*0.5 + (-0.669)*0.866) = (0.643+0.335, 0.371-0.579) = (0.978, -0.208). End: (430+70*0.978, 198.5+70*(-0.208)) = (498.5, 184). -->
+  <line class="other" x1="430" y1="198.5" x2="498.5" y2="184" marker-end="url(#ah-other)"/>
+  <text class="other-txt" x="505" y="180">cos 30° ≈ 0.87</text>
+
+  <!-- θ = 60°: cos=0.5, sin=0.866. new=(0.742*0.5 - (-0.669)*0.866, 0.742*0.866 + (-0.669)*0.5) = (0.371+0.579, 0.643-0.335) = (0.950, 0.308). End: (430+70*0.950, 198.5+70*0.308) = (496.5, 220). -->
+  <line class="other" x1="430" y1="198.5" x2="496.5" y2="220" marker-end="url(#ah-other)"/>
+  <text class="other-txt" x="505" y="228">cos 60° = 0.50</text>
+
+  <!-- θ = 90°: cos=0, sin=1. new=(0 + 0.669, 0.742 + 0) = (0.669, 0.742). Rotated 90° perpendicular. End: (430+70*0.669, 198.5+70*0.742) = (476.8, 250.4). -->
+  <line class="other" x1="430" y1="198.5" x2="476.8" y2="250.4" marker-end="url(#ah-other)"/>
+  <text class="other-txt" x="485" y="262">cos 90° = 0  (tangent to level set)</text>
+
+  <!-- Caption -->
+  <text class="caption" x="360" y="435" text-anchor="middle">Rate of change in direction u  =  ‖∇f‖ · cos θ</text>
+  <text class="caption" x="360" y="455" text-anchor="middle">Maximum when u is parallel to ∇f (θ = 0). Zero along the tangent to the level set (θ = 90°).</text>
+</svg>

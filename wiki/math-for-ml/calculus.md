@@ -2,7 +2,7 @@
 name: calculus
 description: Calculus foundations for ML — limits, continuity, derivatives, differentiation rules (product, quotient, chain), partial derivatives, gradients, directional derivatives, multivariable Taylor expansion, Jacobians, Hessians, the chain rule and backpropagation, gradient descent and its variants (SGD, momentum, Adam, RMSProp), learning rate schedules, optimization landscape (convexity, local minima, saddle points, plateaus), constrained optimization (Lagrange multipliers, KKT), Newton's method, integrals and expectation, automatic differentiation.
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-07-01
 tags: [calculus, math, machine-learning, foundations, gradient-descent, backpropagation, optimization, chain-rule, derivatives, autograd, learning-journey]
 ---
 
@@ -79,6 +79,10 @@ You almost never compute derivatives from the limit definition. You memorize a f
 - **ReLU** has derivative 1 if $x > 0$, 0 if $x < 0$ (and we conventionally pick 0 at $x = 0$).
 - **Softmax** is vector-valued, so its derivative is a Jacobian: $\partial s_i/\partial z_j = s_i(\delta_{ij} - s_j)$. The "softmax + cross-entropy" gradient simplifies to $\hat{p} - y$ — beautifully clean. Frameworks fuse them for numerical stability.
 
+The picture below shows why sigmoid and tanh are "gradient traps" for deep hidden layers and why ReLU/GELU took over: the pink zones are where the derivative flattens to (nearly) zero — no gradient signal survives to update parameters upstream.
+
+![Activation functions and their derivatives, with saturation zones highlighted in pink|697](assets/activations-and-derivatives.svg)
+
 ### The smoothness premium
 
 Differentiability requires continuity. Operations like `argmax`, hard `if/else` branches, and step functions break gradients. ML's solution is **smooth surrogates** — softmax instead of argmax, sigmoid instead of step, GELU instead of ReLU at zero. The reason ML loves smoothness is that gradient descent demands it.
@@ -99,7 +103,9 @@ Single-variable derivatives are great, but a loss function depends on millions o
 
 ### The natural object
 
-For each input dimension, ask: "if I nudge *this* input alone (holding the others fixed), how does $f$ change?" That's the **partial derivative** $\partial f / \partial x_i$.
+Imagine standing on a hillside. The height at your location is $f(x, y)$ where $x$ is east-west and $y$ is north-south. Two natural questions: "If I take one small step *east*, does the ground rise or fall, and by how much?" That's $\partial f/\partial x$. Same question, *north*: $\partial f/\partial y$. The gradient bundles those two rates into a vector that says "east-slope this much, north-slope this much." Then the natural next question — "which single direction should I step to climb fastest?" — has a beautiful answer we'll get to shortly.
+
+Formally: for each input dimension, ask "if I nudge *this* input alone (holding the others fixed), how does $f$ change?" That's the **partial derivative** $\partial f / \partial x_i$.
 
 Stack all $n$ partial derivatives into a vector. That's the **gradient**:
 $$\nabla f = \left[\frac{\partial f}{\partial x_1}, \dots, \frac{\partial f}{\partial x_n}\right]^T$$
@@ -107,6 +113,10 @@ $$\nabla f = \left[\frac{\partial f}{\partial x_1}, \dots, \frac{\partial f}{\pa
 ### The crucial geometric fact
 
 The gradient *points in the direction of steepest ascent*. Among all directions you could move, the one that increases $f$ fastest is the gradient direction.
+
+![Contour plot of a bowl-shaped loss with gradient, negative gradient, and other directions labeled by cos θ|697](assets/gradient-steepest-ascent.svg)
+
+The contours are level sets — walk along one and $f$ doesn't change. The gradient is *perpendicular* to the level set through your point, pointing outward toward higher values. Move at any other angle $\theta$ from $\nabla f$ and your rate of ascent shrinks by $\cos\theta$: half as fast at 60°, zero along the tangent (90°), negative on the far side. The negative gradient is the mirror image — the fastest way *down*.
 
 **Why ML cares.** We want to *minimize* loss. So we step in the direction *opposite* the gradient — the negative gradient is the direction of steepest descent. That's gradient descent in one sentence.
 
@@ -140,6 +150,10 @@ Symmetric (under mild smoothness — Schwarz's theorem). It encodes the local *c
 - The Hessian's eigenvalues bound the safe learning rate. If the largest eigenvalue is $\lambda_{\max}$, you need step size $\eta < 2/\lambda_{\max}$ for stability. Bigger curvature means smaller step.
 - Newton's method uses $H^{-1}\nabla f$ for an exact step toward the minimum of a quadratic — converges in one step on perfect quadratics, very fast near minima.
 
+![Three surface plots showing local min, local max, and saddle point with eigenvalue classification|697](assets/hessian-critical-points.svg)
+
+Each panel shows one signature of curvature: two positive eigenvalues → bowl → local min; two negative → dome → local max; one of each → saddle, which is a min in one direction and a max in the perpendicular direction. In high dimensions, saddles vastly outnumber true minima — see Section 5.
+
 ### The big-NN problem
 
 $H$ is $n \times n$. For a billion-parameter model, that's a quintillion entries. We can't compute or store it. ML mostly avoids second-order methods at scale, or uses cheap approximations:
@@ -167,7 +181,9 @@ You want $\partial \text{loss} / \partial w_{l}$ for every parameter $w_{l}$ in 
 
 ### The single-variable chain rule
 
-$z = f(g(x))$ → $\frac{dz}{dx} = \frac{dz}{dy} \cdot \frac{dy}{dx}$ where $y = g(x)$.
+Imagine you're paid $3 per hour worked, and every hour worked burns 200 calories. If you work one more hour, how many more calories do you burn? Trivially 200. Now flip it: how many more *dollars* per calorie? You earn $3/hr and burn 200 cal/hr, so $3 \div 200\text{ cal} = \$0.015/\text{cal}$. You just used the chain rule: rate of A w.r.t. C = rate of A w.r.t. B $\times$ rate of B w.r.t. C. The chain rule is literally that — how to compose rates through an intermediate variable.
+
+Formally, for $z = f(g(x))$: $\frac{dz}{dx} = \frac{dz}{dy} \cdot \frac{dy}{dx}$ where $y = g(x)$.
 
 In English: "stack" the derivatives — $z$'s rate vs. $y$, times $y$'s rate vs. $x$, gives $z$'s rate vs. $x$. The chain rule is just bookkeeping for "stacked rates."
 
@@ -205,6 +221,10 @@ For $f: \mathbb{R}^n \to \mathbb{R}^m$:
 - **Reverse mode** is efficient when $n \gg m$.
 
 ML has many parameters ($n$ in millions/billions) and one scalar loss ($m = 1$). Reverse mode wins by a factor of $n/m$. That's the entire reason "deep learning" became practical.
+
+![Side-by-side comparison of forward-mode and reverse-mode autodiff sweeps through a 3-layer chain|697](assets/forward-vs-reverse-ad.svg)
+
+Forward mode needs one sweep *per input dimension* to get all the derivatives; reverse mode needs one sweep *per output*. For a billion-parameter model with a single scalar loss, reverse mode delivers all billion gradients in a single pass — forward mode would need a billion passes.
 
 ## 5. The loss landscape: where do you end up?
 
@@ -261,6 +281,10 @@ If different parameters have very different curvatures (typical in deep nets), o
 | **Adam** | Combine momentum + RMSProp. Each parameter gets a smoothed gradient direction *and* its own LR. | The "default" — works out of the box on most things |
 | **AdamW** | Adam with *decoupled* weight decay (the L2 penalty isn't lumped into the gradient). | Modern default for transformers, LLMs |
 | **L-BFGS** | Quasi-Newton — uses gradient history to approximate the Hessian. | Small to medium deterministic problems with batch gradients |
+
+![Trajectories of SGD, momentum, RMSProp, and Adam on an ill-conditioned elliptical bowl|697](assets/optimizer-trajectories.svg)
+
+The elongated bowl is the pathological case adaptive optimizers were built for: the steep direction wants a small step, the flat direction wants a big one. Vanilla SGD picks *one* LR that has to work for both — so it zigzags across the narrow axis while barely progressing along the wide one. Momentum smooths those zigzags, RMSProp rescales per-parameter to march faster along the flat axis, and Adam combines both.
 
 ### Learning-rate schedules
 

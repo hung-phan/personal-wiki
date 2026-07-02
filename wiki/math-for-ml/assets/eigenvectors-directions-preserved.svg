@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .gray-v { stroke: #94a3b8; stroke-width: 2; fill: none; opacity: 0.85; }
+    .eig1   { stroke: #dc2626; stroke-width: 3; fill: none; }
+    .eig2   { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .eig-line { stroke: #64748b; stroke-width: 1; stroke-dasharray: 5 4; opacity: 0.7; }
+    .rot-arc  { stroke: #f97316; stroke-width: 1.5; fill: none; opacity: 0.85; }
+    .txt    { fill: #0f172a; }
+    .title  { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .sub    { font-size: 12px; fill: #475569; }
+    .lam1   { fill: #b91c1c; font-weight: 700; font-size: 15px; }
+    .lam2   { fill: #1d4ed8; font-weight: 700; font-size: 15px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .gray-v { stroke: #94a3b8; }
+      .eig1 { stroke: #f87171; }
+      .eig2 { stroke: #60a5fa; }
+      .eig-line { stroke: #cbd5e1; }
+      .rot-arc { stroke: #fb923c; }
+      .txt, .title { fill: #e2e8f0; }
+      .sub { fill: #cbd5e1; }
+      .lam1 { fill: #fca5a5; }
+      .lam2 { fill: #93c5fd; }
+    }
+  </style>
+  <defs>
+    <marker id="a-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="a-red2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="a-blue2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="450" y="24" text-anchor="middle">Eigenvectors — directions the transformation only stretches, never turns</text>
+
+  <!-- ============ LEFT: Before ============ -->
+  <g transform="translate(30,50)">
+    <text class="title" x="200" y="16" text-anchor="middle">Before A  —  unit vectors in 8 directions</text>
+    <!-- axes centered at (200,200); 1 unit = 60 px -->
+    <line class="ax" x1="30" y1="200" x2="370" y2="200"/>
+    <line class="ax" x1="200" y1="30" x2="200" y2="370"/>
+    <line class="grid" x1="140" y1="30" x2="140" y2="370"/>
+    <line class="grid" x1="260" y1="30" x2="260" y2="370"/>
+    <line class="grid" x1="30" y1="140" x2="370" y2="140"/>
+    <line class="grid" x1="30" y1="260" x2="370" y2="260"/>
+
+    <!-- eigen-lines (dashed rays) -->
+    <line class="eig-line" x1="30"  y1="200" x2="370" y2="200"/>
+    <line class="eig-line" x1="200" y1="30"  x2="200" y2="370"/>
+
+    <!-- 8 gray unit vectors -->
+    <line class="gray-v" x1="200" y1="200" x2="242" y2="158" marker-end="url(#a-gray)"/>  <!-- 45  -->
+    <line class="gray-v" x1="200" y1="200" x2="158" y2="158" marker-end="url(#a-gray)"/>  <!-- 135 -->
+    <line class="gray-v" x1="200" y1="200" x2="158" y2="242" marker-end="url(#a-gray)"/>  <!-- 225 -->
+    <line class="gray-v" x1="200" y1="200" x2="242" y2="242" marker-end="url(#a-gray)"/>  <!-- 315 -->
+    <line class="gray-v" x1="200" y1="200" x2="252" y2="180" marker-end="url(#a-gray)"/>  <!-- ~20 -->
+    <line class="gray-v" x1="200" y1="200" x2="148" y2="180" marker-end="url(#a-gray)"/>  <!-- ~160 -->
+    <!-- Eigenvectors (highlighted): along x-axis (red) and y-axis (blue), length 1 -->
+    <line class="eig1" x1="200" y1="200" x2="258" y2="200" marker-end="url(#a-red2)"/>
+    <line class="eig2" x1="200" y1="200" x2="200" y2="142" marker-end="url(#a-blue2)"/>
+
+    <text class="txt" x="262" y="195" fill="#dc2626" font-weight="700">v₁</text>
+    <text class="txt" x="205" y="138" fill="#2563eb" font-weight="700">v₂</text>
+    <text class="sub" x="200" y="395" text-anchor="middle">All arrows have length 1.  Red & blue are the eigenvectors.</text>
+  </g>
+
+  <!-- Middle: matrix + arrow -->
+  <g transform="translate(430,190)">
+    <path d="M 0 20 L 40 20" stroke="#0f172a" stroke-width="2" fill="none" marker-end="url(#a-red2)"/>
+    <text class="title" x="20" y="14" text-anchor="middle">A</text>
+    <text class="sub" x="20" y="42" text-anchor="middle">A = [[3, 0],</text>
+    <text class="sub" x="20" y="54" text-anchor="middle">     [0, 2]]</text>
+  </g>
+
+  <!-- ============ RIGHT: After ============ -->
+  <g transform="translate(480,50)">
+    <text class="title" x="200" y="16" text-anchor="middle">After A  —  most rotate; red & blue only stretch</text>
+    <line class="ax" x1="30" y1="200" x2="370" y2="200"/>
+    <line class="ax" x1="200" y1="30" x2="200" y2="370"/>
+    <line class="grid" x1="140" y1="30" x2="140" y2="370"/>
+    <line class="grid" x1="260" y1="30" x2="260" y2="370"/>
+    <line class="grid" x1="30" y1="140" x2="370" y2="140"/>
+    <line class="grid" x1="30" y1="260" x2="370" y2="260"/>
+
+    <!-- eigen-lines (still through origin along the same axes) -->
+    <line class="eig-line" x1="30"  y1="200" x2="370" y2="200"/>
+    <line class="eig-line" x1="200" y1="30"  x2="200" y2="370"/>
+
+    <!-- Transform:  A*(x,y) = (3x, 2y).  For each pre-image unit vector at angle θ (r=60px):
+         image = (60·3·cosθ, 60·2·sinθ).  Center (200,200), y screen-flipped.
+         θ=45:  (127.28, 84.85) → (327,115)  original vector-tip was (242,158)
+         θ=135: (-127.28,84.85) → (73,115)
+         θ=225: (-127.28,-84.85)→ (73,285)
+         θ=315: (127.28,-84.85) → (327,285)
+         θ=20:  (169.14, 41.04) → (369,159)   was (252,180)  — rotation faint arc
+         θ=160: (-169.14,41.04) → (31,159)    was (148,180)
+    -->
+    <!-- gray transformed -->
+    <line class="gray-v" x1="200" y1="200" x2="320" y2="120" marker-end="url(#a-gray)"/>
+    <line class="gray-v" x1="200" y1="200" x2="80"  y2="120" marker-end="url(#a-gray)"/>
+    <line class="gray-v" x1="200" y1="200" x2="80"  y2="280" marker-end="url(#a-gray)"/>
+    <line class="gray-v" x1="200" y1="200" x2="320" y2="280" marker-end="url(#a-gray)"/>
+    <line class="gray-v" x1="200" y1="200" x2="362" y2="162" marker-end="url(#a-gray)"/>
+    <line class="gray-v" x1="200" y1="200" x2="38"  y2="162" marker-end="url(#a-gray)"/>
+
+    <!-- Small rotation arc showing gray vector direction change: original 45° vs new angle ~34° -->
+    <path class="rot-arc" d="M 245 155 A 68 68 0 0 1 262 180" marker-end="url(#a-orange)"/>
+    <text class="sub" x="266" y="150" fill="#c2410c">direction changed</text>
+
+    <!-- Eigenvectors stretched along same axes -->
+    <line class="eig1" x1="200" y1="200" x2="373" y2="200" marker-end="url(#a-red2)"/>  <!-- λ1·1 = 3 → 180 px -->
+    <line class="eig2" x1="200" y1="200" x2="200" y2="85"  marker-end="url(#a-blue2)"/> <!-- λ2·1 = 2 → 120 px -->
+
+    <text class="lam1" x="378" y="195" text-anchor="end">λ₁ = 3</text>
+    <text class="lam2" x="207" y="80">λ₂ = 2</text>
+    <text class="sub" x="200" y="395" text-anchor="middle">Red is 3× longer.  Blue is 2× longer.  Both still lie on their eigen-lines.</text>
+  </g>
+</svg>

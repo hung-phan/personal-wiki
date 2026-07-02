@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .h0     { stroke: #2563eb; stroke-width: 2.5; fill: none; }
+    .h1     { stroke: #059669; stroke-width: 2.5; fill: none; }
+    .h0-fill{ fill: #2563eb; opacity: 0.10; }
+    .h1-fill{ fill: #059669; opacity: 0.10; }
+    .alpha  { fill: #dc2626; opacity: 0.55; }
+    .beta   { fill: #f97316; opacity: 0.55; }
+    .power  { fill: #7c3aed; opacity: 0.28; }
+    .crit   { stroke: #0f172a; stroke-width: 2; stroke-dasharray: 6 4; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 12px; }
+    .title  { font-weight: 700; font-size: 17px; fill: #0f172a; }
+    .label  { font-weight: 700; font-size: 13px; }
+    .note   { fill: #475569; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .h0 { stroke: #60a5fa; }
+      .h1 { stroke: #6ee7b7; }
+      .h0-fill { fill: #60a5fa; opacity: 0.18; }
+      .h1-fill { fill: #6ee7b7; opacity: 0.18; }
+      .alpha { fill: #f87171; opacity: 0.65; }
+      .beta { fill: #fb923c; opacity: 0.65; }
+      .power { fill: #a78bfa; opacity: 0.4; }
+      .crit { stroke: #e2e8f0; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="400" y="26" text-anchor="middle">Type I (α) and Type II (β) errors — two ways to be wrong</text>
+  <text class="note"  x="400" y="46" text-anchor="middle">Left bell: distribution of the test statistic if H₀ is true.  Right bell: if H₁ is true.  Dashed line = decision threshold.</text>
+
+  <!--
+    x-range: -3 to 5 on data axis.
+    Screen: x = 60 (data -3) to 740 (data 5) → scale 85 per unit.
+    H0 centered at 0 → screen 60 + 3*85 = 315
+    H1 centered at 2 → screen 60 + 5*85 = 485
+    Critical value at 1.5 → screen 60 + 4.5*85 = 442.5
+    Peak height ~230 units above baseline.
+    Baseline at y=360.
+  -->
+
+  <!-- Baseline axis -->
+  <line class="ax" x1="60" y1="360" x2="740" y2="360"/>
+  <!-- Ticks -->
+  <g>
+    <line class="grid" x1="315" y1="80" x2="315" y2="360"/>
+    <text class="tick" x="315" y="378" text-anchor="middle">μ₀ = 0</text>
+    <line class="grid" x1="485" y1="80" x2="485" y2="360"/>
+    <text class="tick" x="485" y="378" text-anchor="middle">μ₁ = 2</text>
+    <text class="tick" x="740" y="378" text-anchor="middle">→ test statistic</text>
+  </g>
+
+  <!-- H0 bell (Gaussian with μ=0, σ=1). Sample values, y = 360 - 230*exp(-x^2/2) -->
+  <path class="h0-fill" d="
+    M 60 360
+    L 60 360
+    L 145 359.9
+    L 175 359.5
+    L 205 356.4
+    L 235 344.4
+    L 265 315.5
+    L 295 267.7
+    L 315 130
+    L 335 267.7
+    L 365 315.5
+    L 395 344.4
+    L 425 356.4
+    L 455 359.5
+    L 485 359.9
+    L 515 360
+    L 60 360 Z
+  "/>
+  <path class="h0" d="
+    M 60 360
+    L 145 359.9
+    L 175 359.5
+    L 205 356.4
+    L 235 344.4
+    L 265 315.5
+    L 295 267.7
+    L 315 130
+    L 335 267.7
+    L 365 315.5
+    L 395 344.4
+    L 425 356.4
+    L 455 359.5
+    L 485 359.9
+    L 515 360
+  "/>
+
+  <!-- H1 bell (Gaussian with μ=2, σ=1) -->
+  <path class="h1-fill" d="
+    M 230 360
+    L 315 359.9
+    L 345 359.5
+    L 375 356.4
+    L 405 344.4
+    L 435 315.5
+    L 465 267.7
+    L 485 130
+    L 505 267.7
+    L 535 315.5
+    L 565 344.4
+    L 595 356.4
+    L 625 359.5
+    L 655 359.9
+    L 685 360
+    L 685 360 Z
+  "/>
+  <path class="h1" d="
+    M 230 360
+    L 315 359.9
+    L 345 359.5
+    L 375 356.4
+    L 405 344.4
+    L 435 315.5
+    L 465 267.7
+    L 485 130
+    L 505 267.7
+    L 535 315.5
+    L 565 344.4
+    L 595 356.4
+    L 625 359.5
+    L 655 359.9
+    L 685 360
+  "/>
+
+  <!-- Shaded α (right tail of H0 past critical value at x=442.5) -->
+  <!-- Sample the H0 curve from x=442.5 onward. Approx points -->
+  <path class="alpha" d="
+    M 442.5 360
+    L 442.5 331.3
+    L 455 355.5
+    L 485 359.9
+    L 515 360
+    L 442.5 360 Z
+  "/>
+
+  <!-- Shaded β (left tail of H1 before critical value) -->
+  <path class="beta" d="
+    M 315 360
+    L 315 359.9
+    L 345 359.5
+    L 375 356.4
+    L 405 344.4
+    L 435 315.5
+    L 442.5 305.4
+    L 442.5 360
+    L 315 360 Z
+  "/>
+
+  <!-- Highlight power = right tail of H1 (subtle) -->
+  <path class="power" d="
+    M 442.5 360
+    L 442.5 305.4
+    L 465 267.7
+    L 485 130
+    L 505 267.7
+    L 535 315.5
+    L 565 344.4
+    L 595 356.4
+    L 625 359.5
+    L 655 359.9
+    L 685 360
+    L 442.5 360 Z
+  "/>
+
+  <!-- Critical value line -->
+  <line class="crit" x1="442.5" y1="80" x2="442.5" y2="365"/>
+  <text class="tick" x="442.5" y="378" text-anchor="middle">critical value  c = 1.5</text>
+
+  <!-- Bell labels -->
+  <text class="label" x="315" y="115" text-anchor="middle" fill="#2563eb">H₀ true</text>
+  <text class="note"  x="315" y="70"  text-anchor="middle">"no effect"</text>
+  <text class="label" x="485" y="115" text-anchor="middle" fill="#059669">H₁ true</text>
+  <text class="note"  x="485" y="70"  text-anchor="middle">"real effect"</text>
+
+  <!-- α callout -->
+  <path stroke="#dc2626" stroke-width="1.5" fill="none" d="M 470 340 L 550 300"/>
+  <text class="label" x="560" y="298" fill="#dc2626">α — Type I  (false positive)</text>
+  <text class="note"  x="560" y="316">reject H₀ when H₀ is actually true</text>
+
+  <!-- β callout -->
+  <path stroke="#f97316" stroke-width="1.5" fill="none" d="M 405 340 L 130 300"/>
+  <text class="label" x="120" y="298" text-anchor="end" fill="#f97316">β — Type II  (false negative)</text>
+  <text class="note"  x="120" y="316" text-anchor="end">fail to reject H₀ when H₁ is true</text>
+
+  <!-- Power callout -->
+  <path stroke="#7c3aed" stroke-width="1.5" fill="none" d="M 560 250 L 620 210"/>
+  <text class="label" x="628" y="208" fill="#7c3aed">Power = 1 − β</text>
+  <text class="note"  x="628" y="226">chance of detecting a real effect</text>
+
+  <!-- Decision table -->
+  <g transform="translate(60,395)">
+    <text class="note" x="0" y="0">Reject H₀  →  right of the dashed line.   Do not reject  →  left of it.</text>
+    <text class="note" x="0" y="20">Bigger sample size ⇒ narrower curves ⇒ β shrinks ⇒ power rises.  You buy power with data.</text>
+    <text class="note" x="0" y="40">Move the dashed line right ⇒ α ↓ but β ↑.   Move it left ⇒ α ↑ but β ↓.   The two errors trade off.</text>
+  </g>
+</svg>

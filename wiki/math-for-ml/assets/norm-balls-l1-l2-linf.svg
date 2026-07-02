@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .ball   { fill: none; stroke: #2563eb; stroke-width: 2.5; }
+    .ball-fill { fill: #2563eb; opacity: 0.10; stroke: none; }
+    .contour { fill: none; stroke: #059669; stroke-width: 1.5; stroke-dasharray: 4 3; opacity: 0.75; }
+    .opt    { fill: #dc2626; stroke: #7f1d1d; stroke-width: 1.5; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 11px; }
+    .title  { font-weight: 700; font-size: 15px; fill: #0f172a; }
+    .sub    { font-size: 12px; fill: #475569; }
+    .note   { font-size: 12px; fill: #b91c1c; font-weight: 600; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .ball { stroke: #60a5fa; }
+      .ball-fill { fill: #60a5fa; opacity: 0.15; }
+      .contour { stroke: #6ee7b7; }
+      .opt { fill: #f87171; stroke: #fecaca; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .sub { fill: #cbd5e1; }
+      .note { fill: #fca5a5; }
+    }
+  </style>
+
+  <text class="title" x="450" y="24" text-anchor="middle">The unit ball of each norm — where the corners are decides sparsity</text>
+
+  <!-- ============ Panel 1: L2 ============ -->
+  <g transform="translate(20,50)">
+    <text class="title" x="130" y="14" text-anchor="middle">L2 norm  (Euclidean)</text>
+    <text class="sub"   x="130" y="30" text-anchor="middle">‖x‖₂ = 1  →  circle</text>
+    <!-- axes -->
+    <line class="grid" x1="20" y1="150" x2="240" y2="150"/>
+    <line class="grid" x1="130" y1="40"  x2="130" y2="260"/>
+    <line class="ax"   x1="20" y1="260" x2="240" y2="260"/>
+    <text class="tick" x="130" y="275" text-anchor="middle">x₁</text>
+    <text class="tick" x="10"  y="150" text-anchor="end">x₂</text>
+    <!-- unit ball (radius 80 px = 1 unit) -->
+    <circle class="ball-fill" cx="130" cy="150" r="80"/>
+    <circle class="ball" cx="130" cy="150" r="80"/>
+    <!-- axis ticks -->
+    <text class="tick" x="215" y="165" text-anchor="middle">1</text>
+    <text class="tick" x="47"  y="165" text-anchor="middle">−1</text>
+    <text class="tick" x="140" y="72"  text-anchor="start">1</text>
+    <text class="tick" x="140" y="235" text-anchor="start">−1</text>
+    <!-- loss contours (ellipses) -->
+    <ellipse class="contour" cx="180" cy="120" rx="40" ry="28" transform="rotate(-25 180 120)"/>
+    <ellipse class="contour" cx="180" cy="120" rx="60" ry="42" transform="rotate(-25 180 120)"/>
+    <ellipse class="contour" cx="180" cy="120" rx="80" ry="56" transform="rotate(-25 180 120)"/>
+    <!-- tangent optimum: interior point of circle, both coords nonzero -->
+    <circle class="opt" cx="190" cy="102" r="4.5"/>
+    <text class="note" x="197" y="99">optimum</text>
+    <text class="sub"  x="197" y="112">both coords ≠ 0</text>
+  </g>
+
+  <!-- ============ Panel 2: L1 ============ -->
+  <g transform="translate(310,50)">
+    <text class="title" x="130" y="14" text-anchor="middle">L1 norm  (Manhattan)</text>
+    <text class="sub"   x="130" y="30" text-anchor="middle">‖x‖₁ = 1  →  diamond (corners on axes)</text>
+    <line class="grid" x1="20" y1="150" x2="240" y2="150"/>
+    <line class="grid" x1="130" y1="40"  x2="130" y2="260"/>
+    <line class="ax"   x1="20" y1="260" x2="240" y2="260"/>
+    <text class="tick" x="130" y="275" text-anchor="middle">x₁</text>
+    <text class="tick" x="10"  y="150" text-anchor="end">x₂</text>
+    <!-- diamond: (1,0)(0,1)(-1,0)(0,-1) → screen (210,150)(130,70)(50,150)(130,230) -->
+    <polygon class="ball-fill" points="210,150 130,70 50,150 130,230"/>
+    <polygon class="ball" points="210,150 130,70 50,150 130,230"/>
+    <text class="tick" x="215" y="165" text-anchor="middle">1</text>
+    <text class="tick" x="47"  y="165" text-anchor="middle">−1</text>
+    <text class="tick" x="140" y="72"  text-anchor="start">1</text>
+    <text class="tick" x="140" y="235" text-anchor="start">−1</text>
+    <!-- loss contours centered so the smallest one grazes the corner (130,70) i.e. x1=0, x2=1 -->
+    <ellipse class="contour" cx="180" cy="30"  rx="70" ry="50" transform="rotate(-30 180 30)"/>
+    <ellipse class="contour" cx="180" cy="30"  rx="95" ry="68" transform="rotate(-30 180 30)"/>
+    <ellipse class="contour" cx="180" cy="30"  rx="120" ry="86" transform="rotate(-30 180 30)"/>
+    <!-- optimum: at the top corner of diamond -->
+    <circle class="opt" cx="130" cy="70" r="5.5"/>
+    <text class="note" x="82"  y="55">optimum on axis</text>
+    <text class="sub"  x="82"  y="42">x₁ = 0  (sparse!)</text>
+  </g>
+
+  <!-- ============ Panel 3: L∞ ============ -->
+  <g transform="translate(600,50)">
+    <text class="title" x="130" y="14" text-anchor="middle">L∞ norm  (max)</text>
+    <text class="sub"   x="130" y="30" text-anchor="middle">‖x‖∞ = 1  →  axis-aligned square</text>
+    <line class="grid" x1="20" y1="150" x2="240" y2="150"/>
+    <line class="grid" x1="130" y1="40"  x2="130" y2="260"/>
+    <line class="ax"   x1="20" y1="260" x2="240" y2="260"/>
+    <text class="tick" x="130" y="275" text-anchor="middle">x₁</text>
+    <text class="tick" x="10"  y="150" text-anchor="end">x₂</text>
+    <!-- square [-1,1]² → (50,70)-(210,230) -->
+    <rect class="ball-fill" x="50" y="70" width="160" height="160"/>
+    <rect class="ball" x="50" y="70" width="160" height="160"/>
+    <text class="tick" x="215" y="165" text-anchor="middle">1</text>
+    <text class="tick" x="47"  y="165" text-anchor="middle">−1</text>
+    <text class="tick" x="140" y="72"  text-anchor="start">1</text>
+    <text class="tick" x="140" y="235" text-anchor="start">−1</text>
+    <!-- annotation -->
+    <text class="sub" x="130" y="253" text-anchor="middle">corners on diagonals</text>
+    <text class="sub" x="130" y="267" text-anchor="middle">bounds every coord</text>
+  </g>
+
+  <!-- Bottom summary -->
+  <text class="sub" x="450" y="360" text-anchor="middle">
+    Ridge (L2): rounded ball → optimum lands generically off-axis, all weights small but nonzero.
+    Lasso (L1): pointy corners on the axes → optimum snaps to a corner → some weights become exactly 0.
+  </text>
+</svg>

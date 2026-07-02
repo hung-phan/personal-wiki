@@ -2,7 +2,7 @@
 name: statistics-and-probability
 description: Statistics and probability foundations for ML — populations vs samples, descriptive statistics (mean, median, variance, covariance, correlation), probability axioms, conditional probability, Bayes' theorem, common distributions (Normal, Bernoulli, Binomial, Poisson, Uniform, Exponential), Central Limit Theorem, Law of Large Numbers, Maximum Likelihood Estimation (MLE), MAP, hypothesis testing, p-values, confidence intervals, bias-variance tradeoff, linear and logistic regression, regularization as a Bayesian prior, entropy, KL divergence, cross-entropy.
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-07-01
 tags: [statistics, probability, machine-learning, math, foundations, bayes, distributions, regression, mle, learning-journey]
 ---
 
@@ -91,6 +91,10 @@ This is **variance**. Two reasons we usually pick it over the absolute version:
 
 The downside: variance is in *squared units* (squared dollars, squared centimeters), which doesn't mean anything to humans. So we usually report **standard deviation** $\sigma = \sqrt{\sigma^2}$ instead — same units as the data, easy to interpret.
 
+To *see* what squaring does — and why it matters — compare the two side by side on the same eight points, one of which is an outlier:
+
+![|deviation| vs. (deviation)² — outlier bar grows from 4.5× to 20× when squared|697](assets/variance-squared-vs-abs.svg)
+
 **ML takeaway.** The reason MSE (mean squared error) is the default regression loss is exactly this: it's variance of the residuals. You're minimizing the spread of your prediction errors, weighting big errors much more than small ones. If you don't want that — if your data has heavy tails and big errors are *expected* — use mean absolute error or Huber loss instead.
 
 ### How are two variables related?
@@ -121,6 +125,15 @@ This is **Pearson correlation**, always between $-1$ and $+1$:
 - The covariance matrix of your features (every pair's covariance, in a matrix) is the central object that PCA decomposes — see [linear-algebra](linear-algebra.md).
 - Highly correlated features cause **multicollinearity** in linear regression — you can't tell which feature is doing the work, and the coefficients become unstable.
 - **Correlation is not causation.** Ice cream sales correlate with drowning deaths (both rise in summer). A model that learned "more ice cream → more drownings" would be statistically right and substantively wrong. Always ask: is there a hidden third variable?
+
+```mermaid
+flowchart LR
+    S[Summer heat] --> I[Ice cream sales]
+    S --> D[Drowning deaths]
+    I -.spurious.-> D
+```
+
+The dashed edge is what a naive correlation sees; the solid edges are what's actually happening. Always ask: what's the arrow into *both*?
 
 ## 3. From describing a sample to reasoning about uncertainty
 
@@ -207,6 +220,10 @@ Total positives: $99 + 99 = 198$. Of those, only $99$ actually have the disease.
 
 A "99% accurate" test, when applied to a rare disease, leaves you with a coin flip. This isn't a math trick — it's how reality works, and people get it wrong constantly. (It has a name: the **base rate fallacy**.)
 
+Here it is with every one of the 10,000 people drawn as a dot:
+
+![10,000-person grid: tiny red patch of 100 diseased, sea of 9,900 healthy, and ~99 orange false-positive dots that swamp the true positives|697](assets/bayes-base-rate-grid.svg)
+
 ### What we just did, in a formula
 
 We started with $P(\text{positive} | \text{disease})$ — probability of evidence given hypothesis. We wanted $P(\text{disease} | \text{positive})$ — the other direction. The bridge between them is **Bayes' theorem**:
@@ -229,6 +246,14 @@ In words: *"posterior is proportional to likelihood times prior."* The ML way to
 - **Why your spam filter works**, why **medical diagnosis** is a probabilistic task, why **A/B testing** can be done Bayesianly.
 
 If you remember one formula from this whole note, make it Bayes'.
+
+### Watch belief actually shift: prior × likelihood → posterior
+
+Concrete example: you have a coin and want to know $p = P(\text{heads})$. You start with a gentle prior — Beta(2, 2) — that says "probably fair, but I'm not confident." You flip 10 times and see 8 heads. The likelihood peaks at $p = 0.8$. Multiply, renormalize, and you get the posterior — Beta(10, 4), peaking around $p = 0.75$:
+
+![Beta(2,2) prior centered at 0.5, dashed likelihood peaked at 0.8, red posterior Beta(10,4) peaked at 0.75 — belief pulled toward the data|697](assets/bayes-prior-to-posterior.svg)
+
+The posterior lands *between* the prior and the likelihood — a data-weighted compromise. With more flips the likelihood sharpens and the prior loses influence; with fewer flips the prior dominates. That is Bayes updating in one picture.
 
 ## 5. Common distributions: the "shapes" data tends to take
 
@@ -295,6 +320,10 @@ $$\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} \mathcal{N}(0, \sigma^2)$$
 
 **In plain English.** The sample mean of i.i.d. data approaches a Normal distribution as you collect more samples, no matter what shape the original data had.
 
+The 3×3 grid below is the payoff — pick any source distribution (row), take averages of size $n$ (column), and watch the shape morph:
+
+![3×3 grid — Uniform / Exponential / Bimodal rows; n=1, n=5, n=30 columns; leftmost column keeps the source shape, rightmost column collapses to a bell for all three|697](assets/clt-convergence.svg)
+
 ### Why this is the headline theorem of statistics
 
 - **It explains why Normal is everywhere.** Anything that's an average or a sum of many small effects ends up Normal.
@@ -327,15 +356,91 @@ Maximizing the log-likelihood = minimizing the **negative log-likelihood (NLL)**
 
 Different assumed noise distributions yield different MLE losses:
 
-| Assumed noise distribution | Loss derived from MLE |
-|---|---|
-| Gaussian on regression target | **Mean Squared Error (MSE)** |
-| Laplace on regression target | **Mean Absolute Error (MAE)** |
-| Bernoulli on binary target | **Binary cross-entropy** (log loss) |
-| Categorical on multiclass | **Categorical cross-entropy** |
-| Poisson on count target | **Poisson NLL** |
+| Assumed noise distribution    | Loss derived from MLE               |
+| ----------------------------- | ----------------------------------- |
+| Gaussian on regression target | **Mean Squared Error (MSE)**        |
+| Laplace on regression target  | **Mean Absolute Error (MAE)**       |
+| Bernoulli on binary target    | **Binary cross-entropy** (log loss) |
+| Categorical on multiclass     | **Categorical cross-entropy**       |
+| Poisson on count target       | **Poisson NLL**                     |
 
 **The big realization.** Picking a loss function = picking a noise distribution. If your residuals are heavy-tailed, MSE (Gaussian assumption) is wrong — it overweights outliers because the Gaussian thinks big residuals are very unlikely. Try Huber loss or MAE.
+
+#### Where does this table come from?
+
+For regression, we model $y = f_\theta(x) + \epsilon$. The noise $\epsilon$ is the random junk making predictions miss. We *choose* a distribution for $\epsilon$ — Gaussian is only the default, not a law of nature.
+
+Once you pick that distribution, MLE mechanically produces the loss. The recipe is always the same four steps:
+
+![MLE-to-loss recipe: assume noise → write PDF → take log → negate and sum|697](assets/loss-mle-recipe.svg)
+
+Each row of the table above is that recipe applied to a different PDF:
+
+![Gaussian → MSE, Laplace → MAE, Bernoulli → BCE|697](assets/loss-noise-instances.svg)
+
+Walk through Gaussian → MSE explicitly:
+
+$$P(y_i \mid x_i, \theta) = \frac{1}{\sqrt{2\pi}\sigma}\exp\!\left(-\frac{(y_i - f_\theta(x_i))^2}{2\sigma^2}\right)$$
+
+Take log: $\log P = -\frac{(y_i - f_\theta(x_i))^2}{2\sigma^2} + \text{const}$. Sum, flip sign, drop constants:
+
+$$\text{NLL} \propto \sum_i (y_i - f_\theta(x_i))^2$$
+
+That's MSE. The **squared** term isn't a design choice — it fell out of the Gaussian's exponent. Same drill for Laplace gives $|r|$ (that's MAE), for Bernoulli gives $-y\log p - (1-y)\log(1-p)$ (that's binary cross-entropy).
+
+So "I chose MSE" and "I assumed my residuals are Gaussian" are the **same statement**. Same optimization problem, same $\hat\theta$.
+
+#### Why MSE panics at outliers, and MAE doesn't
+
+Look at how fast each PDF decays as the residual grows. Both are normalized so their peak at zero is 1:
+
+| \|residual\| | Gaussian ∝ e^(−r²/2) | Laplace ∝ e^(−\|r\|) |
+| ------------ | -------------------- | -------------------- |
+| 0            | 1.000                | 1.000                |
+| 1            | 0.607                | 0.368                |
+| 2            | 0.135                | 0.135                |
+| 3            | 0.011                | 0.050                |
+| 4            | 0.0003               | 0.018                |
+| 5            | 0.000004             | 0.0067               |
+| 6            | 0.00000001           | 0.0025               |
+
+A residual of 5 is "1 in 270,000" under Gaussian, but "1 in 150" under Laplace. When MLE encounters that residual under the Gaussian assumption, the model literally believes it shouldn't have happened — so it rewrites $\theta$ hard to shrink that one residual, even if that worsens fit on the other honest points.
+
+The two shapes side by side (both peak at zero):
+
+![Gaussian has rounded top and thin tails; Laplace has a sharp spike and heavier tails|697](assets/pdf-gaussian-vs-laplace.svg)
+
+#### The loss shapes MLE actually minimizes
+
+That tail behavior propagates into the shape of the loss itself. Per-example loss as a function of residual $r$:
+
+| $r$  | MSE = $r^2$ | MAE = $\|r\|$ | Huber ($\delta$ = 1) |
+| ---- | ----------- | ------------- | -------------------- |
+| 0    | 0           | 0             | 0                    |
+| 0.5  | 0.25        | 0.5           | 0.125                |
+| 1    | 1           | 1             | 0.5                  |
+| 2    | **4**       | 2             | 1.5                  |
+| 3    | **9**       | 3             | 2.5                  |
+| 5    | **25**      | 5             | 4.5                  |
+| 10   | **100**     | 10            | 9.5                  |
+
+MSE grows **quadratically** — one point with $r = 10$ contributes as much loss as a hundred points with $r = 1$. A single outlier drowns out 100 good points. MAE grows **linearly** — an outlier's vote is bounded. Huber is quadratic near zero (efficient on the bulk) and linear far away (tolerant of outliers).
+
+![MSE curves quadratically, MAE stays linear, Huber tapers from quadratic near zero to linear at the tails|697](assets/loss-curves-mse-mae-huber.svg)
+
+#### What this does to a fit line
+
+Five points on a line, one bad sensor reading:
+
+![MSE fit tilts up to pacify the outlier; MAE fit ignores it and tracks the trend|697](assets/outlier-fit-mse-vs-mae.svg)
+
+MSE sees $r^2$ blow up and bends $\theta$ to reduce that one residual, even though it worsens fit on the four honest points. MAE weights the outlier the same as any residual of comparable size and stays flat.
+
+#### The decision, as a flow
+
+![Decision tree: bell-shaped residuals → MSE; otherwise pick MAE, Huber, Poisson NLL, or cross-entropy by target shape|697](assets/loss-decision-tree.svg)
+
+The habit worth building: before you pick a loss, **look at the residuals**. Losses are noise assumptions in disguise. Match the assumption to the data.
 
 ### Adding a prior: from MLE to MAP and regularization
 
@@ -377,6 +482,10 @@ The expected squared error breaks into three pieces. Each one tells you somethin
 - **Bias** — on average across many possible training sets, how far is your model from the truth? High bias = your model is *systematically* wrong (too simple — straight line trying to fit a curve). This is **underfitting**.
 - **Variance** — how much does your model change when you change the training set? High variance = your model latches onto noise (too flexible — fitting every wiggle in the data). This is **overfitting**.
 - **Irreducible noise** — the part you can't beat. Even a perfect model has some error because the world has randomness.
+
+The dartboard picture makes bias and variance concrete — each dart is one model trained on one dataset; repeated training gives the whole pattern:
+
+![2×2 bullseye grid — low/high bias × low/high variance, with 10 darts each showing centered-vs-off and tight-vs-scattered|697](assets/bias-variance-bullseye.svg)
 
 ### Why this is a *trade-off*
 
@@ -425,6 +534,10 @@ These all reduce to: *given some randomness, can I trust this difference?*
 | You decide not to reject | Correct | **Type II** (false negative) — rate $\beta$ |
 
 - **Power** = $1 - \beta$ — the chance of detecting a real effect. Small samples = low power = you'll miss real effects.
+
+The two shaded tails below are exactly $\alpha$ and $\beta$. The dashed line is the decision threshold; sliding it left or right trades one error for the other:
+
+![Two overlapping bell curves — H₀ centered at 0 and H₁ centered at 2, with red α tail on H₀'s right, orange β tail on H₁'s left, and purple power region highlighted|697](assets/type-i-ii-errors.svg)
 
 ### Confidence intervals
 

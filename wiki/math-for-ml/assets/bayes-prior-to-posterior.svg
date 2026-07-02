@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .prior  { stroke: #2563eb; stroke-width: 2.5; fill: none; }
+    .like   { stroke: #64748b; stroke-width: 2.5; fill: none; stroke-dasharray: 6 4; }
+    .post   { stroke: #dc2626; stroke-width: 3;   fill: none; }
+    .prior-fill { fill: #2563eb; opacity: 0.10; }
+    .post-fill  { fill: #dc2626; opacity: 0.12; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 12px; }
+    .title  { font-weight: 700; font-size: 17px; fill: #0f172a; }
+    .note   { fill: #475569; font-size: 12px; }
+    .callout{ font-size: 13px; fill: #0f172a; }
+    .arrow  { stroke: #475569; stroke-width: 1.5; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .prior { stroke: #60a5fa; }
+      .like  { stroke: #cbd5e1; }
+      .post  { stroke: #f87171; }
+      .prior-fill { fill: #60a5fa; opacity: 0.18; }
+      .post-fill  { fill: #f87171; opacity: 0.20; }
+      .txt, .title, .callout { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+      .arrow { stroke: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="400" y="26" text-anchor="middle">Prior × Likelihood → Posterior — Bayes' theorem in one picture</text>
+  <text class="note"  x="400" y="46" text-anchor="middle">A biased coin.  You start believing p ≈ 0.5, then observe 8 heads out of 10 flips.  Watch belief shift.</text>
+
+  <!--
+    x-axis: p ∈ [0, 1].  Screen: x = 80 (p=0) to 720 (p=1).  Scale = 640 per unit.
+    y-axis: relative density.  Baseline y=380, top y=90 → 290 px available. Peak curves normalized to 1.0.
+
+    Curves (relative heights, peak = 1.0):
+      Prior:      Beta(2,2). Peak at 0.5, value ~1.5 raw. Normalize so peak=1.0.
+      Likelihood: p^8(1-p)^2. Peak at 0.8. Normalize peak to 1.0.
+      Posterior:  Beta(10,4) = p^9(1-p)^3. Peak at 9/12=0.75. Normalize peak to 1.0.
+
+    Y mapping: y = 380 - 290*h  where h ∈ [0,1].
+  -->
+
+  <!-- Axes -->
+  <line class="ax" x1="80" y1="380" x2="720" y2="380"/>
+  <line class="ax" x1="80" y1="80"  x2="80"  y2="385"/>
+
+  <!-- x-ticks -->
+  <g>
+    <line class="grid" x1="208" y1="90" x2="208" y2="380"/><text class="tick" x="208" y="398" text-anchor="middle">0.2</text>
+    <line class="grid" x1="336" y1="90" x2="336" y2="380"/><text class="tick" x="336" y="398" text-anchor="middle">0.4</text>
+    <line class="grid" x1="400" y1="90" x2="400" y2="380"/><text class="tick" x="400" y="398" text-anchor="middle">0.5</text>
+    <line class="grid" x1="464" y1="90" x2="464" y2="380"/><text class="tick" x="464" y="398" text-anchor="middle">0.6</text>
+    <line class="grid" x1="592" y1="90" x2="592" y2="380"/><text class="tick" x="592" y="398" text-anchor="middle">0.8</text>
+    <text class="tick" x="80"  y="398" text-anchor="middle">0</text>
+    <text class="tick" x="720" y="398" text-anchor="middle">1</text>
+    <text class="tick" x="400" y="418" text-anchor="middle">p  =  P(heads)</text>
+  </g>
+
+  <!-- y-ticks -->
+  <g>
+    <line class="grid" x1="80" y1="235" x2="720" y2="235"/><text class="tick" x="75" y="239" text-anchor="end">0.5</text>
+    <line class="grid" x1="80" y1="90"  x2="720" y2="90"/><text class="tick"  x="75" y="94"  text-anchor="end">1.0</text>
+    <text class="tick" x="75" y="384" text-anchor="end">0</text>
+    <text class="tick" x="45" y="235" text-anchor="middle" transform="rotate(-90 45,235)">relative density</text>
+  </g>
+
+  <!-- PRIOR: Beta(2,2)  ∝ p(1-p).  Peak at p=0.5, peak value = 0.25.
+       Normalize: h(p) = 4*p*(1-p). Sample 21 points p=0.05..0.95.
+       p → x = 80 + 640*p.   h(0)=0, h(0.1)=0.36, h(0.2)=0.64, h(0.3)=0.84, h(0.4)=0.96, h(0.5)=1.0, symmetric.
+       y = 380 - 290*h.  y(0)=380, y(0.1)=380-104.4=275.6, y(0.2)=380-185.6=194.4, y(0.3)=380-243.6=136.4,
+       y(0.4)=380-278.4=101.6, y(0.5)=380-290=90. -->
+  <path class="prior-fill" d="
+    M 80 380
+    L 80 380
+    L 144 275.6
+    L 208 194.4
+    L 272 136.4
+    L 336 101.6
+    L 400 90
+    L 464 101.6
+    L 528 136.4
+    L 592 194.4
+    L 656 275.6
+    L 720 380
+    L 720 380 Z
+  "/>
+  <path class="prior" d="
+    M 80 380
+    L 144 275.6
+    L 208 194.4
+    L 272 136.4
+    L 336 101.6
+    L 400 90
+    L 464 101.6
+    L 528 136.4
+    L 592 194.4
+    L 656 275.6
+    L 720 380
+  "/>
+
+  <!-- LIKELIHOOD: p^8(1-p)^2, peak at p=0.8, raw peak = 0.8^8 * 0.2^2 = 0.1678*0.04 = 0.006711.
+       Normalize h(p) = p^8(1-p)^2 / 0.006711.
+       Sample values (compute):
+         p=0.0 h=0
+         p=0.1 h= 1e-8*0.81 / 0.006711  ≈ 0
+         p=0.2 h= 2.56e-6*0.64/0.006711 ≈ 0.00024  (~0)
+         p=0.3 h= 6.561e-5*0.49/0.006711 ≈ 0.00479
+         p=0.4 h= 6.554e-4*0.36/0.006711 ≈ 0.0352
+         p=0.5 h= 0.003906*0.25/0.006711 ≈ 0.1455
+         p=0.6 h= 0.01680*0.16/0.006711 ≈ 0.4006
+         p=0.7 h= 0.05765*0.09/0.006711 ≈ 0.7735
+         p=0.75 h= 0.1001*0.0625/0.006711 ≈ 0.9327
+         p=0.8 h= 0.1678*0.04/0.006711 = 1.0
+         p=0.85 h= 0.2725*0.0225/0.006711 ≈ 0.9138
+         p=0.9 h= 0.4305*0.01/0.006711 ≈ 0.6414
+         p=0.95 h= 0.6634*0.0025/0.006711 ≈ 0.2472
+         p=1.0 h= 0
+       y map -->
+  <path class="like" d="
+    M 80 380
+    L 144 380
+    L 208 379.9
+    L 272 378.6
+    L 336 369.8
+    L 400 337.8
+    L 464 263.8
+    L 528 155.6
+    L 560 109.5
+    L 592 90
+    L 624 114.9
+    L 656 194.0
+    L 688 308.3
+    L 720 380
+  "/>
+
+  <!-- POSTERIOR: Beta(10,4) ∝ p^9(1-p)^3, peak at p=9/12=0.75, raw peak = 0.75^9*0.25^3 = 0.0751*0.01563 = 0.001174.
+       h(p) = p^9(1-p)^3 / 0.001174.
+       Values:
+         p=0.0..0.3 ~0
+         p=0.4: 0.4^9 * 0.6^3 = 2.62e-4 * 0.216 = 5.66e-5 → h=0.0482
+         p=0.45: 0.45^9 = 7.57e-4 * 0.55^3(=0.1664) = 1.259e-4 → h=0.1073
+         p=0.5: 0.5^9 = 1.953e-3 * 0.125 = 2.44e-4 → h=0.2079
+         p=0.55: 0.55^9=0.004605 * 0.4^3(0.45^3? no)  actually (1-0.55)^3=0.45^3=0.0911. 0.004605*0.0911=4.196e-4 → h=0.3573
+         p=0.6: 0.6^9=0.01007 * 0.4^3=0.064 → 6.446e-4 → h=0.5490
+         p=0.65: 0.65^9=0.02071 * 0.35^3=0.04288 → 8.881e-4 → h=0.7563
+         p=0.7: 0.7^9=0.04035 * 0.3^3=0.027 → 1.0894e-3 → h=0.9278
+         p=0.75: peak → h=1.0
+         p=0.8: 0.8^9=0.1342 * 0.2^3=0.008 → 1.0736e-3 → h=0.9143
+         p=0.85: 0.85^9=0.2316 * 0.15^3=0.003375 → 7.816e-4 → h=0.6658
+         p=0.9: 0.9^9=0.3874 * 0.1^3=0.001 → 3.874e-4 → h=0.3299
+         p=0.95: 0.95^9=0.6302 * 0.05^3=1.25e-4 → 7.878e-5 → h=0.0671
+         p=1.0: 0 -->
+  <path class="post-fill" d="
+    M 80 380
+    L 80 380
+    L 336 380
+    L 400 319.7
+    L 464 220.8
+    L 528 110.9
+    L 560 92
+    L 592 105.2
+    L 624 189.6
+    L 656 284.3
+    L 688 360.5
+    L 720 380
+    L 720 380 Z
+  "/>
+  <path class="post" d="
+    M 80 380
+    L 336 380
+    L 368 366
+    L 400 319.7
+    L 432 276.4
+    L 464 220.8
+    L 496 156.4
+    L 528 110.9
+    L 560 92
+    L 592 105.2
+    L 624 189.6
+    L 656 284.3
+    L 688 360.5
+    L 720 380
+  "/>
+
+  <!-- Legend -->
+  <rect x="90" y="102" width="228" height="90" rx="6" fill="rgba(255,255,255,0.85)" stroke="#cbd5e1"/>
+  <line class="prior" x1="105" y1="122" x2="145" y2="122"/>
+  <text class="txt"   x="155" y="126">Prior — Beta(2, 2)</text>
+  <line class="like"  x1="105" y1="150" x2="145" y2="150"/>
+  <text class="txt"   x="155" y="154">Likelihood — 8 H / 10 flips</text>
+  <line class="post"  x1="105" y1="178" x2="145" y2="178"/>
+  <text class="txt"   x="155" y="182">Posterior — Beta(10, 4)</text>
+
+  <!-- Peak markers -->
+  <circle cx="400" cy="90" r="3" fill="#2563eb"/>
+  <text class="callout" x="400" y="78" text-anchor="middle">prior peak</text>
+  <text class="callout" x="400" y="64" text-anchor="middle">p ≈ 0.5</text>
+
+  <circle cx="592" cy="90" r="3" fill="#64748b"/>
+  <text class="callout" x="592" y="78" text-anchor="middle">likelihood peak</text>
+  <text class="callout" x="592" y="64" text-anchor="middle">p = 0.8</text>
+
+  <circle cx="560" cy="92" r="3" fill="#dc2626"/>
+
+  <!-- Formula -->
+  <text class="callout" x="710" y="140" text-anchor="end" font-weight="700">P(θ | data)  ∝  P(data | θ)  ·  P(θ)</text>
+  <text class="callout" x="710" y="160" text-anchor="end">posterior     likelihood   prior</text>
+  <text class="note"    x="710" y="180" text-anchor="end">"combine what you saw with what you already believed."</text>
+
+  <!-- Movement arrow -->
+  <path class="arrow" d="M 400 245 Q 480 210 555 240" marker-end="url(#arh)"/>
+  <defs>
+    <marker id="arh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <text class="callout" x="480" y="210" text-anchor="middle">belief shifts toward the data</text>
+
+  <!-- Bottom caption -->
+  <text class="note" x="400" y="446" text-anchor="middle">A Beta prior + Bernoulli data → Beta posterior (conjugate).  The prior anchors us to 0.5; the data pulls us toward 0.8; the posterior lands at 0.75 — a weighted compromise.</text>
+</svg>

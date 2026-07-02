@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
+  <style>
+    .ax      { stroke: #64748b; stroke-width: 1; }
+    .grid    { stroke: #cbd5e1; stroke-width: 0.7; stroke-dasharray: 3 4; }
+    .act     { stroke: #2563eb; stroke-width: 2.5; fill: none; }
+    .der     { stroke: #dc2626; stroke-width: 2.5; fill: none; }
+    .flat    { fill: #fecaca; opacity: 0.45; }
+    .tick    { fill: #475569; font-size: 10px; }
+    .title   { font-weight: 700; font-size: 15px; fill: #0f172a; }
+    .subtitle { font-weight: 700; font-size: 13px; fill: #0f172a; }
+    .warn    { fill: #b91c1c; font-size: 10px; font-style: italic; font-weight: 700; }
+    .row-lbl { fill: #0f172a; font-weight: 700; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      .ax      { stroke: #94a3b8; }
+      .grid    { stroke: #475569; }
+      .act     { stroke: #60a5fa; }
+      .der     { stroke: #f87171; }
+      .flat    { fill: #7f1d1d; opacity: 0.35; }
+      .tick    { fill: #cbd5e1; }
+      .title, .subtitle, .row-lbl { fill: #e2e8f0; }
+      .warn    { fill: #fca5a5; }
+    }
+  </style>
+
+  <text class="title" x="480" y="22" text-anchor="middle">Activations (blue) and their derivatives (red) — pink zones = vanishing gradient</text>
+
+  <!-- Each plot is 200 wide, 140 tall. x range [-5,5] → 20 units per unit x. y range: activations [-1.5, 1.5] or [0, 5]. -->
+  <!-- Origin of each plot is at (px + 100, py + 70) with x-scale 20/unit. -->
+
+  <!-- Row 1 labels -->
+  <text class="row-lbl" x="20" y="90">Activation</text>
+  <!-- Row 2 labels -->
+  <text class="row-lbl" x="20" y="290">Derivative</text>
+
+  <!-- ==================== Column 1: Sigmoid ==================== -->
+  <!-- Top plot @ (100..300, 40..180), origin (200,110). y-range [0,1] → 100 units. -->
+  <g>
+    <text class="subtitle" x="200" y="40" text-anchor="middle">σ(x) = 1/(1+e⁻ˣ)</text>
+    <line class="grid" x1="100" y1="110" x2="300" y2="110"/>  <!-- y=0.5 line -->
+    <line class="ax" x1="200" y1="40" x2="200" y2="180"/>
+    <line class="ax" x1="100" y1="180" x2="300" y2="180"/>
+    <text class="tick" x="200" y="192" text-anchor="middle">0</text>
+    <text class="tick" x="100" y="192" text-anchor="middle">-5</text>
+    <text class="tick" x="300" y="192" text-anchor="middle">5</text>
+    <text class="tick" x="196" y="184" text-anchor="end">0</text>
+    <text class="tick" x="196" y="115" text-anchor="end">.5</text>
+    <text class="tick" x="196" y="47" text-anchor="end">1</text>
+    <!-- Sigmoid curve: 21 sample points x=-5..5. y = 1/(1+exp(-x)). screen: (200 + 20x, 180 - 140*y) -->
+    <path class="act" d="
+      M 100 179.06
+      L 110 178.46
+      L 120 177.71
+      L 130 176.76
+      L 140 175.57
+      L 150 174.02
+      L 160 172.02
+      L 170 169.46
+      L 180 166.16
+      L 190 161.88
+      L 200 110
+      L 210 58.12
+      L 220 53.84
+      L 230 50.54
+      L 240 47.98
+      L 250 45.98
+      L 260 44.43
+      L 270 43.24
+      L 280 42.29
+      L 290 41.54
+      L 300 40.94
+    "/>
+  </g>
+  <!-- Bottom plot @ (100..300, 230..370), origin (200,370). y-range [0,0.3] → 466 units per unit y. Use 400 for 0.3=full. -->
+  <g>
+    <line class="ax" x1="200" y1="230" x2="200" y2="370"/>
+    <line class="ax" x1="100" y1="370" x2="300" y2="370"/>
+    <text class="tick" x="100" y="382" text-anchor="middle">-5</text>
+    <text class="tick" x="300" y="382" text-anchor="middle">5</text>
+    <text class="tick" x="196" y="374" text-anchor="end">0</text>
+    <text class="tick" x="196" y="237" text-anchor="end">.25</text>
+    <!-- Flat regions: |x|>3 → derivative ~ 0. Shade the pink zones on both sides. -->
+    <rect class="flat" x="100" y="230" width="60" height="140"/>
+    <rect class="flat" x="240" y="230" width="60" height="140"/>
+    <!-- Derivative σ'(x) = σ(x)(1-σ(x)). Peak 0.25 at x=0. screen y = 370 - 560*σ'(x). -->
+    <!-- Values: σ'(-5)≈0.0066, -4≈0.0177, -3≈0.045, -2≈0.105, -1≈0.197, 0=.25, 1≈0.197, 2≈0.105, 3≈0.045, 4≈0.0177, 5≈0.0066 -->
+    <path class="der" d="
+      M 100 366.30
+      L 120 360.09
+      L 140 344.80
+      L 160 311.20
+      L 180 259.68
+      L 200 230
+      L 220 259.68
+      L 240 311.20
+      L 260 344.80
+      L 280 360.09
+      L 300 366.30
+    "/>
+    <text class="warn" x="200" y="410" text-anchor="middle">saturates for |x| &gt; 3</text>
+  </g>
+
+  <!-- ==================== Column 2: tanh ==================== -->
+  <g>
+    <text class="subtitle" x="440" y="40" text-anchor="middle">tanh(x)</text>
+    <line class="grid" x1="340" y1="110" x2="540" y2="110"/>
+    <line class="ax" x1="440" y1="40" x2="440" y2="180"/>
+    <line class="ax" x1="340" y1="110" x2="540" y2="110"/>
+    <text class="tick" x="340" y="192" text-anchor="middle">-5</text>
+    <text class="tick" x="540" y="192" text-anchor="middle">5</text>
+    <text class="tick" x="436" y="47" text-anchor="end">1</text>
+    <text class="tick" x="436" y="180" text-anchor="end">-1</text>
+    <text class="tick" x="436" y="115" text-anchor="end">0</text>
+    <!-- tanh curve: sample x=-5..5. y-scale: 70 units per unit y (range [-1,1]). screen: (440 + 20x, 110 - 70*tanh(x)) -->
+    <path class="act" d="
+      M 340 179.51
+      L 360 179.36
+      L 380 179.05
+      L 400 178.20
+      L 420 175.87
+      L 440 110
+      L 460 44.13
+      L 480 41.80
+      L 500 40.95
+      L 520 40.64
+      L 540 40.49
+    "/>
+  </g>
+  <g>
+    <line class="ax" x1="440" y1="230" x2="440" y2="370"/>
+    <line class="ax" x1="340" y1="370" x2="540" y2="370"/>
+    <text class="tick" x="340" y="382" text-anchor="middle">-5</text>
+    <text class="tick" x="540" y="382" text-anchor="middle">5</text>
+    <text class="tick" x="436" y="374" text-anchor="end">0</text>
+    <text class="tick" x="436" y="237" text-anchor="end">1</text>
+    <!-- Flat regions: |x|>2.5 -->
+    <rect class="flat" x="340" y="230" width="50" height="140"/>
+    <rect class="flat" x="490" y="230" width="50" height="140"/>
+    <!-- Derivative 1 - tanh(x)^2. Peak 1 at x=0. -->
+    <!-- values: -5: 0.00018, -4: 0.00134, -3: 0.00987, -2: 0.0707, -1: 0.4200, 0: 1.0. y-scale: 140 per unit. screen: 370 - 140*d. -->
+    <path class="der" d="
+      M 340 369.97
+      L 360 369.81
+      L 380 368.62
+      L 400 360.10
+      L 420 311.20
+      L 440 230
+      L 460 311.20
+      L 480 360.10
+      L 500 368.62
+      L 520 369.81
+      L 540 369.97
+    "/>
+    <text class="warn" x="440" y="410" text-anchor="middle">saturates for |x| &gt; 2.5</text>
+  </g>
+
+  <!-- ==================== Column 3: ReLU ==================== -->
+  <g>
+    <text class="subtitle" x="680" y="40" text-anchor="middle">ReLU(x) = max(0, x)</text>
+    <line class="grid" x1="580" y1="180" x2="780" y2="180"/>
+    <line class="ax" x1="680" y1="40" x2="680" y2="180"/>
+    <line class="ax" x1="580" y1="180" x2="780" y2="180"/>
+    <text class="tick" x="580" y="192" text-anchor="middle">-5</text>
+    <text class="tick" x="780" y="192" text-anchor="middle">5</text>
+    <text class="tick" x="676" y="184" text-anchor="end">0</text>
+    <text class="tick" x="676" y="47" text-anchor="end">5</text>
+    <!-- ReLU: y=0 for x<=0, y=x otherwise. y-scale: 28 units/unit (max=5→140). screen: (680+20x, 180-28x when x>0). -->
+    <path class="act" d="
+      M 580 180
+      L 680 180
+      L 780 40
+    "/>
+  </g>
+  <g>
+    <line class="ax" x1="680" y1="230" x2="680" y2="370"/>
+    <line class="ax" x1="580" y1="370" x2="780" y2="370"/>
+    <text class="tick" x="580" y="382" text-anchor="middle">-5</text>
+    <text class="tick" x="780" y="382" text-anchor="middle">5</text>
+    <text class="tick" x="676" y="374" text-anchor="end">0</text>
+    <text class="tick" x="676" y="237" text-anchor="end">1</text>
+    <!-- Flat region: entire x<0 half -->
+    <rect class="flat" x="580" y="230" width="100" height="140"/>
+    <!-- Derivative: 0 for x<0, 1 for x>0. -->
+    <line class="der" x1="580" y1="370" x2="680" y2="370"/>
+    <line class="der" x1="680" y1="230" x2="780" y2="230"/>
+    <!-- vertical jump -->
+    <line class="der" x1="680" y1="370" x2="680" y2="230" stroke-dasharray="3 3"/>
+    <text class="warn" x="630" y="410" text-anchor="middle">dead: x &lt; 0 → 0</text>
+  </g>
+
+  <!-- ==================== Column 4: GELU ==================== -->
+  <g>
+    <text class="subtitle" x="890" y="40" text-anchor="middle">GELU(x)</text>
+    <line class="grid" x1="790" y1="140" x2="990" y2="140"/>
+    <line class="ax" x1="890" y1="40" x2="890" y2="180"/>
+    <line class="ax" x1="790" y1="140" x2="990" y2="140"/>
+    <text class="tick" x="790" y="192" text-anchor="middle">-5</text>
+    <text class="tick" x="990" y="192" text-anchor="middle">5</text>
+    <text class="tick" x="886" y="145" text-anchor="end">0</text>
+    <text class="tick" x="886" y="47" text-anchor="end">5</text>
+    <!-- GELU approx: x*Φ(x). y-scale: 28 units/unit, baseline at y=140. Values (approx): -5:~0, -4:~-0.0001, -3:~-0.0036, -2:~-0.0454, -1:~-0.159, -0.5:~-0.154, 0:0, 0.5:~0.346, 1:0.841, 2:1.955, 3:2.996, 4:3.9999, 5:5 -->
+    <!-- screen: (890+20x, 140-28y). -->
+    <path class="act" d="
+      M 790 140
+      L 810 140
+      L 830 140.10
+      L 850 141.27
+      L 870 144.45
+      L 880 144.30
+      L 890 140
+      L 900 130.31
+      L 910 116.45
+      L 930 85.26
+      L 950 56.11
+      L 970 28.00
+      L 990 0
+    "/>
+  </g>
+  <g>
+    <line class="ax" x1="890" y1="230" x2="890" y2="370"/>
+    <line class="ax" x1="790" y1="370" x2="990" y2="370"/>
+    <text class="tick" x="790" y="382" text-anchor="middle">-5</text>
+    <text class="tick" x="990" y="382" text-anchor="middle">5</text>
+    <text class="tick" x="886" y="374" text-anchor="end">0</text>
+    <text class="tick" x="886" y="237" text-anchor="end">1</text>
+    <!-- Flat region only on far-left (x < -3) -->
+    <rect class="flat" x="790" y="230" width="40" height="140"/>
+    <!-- GELU derivative approx values: -5:~0, -4:~0.0004, -3:~0.008, -2:~-0.089 (slightly neg), -1:~-0.083, 0:0.5, 1:1.083, 2:1.089, 3:~1.008, 4:1, 5:1 -->
+    <!-- y-scale: 140 per unit, baseline y=370. screen y = 370 - 140*d. clamp for negatives around -0.09 → 370+12.6 = ~383. -->
+    <path class="der" d="
+      M 790 370
+      L 810 369.94
+      L 830 368.88
+      L 850 382.46
+      L 870 381.62
+      L 890 300
+      L 910 218.38
+      L 930 217.54
+      L 950 231.12
+      L 970 230
+      L 990 230
+    "/>
+    <text class="warn" x="890" y="410" text-anchor="middle">smoother than ReLU</text>
+  </g>
+</svg>

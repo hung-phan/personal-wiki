@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .bell   { stroke: #64748b; stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; opacity: 0.8; }
+    .rowU   { fill: #2563eb; opacity: 0.85; }
+    .rowE   { fill: #f97316; opacity: 0.85; }
+    .rowB   { fill: #059669; opacity: 0.85; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 11px; }
+    .title  { font-weight: 700; font-size: 17px; fill: #0f172a; }
+    .rowlbl { font-weight: 600; font-size: 13px; fill: #0f172a; }
+    .collbl { font-weight: 700; font-size: 14px; fill: #0f172a; }
+    .note   { fill: #475569; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .bell { stroke: #cbd5e1; }
+      .rowU { fill: #60a5fa; }
+      .rowE { fill: #fb923c; }
+      .rowB { fill: #6ee7b7; }
+      .txt, .title, .rowlbl, .collbl { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="450" y="26" text-anchor="middle">Central Limit Theorem — averages converge to Normal, no matter the source</text>
+  <text class="note"  x="450" y="46" text-anchor="middle">Rows: source distribution.  Columns: distribution of the sample mean.  Dashed = reference bell.</text>
+
+  <!-- Column headers -->
+  <text class="collbl" x="290" y="80" text-anchor="middle">n = 1  (the source itself)</text>
+  <text class="collbl" x="510" y="80" text-anchor="middle">n = 5</text>
+  <text class="collbl" x="730" y="80" text-anchor="middle">n = 30</text>
+
+  <!-- Row labels -->
+  <text class="rowlbl" x="20" y="180" text-anchor="start">Uniform</text>
+  <text class="note"   x="20" y="196" text-anchor="start">on [0,1]</text>
+  <text class="rowlbl" x="20" y="340" text-anchor="start">Exponential(1)</text>
+  <text class="note"   x="20" y="356" text-anchor="start">skewed</text>
+  <text class="rowlbl" x="20" y="500" text-anchor="start">Bimodal</text>
+  <text class="note"   x="20" y="516" text-anchor="start">two spikes</text>
+
+  <!-- ============================================================ -->
+  <!-- Row 1: Uniform. -->
+  <!-- Cell U-n1 (flat) -->
+  <g>
+    <line class="ax" x1="180" y1="230" x2="400" y2="230"/>
+    <line class="ax" x1="180" y1="100" x2="180" y2="230"/>
+    <rect class="rowU" x="185" y="150" width="21" height="80"/>
+    <rect class="rowU" x="207" y="150" width="21" height="80"/>
+    <rect class="rowU" x="229" y="150" width="21" height="80"/>
+    <rect class="rowU" x="251" y="150" width="21" height="80"/>
+    <rect class="rowU" x="273" y="150" width="21" height="80"/>
+    <rect class="rowU" x="295" y="150" width="21" height="80"/>
+    <rect class="rowU" x="317" y="150" width="21" height="80"/>
+    <rect class="rowU" x="339" y="150" width="21" height="80"/>
+    <rect class="rowU" x="361" y="150" width="21" height="80"/>
+    <rect class="rowU" x="383" y="150" width="12" height="80"/>
+    <!-- reference bell (very wide) -->
+    <path class="bell" d="M 180 226 Q 200 224 220 220 T 260 210 T 290 200 T 320 210 T 360 220 T 395 226"/>
+    <text class="tick" x="180" y="244" text-anchor="middle">0</text>
+    <text class="tick" x="395" y="244" text-anchor="middle">1</text>
+  </g>
+
+  <!-- Cell U-n5 (soft dome) -->
+  <g>
+    <line class="ax" x1="400" y1="230" x2="620" y2="230"/>
+    <line class="ax" x1="400" y1="100" x2="400" y2="230"/>
+    <rect class="rowU" x="405" y="220" width="21" height="10"/>
+    <rect class="rowU" x="427" y="200" width="21" height="30"/>
+    <rect class="rowU" x="449" y="170" width="21" height="60"/>
+    <rect class="rowU" x="471" y="140" width="21" height="90"/>
+    <rect class="rowU" x="493" y="120" width="21" height="110"/>
+    <rect class="rowU" x="515" y="140" width="21" height="90"/>
+    <rect class="rowU" x="537" y="170" width="21" height="60"/>
+    <rect class="rowU" x="559" y="200" width="21" height="30"/>
+    <rect class="rowU" x="581" y="215" width="21" height="15"/>
+    <rect class="rowU" x="603" y="225" width="12" height="5"/>
+    <path class="bell" d="M 400 228 Q 430 224 460 210 T 505 118 T 550 210 T 590 224 T 615 228"/>
+    <text class="tick" x="400" y="244" text-anchor="middle">0</text>
+    <text class="tick" x="507" y="244" text-anchor="middle">½</text>
+    <text class="tick" x="615" y="244" text-anchor="middle">1</text>
+  </g>
+
+  <!-- Cell U-n30 (tight bell) -->
+  <g>
+    <line class="ax" x1="620" y1="230" x2="840" y2="230"/>
+    <line class="ax" x1="620" y1="100" x2="620" y2="230"/>
+    <rect class="rowU" x="625" y="228" width="21" height="2"/>
+    <rect class="rowU" x="647" y="228" width="21" height="2"/>
+    <rect class="rowU" x="669" y="225" width="21" height="5"/>
+    <rect class="rowU" x="691" y="205" width="21" height="25"/>
+    <rect class="rowU" x="713" y="130" width="21" height="100"/>
+    <rect class="rowU" x="735" y="105" width="21" height="125"/>
+    <rect class="rowU" x="757" y="130" width="21" height="100"/>
+    <rect class="rowU" x="779" y="205" width="21" height="25"/>
+    <rect class="rowU" x="801" y="225" width="21" height="5"/>
+    <rect class="rowU" x="823" y="228" width="12" height="2"/>
+    <path class="bell" d="M 620 229 Q 670 229 700 220 T 745 104 T 790 220 T 830 229 L 835 229"/>
+    <text class="tick" x="620" y="244" text-anchor="middle">0</text>
+    <text class="tick" x="727" y="244" text-anchor="middle">½</text>
+    <text class="tick" x="835" y="244" text-anchor="middle">1</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- Row 2: Exponential. -->
+  <!-- Cell E-n1 (decaying) -->
+  <g>
+    <line class="ax" x1="180" y1="390" x2="400" y2="390"/>
+    <line class="ax" x1="180" y1="260" x2="180" y2="390"/>
+    <rect class="rowE" x="185" y="265" width="21" height="125"/>
+    <rect class="rowE" x="207" y="290" width="21" height="100"/>
+    <rect class="rowE" x="229" y="315" width="21" height="75"/>
+    <rect class="rowE" x="251" y="335" width="21" height="55"/>
+    <rect class="rowE" x="273" y="352" width="21" height="38"/>
+    <rect class="rowE" x="295" y="365" width="21" height="25"/>
+    <rect class="rowE" x="317" y="373" width="21" height="17"/>
+    <rect class="rowE" x="339" y="379" width="21" height="11"/>
+    <rect class="rowE" x="361" y="383" width="21" height="7"/>
+    <rect class="rowE" x="383" y="386" width="12" height="4"/>
+    <path class="bell" d="M 180 265 Q 210 285 240 320 T 300 370 T 360 386 T 395 389"/>
+    <text class="tick" x="180" y="404" text-anchor="middle">0</text>
+    <text class="tick" x="395" y="404" text-anchor="middle">5+</text>
+  </g>
+
+  <!-- Cell E-n5 (skewed hump) -->
+  <g>
+    <line class="ax" x1="400" y1="390" x2="620" y2="390"/>
+    <line class="ax" x1="400" y1="260" x2="400" y2="390"/>
+    <rect class="rowE" x="405" y="370" width="21" height="20"/>
+    <rect class="rowE" x="427" y="330" width="21" height="60"/>
+    <rect class="rowE" x="449" y="285" width="21" height="105"/>
+    <rect class="rowE" x="471" y="270" width="21" height="120"/>
+    <rect class="rowE" x="493" y="285" width="21" height="105"/>
+    <rect class="rowE" x="515" y="315" width="21" height="75"/>
+    <rect class="rowE" x="537" y="345" width="21" height="45"/>
+    <rect class="rowE" x="559" y="365" width="21" height="25"/>
+    <rect class="rowE" x="581" y="378" width="21" height="12"/>
+    <rect class="rowE" x="603" y="385" width="12" height="5"/>
+    <path class="bell" d="M 400 386 Q 430 375 460 315 T 490 268 T 540 340 T 590 385 T 615 389"/>
+    <text class="tick" x="400" y="404" text-anchor="middle">0</text>
+    <text class="tick" x="490" y="404" text-anchor="middle">1</text>
+    <text class="tick" x="615" y="404" text-anchor="middle">2</text>
+  </g>
+
+  <!-- Cell E-n30 (tight bell) -->
+  <g>
+    <line class="ax" x1="620" y1="390" x2="840" y2="390"/>
+    <line class="ax" x1="620" y1="260" x2="620" y2="390"/>
+    <rect class="rowE" x="625" y="388" width="21" height="2"/>
+    <rect class="rowE" x="647" y="385" width="21" height="5"/>
+    <rect class="rowE" x="669" y="365" width="21" height="25"/>
+    <rect class="rowE" x="691" y="320" width="21" height="70"/>
+    <rect class="rowE" x="713" y="278" width="21" height="112"/>
+    <rect class="rowE" x="735" y="265" width="21" height="125"/>
+    <rect class="rowE" x="757" y="285" width="21" height="105"/>
+    <rect class="rowE" x="779" y="330" width="21" height="60"/>
+    <rect class="rowE" x="801" y="370" width="21" height="20"/>
+    <rect class="rowE" x="823" y="385" width="12" height="5"/>
+    <path class="bell" d="M 620 389 Q 670 389 700 340 T 745 264 T 790 340 T 830 389 L 835 389"/>
+    <text class="tick" x="620" y="404" text-anchor="middle">0.5</text>
+    <text class="tick" x="727" y="404" text-anchor="middle">1</text>
+    <text class="tick" x="835" y="404" text-anchor="middle">1.5</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- Row 3: Bimodal. -->
+  <!-- Cell B-n1 (two spikes) -->
+  <g>
+    <line class="ax" x1="180" y1="550" x2="400" y2="550"/>
+    <line class="ax" x1="180" y1="420" x2="180" y2="550"/>
+    <rect class="rowB" x="185" y="548" width="21" height="2"/>
+    <rect class="rowB" x="207" y="545" width="21" height="5"/>
+    <rect class="rowB" x="229" y="435" width="21" height="115"/>
+    <rect class="rowB" x="251" y="425" width="21" height="125"/>
+    <rect class="rowB" x="273" y="548" width="21" height="2"/>
+    <rect class="rowB" x="295" y="548" width="21" height="2"/>
+    <rect class="rowB" x="317" y="435" width="21" height="115"/>
+    <rect class="rowB" x="339" y="425" width="21" height="125"/>
+    <rect class="rowB" x="361" y="545" width="21" height="5"/>
+    <rect class="rowB" x="383" y="548" width="12" height="2"/>
+    <path class="bell" d="M 180 546 Q 230 540 260 500 T 290 540 T 330 500 T 360 540 T 395 548"/>
+    <text class="tick" x="180" y="564" text-anchor="middle">0</text>
+    <text class="tick" x="253" y="564" text-anchor="middle">0.2</text>
+    <text class="tick" x="325" y="564" text-anchor="middle">0.8</text>
+    <text class="tick" x="395" y="564" text-anchor="middle">1</text>
+  </g>
+
+  <!-- Cell B-n5 (smoothed) -->
+  <g>
+    <line class="ax" x1="400" y1="550" x2="620" y2="550"/>
+    <line class="ax" x1="400" y1="420" x2="400" y2="550"/>
+    <rect class="rowB" x="405" y="540" width="21" height="10"/>
+    <rect class="rowB" x="427" y="510" width="21" height="40"/>
+    <rect class="rowB" x="449" y="475" width="21" height="75"/>
+    <rect class="rowB" x="471" y="450" width="21" height="100"/>
+    <rect class="rowB" x="493" y="430" width="21" height="120"/>
+    <rect class="rowB" x="515" y="450" width="21" height="100"/>
+    <rect class="rowB" x="537" y="475" width="21" height="75"/>
+    <rect class="rowB" x="559" y="510" width="21" height="40"/>
+    <rect class="rowB" x="581" y="535" width="21" height="15"/>
+    <rect class="rowB" x="603" y="545" width="12" height="5"/>
+    <path class="bell" d="M 400 546 Q 430 540 460 500 T 505 428 T 550 500 T 590 540 T 615 548"/>
+    <text class="tick" x="400" y="564" text-anchor="middle">0</text>
+    <text class="tick" x="507" y="564" text-anchor="middle">½</text>
+    <text class="tick" x="615" y="564" text-anchor="middle">1</text>
+  </g>
+
+  <!-- Cell B-n30 (tight bell) -->
+  <g>
+    <line class="ax" x1="620" y1="550" x2="840" y2="550"/>
+    <line class="ax" x1="620" y1="420" x2="620" y2="550"/>
+    <rect class="rowB" x="625" y="548" width="21" height="2"/>
+    <rect class="rowB" x="647" y="548" width="21" height="2"/>
+    <rect class="rowB" x="669" y="545" width="21" height="5"/>
+    <rect class="rowB" x="691" y="525" width="21" height="25"/>
+    <rect class="rowB" x="713" y="450" width="21" height="100"/>
+    <rect class="rowB" x="735" y="425" width="21" height="125"/>
+    <rect class="rowB" x="757" y="450" width="21" height="100"/>
+    <rect class="rowB" x="779" y="525" width="21" height="25"/>
+    <rect class="rowB" x="801" y="545" width="21" height="5"/>
+    <rect class="rowB" x="823" y="548" width="12" height="2"/>
+    <path class="bell" d="M 620 549 Q 670 549 700 540 T 745 424 T 790 540 T 830 549 L 835 549"/>
+    <text class="tick" x="620" y="564" text-anchor="middle">0</text>
+    <text class="tick" x="727" y="564" text-anchor="middle">½</text>
+    <text class="tick" x="835" y="564" text-anchor="middle">1</text>
+  </g>
+
+  <!-- Bottom caption -->
+  <text class="note" x="450" y="600" text-anchor="middle">Left column: three wildly different shapes.  Right column: all three collapse to essentially the same bell.</text>
+  <text class="note" x="450" y="620" text-anchor="middle">That's the CLT — averages don't remember where they came from.</text>
+</svg>

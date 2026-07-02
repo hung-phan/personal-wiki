@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax      { stroke: #64748b; stroke-width: 1.2; }
+    .surf    { stroke: #2563eb; stroke-width: 1.6; fill: none; }
+    .surf-b  { stroke: #60a5fa; stroke-width: 1.6; fill: none; opacity: 0.55; }
+    .dot     { fill: #dc2626; stroke: #7f1d1d; stroke-width: 1; }
+    .label   { fill: #0f172a; font-weight: 600; }
+    .sub     { fill: #475569; font-size: 12px; }
+    .title   { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .arrow-up   { stroke: #059669; stroke-width: 2; fill: none; }
+    .arrow-down { stroke: #dc2626; stroke-width: 2; fill: none; }
+    .up-txt   { fill: #059669; font-size: 12px; font-weight: 700; }
+    .down-txt { fill: #dc2626; font-size: 12px; font-weight: 700; }
+    @media (prefers-color-scheme: dark) {
+      .ax      { stroke: #94a3b8; }
+      .surf    { stroke: #60a5fa; }
+      .surf-b  { stroke: #93c5fd; }
+      .dot     { fill: #f87171; stroke: #fecaca; }
+      .label, .title { fill: #e2e8f0; }
+      .sub     { fill: #cbd5e1; }
+      .arrow-up   { stroke: #6ee7b7; }
+      .arrow-down { stroke: #f87171; }
+      .up-txt   { fill: #6ee7b7; }
+      .down-txt { fill: #f87171; }
+    }
+  </style>
+
+  <defs>
+    <marker id="ah-up" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/>
+    </marker>
+    <marker id="ah-dn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="450" y="28" text-anchor="middle">Hessian eigenvalues classify critical points</text>
+
+  <!-- === Panel 1: bowl (local min), center at (150, 210) === -->
+  <!-- Draw an elliptical bowl in perspective: bottom + a few "rings" going up -->
+  <g>
+    <!-- axes hint -->
+    <line class="ax" x1="60" y1="290" x2="240" y2="290"/>
+    <line class="ax" x1="150" y1="90" x2="150" y2="295"/>
+    <text class="sub" x="240" y="305" text-anchor="end">x</text>
+    <text class="sub" x="155" y="90">z = x²+y²</text>
+
+    <!-- Concentric ellipses stacked as the bowl walls (higher = wider) -->
+    <!-- bottom ellipse (small) -->
+    <ellipse class="surf" cx="150" cy="260" rx="18" ry="6"/>
+    <ellipse class="surf" cx="150" cy="230" rx="35" ry="10"/>
+    <ellipse class="surf" cx="150" cy="200" rx="55" ry="14"/>
+    <ellipse class="surf" cx="150" cy="170" rx="75" ry="18"/>
+    <ellipse class="surf" cx="150" cy="140" rx="90" ry="21"/>
+    <!-- side walls -->
+    <path class="surf-b" d="M 60 140 Q 82 200 132 260"/>
+    <path class="surf-b" d="M 240 140 Q 218 200 168 260"/>
+    <!-- min dot at bottom -->
+    <circle class="dot" cx="150" cy="260" r="4"/>
+    <text class="label" x="150" y="335" text-anchor="middle">Local minimum</text>
+    <text class="sub" x="150" y="355" text-anchor="middle">λ₁, λ₂ &gt; 0</text>
+    <text class="sub" x="150" y="372" text-anchor="middle">(Hessian PD)</text>
+    <text class="sub" x="150" y="390" text-anchor="middle">f(x,y) = x² + y²</text>
+  </g>
+
+  <!-- === Panel 2: inverted bowl (local max), center at (450, 210) === -->
+  <g>
+    <line class="ax" x1="360" y1="290" x2="540" y2="290"/>
+    <line class="ax" x1="450" y1="90" x2="450" y2="295"/>
+    <text class="sub" x="540" y="305" text-anchor="end">x</text>
+    <text class="sub" x="455" y="90">z = −x²−y²</text>
+
+    <!-- Top ellipse (smallest), then widening down -->
+    <ellipse class="surf" cx="450" cy="120" rx="18" ry="6"/>
+    <ellipse class="surf" cx="450" cy="150" rx="35" ry="10"/>
+    <ellipse class="surf" cx="450" cy="180" rx="55" ry="14"/>
+    <ellipse class="surf" cx="450" cy="210" rx="75" ry="18"/>
+    <ellipse class="surf" cx="450" cy="240" rx="90" ry="21"/>
+    <path class="surf-b" d="M 360 240 Q 382 180 432 120"/>
+    <path class="surf-b" d="M 540 240 Q 518 180 468 120"/>
+    <!-- max dot at top -->
+    <circle class="dot" cx="450" cy="120" r="4"/>
+    <text class="label" x="450" y="335" text-anchor="middle">Local maximum</text>
+    <text class="sub" x="450" y="355" text-anchor="middle">λ₁, λ₂ &lt; 0</text>
+    <text class="sub" x="450" y="372" text-anchor="middle">(Hessian ND)</text>
+    <text class="sub" x="450" y="390" text-anchor="middle">f(x,y) = −x² − y²</text>
+  </g>
+
+  <!-- === Panel 3: saddle at (750, 210) === -->
+  <g>
+    <line class="ax" x1="660" y1="290" x2="840" y2="290"/>
+    <line class="ax" x1="750" y1="90" x2="750" y2="295"/>
+    <text class="sub" x="840" y="305" text-anchor="end">x</text>
+    <text class="sub" x="755" y="90">z = x² − y²</text>
+
+    <!-- Saddle: two upward parabolas along x, two downward along y, meeting at origin -->
+    <!-- Draw a horse-saddle shape: front & back curves along x are convex up (min at center along x-axis) -->
+    <!-- along y axis (into page), curves are convex down -->
+    <!-- Along x (horizontal at "front" and "back"): -->
+    <path class="surf" d="M 660 260 Q 750 140 840 260"/>  <!-- front, min at center -->
+    <path class="surf-b" d="M 660 180 Q 750 60 840 180"/>  <!-- back, shifted up -->
+    <!-- Along y (perspective front-to-back): concave down at each x -->
+    <path class="surf" d="M 660 260 Q 660 220 660 180"/>
+    <path class="surf" d="M 750 140 Q 750 100 750 60"/>
+    <path class="surf" d="M 840 260 Q 840 220 840 180"/>
+    <!-- Center dot: at (750, ~200) roughly saddle center -->
+    <circle class="dot" cx="750" cy="200" r="4"/>
+
+    <!-- arrows: up along x from center, down along y from center -->
+    <!-- along x, up (out of saddle along ridge) -->
+    <line class="arrow-up" x1="750" y1="200" x2="815" y2="230" marker-end="url(#ah-up)"/>
+    <text class="up-txt" x="785" y="252">up along x</text>
+    <line class="arrow-up" x1="750" y1="200" x2="685" y2="230" marker-end="url(#ah-up)"/>
+
+    <!-- along y, down (into the valley) -->
+    <line class="arrow-down" x1="750" y1="200" x2="750" y2="140" marker-end="url(#ah-dn)"/>
+    <text class="down-txt" x="758" y="150">down along y</text>
+
+    <text class="label" x="750" y="335" text-anchor="middle">Saddle point</text>
+    <text class="sub" x="750" y="355" text-anchor="middle">mixed signs (λ₁ &gt; 0, λ₂ &lt; 0)</text>
+    <text class="sub" x="750" y="372" text-anchor="middle">(Hessian indefinite)</text>
+    <text class="sub" x="750" y="390" text-anchor="middle">f(x,y) = x² − y²</text>
+  </g>
+</svg>
