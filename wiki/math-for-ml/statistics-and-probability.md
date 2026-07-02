@@ -2,7 +2,7 @@
 name: statistics-and-probability
 description: Statistics and probability foundations for ML — populations vs samples, descriptive statistics (mean, median, variance, covariance, correlation), probability axioms, conditional probability, Bayes' theorem, common distributions (Normal, Bernoulli, Binomial, Poisson, Uniform, Exponential), Central Limit Theorem, Law of Large Numbers, Maximum Likelihood Estimation (MLE), MAP, hypothesis testing, p-values, confidence intervals, bias-variance tradeoff, linear and logistic regression, regularization as a Bayesian prior, entropy, KL divergence, cross-entropy.
 created: 2026-06-08
-updated: 2026-07-05
+updated: 2026-07-02
 tags: [statistics, probability, machine-learning, math, foundations, bayes, distributions, regression, mle, learning-journey]
 ---
 
@@ -586,6 +586,58 @@ That tail behavior propagates into the shape of the loss itself. Per-example los
 MSE grows **quadratically** — one point with $r = 10$ contributes as much loss as a hundred points with $r = 1$. A single outlier drowns out 100 good points. MAE grows **linearly** — an outlier's vote is bounded. Huber is quadratic near zero (efficient on the bulk) and linear far away (tolerant of outliers).
 
 ![MSE curves quadratically, MAE stays linear, Huber tapers from quadratic near zero to linear at the tails|697](assets/loss-curves-mse-mae-huber.svg)
+
+#### Huber loss — the pragmatic middle
+
+**The problem.** MSE is smooth and gradient-friendly but panics at outliers. MAE ignores outliers but has a kink at zero — the gradient jumps from $-1$ to $+1$ across the origin, which makes optimization noisy near the minimum. You want the *smoothness of MSE for the well-behaved bulk* and the *tolerance of MAE for the tails*.
+
+**The fix.** Glue them together at some threshold $\delta$:
+
+$$
+L_\delta(r) = \begin{cases}
+\tfrac{1}{2} r^2 & \text{if } |r| \le \delta \\[2pt]
+\delta\bigl(|r| - \tfrac{1}{2}\delta\bigr) & \text{if } |r| > \delta
+\end{cases}
+$$
+
+Quadratic inside the "trust region" $[-\delta, \delta]$; linear outside. The $-\tfrac{1}{2}\delta$ term inside the linear branch isn't magic — it's what makes the two pieces meet smoothly at $|r| = \delta$ (both the value and the first derivative are continuous there). That C¹ continuity is why Huber is gradient-friendly everywhere, unlike MAE's kink.
+
+**What $\delta$ controls.** It's the "how big does a residual have to be before I stop trusting it as normal noise?" knob.
+- **Small $\delta$** (e.g. 0.5·σ of clean residuals) → most residuals treated as outliers → Huber behaves close to MAE.
+- **Large $\delta$** (e.g. 5·σ) → almost every residual is inside the quadratic region → Huber behaves close to MSE.
+- **Standard rule of thumb:** $\delta \approx 1.345 \cdot \hat\sigma$ (Huber's own recommendation) gives 95% asymptotic efficiency vs MSE when the data really is Gaussian, plus robustness when it isn't.
+
+**Probabilistic interpretation.** In the MLE frame we've been using, MSE ↔ Gaussian noise, MAE ↔ Laplace noise. Huber corresponds to a noise distribution that's **Gaussian in the middle and Laplace in the tails** — the noise model you'd write down if you believed *most* observations are clean but some fraction are contaminated by heavy-tailed junk.
+
+**Trying it out.**
+
+```python
+import numpy as np
+
+def huber(r, delta=1.0):
+    r = np.asarray(r, dtype=float)
+    quad = 0.5 * r**2
+    lin = delta * (np.abs(r) - 0.5 * delta)
+    return np.where(np.abs(r) <= delta, quad, lin)
+
+r = np.array([0, 0.5, 1, 2, 3, 5, 10])
+print("MSE  ", 0.5 * r**2)
+print("MAE  ", np.abs(r))
+print("Huber", huber(r, delta=1.0))
+# Expected output:
+# MSE   [ 0.     0.125  0.5    2.     4.5   12.5   50.   ]
+# MAE   [ 0.   0.5  1.   2.   3.   5.  10. ]
+# Huber [0.    0.125 0.5   1.5   2.5   4.5   9.5  ]
+```
+
+At $r = 10$: MSE contributes 50, MAE contributes 10, Huber contributes 9.5 — Huber matches MAE's growth rate for big residuals while keeping MSE's smoothness for small ones. (This snippet uses $\tfrac{1}{2}r^2$ so the quadratic-region math lines up with the definition above; the earlier table showed $r^2$ directly.)
+
+**Where you'll meet it.** `sklearn.linear_model.HuberRegressor`, `scipy.special.huber`, PyTorch's `nn.SmoothL1Loss` (that's Huber with $\delta = 1$ rebranded), object-detection heads in Faster/Mask R-CNN and RetinaNet (the "smooth L1" for bounding-box regression). Robust statistics uses the same idea under the name *M-estimation*.
+
+**Common pitfalls.**
+- **Picking $\delta$ by eyeball on the training set** — do it on a validation split or use a robust scale estimate like $\hat\sigma = 1.4826 \cdot \text{MAD}$ (median absolute deviation).
+- **Forgetting $\delta$ isn't scale-invariant** — if you standardize your target, you also have to rescale $\delta$, or its meaning flips.
+- **Treating Huber as a silver bullet** — if outliers dominate (say >30% of the data is contaminated), the linear tail still lets them tilt the fit. At that point you want a redescending M-estimator like Tukey's biweight, which sends the loss to a constant in extreme tails.
 
 #### What this does to a fit line
 
