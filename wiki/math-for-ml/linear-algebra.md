@@ -2,7 +2,7 @@
 name: linear-algebra
 description: Linear algebra foundations for ML — scalars, vectors, matrices, tensors, dot product, norms (L1, L2, Lp, Frobenius), matrix multiplication, transpose, inverse, determinant, trace, rank, linear independence, span, basis, vector spaces, subspaces, four fundamental subspaces, orthogonality, projection, Gram-Schmidt, eigenvalues and eigenvectors, eigendecomposition, diagonalization, SVD (Singular Value Decomposition), Principal Component Analysis (PCA), positive definite matrices, matrix calculus identities, numerical conditioning.
 created: 2026-06-08
-updated: 2026-07-02
+updated: 2026-07-03
 tags: [linear-algebra, math, machine-learning, foundations, vectors, matrices, eigenvalues, svd, pca, tensors, learning-journey]
 ---
 
@@ -127,6 +127,12 @@ print("Lasso coefs:", np.round(lasso.coef_, 3))   # e.g. [~2.4, 0.0, 0.0]
 print("Ridge coefs:", np.round(ridge.coef_, 3))   # e.g. [~2.4, small, small] — nonzero
 ```
 
+Result:
+```
+Lasso coefs: [2.419 0.    0.   ]
+Ridge coefs: [2.475 0.006 0.005]
+```
+
 The lasso coefficients on features 1 and 2 collapse to exactly `0.0`; the ridge coefficients on the same features are small but nonzero. Corners on the axes vs. no corners — the pictures were literal.
 
 ### Comparing two vectors: dot product
@@ -163,6 +169,12 @@ theta = np.arccos(np.clip(cos_sim, -1, 1))
 print("cos_sim:", cos_sim, "angle (deg):", np.degrees(theta), "cos(theta):", np.cos(theta))
 ```
 
+Result:
+```
+L1: 19.0 L2: 13.0 Linf: 12.0
+cos_sim: 0.48717948717948717 angle (deg): 60.84463457371704 cos(theta): 0.4871794871794871
+```
+
 L2 of $(3, -4, 12)$ is $13$, L1 is $19$, L∞ is $12$. `cos_sim` and `cos(theta)` match — the definition is self-consistent.
 
 ## 3. Matrices: the transformation view
@@ -194,6 +206,15 @@ A = np.array([[2.0, 1.0],
 print("A @ e1 =", A @ np.array([1.0, 0.0]))  # -> first column of A
 print("A @ e2 =", A @ np.array([0.0, 1.0]))  # -> second column of A
 print("A @ I  =\n", A @ np.eye(2))            # -> A itself
+```
+
+Result:
+```
+A @ e1 = [2. 0.]
+A @ e2 = [1. 1.]
+A @ I  =
+ [[2. 1.]
+ [0. 1.]]
 ```
 
 The output columns of `A @ I` are exactly the columns of `A`. That's why $A$'s columns *are* the transformation.
@@ -287,6 +308,13 @@ print("|det(A)| =", abs(np.linalg.det(A)))
 print("transformed corner range x:", transformed[0].min(), "to", transformed[0].max())
 ```
 
+Result:
+```
+det(A) = 8.999999999999998
+|det(A)| = 8.999999999999998
+transformed corner range x: 0.0 to 2.5
+```
+
 $\det(A) = 2 \cdot 3 \cdot 1.5 = 9$ (upper-triangular → product of diagonal). The unit cube maps to a parallelepiped of volume 9.
 
 ### Rank: how much information survives
@@ -311,6 +339,16 @@ print("shape:", A.shape, "rank:", np.linalg.matrix_rank(A))
 ns = null_space(A)
 print("null space basis (shape", ns.shape, "):\n", ns)
 print("A @ null_vec =", A @ ns[:, 0])  # ~ zero vector
+```
+
+Result:
+```
+shape: (3, 3) rank: 2
+null space basis (shape (3, 1) ):
+ [[-0.40824829]
+ [ 0.81649658]
+ [-0.40824829]]
+A @ null_vec = [1.55431223e-15 8.88178420e-16 1.33226763e-15]
 ```
 
 Rank 2 out of 3, so the null space is 1-dimensional (rank-nullity: `dim(null) + rank = # cols`). `A @ ns[:, 0]` is essentially zero — that direction is what $A$ destroys.
@@ -365,6 +403,14 @@ x_hat, *_ = np.linalg.lstsq(A, b, rcond=None)   # least-squares solution
 print("P @ b:      ", P @ b)
 print("A @ x_hat:  ", A @ x_hat)                # same vector
 print("residual perpendicular to columns?:", A.T @ (b - A @ x_hat))
+```
+
+Result:
+```
+P shape: (4, 4) idempotence err: 3.1707024946691817e-16
+P @ b:       [0.9 1.8 2.7 3.6]
+A @ x_hat:   [0.9 1.8 2.7 3.6]
+residual perpendicular to columns?: [-3.33066907e-16 -6.66133815e-16]
 ```
 
 $P$ is idempotent to machine precision, $Pb$ matches $A\hat{\mathbf{x}}$, and $A^T(b - A\hat{\mathbf{x}})$ is zero — the residual is orthogonal to every column of $A$.
@@ -431,6 +477,14 @@ for lam, v in zip(eigvals, eigvecs.T):
 print("reconstruct error:", np.linalg.norm(A - eigvecs @ np.diag(eigvals) @ eigvecs.T))
 ```
 
+Result:
+```
+lambda=+1.2679  ||A v - lambda v|| = 2.29e-16
+lambda=+3.0000  ||A v - lambda v|| = 3.14e-16
+lambda=+4.7321  ||A v - lambda v|| = 1.33e-15
+reconstruct error: 2.4248784069758646e-15
+```
+
 Residuals are at floating-point noise (`~1e-15`), and $V\Lambda V^T$ reproduces $A$ — the spectral theorem in one printout.
 
 ## 7. SVD: the universal factorization
@@ -488,6 +542,17 @@ print("full reconstruct err:", np.linalg.norm(A - A_full))
 for k in [1, 2, 3, 4]:
     A_k = U[:, :k] @ np.diag(S[:k]) @ Vt[:k, :]
     print(f"rank-{k} Frobenius err:", np.linalg.norm(A - A_k, 'fro'))
+```
+
+Result:
+```
+A.shape: (5, 6) U: (5, 5) S: (5,) Vt: (5, 6)
+singular values: [6.874 2.217 1.674 0.547 0.   ]
+full reconstruct err: 6.224057291043854e-15
+rank-1 Frobenius err: 2.831071008204299
+rank-2 Frobenius err: 1.7607059345389193
+rank-3 Frobenius err: 0.5467941155373953
+rank-4 Frobenius err: 6.183792598200554e-15
 ```
 
 The full reconstruction is machine-zero. Each larger $k$ shrinks the Frobenius error monotonically; at $k = 4$ it's already zero because the underlying matrix has rank 4.

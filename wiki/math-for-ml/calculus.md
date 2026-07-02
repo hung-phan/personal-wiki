@@ -2,7 +2,7 @@
 name: calculus
 description: Calculus foundations for ML — limits, continuity, derivatives, differentiation rules (product, quotient, chain), partial derivatives, gradients, directional derivatives, multivariable Taylor expansion, Jacobians, Hessians, the chain rule and backpropagation, gradient descent and its variants (SGD, momentum, Adam, RMSProp), learning rate schedules, optimization landscape (convexity, local minima, saddle points, plateaus), constrained optimization (Lagrange multipliers, KKT), Newton's method, integrals and expectation, automatic differentiation.
 created: 2026-06-08
-updated: 2026-07-02
+updated: 2026-07-03
 tags: [calculus, math, machine-learning, foundations, gradient-descent, backpropagation, optimization, chain-rule, derivatives, autograd, learning-journey]
 ---
 
@@ -83,6 +83,11 @@ fd = (f(x + 1e-5) - f(x - 1e-5)) / (2 * 1e-5)  # central difference
 print(np.max(np.abs(fd - df(x))))              # ~1e-10
 ```
 
+Result:
+```
+1.9873880319210002e-10
+```
+
 The two agree to ~10 decimal places — that's the derivative, computed two totally different ways.
 
 ### A few derivatives you'll see daily in NN math
@@ -101,6 +106,13 @@ dsigmoid = lambda x: sigmoid(x) * (1 - sigmoid(x))
 for x in [-8.0, 0.0, 8.0]:
     print(f"σ'({x:+.0f}) = {dsigmoid(x):.2e}")
 # σ'(-8) = 3.35e-04, σ'(0) = 2.50e-01, σ'(+8) = 3.35e-04
+```
+
+Result:
+```
+σ'(-8) = 3.35e-04
+σ'(+0) = 2.50e-01
+σ'(+8) = 3.35e-04
 ```
 
 Stack ten of these in series (as a deep sigmoid net does) and the gradient upstream is $(3\text{e-}4)^{10} \approx 10^{-35}$ — indistinguishable from zero.
@@ -167,6 +179,12 @@ print(f"grad-dir rise = {f(p + eps*gdir) - f(p):.6e}")
 print(f"best other    = {max(rises):.6e}")     # strictly smaller
 ```
 
+Result:
+```
+grad-dir rise = 6.327355e-03
+best other    = 6.003000e-03
+```
+
 The gradient direction wins over every alternative direction — steepest ascent is not a metaphor.
 
 ## 3. Vector-in, vector-out: Jacobians and Hessians
@@ -209,6 +227,13 @@ for name, H in Hs.items():
     w = np.linalg.eigvalsh(H)
     kind = "min" if (w > 0).all() else "max" if (w < 0).all() else "saddle"
     print(f"{name:22s} eigenvalues={w}  -> {kind}")
+```
+
+Result:
+```
+x^2 + y^2 (bowl)       eigenvalues=[2. 2.]  -> min
+-x^2 - y^2 (dome)      eigenvalues=[-2. -2.]  -> max
+x^2 - y^2 (saddle)     eigenvalues=[-2.  2.]  -> saddle
 ```
 
 The eigenvalue signs are the classification — no drawing required.
@@ -264,6 +289,11 @@ manual = math.cos(0.7**2 + 3*0.7) * (2*0.7 + 3)
 print(f"autograd = {x.grad.item():.6f}, hand-derived = {manual:.6f}")
 ```
 
+Result:
+```
+autograd = -3.747440, hand-derived = -3.747440
+```
+
 Both should print the same number. That's the chain rule — torch just does the bookkeeping.
 
 ### Backpropagation: chain rule, applied cleverly
@@ -303,6 +333,11 @@ xt = torch.tensor(x); W1t = torch.tensor(W1, requires_grad=True)
 W2t = torch.tensor(W2); yt = torch.tensor(y)
 (0.5 * (W2t @ torch.tanh(W1t @ xt) - yt)**2).sum().backward()
 print(np.max(np.abs(dW1_manual - W1t.grad.numpy())))   # ~1e-15
+```
+
+Result:
+```
+5.551115123125783e-17
 ```
 
 The hand-derived gradient of the earliest weight matches autograd to machine precision — the chain rule *is* backprop.
@@ -365,6 +400,20 @@ for t in range(10):
     print(f"step {t+1:2d}: θ={theta.round(3)}, loss={loss:.4f}")
 ```
 
+Result:
+```
+step  1: θ=[ 2.46 -0.8 ], loss=12.4516
+step  2: θ=[2.017 0.64 ], loss=8.1651
+step  3: θ=[ 1.654 -0.512], loss=5.3575
+step  4: θ=[1.356 0.41 ], loss=3.5174
+step  5: θ=[ 1.112 -0.328], loss=2.3108
+step  6: θ=[0.912 0.262], loss=1.5190
+step  7: θ=[ 0.748 -0.21 ], loss=0.9991
+step  8: θ=[0.613 0.168], loss=0.6575
+step  9: θ=[ 0.503 -0.134], loss=0.4330
+step 10: θ=[0.412 0.107], loss=0.2853
+```
+
 Watch $y$ oscillate (curvature 20 puts us near the $2/\lambda_{\max} = 0.1$ stability ceiling, so $|1 - \eta \cdot 20| = 0.8$ per step) while $x$ decays smoothly — an ill-conditioned bowl in miniature.
 
 ### Why mini-batches
@@ -407,6 +456,12 @@ def run(momentum, eta=0.01, tol=1e-4, cap=5000):
     return cap
 print(f"plain GD steps  : {run(momentum=0.0)}")
 print(f"momentum steps  : {run(momentum=0.9)}")
+```
+
+Result:
+```
+plain GD steps  : 511
+momentum steps  : 153
 ```
 
 Momentum reaches the tolerance in a fraction of the iterations plain GD needs — the accumulated velocity in the flat $x$-direction is what buys the speedup.

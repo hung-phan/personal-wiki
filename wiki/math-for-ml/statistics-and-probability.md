@@ -2,7 +2,7 @@
 name: statistics-and-probability
 description: Statistics and probability foundations for ML — populations vs samples, descriptive statistics (mean, median, variance, covariance, correlation), probability axioms, conditional probability, Bayes' theorem, common distributions (Normal, Bernoulli, Binomial, Poisson, Uniform, Exponential), Central Limit Theorem, Law of Large Numbers, Maximum Likelihood Estimation (MLE), MAP, hypothesis testing, p-values, confidence intervals, bias-variance tradeoff, linear and logistic regression, regularization as a Bayesian prior, entropy, KL divergence, cross-entropy.
 created: 2026-06-08
-updated: 2026-07-02
+updated: 2026-07-03
 tags: [statistics, probability, machine-learning, math, foundations, bayes, distributions, regression, mle, learning-journey]
 ---
 
@@ -86,6 +86,15 @@ print(f"sample var (ddof=1) = {np.var(incomes, ddof=1):,.1f}")  # slightly large
 print(f"std = {np.std(incomes):,.1f}")
 ```
 
+Result:
+```
+mean   = 100,040.5
+median = 46.5
+pop var  (ddof=0) = 89,991,900,254.1
+sample var (ddof=1) = 99,991,000,282.3
+std = 299,986.5
+```
+
 Takeaway: the mean shifts by orders of magnitude; the median barely moves. Sample variance (`ddof=1`) is always larger than population variance (`ddof=0`) by exactly the factor $n/(n-1)$.
 
 ### How spread out is the data?
@@ -154,6 +163,13 @@ print(f"Corr(x, y) = {corr_matrix[0, 1]:.3f}")
 by_hand = cov_matrix[0, 1] / (np.std(x, ddof=1) * np.std(y, ddof=1))
 assert np.isclose(by_hand, corr_matrix[0, 1])
 print(f"By hand match: {by_hand:.3f}")
+```
+
+Result:
+```
+Cov(x, y) = 19.24
+Corr(x, y) = 0.981
+By hand match: 0.981
 ```
 
 Correlation lands near 0.98 — strong linear signal even with noise. The by-hand check shows correlation is *literally* covariance normalized by both standard deviations.
@@ -271,6 +287,11 @@ p_disease_given_pos = (sensitivity * p_disease) / p_pos
 print(f"P(disease | positive) = {p_disease_given_pos:.3f}")  # ~0.500
 ```
 
+Result:
+```
+P(disease | positive) = 0.500
+```
+
 The result: even with a 99%-accurate test, a positive result on a 1%-prevalence disease implies only ~50% chance of actually being sick. The prior dominates.
 
 Here it is with every one of the 10,000 people drawn as a dot:
@@ -328,6 +349,12 @@ print(f"Posterior: Beta({alpha_post}, {beta_post}) mean = {post_mean:.3f}")
 assert np.isclose(stats.beta(alpha_post, beta_post).mean(), post_mean)
 ```
 
+Result:
+```
+Prior:     Beta(2, 2) mean = 0.500
+Posterior: Beta(10, 4) mean = 0.714
+```
+
 Prior mean is 0.500 (fair coin); posterior mean shifts to ~0.714 — pulled toward the data (8/10 = 0.8) but tempered by the prior.
 
 ## 5. Common distributions: the "shapes" data tends to take
@@ -377,25 +404,33 @@ print(f"Poisson:   theoretical λ=4.0,  sample mean={poisson_samples.mean():.3f}
 print(f"Poisson variance ≈ λ: {poisson_samples.var():.3f}")
 ```
 
+Result:
+```
+Normal:    theoretical μ=5.0,  sample mean=4.998
+Bernoulli: theoretical p=0.3,  sample mean=0.300
+Poisson:   theoretical λ=4.0,  sample mean=4.006
+Poisson variance ≈ λ: 4.035
+```
+
 All three sample means land within ~0.01 of the theoretical values. For Poisson, mean *equals* variance — a defining property.
 
 ### Quick reference — distributions you'll see in ML
 
-| Distribution | Shape / Models | When ML uses it |
-|---|---|---|
-| **Bernoulli** | One yes/no | Binary classification target (cat / not-cat) |
-| **Binomial** | Count of yeses in $n$ trials | CTR models, A/B test analysis |
-| **Categorical** | One-of-K outcome | Multiclass labels (cat / dog / bird) |
-| **Multinomial** | Counts across K outcomes in $n$ trials | Word counts, bag-of-words |
-| **Uniform** | All values equally likely | Random initialization, sampling |
-| **Normal (Gaussian)** | Symmetric bell | Regression noise, NN weight init, latent variables |
-| **Multivariate Normal** | Bell curve in many dimensions | Latent variables, GMMs |
-| **Exponential** | Time between events | Survival analysis |
-| **Poisson** | Count of rare events in fixed interval | Rare-event count regression |
-| **Beta** | Probability over $[0,1]$ | Bayesian prior to Bernoulli's $p$ |
-| **Dirichlet** | Probability vector summing to 1 | LDA topic priors |
-| **Gamma** | Positive continuous | Conjugate priors |
-| **Laplace** | Sharp peak, heavy tails | Connects to L1 regularization |
+| Distribution            | Shape / Models                         | When ML uses it                                    |
+| ----------------------- | -------------------------------------- | -------------------------------------------------- |
+| **Bernoulli**           | One yes/no                             | Binary classification target (cat / not-cat)       |
+| **Binomial**            | Count of yeses in $n$ trials           | CTR models, A/B test analysis                      |
+| **Categorical**         | One-of-K outcome                       | Multiclass labels (cat / dog / bird)               |
+| **Multinomial**         | Counts across K outcomes in $n$ trials | Word counts, bag-of-words                          |
+| **Uniform**             | All values equally likely              | Random initialization, sampling                    |
+| **Normal (Gaussian)**   | Symmetric bell                         | Regression noise, NN weight init, latent variables |
+| **Multivariate Normal** | Bell curve in many dimensions          | Latent variables, GMMs                             |
+| **Exponential**         | Time between events                    | Survival analysis                                  |
+| **Poisson**             | Count of rare events in fixed interval | Rare-event count regression                        |
+| **Beta**                | Probability over $[0,1]$               | Bayesian prior to Bernoulli's $p$                  |
+| **Dirichlet**           | Probability vector summing to 1        | LDA topic priors                                   |
+| **Gamma**               | Positive continuous                    | Conjugate priors                                   |
+| **Laplace**             | Sharp peak, heavy tails                | Connects to L1 regularization                      |
 
 You don't need to memorize every formula. You need to know which shape to *reach for* when describing data. "This is bounded between 0 and 1 — Beta. This is a count — Poisson. This is a sum of small effects — Normal."
 
@@ -429,6 +464,13 @@ for n in [1, 5, 30]:
     print(f"n={n:2d}: mean={sample_means.mean():.3f}, "
           f"std={sample_means.std():.4f}, "
           f"σ/√n={theoretical_std:.4f}")
+```
+
+Result:
+```
+n= 1: mean=0.499, std=0.2891, σ/√n=0.2887
+n= 5: mean=0.501, std=0.1287, σ/√n=0.1291
+n=30: mean=0.500, std=0.0529, σ/√n=0.0527
 ```
 
 The mean stays near 0.5 (LLN); the std shrinks like $\sigma/\sqrt{n}$ — halving requires quadrupling the sample. That's why "double the data" only cuts your error bars by ~30%, not 50%.
@@ -479,6 +521,13 @@ sigma2_hat_unbiased = x.var(ddof=1)     # unbiased sample estimator — divides 
 print(f"MLE μ̂  = {mu_hat:.3f}  (true = {true_mu})")
 print(f"MLE σ̂² = {sigma2_hat_mle:.3f}  (true = {true_sigma**2})")
 print(f"Unbiased σ̂² = {sigma2_hat_unbiased:.3f}")
+```
+
+Result:
+```
+MLE μ̂  = 4.904  (true = 5.0)
+MLE σ̂² = 3.816  (true = 4.0)
+Unbiased σ̂² = 3.820
 ```
 
 MLE for variance is *slightly* biased downward — that's why Bessel's correction ($n-1$) exists. But MLE is what falls out of $\arg\max$ mechanically.
@@ -651,6 +700,12 @@ for deg in [1, 10]:
           f"total={bias_sq + variance:.4f}")
 ```
 
+Result:
+```
+degree= 1: bias²=0.2646, variance=0.0179, total=0.2825
+degree=10: bias²=0.0001, variance=0.0189, total=0.0191
+```
+
 Degree-1 has high bias² (~0.26 — a line can't hit $-1$ at $x=0.75$ while averaging through 0-mean noise) and low variance. Degree-10 has near-zero bias² but higher variance (each bootstrap fits a wildly different curve). The two failure modes trade off — that's the whole story.
 
 ### Why this is a *trade-off*
@@ -760,6 +815,13 @@ print(f"β̂ (least squares) = {beta_ls}")     # ≈ [1.0, 2.0]
 print(f"MSE = {mse:.4f}, NLL = {nll:.2f}")
 print(f"NLL = (const) + MSE·n/(2σ²): "
       f"{0.5*n*np.log(2*np.pi*sigma**2) + mse*n/(2*sigma**2):.2f}")
+```
+
+Result:
+```
+β̂ (least squares) = [0.97248127 2.02754144]
+MSE = 0.2276, NLL = 68.11
+NLL = (const) + MSE·n/(2σ²): 68.11
 ```
 
 The NLL is MSE plus additive constants that don't depend on $\beta$ — so *any* $\beta$ that minimizes MSE also minimizes NLL. That's what "MSE = MLE under Gaussian" means numerically.
@@ -887,6 +949,14 @@ assert np.isclose(stats.entropy(P), H_P)
 assert np.isclose(stats.entropy(P, Q), KL_PQ)   # note: this is KL, not cross-entropy!
 # Identity: H(P, Q) = H(P) + D_KL(P || Q)
 assert np.isclose(H_PQ, H_P + KL_PQ)
+```
+
+Result:
+```
+H(P)         = 0.8018
+H(P, Q)      = 0.8869
+D_KL(P || Q) = 0.0851
+D_KL(Q || P) = 0.0920   (≠ D_KL(P || Q) — asymmetric)
 ```
 
 Note the scipy gotcha: `stats.entropy(P, Q)` returns *KL divergence*, not cross-entropy. The identity `H(P, Q) = H(P) + D_KL(P||Q)` is why minimizing cross-entropy loss (with fixed one-hot $P$) is equivalent to minimizing KL — $H(P)$ is constant.
