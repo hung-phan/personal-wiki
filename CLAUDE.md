@@ -68,28 +68,21 @@ The wiki is read in Obsidian with the [Execute Code](https://github.com/twibiral
 
 **Python.** Anywhere a formula deserves verification or a picture, add a short runnable snippet:
 
-- Use ` ```python ` fences (not `python3` / `py`) — the Execute Code plugin turns those into Run buttons.
+- Use ` ```python ` fences (not `python3` / `py`) — the Execute Code plugin turns those into Run buttons and executes the block with the interpreter configured in its settings.
 - **Self-contained**: imports at the top of each block; the reader can run one block without running any other.
-- **Deterministic**: seed randomness (`rng = np.random.default_rng(0)`, `torch.manual_seed(0)`, `random_state=0`) so the printed result is reproducible.
+- **Deterministic**: seed randomness (`rng = np.random.default_rng(0)`, `torch.manual_seed(0)`, `random_state=0`) so the same click always produces the same output.
 - **Short**: 5–15 lines. Comparisons (analytic vs numerical, method A vs method B) teach; showcase code doesn't.
-- **Attach expected output** right after the fence in a plain code block labelled `Result:` — so the note is legible on GitHub, on mobile, or with the plugin off, and the plugin's live output appears below as a second copy when clicked. Example:
-
-  ````
-  ```python
-  import numpy as np
-  print(np.linalg.norm([3, -4, 12]))
-  ```
-
-  Result:
-  ```
-  13.0
-  ```
-  ````
-
-- Prefer `matplotlib.pyplot` for plots when a chart teaches better than a static SVG — Execute Code embeds `plt.show()` output inline. Save the plot as `assets/<slug>.png` (or SVG via `plt.savefig`) once you're happy, and embed the static version too so it renders without the plugin.
+- **Don't inline a static `Result:` block.** The plugin renders live output below the fence; a hand-copied duplicate goes stale silently. Add a one-line takeaway *before* the block ("check numerically that these agree") or *after* in prose ("both should print the same number"), not a fake output.
+- Prefer `matplotlib.pyplot` for plots when a chart teaches better than a static SVG — Execute Code embeds `plt.show()` output inline. Reserve hand-authored SVGs under `assets/` for diagrams that are *not* the direct output of a `plt.plot` call (schematic flows, geometry sketches, decision trees) — those stay in `assets/`.
 - Use `numpy` as the default toolkit. Reach for `scipy.stats`, `sklearn`, `torch` only when they clarify the concept (autograd, lasso vs ridge, distributions).
 
-If the tools installed to run it don't exist yet, the environment can be built with `uv venv <name> --python 3.12 && uv pip install numpy scipy scikit-learn torch matplotlib`.
+**Interpreter setup.** The Execute Code plugin runs blocks with the Python interpreter set in Settings → Execute Code → Python. Point it at the project venv `/Users/phahng/Desktop/workarea/.venv/bin/python`. If a package is missing, install it into that venv via:
+
+```
+VIRTUAL_ENV=/Users/phahng/Desktop/workarea/.venv uv pip install <package>
+```
+
+(The venv was built by `uv`, so it doesn't ship `pip` — always use `uv pip install` from outside, not `python -m pip`.) Baseline dependencies for the math notes: `numpy scipy scikit-learn torch matplotlib`.
 
 ## Three jobs
 
