@@ -72,7 +72,18 @@ The wiki is read in Obsidian with the [Execute Code](https://github.com/twibiral
 - **Self-contained**: imports at the top of each block; the reader can run one block without running any other.
 - **Deterministic**: seed randomness (`rng = np.random.default_rng(0)`, `torch.manual_seed(0)`, `random_state=0`) so the same click always produces the same output.
 - **Short**: 5–15 lines. Comparisons (analytic vs numerical, method A vs method B) teach; showcase code doesn't.
-- **Don't inline a static `Result:` block.** The plugin renders live output below the fence; a hand-copied duplicate goes stale silently. Add a one-line takeaway *before* the block ("check numerically that these agree") or *after* in prose ("both should print the same number"), not a fake output.
+- **Fold expected output back into the block as trailing comments**, not into a separate `Result:` fence. The plugin still renders live output below the fence when clicked; the comment serves as a "here's what to expect" preview for reading. Format:
+
+  ````
+  ```python
+  import numpy as np
+  print(np.linalg.norm([3, -4, 12]))
+  # Expected output:
+  # 13.0
+  ```
+  ````
+
+  Run the snippet once against the project venv, paste the captured stdout in as `#` comments — one per output line. Keep it terse: 10 lines max, add `# ... trimmed` if you cut. This co-locates the answer with the code (survives file moves, plugin off, GitHub view) without duplicating a whole fenced block.
 - Prefer `matplotlib.pyplot` for plots when a chart teaches better than a static SVG — Execute Code embeds `plt.show()` output inline. Reserve hand-authored SVGs under `assets/` for diagrams that are *not* the direct output of a `plt.plot` call (schematic flows, geometry sketches, decision trees) — those stay in `assets/`.
 - Use `numpy` as the default toolkit. Reach for `scipy.stats`, `sklearn`, `torch` only when they clarify the concept (autograd, lasso vs ridge, distributions).
 
