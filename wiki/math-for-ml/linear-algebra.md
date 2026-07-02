@@ -2,7 +2,7 @@
 name: linear-algebra
 description: Linear algebra foundations for ML — scalars, vectors, matrices, tensors, dot product, norms (L1, L2, Lp, Frobenius), matrix multiplication, transpose, inverse, determinant, trace, rank, linear independence, span, basis, vector spaces, subspaces, four fundamental subspaces, orthogonality, projection, Gram-Schmidt, eigenvalues and eigenvectors, eigendecomposition, diagonalization, SVD (Singular Value Decomposition), Principal Component Analysis (PCA), positive definite matrices, matrix calculus identities, numerical conditioning.
 created: 2026-06-08
-updated: 2026-07-01
+updated: 2026-07-02
 tags: [linear-algebra, math, machine-learning, foundations, vectors, matrices, eigenvalues, svd, pca, tensors, learning-journey]
 ---
 
@@ -113,6 +113,22 @@ These pictures *explain* why L1 induces sparsity and L2 doesn't. When you minimi
 
 This is why **lasso (L1) does feature selection** and **ridge (L2) only shrinks**.
 
+See the geometry play out on a toy problem — a 3-feature dataset where only feature 0 is actually relevant. L1 zeros the irrelevant coefficients; L2 just shrinks them:
+
+```python
+import numpy as np
+from sklearn.linear_model import Lasso, Ridge
+rng = np.random.default_rng(0)
+X = rng.standard_normal((80, 3))                 # 3 features
+y = 2.5 * X[:, 0] + rng.standard_normal(80) * 0.1  # only feature 0 matters
+lasso = Lasso(alpha=0.1).fit(X, y)
+ridge = Ridge(alpha=1.0).fit(X, y)
+print("Lasso coefs:", np.round(lasso.coef_, 3))   # e.g. [~2.4, 0.0, 0.0]
+print("Ridge coefs:", np.round(ridge.coef_, 3))   # e.g. [~2.4, small, small] — nonzero
+```
+
+The lasso coefficients on features 1 and 2 collapse to exactly `0.0`; the ridge coefficients on the same features are small but nonzero. Corners on the axes vs. no corners — the pictures were literal.
+
 ### Comparing two vectors: dot product
 
 How similar are two vectors? Multiply componentwise and sum:
@@ -135,6 +151,20 @@ This is **cosine similarity**. ML appearances:
 - The core operation inside self-attention is essentially "compute dot products of queries and keys, then softmax."
 - Document retrieval and RAG.
 
+Quick sanity check — all three norms of the same vector, plus cosine similarity checked against $\cos\theta$:
+
+```python
+import numpy as np
+x = np.array([3.0, -4.0, 12.0])
+y = np.array([1.0,  2.0,  2.0])
+print("L1:", np.linalg.norm(x, 1), "L2:", np.linalg.norm(x, 2), "Linf:", np.linalg.norm(x, np.inf))
+cos_sim = x @ y / (np.linalg.norm(x) * np.linalg.norm(y))
+theta = np.arccos(np.clip(cos_sim, -1, 1))
+print("cos_sim:", cos_sim, "angle (deg):", np.degrees(theta), "cos(theta):", np.cos(theta))
+```
+
+L2 of $(3, -4, 12)$ is $13$, L1 is $19$, L∞ is $12$. `cos_sim` and `cos(theta)` match — the definition is self-consistent.
+
 ## 3. Matrices: the transformation view
 
 ### The problem
@@ -154,6 +184,19 @@ The $j$-th column of $A$ is "where the $j$-th basis vector lands after $A$ is ap
 ![Standard grid with basis vectors e₁, e₂ on the left; on the right the same grid warped by A, with the parallelogram spanned by A's columns a₁, a₂. A point x = 1.5·e₁ + 0.5·e₂ maps to Ax = 1.5·a₁ + 0.5·a₂.|697](assets/matrix-as-transformation.svg)
 
 This is the central idea of 3Blue1Brown's *Essence of Linear Algebra*. It single-handedly transforms linear algebra from "manipulating grids of numbers" to "manipulating space."
+
+See it: multiplying $A$ by the identity peels off the columns — each column is literally where a basis vector lands.
+
+```python
+import numpy as np
+A = np.array([[2.0, 1.0],
+              [0.0, 1.0]])
+print("A @ e1 =", A @ np.array([1.0, 0.0]))  # -> first column of A
+print("A @ e2 =", A @ np.array([0.0, 1.0]))  # -> second column of A
+print("A @ I  =\n", A @ np.eye(2))            # -> A itself
+```
+
+The output columns of `A @ I` are exactly the columns of `A`. That's why $A$'s columns *are* the transformation.
 
 ### Multiplying matrices = composing transformations
 
@@ -228,6 +271,24 @@ $\det(A)$ is a single number that tells you *how much $A$ scales volumes*.
 
 If $\det(A) = 0$, the transformation has flattened space, you've lost information, and no inverse can recover it. That's the geometric reason "$\det = 0$ means non-invertible."
 
+Watch the unit cube get stretched — its volume scales by exactly $|\det(A)|$:
+
+```python
+import numpy as np
+from itertools import product
+A = np.array([[2.0, 0.5, 0.0],
+              [0.0, 3.0, 0.0],
+              [0.0, 0.0, 1.5]])
+corners = np.array(list(product([0.0, 1.0], repeat=3))).T   # 3 x 8, unit cube corners
+transformed = A @ corners
+print("det(A) =", np.linalg.det(A))                          # expected volume scale
+# Volume via the parallelepiped spanned by A's columns:
+print("|det(A)| =", abs(np.linalg.det(A)))
+print("transformed corner range x:", transformed[0].min(), "to", transformed[0].max())
+```
+
+$\det(A) = 2 \cdot 3 \cdot 1.5 = 9$ (upper-triangular → product of diagonal). The unit cube maps to a parallelepiped of volume 9.
+
 ### Rank: how much information survives
 
 The **rank** of a matrix is the number of linearly independent columns (equivalently, rows). It's the dimension of the *output space* of $A$.
@@ -237,6 +298,22 @@ The **rank** of a matrix is the number of linearly independent columns (equivale
 - Low rank → there's compression hiding in here.
 
 **ML.** Real-world data is *almost always* low-rank. A user-item ratings matrix is millions × millions, but the ratings actually lie on a low-dimensional manifold (genres, user types). Recommender systems exploit this: factorize the matrix into two low-rank pieces and you've compressed it, learned latent features, and filled in missing entries — all at once.
+
+A rank-deficient matrix in the flesh — row 3 is row 1 + row 2, so rank is 2, not 3:
+
+```python
+import numpy as np
+from scipy.linalg import null_space
+A = np.array([[1.0, 2.0, 3.0],
+              [4.0, 5.0, 6.0],
+              [5.0, 7.0, 9.0]])  # row 3 = row 1 + row 2
+print("shape:", A.shape, "rank:", np.linalg.matrix_rank(A))
+ns = null_space(A)
+print("null space basis (shape", ns.shape, "):\n", ns)
+print("A @ null_vec =", A @ ns[:, 0])  # ~ zero vector
+```
+
+Rank 2 out of 3, so the null space is 1-dimensional (rank-nullity: `dim(null) + rank = # cols`). `A @ ns[:, 0]` is essentially zero — that direction is what $A$ destroys.
 
 ## 5. Vector spaces: the playground for everything above
 
@@ -272,6 +349,25 @@ $$\text{proj} = A(A^TA)^{-1}A^T\mathbf{b}$$
 This is *exactly* OLS regression. You're projecting your target onto the subspace of vectors your model can express. The residual lives in the *left null space* — orthogonal to your model's column space, hence the model can't capture it. That orthogonality is what "least squares" buys you geometrically.
 
 ![A tilted plane through the origin (Col(A)) with columns a₁, a₂ lying in it, target b floating above, projection Aĥx lying in the plane below b, and a residual b − Aĥx perpendicular to the plane.|697](assets/projection-column-space.svg)
+
+Build the projection matrix and confirm two properties: idempotence ($P^2 = P$) and that $Pb$ equals the least-squares fit $A\hat{\mathbf{x}}$:
+
+```python
+import numpy as np
+A = np.array([[1.0, 0.0],
+              [1.0, 1.0],
+              [1.0, 2.0],
+              [1.0, 3.0]])                     # 4x2, tall
+b = np.array([1.0, 2.0, 2.0, 4.0])
+P = A @ np.linalg.pinv(A)                       # = A (A^T A)^{-1} A^T for full-column-rank A
+print("P shape:", P.shape, "idempotence err:", np.linalg.norm(P @ P - P))
+x_hat, *_ = np.linalg.lstsq(A, b, rcond=None)   # least-squares solution
+print("P @ b:      ", P @ b)
+print("A @ x_hat:  ", A @ x_hat)                # same vector
+print("residual perpendicular to columns?:", A.T @ (b - A @ x_hat))
+```
+
+$P$ is idempotent to machine precision, $Pb$ matches $A\hat{\mathbf{x}}$, and $A^T(b - A\hat{\mathbf{x}})$ is zero — the residual is orthogonal to every column of $A$.
 
 ## 6. Eigenvalues and eigenvectors: directions a transformation respects
 
@@ -320,6 +416,23 @@ $$A = V\Lambda V^T$$
 
 with $V$ orthogonal. This is the **spectral theorem**, and it's the cleanest, most useful identity in ML linear algebra.
 
+Check the defining equation directly — for each eigenpair, $A\mathbf{v} - \lambda\mathbf{v}$ should be ~zero:
+
+```python
+import numpy as np
+A = np.array([[4.0, 1.0, 0.0],
+              [1.0, 3.0, 1.0],
+              [0.0, 1.0, 2.0]])                # symmetric -> real eigenvalues, orthogonal eigenvectors
+eigvals, eigvecs = np.linalg.eigh(A)           # eigh for symmetric matrices (more stable)
+for lam, v in zip(eigvals, eigvecs.T):
+    residual = np.linalg.norm(A @ v - lam * v)
+    print(f"lambda={lam:+.4f}  ||A v - lambda v|| = {residual:.2e}")
+# Reconstruction from V Lambda V^T:
+print("reconstruct error:", np.linalg.norm(A - eigvecs @ np.diag(eigvals) @ eigvecs.T))
+```
+
+Residuals are at floating-point noise (`~1e-15`), and $V\Lambda V^T$ reproduces $A$ — the spectral theorem in one printout.
+
 ## 7. SVD: the universal factorization
 
 ### The problem
@@ -360,6 +473,24 @@ If you keep only the top $k$ singular values, you get the best rank-$k$ approxim
 ### When the singular values "fall off a cliff"
 
 Plot the singular values of a real-world matrix in decreasing order. Often the first few are huge and the rest are tiny — the matrix is *effectively low-rank*. That's why low-rank approximations are so good in practice: most of the matrix is noise or redundancy.
+
+SVD, full reconstruction, then a rank-$k$ truncation — Eckart-Young in code:
+
+```python
+import numpy as np
+rng = np.random.default_rng(0)
+A = rng.standard_normal((5, 4)) @ rng.standard_normal((4, 6))   # 5x6, rank <= 4
+U, S, Vt = np.linalg.svd(A, full_matrices=False)
+print("A.shape:", A.shape, "U:", U.shape, "S:", S.shape, "Vt:", Vt.shape)
+print("singular values:", np.round(S, 3))
+A_full = U @ np.diag(S) @ Vt
+print("full reconstruct err:", np.linalg.norm(A - A_full))
+for k in [1, 2, 3, 4]:
+    A_k = U[:, :k] @ np.diag(S[:k]) @ Vt[:k, :]
+    print(f"rank-{k} Frobenius err:", np.linalg.norm(A - A_k, 'fro'))
+```
+
+The full reconstruction is machine-zero. Each larger $k$ shrinks the Frobenius error monotonically; at $k = 4$ it's already zero because the underlying matrix has rank 4.
 
 ## 8. PCA: the capstone
 

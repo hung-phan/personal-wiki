@@ -2,7 +2,7 @@
 name: statistics-and-probability
 description: Statistics and probability foundations for ML — populations vs samples, descriptive statistics (mean, median, variance, covariance, correlation), probability axioms, conditional probability, Bayes' theorem, common distributions (Normal, Bernoulli, Binomial, Poisson, Uniform, Exponential), Central Limit Theorem, Law of Large Numbers, Maximum Likelihood Estimation (MLE), MAP, hypothesis testing, p-values, confidence intervals, bias-variance tradeoff, linear and logistic regression, regularization as a Bayesian prior, entropy, KL divergence, cross-entropy.
 created: 2026-06-08
-updated: 2026-07-01
+updated: 2026-07-02
 tags: [statistics, probability, machine-learning, math, foundations, bayes, distributions, regression, mle, learning-journey]
 ---
 
@@ -74,6 +74,20 @@ That's **central tendency**. Three options, each useful for different reasons:
 
 **ML takeaway.** When you're imputing missing values, you're picking one of these. Numeric + symmetric data → mean. Numeric + skewed data → median. Categorical → mode. The right choice prevents your imputation from systematically distorting the distribution.
 
+Watch mean vs. median react to a single outlier — one billionaire tacked onto nine ordinary incomes:
+
+```python
+import numpy as np
+incomes = np.array([30, 35, 40, 42, 45, 48, 50, 55, 60, 1_000_000])  # last value = outlier
+print(f"mean   = {np.mean(incomes):,.1f}")   # ~100,040 — dragged by outlier
+print(f"median = {np.median(incomes):,.1f}") # 46.5 — unmoved
+print(f"pop var  (ddof=0) = {np.var(incomes, ddof=0):,.1f}")
+print(f"sample var (ddof=1) = {np.var(incomes, ddof=1):,.1f}")  # slightly larger
+print(f"std = {np.std(incomes):,.1f}")
+```
+
+Takeaway: the mean shifts by orders of magnitude; the median barely moves. Sample variance (`ddof=1`) is always larger than population variance (`ddof=0`) by exactly the factor $n/(n-1)$.
+
 ### How spread out is the data?
 
 **The problem.** "Average is 70" doesn't tell you whether it's "everyone got 70" or "half got 100, half got 40." We need a *spread* number.
@@ -85,7 +99,9 @@ That's **central tendency**. Three options, each useful for different reasons:
 **Third attempt.** Average of *squared* deviations:
 $$\sigma^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \mu)^2$$
 
-This is **variance**. Two reasons we usually pick it over the absolute version:
+This is **variance** (specifically the *population* variance, dividing by $n$). When estimating variance *from a sample*, you divide by $n-1$ instead — this is **Bessel's correction**, and it removes a systematic underestimate that comes from using the sample mean in place of the true mean. In numpy this is the difference between `np.var(x, ddof=0)` (population, the default) and `np.var(x, ddof=1)` (sample).
+
+Two reasons we usually pick squared over absolute deviations:
 1. Squaring is *differentiable everywhere*. Absolute value isn't (kink at zero). When ML wants to minimize spread via gradient descent, smooth functions cooperate; non-smooth functions don't. (See [calculus](calculus.md) for why this matters.)
 2. Squaring penalizes big deviations *much more* than small ones. A deviation of 10 contributes 100 to variance; a deviation of 1 contributes 1. If you want a number that's *very upset* about outliers, variance is it.
 
@@ -120,6 +136,27 @@ This is **Pearson correlation**, always between $-1$ and $+1$:
 - $+1$ — perfect linear relationship, going up.
 - $-1$ — perfect, going down.
 - $0$ — no linear relationship.
+
+Verify on a small dataset with a clear positive relationship (`y ≈ 2x + noise`):
+
+```python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+x = np.linspace(0, 10, 50)
+y = 2 * x + rng.normal(0, 1.5, size=50)
+
+cov_matrix = np.cov(x, y, ddof=1)     # 2x2 covariance matrix
+corr_matrix = np.corrcoef(x, y)       # 2x2 correlation matrix
+print(f"Cov(x, y) = {cov_matrix[0, 1]:.2f}")
+print(f"Corr(x, y) = {corr_matrix[0, 1]:.3f}")
+
+# Correlation by hand from the covariance and stds
+by_hand = cov_matrix[0, 1] / (np.std(x, ddof=1) * np.std(y, ddof=1))
+assert np.isclose(by_hand, corr_matrix[0, 1])
+print(f"By hand match: {by_hand:.3f}")
+```
+
+Correlation lands near 0.98 — strong linear signal even with noise. The by-hand check shows correlation is *literally* covariance normalized by both standard deviations.
 
 **ML takeaways.**
 - The covariance matrix of your features (every pair's covariance, in a matrix) is the central object that PCA decomposes — see [linear-algebra](linear-algebra.md).
@@ -168,7 +205,7 @@ So we don't talk about the probability of a *single value* for continuous things
 
 A **random variable** is a function that turns outcomes into numbers (height of a randomly picked person, or 0/1 for a coin flip). The way its probabilities are distributed is described by:
 
-- **PMF (Probability Mass Function)** for discrete variables: $P(X = x)$ — direct probability of each value. Heights of a die: $P(X = 1) = P(X = 2) = \dots = 1/6$.
+- **PMF (Probability Mass Function)** for discrete variables: $P(X = x)$ — direct probability of each value. Roll of a fair die: $P(X = 1) = P(X = 2) = \dots = P(X = 6) = 1/6$.
 - **PDF (Probability Density Function)** for continuous variables: $f(x)$ where $P(a \leq X \leq b) = \int_a^b f(x)\,dx$.
 - **CDF (Cumulative Distribution Function)** for both: $F(x) = P(X \leq x)$.
 
@@ -220,6 +257,22 @@ Total positives: $99 + 99 = 198$. Of those, only $99$ actually have the disease.
 
 A "99% accurate" test, when applied to a rare disease, leaves you with a coin flip. This isn't a math trick — it's how reality works, and people get it wrong constantly. (It has a name: the **base rate fallacy**.)
 
+Compute it directly with Bayes' rule:
+
+```python
+p_disease = 0.01         # base rate (prior)
+sensitivity = 0.99        # P(positive | disease)
+specificity = 0.99        # P(negative | no disease)
+
+# P(positive) via total probability
+p_pos = sensitivity * p_disease + (1 - specificity) * (1 - p_disease)
+# Bayes' rule
+p_disease_given_pos = (sensitivity * p_disease) / p_pos
+print(f"P(disease | positive) = {p_disease_given_pos:.3f}")  # ~0.500
+```
+
+The result: even with a 99%-accurate test, a positive result on a 1%-prevalence disease implies only ~50% chance of actually being sick. The prior dominates.
+
 Here it is with every one of the 10,000 people drawn as a dot:
 
 ![10,000-person grid: tiny red patch of 100 diseased, sea of 9,900 healthy, and ~99 orange false-positive dots that swamp the true positives|697](assets/bayes-base-rate-grid.svg)
@@ -255,6 +308,28 @@ Concrete example: you have a coin and want to know $p = P(\text{heads})$. You st
 
 The posterior lands *between* the prior and the likelihood — a data-weighted compromise. With more flips the likelihood sharpens and the prior loses influence; with fewer flips the prior dominates. That is Bayes updating in one picture.
 
+The Beta distribution is *conjugate* to the Bernoulli — after $h$ heads and $t$ tails, a Beta($\alpha, \beta$) prior becomes a Beta($\alpha + h, \beta + t$) posterior. No integration needed:
+
+```python
+from scipy import stats
+# Prior: Beta(2, 2) — mild belief the coin is fair
+alpha_prior, beta_prior = 2, 2
+heads, tails = 8, 2
+
+# Posterior: Beta(alpha + heads, beta + tails)
+alpha_post, beta_post = alpha_prior + heads, beta_prior + tails
+
+prior_mean = alpha_prior / (alpha_prior + beta_prior)
+post_mean = alpha_post / (alpha_post + beta_post)
+print(f"Prior:     Beta({alpha_prior}, {beta_prior}) mean = {prior_mean:.3f}")
+print(f"Posterior: Beta({alpha_post}, {beta_post}) mean = {post_mean:.3f}")
+
+# scipy agrees
+assert np.isclose(stats.beta(alpha_post, beta_post).mean(), post_mean)
+```
+
+Prior mean is 0.500 (fair coin); posterior mean shifts to ~0.714 — pulled toward the data (8/10 = 0.8) but tempered by the prior.
+
 ## 5. Common distributions: the "shapes" data tends to take
 
 ### The problem
@@ -283,6 +358,26 @@ The 68-95-99.7 rule is worth memorizing: that fraction of values fall within 1, 
 A **Bernoulli** trial: one yes/no outcome with probability $p$. The flip of a coin, the click on an ad, the pass/fail of a single test. One parameter, $p$.
 
 A **Binomial** is the count of yeses across $n$ Bernoulli trials. "Out of 100 emails, how many were spam?" Two parameters: $n$ and $p$.
+
+Draw large samples and confirm the sample means match the theoretical ones. Theoretical means: Normal is $\mu$, Bernoulli is $p$, Poisson is $\lambda$:
+
+```python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+N = 100_000
+
+normal_samples = rng.normal(loc=5.0, scale=2.0, size=N)   # μ=5, σ=2
+bernoulli_samples = rng.binomial(n=1, p=0.3, size=N)      # p=0.3
+poisson_samples = rng.poisson(lam=4.0, size=N)            # λ=4
+
+print(f"Normal:    theoretical μ=5.0,  sample mean={normal_samples.mean():.3f}")
+print(f"Bernoulli: theoretical p=0.3,  sample mean={bernoulli_samples.mean():.3f}")
+print(f"Poisson:   theoretical λ=4.0,  sample mean={poisson_samples.mean():.3f}")
+# Poisson variance also equals λ — check:
+print(f"Poisson variance ≈ λ: {poisson_samples.var():.3f}")
+```
+
+All three sample means land within ~0.01 of the theoretical values. For Poisson, mean *equals* variance — a defining property.
 
 ### Quick reference — distributions you'll see in ML
 
@@ -320,6 +415,24 @@ $$\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} \mathcal{N}(0, \sigma^2)$$
 
 **In plain English.** The sample mean of i.i.d. data approaches a Normal distribution as you collect more samples, no matter what shape the original data had.
 
+Verify the $\sigma/\sqrt{n}$ shrinkage of the sample-mean's standard deviation. For Uniform(0, 1), the population $\sigma = 1/\sqrt{12} \approx 0.2887$:
+
+```python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+sigma_pop = 1 / np.sqrt(12)  # true σ of Uniform(0, 1)
+trials = 10_000
+
+for n in [1, 5, 30]:
+    sample_means = rng.uniform(0, 1, size=(trials, n)).mean(axis=1)
+    theoretical_std = sigma_pop / np.sqrt(n)
+    print(f"n={n:2d}: mean={sample_means.mean():.3f}, "
+          f"std={sample_means.std():.4f}, "
+          f"σ/√n={theoretical_std:.4f}")
+```
+
+The mean stays near 0.5 (LLN); the std shrinks like $\sigma/\sqrt{n}$ — halving requires quadrupling the sample. That's why "double the data" only cuts your error bars by ~30%, not 50%.
+
 The 3×3 grid below is the payoff — pick any source distribution (row), take averages of size $n$ (column), and watch the shape morph:
 
 ![3×3 grid — Uniform / Exponential / Bimodal rows; n=1, n=5, n=30 columns; leftmost column keeps the source shape, rightmost column collapses to a bell for all three|697](assets/clt-convergence.svg)
@@ -351,6 +464,24 @@ A product of small probabilities underflows to zero in floating point. The fix i
 $$\hat\theta_{\text{MLE}} = \arg\max_\theta \sum_{i=1}^n \log P(x_i | \theta)$$
 
 Maximizing the log-likelihood = minimizing the **negative log-likelihood (NLL)**. **NLL is the loss function** of most probabilistic ML models. When you train a classifier with cross-entropy loss, you're doing MLE under a categorical likelihood. When you minimize MSE, you're doing MLE under a Gaussian likelihood.
+
+Concretely: for a Gaussian sample, the MLE estimates are $\hat\mu = \bar x$ (the sample mean) and $\hat\sigma^2 = \frac{1}{n}\sum(x_i - \bar x)^2$ (population variance, `ddof=0` — *not* the unbiased sample variance):
+
+```python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+true_mu, true_sigma = 5.0, 2.0
+x = rng.normal(true_mu, true_sigma, size=1000)
+
+mu_hat = x.mean()
+sigma2_hat_mle = x.var(ddof=0)          # MLE — divides by n
+sigma2_hat_unbiased = x.var(ddof=1)     # unbiased sample estimator — divides by n-1
+print(f"MLE μ̂  = {mu_hat:.3f}  (true = {true_mu})")
+print(f"MLE σ̂² = {sigma2_hat_mle:.3f}  (true = {true_sigma**2})")
+print(f"Unbiased σ̂² = {sigma2_hat_unbiased:.3f}")
+```
+
+MLE for variance is *slightly* biased downward — that's why Bessel's correction ($n-1$) exists. But MLE is what falls out of $\arg\max$ mechanically.
 
 ### The connection that unlocks loss design
 
@@ -459,7 +590,7 @@ This is **regularization**. And it's the *same idea* as Bayesian inference, just
 | Gaussian $\mathcal{N}(0, \sigma^2)$ | **L2** regularization (ridge) — penalizes $\sum \theta_i^2$ |
 | Laplace $\text{Lap}(0, b)$ | **L1** regularization (lasso) — penalizes $\sum |\theta_i|$ |
 
-This explains a famous behavior: L1 produces *sparse* solutions (many zero coefficients), L2 doesn't. The Laplace distribution puts much more mass exactly at zero than the Gaussian does — so the Laplace prior pushes individual coefficients all the way to zero, while the Gaussian only shrinks them. The geometry of this is in [linear-algebra](linear-algebra.md) (the L1 ball has corners on the axes).
+This explains a famous behavior: L1 produces *sparse* solutions (many zero coefficients), L2 doesn't. The Laplace prior has a sharp peak (non-differentiable kink) at zero, giving it a strong preference for exact zeros; the Gaussian is smooth and rounded at zero, so it only shrinks coefficients toward zero without setting them to it. The geometry of this is in [linear-algebra](linear-algebra.md) (the L1 ball has corners on the axes).
 
 ## 8. Why models fail to generalize: bias and variance
 
@@ -486,6 +617,41 @@ The expected squared error breaks into three pieces. Each one tells you somethin
 The dartboard picture makes bias and variance concrete — each dart is one model trained on one dataset; repeated training gives the whole pattern:
 
 ![2×2 bullseye grid — low/high bias × low/high variance, with 10 darts each showing centered-vs-off and tight-vs-scattered|697](assets/bias-variance-bullseye.svg)
+
+### Measure it in code
+
+Fit a low-complexity model (degree-1 polynomial) and a high-complexity model (degree-10) on many bootstrap resamples. Evaluate each at a fixed test point $x^\* = 0.75$ (where $\sin(2\pi x^\*) = -1$). Compute $\text{Bias}^2$ (systematic offset from truth) and $\text{Variance}$ (spread across resamples):
+
+```python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+
+def true_f(x):
+    return np.sin(2 * np.pi * x)
+
+n = 30                                    # training set size
+x_star = np.array([0.75])                 # single test point
+y_star_true = true_f(x_star)[0]           # = -1
+n_bootstraps = 500
+
+def predictions(degree):
+    preds = []
+    for _ in range(n_bootstraps):
+        x_train = rng.uniform(0, 1, size=n)
+        y_train = true_f(x_train) + rng.normal(0, 0.2, size=n)
+        coef = np.polyfit(x_train, y_train, degree)
+        preds.append(np.polyval(coef, x_star)[0])
+    return np.array(preds)
+
+for deg in [1, 10]:
+    preds = predictions(deg)
+    bias_sq = (preds.mean() - y_star_true) ** 2
+    variance = preds.var()
+    print(f"degree={deg:2d}: bias²={bias_sq:.4f}, variance={variance:.4f}, "
+          f"total={bias_sq + variance:.4f}")
+```
+
+Degree-1 has high bias² (~0.26 — a line can't hit $-1$ at $x=0.75$ while averaging through 0-mean noise) and low variance. Degree-10 has near-zero bias² but higher variance (each bootstrap fits a wildly different curve). The two failure modes trade off — that's the whole story.
 
 ### Why this is a *trade-off*
 
@@ -569,6 +735,34 @@ Take the derivative, set to zero, and you get a closed-form solution:
 $$\hat\beta = (X^TX)^{-1} X^T y$$
 
 This is the **Normal Equation**. Geometrically, it's the *projection* of $y$ onto the column space of $X$ — the closest point to $y$ that the model is capable of producing. (See [linear-algebra](linear-algebra.md) for the projection picture.)
+
+Verify that MSE-minimization and Gaussian-NLL-minimization return the *same* $\hat\beta$:
+
+```python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+n = 100
+X = np.column_stack([np.ones(n), rng.normal(size=n)])  # bias column + one feature
+true_beta = np.array([1.0, 2.0])
+sigma = 0.5
+y = X @ true_beta + rng.normal(0, sigma, size=n)
+
+# Method 1: least-squares
+beta_ls, *_ = np.linalg.lstsq(X, y, rcond=None)
+
+# Method 2: minimize Gaussian NLL directly
+#   NLL = n/2 · log(2πσ²) + (1/2σ²) · Σ(y − Xβ)²
+# For fixed σ, this is minimized by the same β as MSE.
+resid = y - X @ beta_ls
+mse = (resid ** 2).mean()
+nll = 0.5 * n * np.log(2 * np.pi * sigma**2) + resid @ resid / (2 * sigma**2)
+print(f"β̂ (least squares) = {beta_ls}")     # ≈ [1.0, 2.0]
+print(f"MSE = {mse:.4f}, NLL = {nll:.2f}")
+print(f"NLL = (const) + MSE·n/(2σ²): "
+      f"{0.5*n*np.log(2*np.pi*sigma**2) + mse*n/(2*sigma**2):.2f}")
+```
+
+The NLL is MSE plus additive constants that don't depend on $\beta$ — so *any* $\beta$ that minimizes MSE also minimizes NLL. That's what "MSE = MLE under Gaussian" means numerically.
 
 ### What we assumed without saying so
 
@@ -667,6 +861,35 @@ If $Q = P$, cross-entropy equals entropy — minimum cost. The further $Q$ is fr
 $$D_{KL}(P \| Q) = \sum_x P(x) \log \frac{P(x)}{Q(x)} = H(P, Q) - H(P)$$
 
 Cross-entropy minus entropy. Always $\geq 0$, zero iff $P = Q$. **Not symmetric** — $D_{KL}(P\|Q) \neq D_{KL}(Q\|P)$.
+
+Verify all three quantities by hand and against `scipy.stats.entropy`:
+
+```python
+import numpy as np
+from scipy import stats
+
+P = np.array([0.7, 0.2, 0.1])   # true distribution
+Q = np.array([0.5, 0.3, 0.2])   # model distribution
+
+# By hand — using natural log (nats). scipy.stats.entropy uses natural log by default.
+H_P = -np.sum(P * np.log(P))                    # entropy of P
+H_PQ = -np.sum(P * np.log(Q))                   # cross-entropy H(P, Q)
+KL_PQ = np.sum(P * np.log(P / Q))               # D_KL(P || Q)
+KL_QP = np.sum(Q * np.log(Q / P))               # asymmetry check
+
+print(f"H(P)         = {H_P:.4f}")
+print(f"H(P, Q)      = {H_PQ:.4f}")
+print(f"D_KL(P || Q) = {KL_PQ:.4f}")
+print(f"D_KL(Q || P) = {KL_QP:.4f}   (≠ D_KL(P || Q) — asymmetric)")
+
+# scipy check
+assert np.isclose(stats.entropy(P), H_P)
+assert np.isclose(stats.entropy(P, Q), KL_PQ)   # note: this is KL, not cross-entropy!
+# Identity: H(P, Q) = H(P) + D_KL(P || Q)
+assert np.isclose(H_PQ, H_P + KL_PQ)
+```
+
+Note the scipy gotcha: `stats.entropy(P, Q)` returns *KL divergence*, not cross-entropy. The identity `H(P, Q) = H(P) + D_KL(P||Q)` is why minimizing cross-entropy loss (with fixed one-hot $P$) is equivalent to minimizing KL — $H(P)$ is constant.
 
 **ML uses:**
 - **VAEs** (variational autoencoders) — loss has a "KL to prior" term.
