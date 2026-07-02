@@ -60,6 +60,37 @@ Relative links to neighboring notes: `[event-sourcing](../system-design/event-so
 
 Drop a section if it would be one line of fluff. Keep it if it would be five lines of substance. The fixed order is what makes scanning fast — don't reorder.
 
+## Teach with pictures and code, not just prose
+
+The wiki is read in Obsidian with the [Execute Code](https://github.com/twibiral/obsidian-execute-code) plugin installed. Any concept that can be *seen* or *run* should be — reading raw formulas is the slowest way to learn.
+
+**Diagrams.** Prefer SVG under `wiki/<category>/assets/` over ASCII art or Mermaid. SVGs render sharp in Obsidian light/dark themes and on GitHub. Include a `@media (prefers-color-scheme: dark)` block in the inline `<style>` so colors adapt. Embed as `![alt](assets/name.svg)`. Reserve Mermaid for tiny flow/graph diagrams where the source text carries meaning (e.g. a confounder DAG); pixel-precise charts belong in SVG.
+
+**Python.** Anywhere a formula deserves verification or a picture, add a short runnable snippet:
+
+- Use ` ```python ` fences (not `python3` / `py`) — the Execute Code plugin turns those into Run buttons.
+- **Self-contained**: imports at the top of each block; the reader can run one block without running any other.
+- **Deterministic**: seed randomness (`rng = np.random.default_rng(0)`, `torch.manual_seed(0)`, `random_state=0`) so the printed result is reproducible.
+- **Short**: 5–15 lines. Comparisons (analytic vs numerical, method A vs method B) teach; showcase code doesn't.
+- **Attach expected output** right after the fence in a plain code block labelled `Result:` — so the note is legible on GitHub, on mobile, or with the plugin off, and the plugin's live output appears below as a second copy when clicked. Example:
+
+  ````
+  ```python
+  import numpy as np
+  print(np.linalg.norm([3, -4, 12]))
+  ```
+
+  Result:
+  ```
+  13.0
+  ```
+  ````
+
+- Prefer `matplotlib.pyplot` for plots when a chart teaches better than a static SVG — Execute Code embeds `plt.show()` output inline. Save the plot as `assets/<slug>.png` (or SVG via `plt.savefig`) once you're happy, and embed the static version too so it renders without the plugin.
+- Use `numpy` as the default toolkit. Reach for `scipy.stats`, `sklearn`, `torch` only when they clarify the concept (autograd, lasso vs ridge, distributions).
+
+If the tools installed to run it don't exist yet, the environment can be built with `uv venv <name> --python 3.12 && uv pip install numpy scipy scikit-learn torch matplotlib`.
+
 ## Three jobs
 
 - **Recall** ("do I have notes on X?") — start with `python3 scripts/extract-manifest.py <keyword>`, fall back to `grep -ril <keyword> wiki/`. Read the candidate in full before quoting. Cite the path. If nothing matches, say so plainly.
