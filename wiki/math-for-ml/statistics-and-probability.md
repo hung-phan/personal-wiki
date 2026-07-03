@@ -2,7 +2,7 @@
 name: statistics-and-probability
 description: Statistics and probability foundations for ML — populations vs samples, descriptive statistics (mean, median, variance, covariance, correlation), probability axioms, conditional probability, Bayes' theorem, common distributions (Normal, Bernoulli, Binomial, Poisson, Uniform, Exponential), Central Limit Theorem, Law of Large Numbers, Maximum Likelihood Estimation (MLE), MAP, hypothesis testing, p-values, confidence intervals, bias-variance tradeoff, linear and logistic regression, regularization as a Bayesian prior, entropy, KL divergence, cross-entropy.
 created: 2026-06-08
-updated: 2026-07-02
+updated: 2026-07-03
 tags: [statistics, probability, machine-learning, math, foundations, bayes, distributions, regression, mle, learning-journey]
 ---
 
@@ -472,24 +472,106 @@ The 3×3 grid below is the payoff — pick any source distribution (row), take a
 
 ### The problem
 
-You have data $D$. You hypothesize a model with parameter $\theta$ (could be one number, could be millions). Which $\theta$ is *most consistent* with the data?
+Someone hands you a coin and flips it 20 times: **13 heads, 7 tails**. Is it fair? Biased? What's your best guess for $p$, the probability of heads?
 
-### The intuition
+You have data. You have a model (Bernoulli with unknown $p$). You want the "best" value of $p$. What does "best" even mean?
 
-A good $\theta$ should make the data we actually observed *plausible* — high probability under the model. A bad $\theta$ would mean the data is a freak coincidence.
+### The intuition — score each guess by how well it explains what happened
 
-So: pick the $\theta$ that maximizes the probability of the data:
-$$\hat\theta_{\text{MLE}} = \arg\max_\theta P(D | \theta)$$
+Try $p = 0.35$. Under that model, seeing 13 heads out of 20 would be a freakish accident. Try $p = 0.65$. Now those 13 heads are exactly what you'd expect. Try $p = 0.9$. Too extreme — you'd have expected more heads than you saw.
 
-If the data points are independent (the i.i.d. assumption again):
-$$P(D | \theta) = \prod_{i=1}^n P(x_i | \theta)$$
+The **plausibility** of a given $p$ = the probability the model assigns to *the data you actually observed*. That number has a name: the **likelihood**.
 
-A product of small probabilities underflows to zero in floating point. The fix is the same as always: take the log to convert product into sum.
-$$\hat\theta_{\text{MLE}} = \arg\max_\theta \sum_{i=1}^n \log P(x_i | \theta)$$
+$$L(p) = P(\text{data} \mid p) = p^{13} (1-p)^{7}$$
 
-Maximizing the log-likelihood = minimizing the **negative log-likelihood (NLL)**. **NLL is the loss function** of most probabilistic ML models. When you train a classifier with cross-entropy loss, you're doing MLE under a categorical likelihood. When you minimize MSE, you're doing MLE under a Gaussian likelihood.
+(13 heads each contribute a factor of $p$, 7 tails each contribute $1-p$; multiply.)
 
-Concretely: for a Gaussian sample, the MLE estimates are $\hat\mu = \bar x$ (the sample mean) and $\hat\sigma^2 = \frac{1}{n}\sum(x_i - \bar x)^2$ (population variance, `ddof=0` — *not* the unbiased sample variance):
+Note the flip in what's variable: the *data* is fixed (that's what you observed), and $p$ is the free parameter. $L(p)$ is a function of $p$. Plot it:
+
+![Likelihood curve L(p) = p^13 (1-p)^7 peaks sharply at p = 0.65](assets/mle-likelihood-curve.svg)
+
+**The MLE recipe in one sentence:** pick the value that makes the observed data most likely — the peak of $L$.
+
+$$\hat p_{\text{MLE}} = \arg\max_p L(p)$$
+
+For this example, the peak is at $p = 0.65 = 13/20$. That's why we teach kids "13 out of 20 = 0.65" — it's literally MLE for a Bernoulli. Every empirical frequency you've ever computed was an MLE.
+
+### The three moves that solve every MLE problem
+
+Real MLE has more than one data point, and multiplying dozens or thousands of probabilities together underflows to zero in floating point. So there's a standard three-move dance:
+
+**Move 1 — factorize (i.i.d.).** If the data points are independent, the joint likelihood is a product of per-point likelihoods:
+
+$$L(\theta) = P(D \mid \theta) = \prod_{i=1}^n P(x_i \mid \theta)$$
+
+**Move 2 — take the log.** Products become sums. Products of tiny numbers underflow; sums of `log(tiny)` are fine. And log is monotonic, so the argmax doesn't move.
+
+$$\log L(\theta) = \sum_{i=1}^n \log P(x_i \mid \theta)$$
+
+**Move 3 — set derivative to zero.** For a smooth likelihood, the peak is where $\frac{d \log L}{d\theta} = 0$. Solve for $\theta$; that's $\hat\theta_{\text{MLE}}$.
+
+By convention we flip the sign and *minimize* the **negative log-likelihood (NLL)** instead — same optimum, and it aligns with the "loss" framing we use for gradient descent. That's the whole story: **NLL is the loss function of most probabilistic ML models.** Cross-entropy loss for a classifier is NLL under a categorical likelihood; MSE for a regressor is NLL under a Gaussian likelihood. More on that in the next subsection.
+
+### Worked example 1 — coin flips (one parameter)
+
+For our coin, $L(p) = p^{13}(1-p)^7$. Log it:
+
+$$\log L(p) = 13 \log p + 7 \log(1 - p)$$
+
+Differentiate and set to zero:
+
+$$\frac{d \log L}{dp} = \frac{13}{p} - \frac{7}{1 - p} = 0 \;\;\Longrightarrow\;\; 13(1 - p) = 7 p \;\;\Longrightarrow\;\; \hat p = \frac{13}{20} = 0.65$$
+
+The intuitive answer (heads-so-far over flips-so-far) falls out of the derivative — it wasn't a lucky guess. The general pattern: for $k$ heads out of $n$ flips, $\hat p_{\text{MLE}} = k/n$.
+
+Verify in code:
+
+```python
+import numpy as np
+
+n_heads, n_tails = 13, 7
+p_grid = np.linspace(0.01, 0.99, 99)
+L = p_grid**n_heads * (1 - p_grid)**n_tails
+p_hat = p_grid[np.argmax(L)]
+
+print(f"MLE by grid search:  p̂ = {p_hat:.3f}")
+print(f"Closed-form (calc):  p̂ = {n_heads / (n_heads + n_tails):.3f}")
+peak = L[np.argmax(L)]
+at_half = L[np.argmin(np.abs(p_grid - 0.5))]
+print(f"L(0.65) / L(0.5)  = {peak / at_half:.2f}× more likely")
+# Expected output:
+# MLE by grid search:  p̂ = 0.650
+# Closed-form (calc):  p̂ = 0.650
+# L(0.65) / L(0.5)  = 2.49× more likely
+```
+
+The grid-search peak and the calculus-derived answer agree. And the peak is only ~2.5× more likely than $p = 0.5$ — with only 20 flips there's *huge* uncertainty about whether the coin is really biased. MLE gives a point estimate but no uncertainty; you'd need a full posterior (next subsection) or a confidence interval (§9) for that.
+
+### Worked example 2 — Gaussian sample (two parameters)
+
+You have $n$ measurements $x_1, \ldots, x_n$ and want to fit a Normal $\mathcal{N}(\mu, \sigma^2)$. Same three moves.
+
+**Factorize:**
+
+$$L(\mu, \sigma^2) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}} \exp\!\left(-\frac{(x_i - \mu)^2}{2\sigma^2}\right)$$
+
+**Log:**
+
+$$\log L = -\frac{n}{2}\log(2\pi\sigma^2) \;-\; \frac{1}{2\sigma^2} \sum_{i=1}^n (x_i - \mu)^2$$
+
+**Derivative in $\mu$**, set to zero — only the second term depends on $\mu$:
+
+$$\frac{\partial \log L}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^n (x_i - \mu) = 0 \;\;\Longrightarrow\;\; \hat\mu = \frac{1}{n}\sum_{i=1}^n x_i = \bar x$$
+
+The MLE for the mean of a Gaussian is *the sample average*. That's not a coincidence — it's *because* we assumed Gaussian noise that "take the average" is the right thing to do. Under Laplace noise, the MLE for the center is the *median*, not the mean.
+
+**Derivative in $\sigma^2$**, set to zero — both terms depend on it:
+
+$$\frac{\partial \log L}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum_{i=1}^n (x_i - \hat\mu)^2 = 0 \;\;\Longrightarrow\;\; \hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \bar x)^2$$
+
+Note the $\frac{1}{n}$, **not** $\frac{1}{n-1}$. MLE gives the *population* variance formula (`np.var(x, ddof=0)`). The $\frac{1}{n-1}$ "unbiased" version (`ddof=1`, Bessel's correction) is a different thing — it corrects for a small downward bias in MLE's variance estimate. MLE doesn't care about bias, only likelihood.
+
+Verify in code:
 
 ```python
 import numpy as np
@@ -499,7 +581,7 @@ x = rng.normal(true_mu, true_sigma, size=1000)
 
 mu_hat = x.mean()
 sigma2_hat_mle = x.var(ddof=0)          # MLE — divides by n
-sigma2_hat_unbiased = x.var(ddof=1)     # unbiased sample estimator — divides by n-1
+sigma2_hat_unbiased = x.var(ddof=1)     # Bessel — divides by n-1
 print(f"MLE μ̂  = {mu_hat:.3f}  (true = {true_mu})")
 print(f"MLE σ̂² = {sigma2_hat_mle:.3f}  (true = {true_sigma**2})")
 print(f"Unbiased σ̂² = {sigma2_hat_unbiased:.3f}")
@@ -509,7 +591,9 @@ print(f"Unbiased σ̂² = {sigma2_hat_unbiased:.3f}")
 # Unbiased σ̂² = 3.820
 ```
 
-MLE for variance is *slightly* biased downward — that's why Bessel's correction ($n-1$) exists. But MLE is what falls out of $\arg\max$ mechanically.
+MLE variance is *slightly* smaller than the unbiased version — that's the bias Bessel corrects. Both converge to the truth as $n \to \infty$.
+
+**Zoom out.** Every MLE problem is these same three moves. Only the algebra of Move 3 changes. Once you can do it for the coin and the Gaussian by hand, you can do it for anything — and once you know the answer is called "the loss function," the whole zoo of ML losses stops being a zoo.
 
 ### The connection that unlocks loss design
 

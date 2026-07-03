@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax    { stroke: #64748b; stroke-width: 1.5; }
+    .grid  { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .curve { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .fill  { fill: #2563eb; opacity: 0.12; }
+    .peak  { stroke: #dc2626; stroke-width: 2; stroke-dasharray: 5 4; }
+    .dot   { fill: #dc2626; stroke: #7f1d1d; stroke-width: 1.5; }
+    .txt   { fill: #0f172a; }
+    .tick  { fill: #475569; font-size: 12px; }
+    .title { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .note  { fill: #475569; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .curve { stroke: #60a5fa; }
+      .fill { fill: #60a5fa; opacity: 0.16; }
+      .peak { stroke: #f87171; }
+      .dot { fill: #f87171; stroke: #fecaca; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="360" y="30" text-anchor="middle">Likelihood L(p) for 13 heads out of 20 flips — MLE picks the peak</text>
+
+  <line class="ax" x1="60" y1="340" x2="660" y2="340"/>
+  <line class="ax" x1="60" y1="60"  x2="60"  y2="345"/>
+
+  <g>
+    <line class="grid" x1="180" y1="60" x2="180" y2="340"/>
+    <text class="tick" x="180" y="358" text-anchor="middle">0.2</text>
+    <line class="grid" x1="300" y1="60" x2="300" y2="340"/>
+    <text class="tick" x="300" y="358" text-anchor="middle">0.4</text>
+    <line class="grid" x1="420" y1="60" x2="420" y2="340"/>
+    <text class="tick" x="420" y="358" text-anchor="middle">0.6</text>
+    <line class="grid" x1="540" y1="60" x2="540" y2="340"/>
+    <text class="tick" x="540" y="358" text-anchor="middle">0.8</text>
+    <line class="grid" x1="660" y1="60" x2="660" y2="340"/>
+    <text class="tick" x="660" y="358" text-anchor="middle">1.0</text>
+    <text class="tick" x="60"  y="358" text-anchor="middle">0</text>
+  </g>
+  <text class="tick" x="360" y="378" text-anchor="middle">p  (probability of heads)</text>
+
+  <text class="tick" x="55" y="344" text-anchor="end">0</text>
+  <text class="tick" x="55" y="215" text-anchor="end">0.5</text>
+  <line class="grid" x1="60" y1="210" x2="660" y2="210"/>
+  <text class="tick" x="55" y="85" text-anchor="end">1.0</text>
+  <line class="grid" x1="60" y1="80"  x2="660" y2="80"/>
+  <text class="tick" x="30" y="200" text-anchor="middle" transform="rotate(-90 30,200)">L(p) / L_max</text>
+
+  <path class="fill" d="
+    M 60 340
+    L 66 340
+    L 90.5 340
+    L 115 340
+    L 139.5 340
+    L 164 340
+    L 188.5 340
+    L 213 339.7
+    L 237.5 338.7
+    L 262 335.6
+    L 286.5 327.4
+    L 311 310.2
+    L 335.5 279.9
+    L 360 234.9
+    L 384.5 179.4
+    L 409 124.5
+    L 433.5 86.3
+    L 450 80
+    L 458 80
+    L 482.5 111.4
+    L 507 171.8
+    L 531.5 240.8
+    L 556 296.4
+    L 580.5 327.6
+    L 605 338.3
+    L 629.5 340
+    L 654 340
+    L 660 340
+    L 660 340 Z
+  "/>
+  <path class="curve" d="
+    M 66 340
+    L 90.5 340
+    L 115 340
+    L 139.5 340
+    L 164 340
+    L 188.5 340
+    L 213 339.7
+    L 237.5 338.7
+    L 262 335.6
+    L 286.5 327.4
+    L 311 310.2
+    L 335.5 279.9
+    L 360 234.9
+    L 384.5 179.4
+    L 409 124.5
+    L 433.5 86.3
+    L 450 80
+    L 458 80
+    L 482.5 111.4
+    L 507 171.8
+    L 531.5 240.8
+    L 556 296.4
+    L 580.5 327.6
+    L 605 338.3
+    L 629.5 340
+    L 654 340
+  "/>
+
+  <line class="peak" x1="450" y1="80" x2="450" y2="340"/>
+  <circle class="dot" cx="450" cy="80" r="6"/>
+
+  <text class="txt" x="450" y="60" text-anchor="middle" font-weight="700">p̂_MLE = 13/20 = 0.65</text>
+  <text class="note" x="120" y="308">L(p) = p¹³ (1 − p)⁷</text>
+
+  <line class="grid" x1="360" y1="234.9" x2="360" y2="340" stroke="#94a3b8"/>
+  <text class="note" x="360" y="230" text-anchor="middle">p = 0.5</text>
+  <text class="note" x="360" y="248" text-anchor="middle" fill="#64748b">≈ 40% as likely</text>
+
+  <line class="grid" x1="270" y1="333" x2="270" y2="340" stroke="#94a3b8"/>
+  <text class="note" x="270" y="325" text-anchor="middle">p = 0.35</text>
+  <text class="note" x="270" y="308" text-anchor="middle" fill="#64748b">practically zero</text>
+</svg>
