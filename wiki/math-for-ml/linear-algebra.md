@@ -2,7 +2,7 @@
 name: linear-algebra
 description: Linear algebra foundations for ML — scalars, vectors, matrices, tensors, dot product, norms (L1, L2, Lp, Frobenius), matrix multiplication, transpose, inverse, determinant, trace, rank, linear independence, span, basis, vector spaces, subspaces, four fundamental subspaces, orthogonality, projection, Gram-Schmidt, eigenvalues and eigenvectors, eigendecomposition, diagonalization, SVD (Singular Value Decomposition), Principal Component Analysis (PCA), positive definite matrices, matrix calculus identities, numerical conditioning.
 created: 2026-06-08
-updated: 2026-07-05
+updated: 2026-07-03
 tags: [linear-algebra, math, machine-learning, foundations, vectors, matrices, eigenvalues, svd, pca, tensors, learning-journey]
 ---
 
@@ -121,9 +121,9 @@ from sklearn.linear_model import Lasso, Ridge
 rng = np.random.default_rng(0)
 X = rng.standard_normal((80, 3))                 # 3 features
 y = 2.5 * X[:, 0] + rng.standard_normal(80) * 0.1  # only feature 0 matters
-lasso = Lasso(alpha=0.1).fit(X, y)
-ridge = Ridge(alpha=1.0).fit(X, y)
-print("Lasso coefs:", np.round(lasso.coef_, 3))   # e.g. [~2.4, 0.0, 0.0]
+lasso = Lasso(alpha=0.1).fit(X, y)  # L1 penalty; alpha = strength
+ridge = Ridge(alpha=1.0).fit(X, y)  # L2 penalty; alpha = strength
+print("Lasso coefs:", np.round(lasso.coef_, 3))   # .coef_ = trained weights
 print("Ridge coefs:", np.round(ridge.coef_, 3))   # e.g. [~2.4, small, small] — nonzero
 # Expected output:
 # Lasso coefs: [2.419 0.    0.   ]
@@ -160,9 +160,10 @@ Quick sanity check — all three norms of the same vector, plus cosine similarit
 import numpy as np
 x = np.array([3.0, -4.0, 12.0])
 y = np.array([1.0,  2.0,  2.0])
+# ord=1 -> L1 (sum |xi|); ord=2 -> L2 (Euclidean); ord=inf -> max |xi|
 print("L1:", np.linalg.norm(x, 1), "L2:", np.linalg.norm(x, 2), "Linf:", np.linalg.norm(x, np.inf))
-cos_sim = x @ y / (np.linalg.norm(x) * np.linalg.norm(y))
-theta = np.arccos(np.clip(cos_sim, -1, 1))
+cos_sim = x @ y / (np.linalg.norm(x) * np.linalg.norm(y))  # default ord=2
+theta = np.arccos(np.clip(cos_sim, -1, 1))  # clip guards float drift past [-1, 1]
 print("cos_sim:", cos_sim, "angle (deg):", np.degrees(theta), "cos(theta):", np.cos(theta))
 # Expected output:
 # L1: 19.0 L2: 13.0 Linf: 12.0
@@ -293,9 +294,9 @@ A = np.array([[2.0, 0.5, 0.0],
               [0.0, 0.0, 1.5]])
 corners = np.array(list(product([0.0, 1.0], repeat=3))).T   # 3 x 8, unit cube corners
 transformed = A @ corners
-print("det(A) =", np.linalg.det(A))                          # expected volume scale
+print("det(A) =", np.linalg.det(A))          # signed volume-scale factor of A
 # Volume via the parallelepiped spanned by A's columns:
-print("|det(A)| =", abs(np.linalg.det(A)))
+print("|det(A)| =", abs(np.linalg.det(A)))   # |det| = volume scale (sign = orientation)
 print("transformed corner range x:", transformed[0].min(), "to", transformed[0].max())
 # Expected output:
 # det(A) = 8.999999999999998
@@ -323,8 +324,8 @@ from scipy.linalg import null_space
 A = np.array([[1.0, 2.0, 3.0],
               [4.0, 5.0, 6.0],
               [5.0, 7.0, 9.0]])  # row 3 = row 1 + row 2
-print("shape:", A.shape, "rank:", np.linalg.matrix_rank(A))
-ns = null_space(A)
+print("shape:", A.shape, "rank:", np.linalg.matrix_rank(A))  # rank via SVD (default tol)
+ns = null_space(A)  # orthonormal basis of {x : A x = 0} via SVD
 print("null space basis (shape", ns.shape, "):\n", ns)
 print("A @ null_vec =", A @ ns[:, 0])  # ~ zero vector
 # Expected output:
@@ -382,9 +383,9 @@ A = np.array([[1.0, 0.0],
               [1.0, 2.0],
               [1.0, 3.0]])                     # 4x2, tall
 b = np.array([1.0, 2.0, 2.0, 4.0])
-P = A @ np.linalg.pinv(A)                       # = A (A^T A)^{-1} A^T for full-column-rank A
+P = A @ np.linalg.pinv(A)                       # pinv = Moore-Penrose pseudoinverse (via SVD)
 print("P shape:", P.shape, "idempotence err:", np.linalg.norm(P @ P - P))
-x_hat, *_ = np.linalg.lstsq(A, b, rcond=None)   # least-squares solution
+x_hat, *_ = np.linalg.lstsq(A, b, rcond=None)   # solves min ||Ax - b||; rcond=None uses new default
 print("P @ b:      ", P @ b)
 print("A @ x_hat:  ", A @ x_hat)                # same vector
 print("residual perpendicular to columns?:", A.T @ (b - A @ x_hat))
@@ -451,7 +452,7 @@ import numpy as np
 A = np.array([[4.0, 1.0, 0.0],
               [1.0, 3.0, 1.0],
               [0.0, 1.0, 2.0]])                # symmetric -> real eigenvalues, orthogonal eigenvectors
-eigvals, eigvecs = np.linalg.eigh(A)           # eigh for symmetric matrices (more stable)
+eigvals, eigvecs = np.linalg.eigh(A)           # eigh: symmetric/Hermitian — real vals, orthonormal vecs (vs. eig which may return complex)
 for lam, v in zip(eigvals, eigvecs.T):
     residual = np.linalg.norm(A @ v - lam * v)
     print(f"lambda={lam:+.4f}  ||A v - lambda v|| = {residual:.2e}")
@@ -513,7 +514,7 @@ SVD, full reconstruction, then a rank-$k$ truncation — Eckart-Young in code:
 import numpy as np
 rng = np.random.default_rng(0)
 A = rng.standard_normal((5, 4)) @ rng.standard_normal((4, 6))   # 5x6, rank <= 4
-U, S, Vt = np.linalg.svd(A, full_matrices=False)
+U, S, Vt = np.linalg.svd(A, full_matrices=False)  # reduced SVD: U m×k, S len k, Vt k×n (k=min(m,n))
 print("A.shape:", A.shape, "U:", U.shape, "S:", S.shape, "Vt:", Vt.shape)
 print("singular values:", np.round(S, 3))
 A_full = U @ np.diag(S) @ Vt

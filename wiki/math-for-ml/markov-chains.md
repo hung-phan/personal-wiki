@@ -84,12 +84,12 @@ import numpy as np
 
 P = np.array([[0.9, 0.1],
               [0.5, 0.5]])
-rng = np.random.default_rng(0)
+rng = np.random.default_rng(0)  # seeded RNG for reproducibility
 
 s = 0            # start Sunny
 path = [s]
 for _ in range(19):
-    s = rng.choice(2, p=P[s])
+    s = rng.choice(2, p=P[s])  # weighted draw from current row of P
     path.append(s)
 
 print("".join("S" if d == 0 else "R" for d in path))
@@ -124,7 +124,7 @@ P = np.array([[0.9, 0.1],
               [0.5, 0.5]])
 
 for n in [1, 2, 5, 20]:
-    Pn = np.linalg.matrix_power(P, n)
+    Pn = np.linalg.matrix_power(P, n)  # computes P^n (n-step transitions)
     print(f"P^{n:2d} =\n{np.round(Pn, 4)}\n")
 # Expected output:
 # P^ 1 =
@@ -184,10 +184,10 @@ for _ in range(200):
     pi_pi = pi_pi @ P
 
 # Method B — left eigenvector of P with eigenvalue 1
-vals, vecs = np.linalg.eig(P.T)
-idx = np.argmin(np.abs(vals - 1))
-pi_eig = np.real(vecs[:, idx])
-pi_eig /= pi_eig.sum()
+vals, vecs = np.linalg.eig(P.T)          # eig of transpose: left eigvecs of P become right eigvecs of P.T
+idx = np.argmin(np.abs(vals - 1))        # pick the eigenvalue equal to 1 (stationarity)
+pi_eig = np.real(vecs[:, idx])           # strip tiny imaginary parts from eig's complex output
+pi_eig /= pi_eig.sum()                   # normalize to a probability distribution
 
 print(f"power iteration : π = {pi_pi}")
 print(f"left eigenvector: π = {pi_eig}")

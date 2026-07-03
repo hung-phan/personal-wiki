@@ -81,9 +81,9 @@ import numpy as np
 incomes = np.array([30, 35, 40, 42, 45, 48, 50, 55, 60, 1_000_000])  # last value = outlier
 print(f"mean   = {np.mean(incomes):,.1f}")   # ~100,040 — dragged by outlier
 print(f"median = {np.median(incomes):,.1f}") # 46.5 — unmoved
-print(f"pop var  (ddof=0) = {np.var(incomes, ddof=0):,.1f}")
-print(f"sample var (ddof=1) = {np.var(incomes, ddof=1):,.1f}")  # slightly larger
-print(f"std = {np.std(incomes):,.1f}")
+print(f"pop var  (ddof=0) = {np.var(incomes, ddof=0):,.1f}")     # divides by n (MLE)
+print(f"sample var (ddof=1) = {np.var(incomes, ddof=1):,.1f}")   # divides by n-1 (Bessel, unbiased)
+print(f"std = {np.std(incomes):,.1f}")                            # ddof=0 by default
 # Expected output:
 # mean   = 100,040.5
 # median = 46.5
@@ -147,17 +147,17 @@ Verify on a small dataset with a clear positive relationship (`y ≈ 2x + noise`
 
 ```python
 import numpy as np
-rng = np.random.default_rng(seed=0)
-x = np.linspace(0, 10, 50)
-y = 2 * x + rng.normal(0, 1.5, size=50)
+rng = np.random.default_rng(seed=0)                # seeded RNG — reproducible draws
+x = np.linspace(0, 10, 50)                         # 50 evenly spaced points on [0, 10]
+y = 2 * x + rng.normal(0, 1.5, size=50)            # 50 draws from N(0, 1.5²) added as noise
 
-cov_matrix = np.cov(x, y, ddof=1)     # 2x2 covariance matrix
-corr_matrix = np.corrcoef(x, y)       # 2x2 correlation matrix
+cov_matrix = np.cov(x, y, ddof=1)     # 2x2 sample covariance matrix (Bessel corrected)
+corr_matrix = np.corrcoef(x, y)       # 2x2 Pearson correlation matrix, entries in [-1, 1]
 print(f"Cov(x, y) = {cov_matrix[0, 1]:.2f}")
 print(f"Corr(x, y) = {corr_matrix[0, 1]:.3f}")
 
 # Correlation by hand from the covariance and stds
-by_hand = cov_matrix[0, 1] / (np.std(x, ddof=1) * np.std(y, ddof=1))
+by_hand = cov_matrix[0, 1] / (np.std(x, ddof=1) * np.std(y, ddof=1))  # ddof=1 matches np.cov above
 assert np.isclose(by_hand, corr_matrix[0, 1])
 print(f"By hand match: {by_hand:.3f}")
 # Expected output:
@@ -274,9 +274,9 @@ p_disease = 0.01         # base rate (prior)
 sensitivity = 0.99        # P(positive | disease)
 specificity = 0.99        # P(negative | no disease)
 
-# P(positive) via total probability
+# P(positive) via total probability — sum over both disease outcomes
 p_pos = sensitivity * p_disease + (1 - specificity) * (1 - p_disease)
-# Bayes' rule
+# Bayes' rule: posterior = (likelihood × prior) / evidence
 p_disease_given_pos = (sensitivity * p_disease) / p_pos
 print(f"P(disease | positive) = {p_disease_given_pos:.3f}")  # ~0.500
 # Expected output:
@@ -328,15 +328,15 @@ from scipy import stats
 alpha_prior, beta_prior = 2, 2
 heads, tails = 8, 2
 
-# Posterior: Beta(alpha + heads, beta + tails)
+# Posterior: Beta(alpha + heads, beta + tails)  — conjugate update, no integral needed
 alpha_post, beta_post = alpha_prior + heads, beta_prior + tails
 
-prior_mean = alpha_prior / (alpha_prior + beta_prior)
+prior_mean = alpha_prior / (alpha_prior + beta_prior)     # mean of Beta(a,b) = a/(a+b)
 post_mean = alpha_post / (alpha_post + beta_post)
 print(f"Prior:     Beta({alpha_prior}, {beta_prior}) mean = {prior_mean:.3f}")
 print(f"Posterior: Beta({alpha_post}, {beta_post}) mean = {post_mean:.3f}")
 
-# scipy agrees
+# scipy agrees — stats.beta(a, b) is a frozen Beta distribution object
 assert np.isclose(stats.beta(alpha_post, beta_post).mean(), post_mean)
 # Expected output:
 # Prior:     Beta(2, 2) mean = 0.500
@@ -378,18 +378,18 @@ Draw large samples and confirm the sample means match the theoretical ones. Theo
 
 ```python
 import numpy as np
-rng = np.random.default_rng(seed=0)
+rng = np.random.default_rng(seed=0)                       # seeded RNG — reproducible
 N = 100_000
 
-normal_samples = rng.normal(loc=5.0, scale=2.0, size=N)   # μ=5, σ=2
-bernoulli_samples = rng.binomial(n=1, p=0.3, size=N)      # p=0.3
-poisson_samples = rng.poisson(lam=4.0, size=N)            # λ=4
+normal_samples = rng.normal(loc=5.0, scale=2.0, size=N)   # N draws from N(5, 2²)
+bernoulli_samples = rng.binomial(n=1, p=0.3, size=N)      # n=1 → Bernoulli(p=0.3)
+poisson_samples = rng.poisson(lam=4.0, size=N)            # N draws from Poisson(λ=4)
 
 print(f"Normal:    theoretical μ=5.0,  sample mean={normal_samples.mean():.3f}")
 print(f"Bernoulli: theoretical p=0.3,  sample mean={bernoulli_samples.mean():.3f}")
 print(f"Poisson:   theoretical λ=4.0,  sample mean={poisson_samples.mean():.3f}")
 # Poisson variance also equals λ — check:
-print(f"Poisson variance ≈ λ: {poisson_samples.var():.3f}")
+print(f"Poisson variance ≈ λ: {poisson_samples.var():.3f}")   # .var() defaults to ddof=0
 # Expected output:
 # Normal:    theoretical μ=5.0,  sample mean=4.998
 # Bernoulli: theoretical p=0.3,  sample mean=0.300
@@ -444,8 +444,9 @@ sigma_pop = 1 / np.sqrt(12)  # true σ of Uniform(0, 1)
 trials = 10_000
 
 for n in [1, 5, 30]:
+    # (trials × n) matrix of U(0,1) draws; .mean(axis=1) collapses each row to its sample mean
     sample_means = rng.uniform(0, 1, size=(trials, n)).mean(axis=1)
-    theoretical_std = sigma_pop / np.sqrt(n)
+    theoretical_std = sigma_pop / np.sqrt(n)               # CLT prediction for SE of the mean
     print(f"n={n:2d}: mean={sample_means.mean():.3f}, "
           f"std={sample_means.std():.4f}, "
           f"σ/√n={theoretical_std:.4f}")
@@ -530,14 +531,14 @@ Verify in code:
 import numpy as np
 
 n_heads, n_tails = 13, 7
-p_grid = np.linspace(0.01, 0.99, 99)
-L = p_grid**n_heads * (1 - p_grid)**n_tails
-p_hat = p_grid[np.argmax(L)]
+p_grid = np.linspace(0.01, 0.99, 99)             # 99 candidate p values in (0, 1)
+L = p_grid**n_heads * (1 - p_grid)**n_tails      # elementwise Bernoulli likelihood on the grid
+p_hat = p_grid[np.argmax(L)]                     # argmax returns index of the peak
 
 print(f"MLE by grid search:  p̂ = {p_hat:.3f}")
 print(f"Closed-form (calc):  p̂ = {n_heads / (n_heads + n_tails):.3f}")
 peak = L[np.argmax(L)]
-at_half = L[np.argmin(np.abs(p_grid - 0.5))]
+at_half = L[np.argmin(np.abs(p_grid - 0.5))]     # nearest grid point to p = 0.5
 print(f"L(0.65) / L(0.5)  = {peak / at_half:.2f}× more likely")
 # Expected output:
 # MLE by grid search:  p̂ = 0.650
@@ -577,11 +578,11 @@ Verify in code:
 import numpy as np
 rng = np.random.default_rng(seed=0)
 true_mu, true_sigma = 5.0, 2.0
-x = rng.normal(true_mu, true_sigma, size=1000)
+x = rng.normal(true_mu, true_sigma, size=1000)   # 1000 draws from N(5, 2²)
 
 mu_hat = x.mean()
-sigma2_hat_mle = x.var(ddof=0)          # MLE — divides by n
-sigma2_hat_unbiased = x.var(ddof=1)     # Bessel — divides by n-1
+sigma2_hat_mle = x.var(ddof=0)          # MLE — divides by n (biased low)
+sigma2_hat_unbiased = x.var(ddof=1)     # Bessel — divides by n-1 (unbiased)
 print(f"MLE μ̂  = {mu_hat:.3f}  (true = {true_mu})")
 print(f"MLE σ̂² = {sigma2_hat_mle:.3f}  (true = {true_sigma**2})")
 print(f"Unbiased σ̂² = {sigma2_hat_unbiased:.3f}")
@@ -699,10 +700,10 @@ Quadratic inside the "trust region" $[-\delta, \delta]$; linear outside. The $-\
 import numpy as np
 
 def huber(r, delta=1.0):
-    r = np.asarray(r, dtype=float)
-    quad = 0.5 * r**2
-    lin = delta * (np.abs(r) - 0.5 * delta)
-    return np.where(np.abs(r) <= delta, quad, lin)
+    r = np.asarray(r, dtype=float)                          # coerce list/scalar to float array
+    quad = 0.5 * r**2                                       # inner branch (|r| ≤ δ)
+    lin = delta * (np.abs(r) - 0.5 * delta)                 # outer branch (|r| > δ)
+    return np.where(np.abs(r) <= delta, quad, lin)          # elementwise pick per residual
 
 r = np.array([0, 0.5, 1, 2, 3, 5, 10])
 print("MSE  ", 0.5 * r**2)
@@ -796,21 +797,21 @@ def true_f(x):
 n = 30                                    # training set size
 x_star = np.array([0.75])                 # single test point
 y_star_true = true_f(x_star)[0]           # = -1
-n_bootstraps = 500
+n_bootstraps = 500                        # number of resampled training sets
 
 def predictions(degree):
     preds = []
     for _ in range(n_bootstraps):
-        x_train = rng.uniform(0, 1, size=n)
-        y_train = true_f(x_train) + rng.normal(0, 0.2, size=n)
-        coef = np.polyfit(x_train, y_train, degree)
-        preds.append(np.polyval(coef, x_star)[0])
+        x_train = rng.uniform(0, 1, size=n)                   # fresh random x on [0, 1]
+        y_train = true_f(x_train) + rng.normal(0, 0.2, size=n)  # noisy targets, σ=0.2
+        coef = np.polyfit(x_train, y_train, degree)           # least-squares polynomial fit
+        preds.append(np.polyval(coef, x_star)[0])             # evaluate the fit at x*
     return np.array(preds)
 
 for deg in [1, 10]:
     preds = predictions(deg)
-    bias_sq = (preds.mean() - y_star_true) ** 2
-    variance = preds.var()
+    bias_sq = (preds.mean() - y_star_true) ** 2               # (avg prediction − truth)²
+    variance = preds.var()                                    # spread of preds across bootstraps
     print(f"degree={deg:2d}: bias²={bias_sq:.4f}, variance={variance:.4f}, "
           f"total={bias_sq + variance:.4f}")
 # Expected output:
@@ -909,20 +910,20 @@ Verify that MSE-minimization and Gaussian-NLL-minimization return the *same* $\h
 import numpy as np
 rng = np.random.default_rng(seed=0)
 n = 100
-X = np.column_stack([np.ones(n), rng.normal(size=n)])  # bias column + one feature
+X = np.column_stack([np.ones(n), rng.normal(size=n)])  # bias column + one N(0,1) feature
 true_beta = np.array([1.0, 2.0])
 sigma = 0.5
-y = X @ true_beta + rng.normal(0, sigma, size=n)
+y = X @ true_beta + rng.normal(0, sigma, size=n)       # @ is matrix multiply; add Gaussian noise
 
 # Method 1: least-squares
-beta_ls, *_ = np.linalg.lstsq(X, y, rcond=None)
+beta_ls, *_ = np.linalg.lstsq(X, y, rcond=None)        # solves min ‖Xβ − y‖²; rcond=None silences warning
 
 # Method 2: minimize Gaussian NLL directly
 #   NLL = n/2 · log(2πσ²) + (1/2σ²) · Σ(y − Xβ)²
 # For fixed σ, this is minimized by the same β as MSE.
 resid = y - X @ beta_ls
 mse = (resid ** 2).mean()
-nll = 0.5 * n * np.log(2 * np.pi * sigma**2) + resid @ resid / (2 * sigma**2)
+nll = 0.5 * n * np.log(2 * np.pi * sigma**2) + resid @ resid / (2 * sigma**2)  # resid @ resid = Σr²
 print(f"β̂ (least squares) = {beta_ls}")     # ≈ [1.0, 2.0]
 print(f"MSE = {mse:.4f}, NLL = {nll:.2f}")
 print(f"NLL = (const) + MSE·n/(2σ²): "
@@ -1043,7 +1044,7 @@ P = np.array([0.7, 0.2, 0.1])   # true distribution
 Q = np.array([0.5, 0.3, 0.2])   # model distribution
 
 # By hand — using natural log (nats). scipy.stats.entropy uses natural log by default.
-H_P = -np.sum(P * np.log(P))                    # entropy of P
+H_P = -np.sum(P * np.log(P))                    # Shannon entropy of P
 H_PQ = -np.sum(P * np.log(Q))                   # cross-entropy H(P, Q)
 KL_PQ = np.sum(P * np.log(P / Q))               # D_KL(P || Q)
 KL_QP = np.sum(Q * np.log(Q / P))               # asymmetry check
@@ -1054,8 +1055,8 @@ print(f"D_KL(P || Q) = {KL_PQ:.4f}")
 print(f"D_KL(Q || P) = {KL_QP:.4f}   (≠ D_KL(P || Q) — asymmetric)")
 
 # scipy check
-assert np.isclose(stats.entropy(P), H_P)
-assert np.isclose(stats.entropy(P, Q), KL_PQ)   # note: this is KL, not cross-entropy!
+assert np.isclose(stats.entropy(P), H_P)        # entropy(pk) → Shannon entropy of pk
+assert np.isclose(stats.entropy(P, Q), KL_PQ)   # entropy(pk, qk) → KL(pk‖qk), NOT cross-entropy!
 # Identity: H(P, Q) = H(P) + D_KL(P || Q)
 assert np.isclose(H_PQ, H_P + KL_PQ)
 # Expected output:

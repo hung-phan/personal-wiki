@@ -86,6 +86,16 @@ The wiki is read in Obsidian with the [Execute Code](https://github.com/twibiral
   Run the snippet once against the project venv, paste the captured stdout in as `#` comments — one per output line. Keep it terse: 10 lines max, add `# ... trimmed` if you cut. This co-locates the answer with the code (survives file moves, plugin off, GitHub view) without duplicating a whole fenced block.
 - Prefer `matplotlib.pyplot` for plots when a chart teaches better than a static SVG — Execute Code embeds `plt.show()` output inline. Reserve hand-authored SVGs under `assets/` for diagrams that are *not* the direct output of a `plt.plot` call (schematic flows, geometry sketches, decision trees) — those stay in `assets/`.
 - Use `numpy` as the default toolkit. Reach for `scipy.stats`, `sklearn`, `torch` only when they clarify the concept (autograd, lasso vs ridge, distributions).
+- **Explain non-obvious function calls with a short inline comment.** The snippet teaches the *math*; the reader shouldn't have to alt-tab to numpy docs to know what `np.linalg.matrix_power`, `scipy.linalg.null_space`, or `torch.autograd` is doing. Skip trivial calls (`np.array`, `print`, `.mean()`). Comment when a call is: library-specific (scipy/sklearn/torch), a numpy internal (`ddof`, `axis`, `keepdims`), or picks a non-obvious variant (`.eigh` vs `.eig`, `ddof=0` vs `ddof=1`, `rng.choice(..., p=...)` vs `rng.integers`).
+
+  ````
+  ```python
+  import numpy as np
+  rng = np.random.default_rng(0)          # seeded RNG (deterministic)
+  x = rng.normal(5.0, 2.0, size=1000)     # 1000 draws from N(5, 4)
+  sigma2_hat = x.var(ddof=0)              # divide by n (MLE) — ddof=1 gives Bessel
+  ```
+  ````
 
 **Interpreter setup.** The Execute Code plugin runs blocks with the Python interpreter set in Settings → Execute Code → Python. Point it at the project venv `/Users/phahng/Desktop/workarea/.venv/bin/python`. If a package is missing, install it into that venv via:
 

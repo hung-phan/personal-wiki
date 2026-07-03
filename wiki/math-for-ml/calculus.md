@@ -2,7 +2,7 @@
 name: calculus
 description: Calculus foundations for ML — limits, continuity, derivatives, differentiation rules (product, quotient, chain), partial derivatives, gradients, directional derivatives, multivariable Taylor expansion, Jacobians, Hessians, the chain rule and backpropagation, gradient descent and its variants (SGD, momentum, Adam, RMSProp), learning rate schedules, optimization landscape (convexity, local minima, saddle points, plateaus), constrained optimization (Lagrange multipliers, KKT), Newton's method, integrals and expectation, automatic differentiation.
 created: 2026-06-08
-updated: 2026-07-05
+updated: 2026-07-03
 tags: [calculus, math, machine-learning, foundations, gradient-descent, backpropagation, optimization, chain-rule, derivatives, autograd, learning-journey]
 ---
 
@@ -78,8 +78,8 @@ Let's check numerically that the analytic derivative of $f(x) = x^3 - 2x$ (which
 import numpy as np
 f  = lambda x: x**3 - 2*x
 df = lambda x: 3*x**2 - 2                      # analytic derivative
-x  = np.linspace(-2, 2, 9)
-fd = (f(x + 1e-5) - f(x - 1e-5)) / (2 * 1e-5)  # central difference
+x  = np.linspace(-2, 2, 9)                     # 9 evenly spaced pts in [-2,2]
+fd = (f(x + 1e-5) - f(x - 1e-5)) / (2 * 1e-5)  # central-difference derivative
 print(np.max(np.abs(fd - df(x))))              # ~1e-10
 # Expected output:
 # 1.9873880319210002e-10
@@ -98,7 +98,7 @@ Let's see how brutally $\sigma'$ collapses in the tails — this is the vanishin
 
 ```python
 import numpy as np
-sigmoid  = lambda x: 1 / (1 + np.exp(-x))
+sigmoid  = lambda x: 1 / (1 + np.exp(-x))       # np.exp: elementwise e^x
 dsigmoid = lambda x: sigmoid(x) * (1 - sigmoid(x))
 for x in [-8.0, 0.0, 8.0]:
     print(f"σ'({x:+.0f}) = {dsigmoid(x):.2e}")
@@ -166,8 +166,8 @@ import numpy as np
 f = lambda p: p[0]**2 + 3*p[1]**2
 p, eps = np.array([1.0, 1.0]), 1e-3
 grad = np.array([2*p[0], 6*p[1]])
-gdir = grad / np.linalg.norm(grad)             # unit gradient
-angles = np.linspace(0, 2*np.pi, 9)[:-1]
+gdir = grad / np.linalg.norm(grad)             # normalize to unit vector
+angles = np.linspace(0, 2*np.pi, 9)[:-1]       # 8 angles around the circle
 rises  = [f(p + eps * np.array([np.cos(a), np.sin(a)])) - f(p) for a in angles]
 print(f"grad-dir rise = {f(p + eps*gdir) - f(p):.6e}")
 print(f"best other    = {max(rises):.6e}")     # strictly smaller
@@ -215,7 +215,7 @@ Hs = {
     "x^2 - y^2 (saddle)": np.array([[2,  0], [0, -2]]),
 }
 for name, H in Hs.items():
-    w = np.linalg.eigvalsh(H)
+    w = np.linalg.eigvalsh(H)                   # eigvals of symmetric matrix (real, sorted)
     kind = "min" if (w > 0).all() else "max" if (w < 0).all() else "saddle"
     print(f"{name:22s} eigenvalues={w}  -> {kind}")
 # Expected output:
@@ -270,11 +270,11 @@ Let's check it in torch. For $z = \sin(x^2 + 3x)$, hand-derived $dz/dx = \cos(x^
 
 ```python
 import torch, math
-x = torch.tensor(0.7, requires_grad=True)
+x = torch.tensor(0.7, requires_grad=True)      # track gradient wrt this leaf
 z = torch.sin(x**2 + 3*x)
-z.backward()
+z.backward()                                    # reverse-mode AD populates x.grad
 manual = math.cos(0.7**2 + 3*0.7) * (2*0.7 + 3)
-print(f"autograd = {x.grad.item():.6f}, hand-derived = {manual:.6f}")
+print(f"autograd = {x.grad.item():.6f}, hand-derived = {manual:.6f}")  # .item(): scalar out of 0-d tensor
 # Expected output:
 # autograd = -3.747440, hand-derived = -3.747440
 ```
@@ -306,17 +306,17 @@ Let's derive $\partial\text{loss}/\partial W_1$ for a tiny 2-layer net by hand a
 
 ```python
 import torch, numpy as np
-rng = np.random.default_rng(0)
+rng = np.random.default_rng(0)                    # seeded RNG for reproducibility
 x  = rng.normal(size=(4, 1)); y = np.array([[1.0]])
 W1 = rng.normal(size=(3, 4)); W2 = rng.normal(size=(1, 3))
-z1 = W1 @ x;             a1 = np.tanh(z1)
+z1 = W1 @ x;             a1 = np.tanh(z1)         # @: matrix multiply
 z2 = W2 @ a1;            loss = 0.5 * (z2 - y)**2
 d2 = (z2 - y)                                     # ∂loss/∂z2
 d1 = (W2.T @ d2) * (1 - a1**2)                    # (W2^T δ2) ⊙ tanh'
 dW1_manual = d1 @ x.T
-xt = torch.tensor(x); W1t = torch.tensor(W1, requires_grad=True)
+xt = torch.tensor(x); W1t = torch.tensor(W1, requires_grad=True)  # track grad on W1
 W2t = torch.tensor(W2); yt = torch.tensor(y)
-(0.5 * (W2t @ torch.tanh(W1t @ xt) - yt)**2).sum().backward()
+(0.5 * (W2t @ torch.tanh(W1t @ xt) - yt)**2).sum().backward()  # .sum() to scalar, then AD
 print(np.max(np.abs(dW1_manual - W1t.grad.numpy())))   # ~1e-15
 # Expected output:
 # 5.551115123125783e-17
@@ -376,8 +376,8 @@ Let's watch 10 GD steps on $f(x, y) = x^2 + 10y^2$ from $(3, 1)$:
 import numpy as np
 theta, eta = np.array([3.0, 1.0]), 0.09
 for t in range(10):
-    grad = np.array([2*theta[0], 20*theta[1]])
-    theta = theta - eta * grad
+    grad = np.array([2*theta[0], 20*theta[1]])   # analytic ∇f at current θ
+    theta = theta - eta * grad                    # GD update: step against gradient
     loss = theta[0]**2 + 10*theta[1]**2
     print(f"step {t+1:2d}: θ={theta.round(3)}, loss={loss:.4f}")
 # Expected output:
@@ -426,11 +426,11 @@ Let's race plain GD vs. momentum on the same $f(x, y) = x^2 + 10y^2$ and count s
 import numpy as np
 def grad(t): return np.array([2*t[0], 20*t[1]])
 def run(momentum, eta=0.01, tol=1e-4, cap=5000):
-    t, v = np.array([3.0, 1.0]), np.zeros(2)
+    t, v = np.array([3.0, 1.0]), np.zeros(2)     # v = velocity buffer
     for i in range(1, cap + 1):
-        v = momentum * v + grad(t)
-        t = t - eta * v
-        if np.linalg.norm(t) < tol: return i
+        v = momentum * v + grad(t)                # EMA-style velocity accumulation
+        t = t - eta * v                           # step along velocity, not raw grad
+        if np.linalg.norm(t) < tol: return i      # L2 distance to origin
     return cap
 print(f"plain GD steps  : {run(momentum=0.0)}")
 print(f"momentum steps  : {run(momentum=0.9)}")
