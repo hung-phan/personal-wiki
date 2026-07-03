@@ -1,8 +1,8 @@
 ---
 name: math-for-ml-index
-description: Roadmap for the math foundations of AI/ML — statistics & probability, linear algebra, calculus — what to learn, why each pillar matters, where each concept shows up in machine learning, and curated study resources.
+description: Roadmap for the math foundations of AI/ML — statistics & probability, linear algebra, calculus, Markov chains — what to learn, why each pillar matters, where each concept shows up in machine learning, and curated study resources.
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-07-03
 tags: [math, machine-learning, roadmap, index, foundations]
 ---
 
@@ -44,6 +44,12 @@ The cheatsheet-style tables at the end of each note (Decision Table, etc.) exist
 | Statistics & Probability | The language of uncertainty — how data behaves and how confident our claims are | [statistics-and-probability](statistics-and-probability.md) |
 | Linear Algebra | The language of data — vectors, matrices, transformations on multidimensional inputs | [linear-algebra](linear-algebra.md) |
 | Calculus | The language of change — how loss responds to parameters, the engine of training | [calculus](calculus.md) |
+
+## Companion notes (probabilistic dynamics)
+
+| Note | One-line role |
+|------|---------------|
+| [markov-chains](markov-chains.md) | State-transition dynamics — transition matrices, stationary distribution, mixing time, MCMC, HMMs, PageRank, and the RL / language-model connection |
 
 ## Learning Order (Pragmatic)
 

@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .curve1 { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .curve2 { stroke: #dc2626; stroke-width: 3; fill: none; }
+    .dot1   { fill: #2563eb; }
+    .dot2   { fill: #dc2626; }
+    .stat   { stroke: #059669; stroke-width: 2; stroke-dasharray: 6 5; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 12px; }
+    .title  { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .note   { fill: #475569; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .curve1 { stroke: #60a5fa; }
+      .curve2 { stroke: #f87171; }
+      .dot1 { fill: #60a5fa; }
+      .dot2 { fill: #f87171; }
+      .stat { stroke: #6ee7b7; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+    }
+  </style>
+
+  <text class="title" x="360" y="26" text-anchor="middle">Two starting beliefs converge to the same stationary distribution π ≈ (0.833, 0.167)</text>
+
+  <line class="ax" x1="60" y1="340" x2="680" y2="340"/>
+  <line class="ax" x1="60" y1="60"  x2="60"  y2="345"/>
+
+  <g>
+    <line class="grid" x1="130" y1="60" x2="130" y2="340"/>
+    <text class="tick" x="130" y="358" text-anchor="middle">2</text>
+    <line class="grid" x1="210" y1="60" x2="210" y2="340"/>
+    <text class="tick" x="210" y="358" text-anchor="middle">4</text>
+    <line class="grid" x1="290" y1="60" x2="290" y2="340"/>
+    <text class="tick" x="290" y="358" text-anchor="middle">6</text>
+    <line class="grid" x1="370" y1="60" x2="370" y2="340"/>
+    <text class="tick" x="370" y="358" text-anchor="middle">8</text>
+    <line class="grid" x1="450" y1="60" x2="450" y2="340"/>
+    <text class="tick" x="450" y="358" text-anchor="middle">10</text>
+    <line class="grid" x1="530" y1="60" x2="530" y2="340"/>
+    <text class="tick" x="530" y="358" text-anchor="middle">12</text>
+    <line class="grid" x1="610" y1="60" x2="610" y2="340"/>
+    <text class="tick" x="610" y="358" text-anchor="middle">14</text>
+    <text class="tick" x="60"  y="358" text-anchor="middle">0</text>
+  </g>
+  <text class="tick" x="370" y="378" text-anchor="middle">n  (step)</text>
+
+  <text class="tick" x="55" y="344" text-anchor="end">0.0</text>
+  <line class="grid" x1="60" y1="284" x2="680" y2="284"/>
+  <text class="tick" x="55" y="288" text-anchor="end">0.2</text>
+  <line class="grid" x1="60" y1="228" x2="680" y2="228"/>
+  <text class="tick" x="55" y="232" text-anchor="end">0.4</text>
+  <line class="grid" x1="60" y1="172" x2="680" y2="172"/>
+  <text class="tick" x="55" y="176" text-anchor="end">0.6</text>
+  <line class="grid" x1="60" y1="116" x2="680" y2="116"/>
+  <text class="tick" x="55" y="120" text-anchor="end">0.8</text>
+  <line class="grid" x1="60" y1="60" x2="680" y2="60"/>
+  <text class="tick" x="55" y="64" text-anchor="end">1.0</text>
+  <text class="tick" x="30" y="200" text-anchor="middle" transform="rotate(-90 30,200)">P(Sunny)</text>
+
+  <line class="stat" x1="60" y1="106.7" x2="680" y2="106.7"/>
+  <text class="txt" x="685" y="110" text-anchor="start" font-size="12" fill="#047857" font-weight="700">π₀ = 5/6</text>
+
+  <polyline class="curve1" points="
+    60,60
+    100,88
+    140,99.2
+    180,103.68
+    220,105.472
+    260,106.19
+    300,106.48
+    340,106.59
+    380,106.64
+    420,106.66
+    460,106.67
+    500,106.66
+    540,106.66
+    580,106.66
+    620,106.66
+  "/>
+  <circle class="dot1" cx="60"  cy="60"  r="4"/>
+  <circle class="dot1" cx="100" cy="88"  r="4"/>
+  <circle class="dot1" cx="140" cy="99.2"  r="4"/>
+  <circle class="dot1" cx="180" cy="103.68"  r="4"/>
+  <circle class="dot1" cx="220" cy="105.47"  r="4"/>
+
+  <polyline class="curve2" points="
+    60,340
+    100,200
+    140,144
+    180,121.6
+    220,112.64
+    260,109.06
+    300,107.62
+    340,107.05
+    380,106.82
+    420,106.73
+    460,106.69
+    500,106.68
+    540,106.67
+    580,106.67
+    620,106.66
+  "/>
+  <circle class="dot2" cx="60"  cy="340" r="4"/>
+  <circle class="dot2" cx="100" cy="200" r="4"/>
+  <circle class="dot2" cx="140" cy="144" r="4"/>
+  <circle class="dot2" cx="180" cy="121.6" r="4"/>
+  <circle class="dot2" cx="220" cy="112.64" r="4"/>
+
+  <rect x="380" y="220" width="220" height="70" rx="6" fill="rgba(255,255,255,0.9)" stroke="#cbd5e1"/>
+  <line class="curve1" x1="395" y1="240" x2="430" y2="240"/>
+  <text class="txt" x="440" y="244">Started Sunny  (π₀ = 1, 0)</text>
+  <line class="curve2" x1="395" y1="265" x2="430" y2="265"/>
+  <text class="txt" x="440" y="269">Started Rainy  (π₀ = 0, 1)</text>
+  <line class="stat" x1="395" y1="284" x2="430" y2="284"/>
+  <text class="txt" x="440" y="288" font-size="12">Stationary π = (5/6, 1/6)</text>
+</svg>
