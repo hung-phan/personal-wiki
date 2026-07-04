@@ -922,52 +922,95 @@ This trade-off is the classical story for small models. Large neural networks ro
 
 ### The problem
 
-You ran A/B test. Variant B converted at 5.2%, variant A at 5.0%. Is B actually better, or did random variation produce that gap by chance?
+You ran an A/B test. In variant A, 500 out of 10,000 users converted (5.0%). In variant B, 520 out of 10,000 converted (5.2%). Is B *actually better*, or was that 20-user gap just coin-flip luck?
 
-You compared two models. One scored 91%, one 92%. Real improvement, or noise?
+Everything in ML has this shape:
+- Model A scores 91.0% on the test set, Model B scores 91.5%. Real improvement, or noise?
+- You added a regularizer. Validation loss dropped from 0.412 to 0.397. Worth keeping?
+- One feature's coefficient came out to 0.02. Is it *actually correlated* with the target, or would a random feature also produce a small nonzero number?
 
-You added a feature. Loss dropped slightly. Worth keeping?
+**The core difficulty.** Samples are always noisy. Even if A and B are truly identical, running an A/B test on 20,000 users won't give exactly equal conversion rates — you'll always see *some* gap, just from random variation in *which* users happened to be shown each variant. So the raw gap alone tells you nothing. What you need is: **"how big a gap would you expect purely by chance?"** If your observed gap is comfortably inside "random luck range," you shrug. If it's *way* outside that range, you have evidence the variants really differ.
 
-These all reduce to: *given some randomness, can I trust this difference?*
+Hypothesis testing is a framework for answering that "way outside" question with numbers.
 
-### The classical (frequentist) workflow
+### The core idea — "innocent until proven guilty"
 
-1. State a **null hypothesis** $H_0$ — "there's no difference; both variants convert the same."
-2. State an **alternative** $H_1$ — "there is a difference."
-3. Pick a **test statistic** — a number summarizing the data (e.g., difference in observed conversion rates).
-4. Figure out the distribution of that statistic *if $H_0$ were true*. (This is the hard part. Tools like the t-test, z-test, chi-squared test give you closed-form answers for common cases.)
-5. Compute the **p-value**: probability of seeing a statistic at least as extreme as observed, *assuming $H_0$*. A tiny p-value means "if $H_0$ were true, we'd almost never see data this extreme."
-6. If $p < \alpha$ (the **significance level**, typically 0.05 — the false-positive rate you're willing to tolerate), **reject** $H_0$.
+Statisticians don't try to prove "B is better" directly. That's hard: any observed gap is *compatible* with a real difference, but it's also compatible with pure luck. So the workflow flips it around: **assume there's no difference, then ask how surprising the data is under that assumption.**
+
+- If the data would be routine under "no difference" → shrug. You have no case.
+- If the data would be *shocking* under "no difference" → the assumption looks unlikely, so you reject it.
+
+This is exactly like the presumption of innocence in court. The defendant (the null hypothesis) is *assumed* innocent. The prosecutor (your data) has to produce evidence so strong that "innocent" no longer fits. If they can't, the defendant walks — *not* because innocence was proven, but because guilt wasn't.
+
+That's the whole idea. Now the vocabulary:
+
+- **Null hypothesis $H_0$** = "no effect, no difference" — the defendant. Concrete A/B version: "A and B have the same true conversion rate."
+- **Alternative $H_1$** = "there is a difference" — what you'd conclude if $H_0$ falls.
+- **Test statistic** = a single number summarizing the data. For our A/B example, the observed conversion-rate gap $\hat p_B - \hat p_A = 0.052 - 0.050 = 0.002$.
+- **Null distribution** = the distribution of the test statistic *if $H_0$ is true*. Effectively: "if A and B are truly identical, and we ran this experiment a million times, what does the histogram of observed gaps look like?" It's usually roughly bell-shaped and centered at 0, with width set by the sample size (bigger $n$ → tighter bell → more precise experiment).
+- **p-value** = the probability of seeing a gap *at least as extreme* as the one you actually got, under $H_0$. A tiny p-value means "if $H_0$ were true, this data would be freakishly rare."
+- **Significance level $\alpha$** = the p-value threshold you commit to *before* looking (conventionally 0.05). "If p < $\alpha$, I'll reject $H_0$." It's the false-positive rate you're accepting.
+
+### The classical (frequentist) workflow, on the A/B example
+
+Working the example end to end:
+
+1. **State $H_0$ and $H_1$.** $H_0$: A and B convert at the same rate. $H_1$: they don't.
+
+2. **Pick the test statistic.** Observed gap: $\hat p_B - \hat p_A = 0.002$ (0.2 percentage points).
+
+3. **Get the null distribution.** *If* the two variants convert identically, both are Binomial samples from the same rate $p \approx 0.051$ (pooled). The Central Limit Theorem (§6) tells us that with $n = 10{,}000$ per arm, the observed gap under $H_0$ is approximately $\mathcal{N}(0, \sigma^2)$ with $\sigma \approx 0.0031$ (from the standard two-proportion formula). *This is the "expected range of pure noise."*
+
+4. **Compute the p-value.** Our gap is $0.002$. How many standard deviations out? $0.002 / 0.0031 \approx 0.65$. Under a Normal, the two-tailed probability of seeing $|z| \ge 0.65$ is about $0.52$. So **p ≈ 0.52** — half the time under $H_0$, we'd see a gap at least this big just by luck. This is *not surprising at all*.
+
+5. **Compare to $\alpha$.** $0.52 > 0.05$. **Fail to reject $H_0$.** We do *not* have evidence that B is better. (Note: "fail to reject" ≠ "proven equal." Absence of evidence isn't evidence of absence.)
+
+If instead we'd observed 570 out of 10,000 conversions in B (a 0.7-percentage-point gap), we'd get $z \approx 2.3$, p ≈ 0.02 → reject $H_0$ at $\alpha = 0.05$, conclude B is likely different.
+
+Same logic runs behind t-tests (small samples, unknown variance), chi-squared tests (categorical data), z-tests (large samples, known variance), etc. Different test statistics, different null distributions — but always: *state $H_0$, compute the statistic, ask how weird it is under $H_0$, compare p to $\alpha$.*
 
 ### What the p-value is *not*
 
-- It is *not* the probability that the null is true.
-- It is *not* the probability that your effect is real.
-- It is $P(\text{data this extreme} | H_0 \text{ is true})$ — and that's a different conditional than people instinctively read.
+The p-value is the single most-misread number in statistics. Reciting what it isn't:
 
-### Two errors to be aware of
+- **p is *not* "the probability the null is true."** It's the other direction: $P(\text{data this extreme} \mid H_0 \text{ true})$, not $P(H_0 \text{ true} \mid \text{data})$. Those are Bayes-related but *very* different quantities (§4).
+- **p is *not* "the probability that your effect is real."** A p-value of 0.03 does *not* mean "there's a 97% chance B beats A." It means "if A = B, we'd see data this extreme 3% of the time." Same words, different math.
+- **A small p doesn't mean a *big* effect.** With huge samples, even a laughable 0.001-percentage-point difference can be "significant." That's why you should always report effect sizes (and confidence intervals) alongside p-values.
+- **A large p doesn't mean $H_0$ is *true*.** It only means you don't have enough evidence to reject. Maybe your sample is too small, or the effect is real but weak.
 
-| | Reality: $H_0$ true | Reality: $H_0$ false |
+### Two ways your decision can be wrong
+
+Once you decide "reject" or "fail to reject," reality gets a vote. Four outcomes, two of which are errors:
+
+| | Reality: $H_0$ true (no effect) | Reality: $H_0$ false (real effect) |
 |---|---|---|
-| You decide to reject $H_0$ | **Type I** (false positive) — rate $\alpha$ | Correct |
-| You decide not to reject | Correct | **Type II** (false negative) — rate $\beta$ |
+| You reject $H_0$ | **Type I error** (false positive) — rate $\alpha$ | Correct |
+| You fail to reject | Correct | **Type II error** (false negative) — rate $\beta$ |
 
-- **Power** = $1 - \beta$ — the chance of detecting a real effect. Small samples = low power = you'll miss real effects.
+- **Type I (false positive).** You concluded there's a difference when there isn't. Rate = $\alpha$ (which is why you set $\alpha = 0.05$: you're accepting a 5% false-positive rate).
+- **Type II (false negative).** You missed a real effect. Rate = $\beta$. Depends on how big the true effect is *and* your sample size.
+- **Power = $1 - \beta$.** The probability of detecting a real effect *if one exists*. Small samples → wide null distribution → low power → you miss real effects.
 
-The two shaded tails below are exactly $\alpha$ and $\beta$. The dashed line is the decision threshold; sliding it left or right trades one error for the other:
+The picture below shows both errors at once. $H_0$'s distribution (left bell, centered at 0) is what you'd see if there's no effect. $H_1$'s distribution (right bell, shifted) is what you'd see if the true effect really is nonzero. The dashed vertical line is your decision threshold — reject $H_0$ if the test statistic falls to the right of it. **Red tail** = area under $H_0$ past the threshold = $\alpha$ (you rejected when you shouldn't have). **Orange tail** = area under $H_1$ *before* the threshold = $\beta$ (you failed to reject when you should have). Sliding the threshold left cuts $\beta$ but grows $\alpha$; sliding it right does the reverse. You can't shrink both at once — only more data can do that (narrower bells → less overlap → both errors shrink together).
 
 ![Two overlapping bell curves — H₀ centered at 0 and H₁ centered at 2, with red α tail on H₀'s right, orange β tail on H₁'s left, and purple power region highlighted|697](assets/type-i-ii-errors.svg)
 
-### Confidence intervals
+### Confidence intervals — the more useful cousin
 
-Reporting "95% CI: [4.8%, 5.6%]" is more useful than "p = 0.03." Both are saying similar things, but the CI tells you the *range of plausible values* for the parameter — not just whether to reject one specific number.
+Reporting "**95% CI: [4.8%, 5.6%]**" for the conversion rate is almost always more useful than "p = 0.03." A p-value is a yes/no verdict against one specific null value; a **confidence interval** hands you the whole *range of parameter values compatible with the data*. If your CI doesn't overlap zero, you have (rough) evidence against the null — and you also see how big or small the plausible effect is.
 
-A frequentist 95% CI: "if you ran this experiment many times, 95% of the constructed intervals would contain the true parameter." Subtle and famously misread (people instinctively think it means "95% chance the true value is in this interval" — that's a *Bayesian credible interval*, philosophically distinct, practically often equivalent).
+The formally correct reading of "95% CI" is subtle: *"if I repeated this experiment many times and built a CI each time, 95% of those intervals would contain the true parameter."* People instinctively read it as "95% chance the true value is in *this* interval" — that's technically a **Bayesian credible interval**, philosophically different (talks about parameter uncertainty directly) but often numerically close in practice.
+
+Rule of thumb: in a report, prefer effect size + CI over a naked p-value. It gives your audience the actual information they need.
 
 ### ML twins of statistical sins
 
-- **p-hacking** = running many tests, reporting only significant ones. ML version: trying many architectures and reporting the best test-set number → test-set overfitting.
-- **Multiple comparisons** = running 20 tests at $\alpha = 0.05$ gives ~1 false positive even under all-null. Use Bonferroni or FDR correction.
+The same failure modes reappear in ML dressed up in different words:
+
+- **p-hacking** = running many statistical tests and reporting only the "significant" ones. **ML twin:** trying many architectures, hyperparameter combos, or random seeds and reporting only the best test-set number. Result: you've selected the lucky outlier — the score won't hold up in production. Fix: hold out a *final* test set you touch exactly once.
+- **Multiple comparisons.** Running 20 independent tests at $\alpha = 0.05$ gives roughly one false positive *on average* even if every null is true. **ML twin:** running an ablation over 20 features and celebrating the "significant" one. Fix: correct for multiple comparisons (Bonferroni divides $\alpha$ by the number of tests; Benjamini-Hochberg / FDR is less conservative).
+- **Data dredging / feature hunting.** Trying transformations, interactions, subsets until something works. Same problem — you've turned a test into a search, and searches find noise. Fix: pre-register hypotheses, or use a strict train/val/test split.
+- **Confusing statistical significance with practical significance.** A model that improves accuracy from 91.00% to 91.02% may be "significant" with enough test data — but it's also probably not worth shipping. Report both p and effect size; make the ship decision on the effect.
 
 ## 10. Linear regression: the simplest "real" model
 
