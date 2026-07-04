@@ -15,13 +15,13 @@ tags: [statistics, probability, machine-learning, math, foundations, bayes, dist
 
 These are not engineering questions. They are statistical questions. ML without statistics is a black box that occasionally gives you numbers — and you have no language to argue with it.
 
-**Key insight.** Machine learning *is* applied statistics. A loss function is a likelihood. Regularization is a prior. Cross-validation is a hypothesis test. Once you see this, ML stops being a bag of tricks and becomes one coherent thing.
+**Key insight.** Machine learning *is* applied statistics. A loss function is a likelihood. Regularization (an extra penalty term added to the loss to keep parameters "reasonable" — see §7) is a prior. Cross-validation is a hypothesis test. Once you see this, ML stops being a bag of tricks and becomes one coherent thing.
 
 **Reach for this when:**
 - Picking a loss function (MSE? cross-entropy? Huber?) — the answer comes from "what's the noise distribution?"
 - Interpreting a model's confidence — calibration, predictive intervals.
 - Reading a paper that says "MLE", "posterior", "log-likelihood", "KL divergence".
-- Debugging a model that overfits — bias-variance, regularization.
+- Debugging a model that overfits (memorizes training data instead of learning the pattern) — bias-variance, regularization.
 - Designing an A/B test or evaluating an experiment.
 
 **Don't reach for this when:**
@@ -825,22 +825,62 @@ The habit worth building: before you pick a loss, **look at the residuals**. Los
 
 ### Adding a prior: from MLE to MAP and regularization
 
-**Problem with MLE.** Sometimes there isn't enough data to nail down $\theta$. MLE will pick whatever fits the limited data best, even if that's a wild solution.
+**The pain first.** MLE is great when you have a lot of data. When you don't, or when your model has more parameters than the data can pin down, MLE picks whatever fits *the specific points you happened to see* — even if that solution is absurd.
 
-**Fix.** Use Bayes' theorem to combine the data-driven likelihood with a prior belief — a built-in preference for "reasonable" $\theta$:
+Concrete failure modes:
+- Fit a Gaussian to a single point: MLE says $\hat\mu = x_1$ and $\hat\sigma^2 = 0$ (variance literally zero, an infinitely narrow spike). Absurd.
+- Fit linear regression to 5 features with only 3 data points: infinitely many perfect fits exist — MLE picks *one*, arbitrarily.
+- Fit a huge neural net: it can memorize the training set (train loss → 0) while doing terribly on new data. This is **overfitting** — the model captured noise instead of signal.
 
-$$\hat\theta_{\text{MAP}} = \arg\max_\theta P(D | \theta) P(\theta)$$
+The common thread: MLE has no built-in preference for "reasonable-looking" $\theta$. It rewards *fit* and *fit only*.
 
-Take logs: minimize $-\log P(D|\theta) - \log P(\theta)$. The first term is the data fit (the loss you already had). The second term is a penalty for $\theta$ being far from what the prior considers "reasonable."
+**Regularization — the fix in one sentence.** Add an extra term to the loss that *penalizes* unreasonable $\theta$-values. So the loss the optimizer minimizes becomes:
 
-This is **regularization**. And it's the *same idea* as Bayesian inference, just kept as a point estimate.
+$$\text{total loss}(\theta) = \underbrace{\text{data fit}}_{\text{NLL, MSE, cross-entropy, whatever}} \;+\; \underbrace{\lambda \cdot \text{penalty}(\theta)}_{\text{regularization}}$$
+
+The penalty term costs the model something for every unit of "unreasonableness" in $\theta$ (typically: coefficients being large). The $\lambda \ge 0$ knob controls how much you care about that penalty vs. fitting the data. Small $\lambda$ = "fit at all costs" (back to MLE). Large $\lambda$ = "keep $\theta$ tame at all costs, even if it hurts fit." Somewhere in the middle usually wins.
+
+**Why this works.** The optimizer is now solving two competing objectives at once:
+- Fitting the data (drags $\theta$ toward whatever memorizes the training points, including their noise).
+- Keeping $\theta$ small/simple (drags $\theta$ toward zero, or toward whatever the penalty says is "reasonable").
+
+Overfitting comes from letting the first objective run unchecked. Regularization gives the *second* objective a seat at the table, and the tug-of-war lands on a solution that fits the data *reasonably well* without going haywire.
+
+**The two workhorses.**
+
+| Penalty | Name | What it prefers |
+|---|---|---|
+| $\lambda \sum_i \theta_i^2$ | **L2** (ridge) | All coefficients *small* — shrinks them toward zero smoothly |
+| $\lambda \sum_i \|\theta_i\|$ | **L1** (lasso) | Many coefficients *exactly zero* — does automatic feature selection |
+
+That's why "lasso does feature selection and ridge only shrinks" — the same fact from the linear-algebra note ([norm balls](linear-algebra.md#l1-vs-l2-vs-l-unit-balls)). Different penalty shapes prefer different kinds of $\theta$.
+
+**Where the "regularization = prior" claim comes from.** Now the elegant part: this isn't just a hack. It falls out of Bayes' theorem. If you have a **prior** belief over $\theta$ (before seeing data — say, "small $\theta$ is more plausible than huge $\theta$"), Bayes says the posterior is:
+
+$$P(\theta \mid D) \propto P(D \mid \theta)\, P(\theta)$$
+
+Maximum-a-posteriori (**MAP**) estimation just picks the peak:
+
+$$\hat\theta_{\text{MAP}} = \arg\max_\theta P(D \mid \theta)\, P(\theta)$$
+
+Take logs and negate (same trick as MLE): minimize $-\log P(D \mid \theta) - \log P(\theta)$. The first term *is* the loss you already had (NLL). The second term is a penalty determined by the shape of your prior. **That's regularization**: MAP with a prior looks exactly like MLE with a penalty.
+
+Different priors → different penalties → different regularizers. Two famous pairings:
 
 | Prior on $\theta$ | Equivalent regularizer |
 |---|---|
 | Gaussian $\mathcal{N}(0, \sigma^2)$ | **L2** regularization (ridge) — penalizes $\sum \theta_i^2$ |
-| Laplace $\text{Lap}(0, b)$ | **L1** regularization (lasso) — penalizes $\sum |\theta_i|$ |
+| Laplace $\text{Lap}(0, b)$ | **L1** regularization (lasso) — penalizes $\sum \|\theta_i\|$ |
 
-This explains a famous behavior: L1 produces *sparse* solutions (many zero coefficients), L2 doesn't. The Laplace prior has a sharp peak (non-differentiable kink) at zero, giving it a strong preference for exact zeros; the Gaussian is smooth and rounded at zero, so it only shrinks coefficients toward zero without setting them to it. The geometry of this is in [linear-algebra](linear-algebra.md) (the L1 ball has corners on the axes).
+The Gaussian prior says "small $\theta$ is more likely than large" *smoothly* — the density falls off as $\exp(-\theta^2)$. Taking $-\log$ gives $\theta^2$. That's L2. The Laplace prior says the same thing more aggressively at zero — density $\propto \exp(-|\theta|)$, so $-\log$ gives $|\theta|$. That's L1.
+
+**Why L1 gives sparsity and L2 doesn't.** The Laplace prior has a **sharp peak** (non-differentiable kink) at zero, giving it a strong preference for coefficients that are *exactly* zero. The Gaussian is smooth and rounded at zero, so it only shrinks coefficients toward zero without setting them to it. The geometry (why the L1 ball's *corners* land on the axes and force sparsity) is in [linear-algebra](linear-algebra.md#l1-vs-l2-vs-l-unit-balls).
+
+**Two views, same math.**
+- **Frequentist view.** Regularization is a penalty added to the loss to prevent overfitting. Practical, no philosophy needed.
+- **Bayesian view.** It's your prior belief about $\theta$, encoded as a distribution. Feels more principled.
+
+They compute the same $\hat\theta$. Use whichever mental model helps you sleep.
 
 ## 8. Why models fail to generalize: bias and variance
 
