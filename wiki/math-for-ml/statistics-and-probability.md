@@ -505,19 +505,46 @@ For this example, the peak is at $p = 0.65 = 13/20$. That's why we teach kids "1
 
 ### The three moves that solve every MLE problem
 
-Real MLE has more than one data point, and multiplying dozens or thousands of probabilities together underflows to zero in floating point. So there's a standard three-move dance:
+Real MLE almost never has just one data point — it has hundreds or thousands. And "argmax the joint probability of *all* of them" isn't something you can plug and chug in that form. There's a standard three-move dance that turns any MLE problem into something solvable.
 
-**Move 1 — factorize (i.i.d.).** If the data points are independent, the joint likelihood is a product of per-point likelihoods (we'll write $\theta$ for the model's parameter(s) — a stand-in for $p$, $(\mu, \sigma^2)$, or a whole weight vector, depending on the model):
+**Move 1 — factorize (use i.i.d.).**
+
+*Problem.* We want $P(D \mid \theta)$ — the probability of the *whole dataset* under parameter $\theta$. But there's no direct formula for "probability of 1000 numbers all at once." What we *do* have is a formula for one point: $P(x_i \mid \theta)$.
+
+*The move.* If the data points are independent (the i.i.d. assumption from §1), the joint probability equals the product of per-point probabilities:
 
 $$L(\theta) = P(D \mid \theta) = \prod_{i=1}^n P(x_i \mid \theta)$$
 
-**Move 2 — take the log.** Products become sums. Products of tiny numbers underflow; sums of `log(tiny)` are fine. And log is monotonic, so the argmax doesn't move.
+(We'll write $\theta$ for the model's parameter(s) — could be $p$, could be $(\mu, \sigma^2)$, could be a whole weight vector, depending on the model.)
+
+*Payoff.* One intractable multi-dimensional object gets swapped for $n$ small, tractable ones. Every distribution's PDF/PMF is a one-liner; multiplying $n$ of them is arithmetic.
+
+**Move 2 — take the log.**
+
+*Problem.* We're now multiplying $n$ numbers, each in $[0, 1]$. Two things break:
+1. **Numerics.** A product of a thousand small probabilities underflows to `0.0` in floating point. Every candidate $\theta$ gets scored as zero — you can't compare them.
+2. **Algebra.** The derivative of a product of $n$ things means iterated product rule — brutal even for small $n$, and it doesn't simplify.
+
+*The move.* Take the logarithm:
 
 $$\log L(\theta) = \sum_{i=1}^n \log P(x_i \mid \theta)$$
 
-**Move 3 — set derivative to zero.** For a smooth likelihood, the peak is where $\frac{d \log L}{d\theta} = 0$. Solve for $\theta$; that's $\hat\theta_{\text{MLE}}$. The hat on $\hat\theta$ marks it as an *estimate* computed from data, distinct from the (unknown) true $\theta$.
+*Payoff.* Three wins from one operation:
+- **Product → sum.** The log's defining identity is $\log(ab) = \log a + \log b$; the product just falls apart.
+- **No underflow.** `log(1e-300)` is just $-690$, an ordinary float. Sums of these stay well-scaled.
+- **Argmax doesn't move.** Since $\log$ is monotonically increasing, $\arg\max_\theta L(\theta) = \arg\max_\theta \log L(\theta)$. We've reshaped the surface (multiplication → addition, tiny numbers → large negatives) but the *location of the peak is unchanged*. That's the entire reason we're allowed to do this.
 
-By convention we flip the sign and *minimize* the **negative log-likelihood (NLL)** instead — same optimum, and it aligns with the "loss" framing we use for gradient descent. That's the whole story: **NLL is the loss function of most probabilistic ML models.** Cross-entropy loss for a classifier is NLL under a categorical likelihood; MSE for a regressor is NLL under a Gaussian likelihood. More on that in the next subsection.
+**Move 3 — set derivative to zero.**
+
+*Problem.* We want the peak of $\log L(\theta)$. How do you find the peak of a smooth function?
+
+*The move.* At a peak, the tangent line is flat — the derivative is zero. So we compute $\frac{d \log L}{d\theta}$, set it to zero, and solve for $\theta$. That $\theta$ is $\hat\theta_{\text{MLE}}$. (The hat marks it as an *estimate* computed from data, distinct from the unknown true $\theta$.)
+
+*Payoff.* We've converted an optimization problem ("find where the max is") into an algebra problem ("solve one equation"). For a lot of textbook likelihoods — Gaussian, Bernoulli, Poisson — this gives a **closed-form answer**: no computer needed, just calculus. When there's no closed form (e.g. neural networks), you fall back to gradient descent — but that's *still the same idea*, just done numerically instead of algebraically: keep stepping until the gradient is (near) zero.
+
+**One more twist for the "loss function" framing.** By convention we flip the sign and *minimize* the **negative log-likelihood (NLL)** rather than maximize the log-likelihood. Same optimum — negating a function reflects it upside-down, so the maximum becomes the minimum at the same $\theta$. Why bother? Because "minimize a loss" is the standard vocabulary of gradient descent and ML. Same math, different framing.
+
+That's the whole story: **NLL is the loss function of most probabilistic ML models.** Cross-entropy loss for a classifier is NLL under a categorical likelihood; MSE for a regressor is NLL under a Gaussian likelihood. More on that in the next subsection.
 
 ### Worked example 1 — coin flips (one parameter)
 
