@@ -20,7 +20,7 @@ When training breaks — loss diverges, gradients vanish, the optimizer stalls �
 
 **Reach for this when:**
 - Loss diverges to NaN — likely numerical / gradient issue.
-- Loss is stuck — saddle, vanishing gradient, dead ReLU, bad LR.
+- Loss is stuck — saddle (flat point that's a min in some directions, max in others), vanishing gradient, dead ReLU (neuron stuck outputting 0), bad LR.
 - A paper says "Jacobian," "Hessian," "second-order," "natural gradient."
 - Implementing a custom layer or loss and you need backward correctness.
 - Choosing an optimizer (SGD vs. Adam) or learning rate schedule.
@@ -89,10 +89,10 @@ The two agree to ~10 decimal places — that's the derivative, computed two tota
 
 ### A few derivatives you'll see daily in NN math
 
-- **Sigmoid** $\sigma(x) = \frac{1}{1+e^{-x}}$ has the gem of a derivative $\sigma'(x) = \sigma(x)(1 - \sigma(x))$. So once you've computed $\sigma(x)$ during the forward pass, you have the derivative for free.
+- **Sigmoid** $\sigma(x) = \frac{1}{1+e^{-x}}$ has the gem of a derivative $\sigma'(x) = \sigma(x)(1 - \sigma(x))$. So once you've computed $\sigma(x)$ during the forward pass (the forward pass computes activations layer by layer input→output; the backward pass computes gradients output→input), you have the derivative for free.
 - **tanh** has $\tanh'(x) = 1 - \tanh^2(x)$.
 - **ReLU** has derivative 1 if $x > 0$, 0 if $x < 0$ (and we conventionally pick 0 at $x = 0$).
-- **Softmax** is vector-valued, so its derivative is a Jacobian: $\partial s_i/\partial z_j = s_i(\delta_{ij} - s_j)$. The "softmax + cross-entropy" gradient simplifies to $\hat{p} - y$ — beautifully clean. Frameworks fuse them for numerical stability.
+- **Softmax** is vector-valued, so its derivative is a Jacobian. Softmax turns raw scores $z$ into probabilities $s = \text{softmax}(z)$; $\delta_{ij} = 1$ if $i=j$ else $0$ (Kronecker delta); $\hat p$ is the predicted probability vector, $y$ the one-hot target label. Then $\partial s_i/\partial z_j = s_i(\delta_{ij} - s_j)$. The "softmax + cross-entropy" gradient simplifies to $\hat{p} - y$ — beautifully clean. Frameworks fuse them for numerical stability.
 
 Let's see how brutally $\sigma'$ collapses in the tails — this is the vanishing-gradient story in three numbers:
 
@@ -111,7 +111,7 @@ for x in [-8.0, 0.0, 8.0]:
 
 Stack ten of these in series (as a deep sigmoid net does) and the gradient upstream is $(3\text{e-}4)^{10} \approx 10^{-35}$ — indistinguishable from zero.
 
-The picture below shows why sigmoid and tanh are "gradient traps" for deep hidden layers and why ReLU/GELU took over: the pink zones are where the derivative flattens to (nearly) zero — no gradient signal survives to update parameters upstream.
+The picture below shows why sigmoid and tanh are "gradient traps" for deep hidden layers and why ReLU/GELU (Gaussian Error Linear Unit — a smooth ReLU variant) took over: the pink zones are where the derivative flattens to (nearly) zero — no gradient signal survives to update parameters upstream.
 
 ![Activation functions and their derivatives, with saturation zones highlighted in pink|697](assets/activations-and-derivatives.svg)
 
@@ -198,7 +198,7 @@ Symmetric (under mild smoothness — Schwarz's theorem). It encodes the local *c
 
 **Why we care.**
 - At a critical point ($\nabla f = 0$), the Hessian's eigenvalues classify it: all positive → local min, all negative → local max, mixed → saddle. (See [linear-algebra](linear-algebra.md) for eigenvalues.)
-- The Hessian's eigenvalues bound the safe learning rate. If the largest eigenvalue is $\lambda_{\max}$, you need step size $\eta < 2/\lambda_{\max}$ for stability. Bigger curvature means smaller step.
+- The Hessian's eigenvalues bound the safe learning rate. Where $\eta$ is the learning rate (step size) and $\lambda_{\max}$ is the largest eigenvalue of the Hessian, you need $\eta < 2/\lambda_{\max}$ for stability. Bigger curvature means smaller step.
 - Newton's method uses $H^{-1}\nabla f$ for an exact step toward the minimum of a quadratic — converges in one step on perfect quadratics, very fast near minima.
 
 ![Three surface plots showing local min, local max, and saddle point with eigenvalue classification|697](assets/hessian-critical-points.svg)
@@ -231,7 +231,7 @@ The eigenvalue signs are the classification — no drawing required.
 $H$ is $n \times n$. For a billion-parameter model, that's a quintillion entries. We can't compute or store it. ML mostly avoids second-order methods at scale, or uses cheap approximations:
 - **Quasi-Newton** (L-BFGS): build up an approximation to $H^{-1}$ from gradient history. Works for medium-sized problems.
 - **Hessian-vector products**: compute $Hv$ for a specific $v$ without forming $H$. Useful for second-order analysis without quadratic memory.
-- **Natural gradient / K-FAC**: structured approximations using the Fisher information matrix. Common in RL.
+- **Natural gradient / K-FAC**: structured approximations using the Fisher information matrix (Bayesian: curvature of the log-likelihood — see [statistics-and-probability](statistics-and-probability.md)), popular in reinforcement learning (RL).
 
 ### Multivariable Taylor — the universal local approximation
 
@@ -288,7 +288,9 @@ Three observations make backprop the dominant algorithm:
 2. The chain rule lets you compute $\partial \text{loss}/\partial w_l$ if you know the local derivatives of every layer.
 3. Computing it **backward** (from output to input) is dramatically more efficient than forward, because every layer's gradient *reuses* the gradient of the layer above it.
 
-Pseudo-algorithm for an $L$-layer net (with $z_l = W_l a_{l-1} + b_l$ and $a_l = f(z_l)$):
+Symbols: $z_l = W_l a_{l-1} + b_l$ is the pre-activation at layer $l$; $a_l = f(z_l)$ its activation; $\delta_l = \partial \mathcal{L}/\partial z_l$ the "error signal" backprop passes back; $f$ is the activation function; $W_l, b_l$ its weight matrix and bias vector. $\odot$ denotes elementwise (Hadamard) product.
+
+Pseudo-algorithm for an $L$-layer net:
 ```
 Forward pass (l = 1..L):
   cache z_l (pre-activation) and a_l (activation) at every layer
@@ -343,14 +345,14 @@ Forward mode needs one sweep *per input dimension* to get all the derivatives; r
 Before talking about how we walk (gradient descent), let's understand the terrain.
 
 Critical points (where $\nabla f = 0$) come in flavors:
-- **Local minimum** — Hessian PD, all eigenvalues positive. A bowl.
-- **Local maximum** — Hessian ND. A hilltop.
+- **Local minimum** — Hessian PD (positive-definite: all eigenvalues > 0). A bowl.
+- **Local maximum** — Hessian ND (negative-definite: all eigenvalues < 0). A hilltop.
 - **Saddle point** — Hessian indefinite, mixed-sign eigenvalues. A mountain pass — minimum in some directions, maximum in others.
 - **Plateau** — gradient is small but you're not at a critical point per se. The terrain is just flat. SGD slows here; momentum helps push through.
 
 ### Convexity: when the terrain has a single bowl
 
-A function is **convex** if, for any two points, the line segment between them lies above the function. Equivalently (in the smooth case): the Hessian is PSD everywhere.
+A function is **convex** if, for any two points, the line segment between them lies above the function. Equivalently (in the smooth case): the Hessian is PSD (positive-semi-definite: all eigenvalues ≥ 0) everywhere.
 
 Convex functions have *no local minima other than the global one*. Gradient descent is *guaranteed* to find the global minimum. Linear regression, logistic regression, SVMs — convex.
 
@@ -364,6 +366,8 @@ Multiple local minima, lots of saddle points. Theoretically gradient descent cou
 ## 6. Gradient descent and its zoo
 
 ### The core update
+
+Let $\theta$ be all model parameters stacked into a vector, and $\mathcal{L}(\theta)$ the loss as a function of them.
 
 $$\theta_{t+1} = \theta_t - \eta \nabla \mathcal{L}(\theta_t)$$
 
@@ -392,7 +396,7 @@ for t in range(10):
 # ... trimmed
 ```
 
-Watch $y$ oscillate (curvature 20 puts us near the $2/\lambda_{\max} = 0.1$ stability ceiling, so $|1 - \eta \cdot 20| = 0.8$ per step) while $x$ decays smoothly — an ill-conditioned bowl in miniature.
+Watch $y$ oscillate (curvature 20 puts us near the $2/\lambda_{\max} = 0.1$ stability ceiling, so $|1 - \eta \cdot 20| = 0.8$ per step) while $x$ decays smoothly — an ill-conditioned bowl in miniature (ill-conditioned = curvature varies wildly across directions: large ratio of max to min Hessian eigenvalues, i.e. long-thin loss valleys).
 
 ### Why mini-batches
 
@@ -411,9 +415,9 @@ If different parameters have very different curvatures (typical in deep nets), o
 | **Momentum** | Don't just step on the gradient; build up "velocity" — gradients accumulate over time, smoothing direction. | Vision, anywhere you want SGD with smoother dynamics |
 | **Nesterov momentum** | Same but evaluates gradient at the look-ahead position. Often slightly better. | Same as momentum |
 | **AdaGrad** | Per-parameter learning rate scaled by $\sqrt{\sum g^2}$ — lower LR for parameters that have seen big gradients. | Sparse data (NLP with bag-of-words). Drawback: LR shrinks forever, eventually freezes. |
-| **RMSProp** | Per-param LR scaled by an *EMA* of $g^2$ — recent gradients matter more than ancient ones. | Recurrent nets, non-stationary problems |
+| **RMSProp** | Per-param LR scaled by an *EMA* (exponential moving average — recent values weighted more heavily) of $g^2$ — recent gradients matter more than ancient ones. | Recurrent nets, non-stationary problems |
 | **Adam** | Combine momentum + RMSProp. Each parameter gets a smoothed gradient direction *and* its own LR. | The "default" — works out of the box on most things |
-| **AdamW** | Adam with *decoupled* weight decay (the L2 penalty isn't lumped into the gradient). | Modern default for transformers, LLMs |
+| **AdamW** | Adam with *decoupled* weight decay / L2 penalty (adding $\lambda \|\theta\|^2$ to the loss to keep weights small — here it isn't lumped into the gradient). | Modern default for transformers, LLMs |
 | **L-BFGS** | Quasi-Newton — uses gradient history to approximate the Hessian. | Small to medium deterministic problems with batch gradients |
 
 ![Trajectories of SGD, momentum, RMSProp, and Adam on an ill-conditioned elliptical bowl|697](assets/optimizer-trajectories.svg)
@@ -476,7 +480,7 @@ For a perfect quadratic, this lands at the minimum *in one step*. Near a minimum
 - Inverting $H$ costs $O(n^3)$.
 - Far from a minimum, $H$ may not be PD, and Newton's step can go uphill.
 
-So ML almost always sticks with first-order methods. Quasi-Newton (L-BFGS) is a middle ground that approximates $H^{-1}$ from gradient history and works well for medium scale. **Natural gradient / K-FAC** uses the Fisher information matrix as a structured curvature proxy and is popular in RL.
+So ML almost always sticks with first-order methods. Quasi-Newton (L-BFGS) is a middle ground that approximates $H^{-1}$ from gradient history and works well for medium scale. **Natural gradient / K-FAC** uses the Fisher information matrix as a structured curvature proxy and is popular in reinforcement learning (RL).
 
 ## 8. Constrained optimization (briefly)
 
@@ -486,7 +490,7 @@ Sometimes parameters live on a constraint — they have to sum to 1 (probability
 
 ### The classical solution: Lagrange multipliers
 
-For "minimize $f$ subject to $g(\mathbf{x}) = 0$," form the Lagrangian:
+For "minimize $f$ subject to $g(\mathbf{x}) = 0$," form the Lagrangian. Here $\lambda$ is a **Lagrange multiplier** (unrelated to the eigenvalue $\lambda$ earlier), and $\mathcal{L}$ is the **Lagrangian** (not the loss $\mathcal{L}(\theta)$ used in the optimizer section):
 $$\mathcal{L}(\mathbf{x}, \lambda) = f(\mathbf{x}) - \lambda g(\mathbf{x})$$
 
 and find a saddle point: $\nabla_\mathbf{x}\mathcal{L} = 0$ and $g(\mathbf{x}) = 0$. The multiplier $\lambda$ is a "price" on violating the constraint — at the optimum, that price exactly balances the gradient.
@@ -507,7 +511,7 @@ A working knowledge of calculus turns "training is broken" into "I know which gr
 | Symptom | Likely calculus reason | Fix |
 |---|---|---|
 | Loss → NaN or Inf | Exploding gradients | Gradient clipping; lower LR; BatchNorm/LayerNorm |
-| Loss not decreasing | Vanishing gradients | Better init (He/Xavier); residual connections; ReLU/GELU instead of sigmoid in hidden layers |
+| Loss not decreasing | Vanishing gradients | Better init (He/Xavier = variance-preserving weight initialization); residual connections (skip paths adding a layer's input to its output); ReLU/GELU instead of sigmoid in hidden layers |
 | Loss oscillates wildly | LR too high relative to curvature | Decrease LR; add momentum; normalize features |
 | Loss plateaus then drops | Crossing a saddle | Wait it out; momentum helps; try LR warmup |
 | Sigmoid output stuck near 0 or 1 | Saturated sigmoid (gradient → 0) | Numerically stable softmax; logit clipping; better init |
@@ -540,7 +544,7 @@ Frameworks (PyTorch, JAX, TensorFlow) implement **reverse-mode automatic differe
 - **Non-differentiable ops** break the graph. `argmax`, hard indexing, hard sampling — use `.detach()` to mark "no gradient through here," or replace with a smooth surrogate.
 - **In-place operations** (`x += y`) can corrupt tensors that backward needs. Prefer non-inplace versions.
 - `torch.no_grad()` disables graph building — useful for inference (saves memory).
-- **Custom gradients** via `torch.autograd.Function` — when you need to override backward (straight-through estimator, custom CUDA op).
+- **Custom gradients** via `torch.autograd.Function` — when you need to override backward (straight-through estimator = pass gradients through a non-differentiable op as if it were the identity; custom CUDA op).
 - Calling `loss.backward()` twice on the same graph fails because PyTorch frees activations after the first. Use `retain_graph=True` only when you really need it.
 
 ## Trade-offs
@@ -566,7 +570,7 @@ Frameworks (PyTorch, JAX, TensorFlow) implement **reverse-mode automatic differe
 |----------|------|-----|
 | Default optimizer for transformers / LLMs | AdamW | Adaptive + decoupled weight decay; modern standard |
 | Default optimizer for ResNets / vision | SGD with momentum + cosine LR | Generalizes well; well-understood |
-| Sparse-feature linear models | AdaGrad / FTRL | Per-param LR matches sparsity |
+| Sparse-feature linear models | AdaGrad / FTRL (Follow The Regularized Leader — online-learning method for sparse linear models) | Per-param LR matches sparsity |
 | Small problem, deterministic, smooth loss | L-BFGS | Quasi-Newton converges fast |
 | Pretrained model, small dataset (fine-tune) | Smaller LR; possibly freeze early layers | Avoid catastrophic forgetting |
 | RNN / sequence model | RMSProp or Adam + gradient clipping | Vanishing/exploding gradients across time |

@@ -49,13 +49,13 @@ Every arrow out of a state must sum to 1. That's it.
 
 $$P(X_{t+1} = j \mid X_t = i, X_{t-1}, X_{t-2}, \ldots, X_0) = P(X_{t+1} = j \mid X_t = i)$$
 
-In English: *given the present, the future is independent of the past.* The current state is a "sufficient statistic" for all future behavior.
+In English: *given the present, the future is independent of the past.* A **state** is a label for the system's condition at a moment in time — whatever you'd need to know to predict what happens next. The current state is a "sufficient statistic" (a summary that captures everything predictively relevant — no extra info from the past would help) for all future behavior.
 
 **Why this is powerful and dangerous.**
 - Powerful: you only need to store the current state, not the full history. Massive compression.
 - Dangerous: you have to *design* the state so that it really does contain all the predictive information. If tomorrow's weather actually depends on last week's, "Sunny/Rainy" isn't enough state — you'd need something like "Sunny with a week of rain behind it." The Markov property is a modeling *choice*, not a fact about the world.
 
-**The escape hatch.** If a system needs $k$ steps of history, define your state as the tuple of the last $k$ observations. That's a *higher-order* Markov chain — still Markov, just over a bigger state space. This is exactly what an $n$-gram language model does.
+**The escape hatch.** If a system needs $k$ steps of history, define your state as the tuple of the last $k$ observations. That's a *higher-order* Markov chain — still Markov, just over a bigger state space. This is exactly what an $n$-gram language model (an $n$-gram language model predicts the next token given the previous $n-1$) does.
 
 ## 2. The transition matrix
 
@@ -101,7 +101,7 @@ You can *see* the stickiness — long runs of S and R rather than random alterna
 
 ## 3. Propagating a distribution one step forward
 
-**The problem.** You have a probability distribution over states today: $\pi_t = (p_1, p_2, \ldots, p_N)$. What's the distribution tomorrow?
+**The problem.** You have a probability distribution over states today: $\pi_t = (p_1, p_2, \ldots, p_N)$. (Convention: $\pi_t$ is the distribution at time $t$; later we drop the subscript for the stationary limit $\pi$. Different letter than the Bayesian prior $\pi(\theta)$ in the statistics note — same symbol, different meaning.) What's the distribution tomorrow?
 
 **The intuition.** For each starting state $i$, you're in it with probability $\pi_t(i)$, and from there you land in $j$ with probability $P_{ij}$. Sum over all $i$:
 
@@ -111,7 +111,7 @@ That's just a matrix-vector product, with the distribution treated as a *row* ve
 
 $$\pi_{t+1} = \pi_t \cdot P$$
 
-(This is the reason "row-stochastic" is the convention — the multiplication goes on the *right*. In some texts they use column-stochastic matrices and left-multiply; same idea, transposed.)
+(This is the reason "row-stochastic" is the convention — the multiplication goes on the *right*. In some texts they use column-stochastic matrices and left-multiply (column-stochastic = columns sum to 1, so the multiplication is $\pi_{n+1} = P \pi_n$ with column vectors); same idea, transposed.)
 
 **By induction:** $\pi_n = \pi_0 \cdot P^n$. The $n$-step transition matrix is just $P$ raised to the $n$-th power.
 
@@ -156,7 +156,7 @@ $$\pi = \pi \cdot P$$
 
 Once your belief is $\pi$, one more step keeps it at $\pi$. It's a *fixed point* of the transition operator.
 
-**Reading the equation.** $\pi P = \pi$ says $\pi$ is a **left eigenvector of $P$ with eigenvalue 1**. Every row-stochastic matrix has 1 as an eigenvalue (that's a theorem — row-stochastic ⇒ $P \mathbf{1} = \mathbf{1}$, so 1 is a right eigenvalue with eigenvector $\mathbf{1}$; eigenvalues of $P$ and $P^T$ are the same set, so there's a left eigenvector for 1 too). So the stationary distribution is always *computable* — it's a linear-algebra problem.
+**Reading the equation.** A **left eigenvector** $v$ satisfies $vP = \lambda v$ — multiplying $v$ by $P$ just scales it by the scalar $\lambda$, the **eigenvalue**. Here $\lambda = 1$, so $\pi$ is unchanged. $\pi P = \pi$ says $\pi$ is a **left eigenvector of $P$ with eigenvalue 1**. Every row-stochastic matrix has 1 as an eigenvalue (that's a theorem — row-stochastic ⇒ $P \mathbf{1} = \mathbf{1}$, so 1 is a right eigenvalue with eigenvector $\mathbf{1}$; eigenvalues of $P$ and $P^T$ are the same set, so there's a left eigenvector for 1 too). So the stationary distribution is always *computable* — it's a linear-algebra problem.
 
 **Solve it for our weather chain.** Let $\pi = (s, 1-s)$. Then
 
@@ -196,7 +196,7 @@ print(f"left eigenvector: π = {pi_eig}")
 # left eigenvector: π = [0.83333333 0.16666667]
 ```
 
-Both agree, both match the algebra. **Power iteration** is what Google's original PageRank was, and it's the basic engine of MCMC too — just multiply repeatedly.
+Both agree, both match the algebra. **Power iteration** — pick any starting vector and multiply by $P$ repeatedly; under mild conditions it converges to the dominant eigenvector. **Power iteration** is what Google's original PageRank was, and it's the basic engine of MCMC too — just multiply repeatedly.
 
 ## 5. Convergence — the picture
 
@@ -226,7 +226,7 @@ for start in [np.array([1.0, 0.0]), np.array([0.0, 1.0])]:
 # start=[0. 1.] -> 0.5000 -> 0.7000 -> 0.7800 -> 0.8120 -> 0.8248 -> 0.8299 -> 0.8320 -> 0.8328
 ```
 
-Note the *rate* of convergence — each step, the gap to 0.8333 shrinks by a factor of **0.4**. That's not a coincidence: 0.4 is the *second-largest eigenvalue* of $P$. The mixing rate is governed by the **spectral gap** $1 - |\lambda_2|$: closer to 1 = mixes fast; closer to 0 = mixes slowly.
+Note the *rate* of convergence — each step, the gap to 0.8333 shrinks by a factor of **0.4**. That's not a coincidence: every $N \times N$ matrix has $N$ eigenvalues; for a row-stochastic $P$, the largest is always 1, and $\lambda_2$ is the next-largest in absolute value. 0.4 is the *second-largest eigenvalue* of $P$. The mixing rate is governed by the **spectral gap** $1 - |\lambda_2|$: closer to 1 = mixes fast; closer to 0 = mixes slowly.
 
 ## 6. When does convergence work? — irreducibility, aperiodicity, ergodicity
 
@@ -238,7 +238,7 @@ Example — reducible chain:
 
 $$P = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0.5 & 0.5 \\ 0 & 0.3 & 0.7 \end{pmatrix}$$
 
-State 1 is an absorbing island (never leaves). States 2 and 3 form another island. There's no single $\pi$ — where you end up depends on where you started.
+State 1 is **absorbing** — once entered, the chain never leaves ($P_{11} = 1$). States 2 and 3 form another island. There's no single $\pi$ — where you end up depends on where you started.
 
 **Periodicity.** A state has **period** $k$ if returns to it can only happen in multiples of $k$ steps. If every state has period 1, the chain is **aperiodic**.
 
@@ -261,17 +261,17 @@ The whole machinery pays off because it maps onto famous algorithms:
 
 **PageRank.** Model the web as a Markov chain where a "random surfer" is on a page and, with prob $0.85$, clicks a random outgoing link; with prob $0.15$, teleports to a random page (this teleport is what makes the chain irreducible and aperiodic — without it the surfer would get trapped in dead ends). PageRank of a page = stationary probability of being on it. Google's original algorithm was: compute $\pi$ by power iteration.
 
-**MCMC (Markov Chain Monte Carlo).** You want to sample from a distribution $\pi$ that's hard to sample directly (e.g. a Bayesian posterior with intractable normalizer). Trick: *design* a Markov chain whose stationary distribution is exactly $\pi$, then run it. After it mixes, the samples $X_t$ are (correlated) draws from $\pi$.
-- **Metropolis-Hastings** designs $P$ by "propose then accept/reject."
+**MCMC (Markov Chain Monte Carlo).** You want to sample from a distribution $\pi$ that's hard to sample directly (e.g. a Bayesian posterior with intractable normalizer — the posterior $p(\theta \mid \text{data}) \propto p(\text{data} \mid \theta) \, p(\theta)$; the **normalizer** is $\int p(\text{data} \mid \theta) p(\theta)\, d\theta$, often uncomputable in closed form). Trick: *design* a Markov chain whose stationary distribution is exactly $\pi$, then run it. After it mixes, the samples $X_t$ are (correlated) draws from $\pi$.
+- **Metropolis-Hastings** designs $P$ by "propose then accept/reject." You draw a candidate $y$ from a **proposal distribution** $q(y \mid x)$, then accept with probability $\min(1, \frac{\pi(y) q(x \mid y)}{\pi(x) q(y \mid x)})$.
 - **Gibbs sampling** cycles through coordinates.
-- **HMC / NUTS** (in Stan, PyMC) use gradient information to propose smarter moves.
+- **HMC / NUTS** (Hamiltonian Monte Carlo / No-U-Turn Sampler — implemented in Stan and PyMC) use gradient information to propose smarter moves.
 The reason MCMC exists as a field is that you can build such a $P$ *without* ever having to compute $\pi$'s normalizer — you only need ratios $\pi(y)/\pi(x)$.
 
 **Hidden Markov Models (HMMs).** A Markov chain over *hidden* states $Z_t$, plus an emission model $P(X_t \mid Z_t)$ for observations. Given the observations, you infer the latent state sequence. Used in speech recognition, part-of-speech tagging, gene finding, quant regime detection.
 
-**Reinforcement Learning.** An MDP is a Markov chain with actions and rewards. Value iteration, policy iteration, and Q-learning are all algorithms about stationary quantities on Markov chains.
+**Reinforcement Learning.** An **MDP** (Markov Decision Process) is a Markov chain with actions and rewards — see any RL reference for policy, value function, and Q-learning. Value iteration, policy iteration, and Q-learning are all algorithms about stationary quantities on Markov chains.
 
-**Language models — at generation time.** Autoregressive LMs generate tokens by sampling $x_{t+1} \sim P(\cdot \mid \text{state}_t)$, where $\text{state}_t$ is the KV cache. That's a (huge-state) Markov chain — which is why "temperature" and "top-k" are just knobs on the transition probabilities.
+**Language models — at generation time.** Autoregressive LMs generate tokens by sampling $x_{t+1} \sim P(\cdot \mid \text{state}_t)$, where $\text{state}_t$ is the KV cache. **Autoregressive** = each token conditions on all previous tokens; the **KV cache** stores the transformer's per-layer key/value tensors so old context isn't recomputed each step. That's a (huge-state) Markov chain — which is why "temperature" and "top-k" are just knobs on the transition probabilities.
 
 **Random walks on graphs.** Node2vec, DeepWalk, and other graph-embedding methods define a Markov chain on the graph and use stationary/short-time statistics as features.
 
@@ -285,7 +285,7 @@ The reason MCMC exists as a field is that you can build such a $P$ *without* eve
 ## Common Pitfalls
 
 - **Believing your state is Markov when it isn't.** Symptom: your simulated trajectories don't match reality even when the transition matrix fits the marginals. Fix: enlarge the state, or use a richer model class.
-- **Running MCMC too short.** The first samples are biased by the starting point (the "burn-in"). Discard them. Diagnose with $\hat R$ (Gelman-Rubin) across parallel chains, or trace plots — if the chain hasn't visibly wandered, it hasn't mixed.
+- **Running MCMC too short.** The first samples are biased by the starting point (the "burn-in"). Discard them. Diagnose with $\hat R$ (Gelman-Rubin) across parallel chains, or trace plots — $\hat R$ compares within-chain variance to between-chain variance and should be ≈1; a **trace plot** graphs sampled values over iterations — if the chain hasn't visibly wandered, it hasn't mixed.
 - **Assuming ergodicity without checking.** If your chain has disconnected components (reducibility) or a period > 1, there's no unique $\pi$ to converge to. Symptom: samples cluster in one region forever. Fix: add a small "teleport" probability (PageRank's trick) or redesign the proposal.
 - **Confusing "$P_{ij}$" row/column conventions.** Some texts use column-stochastic matrices ($\pi_{n+1} = P \pi_n$ with column vectors). Both are correct; check which one your library / paper uses before multiplying.
 - **Thinking large eigenvalue gap = fast mixing everywhere.** The spectral gap governs *worst-case* mixing. A specific chain might get "close enough" for your purposes much sooner. Trust simulation over gap-based bounds for practical questions.

@@ -65,7 +65,7 @@ If you forget every other word in this section, remember: **the model only knows
 
 That's **central tendency**. Three options, each useful for different reasons:
 
-- **Mean** — add up all the values, divide by count. Simple. But sensitive to outliers: one billionaire in a sample of 100 people obliterates the meaning of "average wealth."
+- **Mean** — add up all the values, divide by count. Simple. But sensitive to outliers: one billionaire in a sample of 100 people obliterates the meaning of "average wealth." (An **outlier** is a data point far from the bulk of the distribution — extreme enough that summary statistics distort around it.)
   $$\mu = \frac{1}{n}\sum_{i=1}^n x_i$$
 
 - **Median** — sort the data, take the middle value. Robust to outliers. The billionaire is still in the sample, but they don't drag the median up to a meaningless number.
@@ -74,7 +74,7 @@ That's **central tendency**. Three options, each useful for different reasons:
 
 **ML takeaway.** When you're imputing missing values, you're picking one of these. Numeric + symmetric data → mean. Numeric + skewed data → median. Categorical → mode. The right choice prevents your imputation from systematically distorting the distribution.
 
-Watch mean vs. median react to a single outlier — one billionaire tacked onto nine ordinary incomes:
+Watch mean vs. median react to a single outlier — one billionaire tacked onto nine ordinary incomes. (`ddof` (numpy's "delta degrees of freedom") switches between dividing by $n$ (`ddof=0`, population) or $n-1$ (`ddof=1`, sample).)
 
 ```python
 import numpy as np
@@ -117,7 +117,7 @@ To *see* what squaring does — and why it matters — compare the two side by s
 
 ![|deviation| vs. (deviation)² — outlier bar grows from 4.5× to 20× when squared|697](assets/variance-squared-vs-abs.svg)
 
-**ML takeaway.** The reason MSE (mean squared error) is the default regression loss is exactly this: it's variance of the residuals. You're minimizing the spread of your prediction errors, weighting big errors much more than small ones. If you don't want that — if your data has heavy tails and big errors are *expected* — use mean absolute error or Huber loss instead.
+**ML takeaway.** In regression, a **residual** is the gap between a data point and the model's prediction for it: $r_i = y_i - \hat y_i$. Positive means the model under-predicted; negative means it over-predicted. The reason MSE (mean squared error) is the default regression loss is exactly this: it's *variance of the residuals*. You're minimizing the spread of your prediction errors, weighting big errors much more than small ones (because squaring a big residual makes it *much* bigger). If you don't want that — if your data has heavy tails and big errors are *expected* — use mean absolute error or Huber loss instead.
 
 ### How are two variables related?
 
@@ -401,6 +401,8 @@ All three sample means land within ~0.01 of the theoretical values. For Poisson,
 
 ### Quick reference — distributions you'll see in ML
 
+A **latent variable** is one the model posits but doesn't observe directly (like the cluster assignment in a mixture model or the topic of a document in LDA).
+
 | Distribution            | Shape / Models                         | When ML uses it                                    |
 | ----------------------- | -------------------------------------- | -------------------------------------------------- |
 | **Bernoulli**           | One yes/no                             | Binary classification target (cat / not-cat)       |
@@ -433,6 +435,8 @@ This is the **Central Limit Theorem**:
 
 $$\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} \mathcal{N}(0, \sigma^2)$$
 
+where $\bar X_n = \tfrac{1}{n}\sum_{i=1}^n X_i$ is the sample mean and $\xrightarrow{d}$ means *converges in distribution* — the histogram of $\bar X_n$ across many samples approaches the Normal shape as $n$ grows.
+
 **In plain English.** The sample mean of i.i.d. data approaches a Normal distribution as you collect more samples, no matter what shape the original data had.
 
 Verify the $\sigma/\sqrt{n}$ shrinkage of the sample-mean's standard deviation. For Uniform(0, 1), the population $\sigma = 1/\sqrt{12} \approx 0.2887$:
@@ -456,7 +460,7 @@ for n in [1, 5, 30]:
 # n=30: mean=0.500, std=0.0529, σ/√n=0.0527
 ```
 
-The mean stays near 0.5 (LLN); the std shrinks like $\sigma/\sqrt{n}$ — halving requires quadrupling the sample. That's why "double the data" only cuts your error bars by ~30%, not 50%.
+The mean stays near 0.5 (the Law of Large Numbers — see below); the std shrinks like $\sigma/\sqrt{n}$ — halving requires quadrupling the sample. That's why "double the data" only cuts your error bars by ~30%, not 50%.
 
 The 3×3 grid below is the payoff — pick any source distribution (row), take averages of size $n$ (column), and watch the shape morph:
 
@@ -467,7 +471,7 @@ The 3×3 grid below is the payoff — pick any source distribution (row), take a
 - **It explains why Normal is everywhere.** Anything that's an average or a sum of many small effects ends up Normal.
 - **It's why "error bars" use $\pm 2\sigma/\sqrt{n}$.** Once you know the means are approximately Normal, the 95% confidence interval falls out for free.
 - **It justifies the Gaussian noise assumption** in linear regression: if measurement error is the sum of many tiny independent effects, it's approximately Normal.
-- **The Law of Large Numbers** is the simpler companion: as $n \to \infty$, $\bar{X}_n \to \mu$. This is why averaging over a mini-batch gives a useful gradient estimate in SGD — many noisy estimates average out to the truth.
+- **The Law of Large Numbers** is the simpler companion: as $n \to \infty$, $\bar{X}_n \to \mu$. This is why averaging over a mini-batch gives a useful gradient estimate in **SGD** (stochastic gradient descent) — trains on small random *mini-batches* of data rather than the full set; more in [calculus](calculus.md). Many noisy estimates average out to the truth.
 
 ## 7. From data to model parameters: Maximum Likelihood Estimation (MLE)
 
@@ -495,13 +499,15 @@ Note the flip in what's variable: the *data* is fixed (that's what you observed)
 
 $$\hat p_{\text{MLE}} = \arg\max_p L(p)$$
 
+($\arg\max_p L(p)$ means *the value of $p$ that makes $L(p)$ largest* — as opposed to $\max L$, which would be the largest value itself.)
+
 For this example, the peak is at $p = 0.65 = 13/20$. That's why we teach kids "13 out of 20 = 0.65" — it's literally MLE for a Bernoulli. Every empirical frequency you've ever computed was an MLE.
 
 ### The three moves that solve every MLE problem
 
 Real MLE has more than one data point, and multiplying dozens or thousands of probabilities together underflows to zero in floating point. So there's a standard three-move dance:
 
-**Move 1 — factorize (i.i.d.).** If the data points are independent, the joint likelihood is a product of per-point likelihoods:
+**Move 1 — factorize (i.i.d.).** If the data points are independent, the joint likelihood is a product of per-point likelihoods (we'll write $\theta$ for the model's parameter(s) — a stand-in for $p$, $(\mu, \sigma^2)$, or a whole weight vector, depending on the model):
 
 $$L(\theta) = P(D \mid \theta) = \prod_{i=1}^n P(x_i \mid \theta)$$
 
@@ -509,7 +515,7 @@ $$L(\theta) = P(D \mid \theta) = \prod_{i=1}^n P(x_i \mid \theta)$$
 
 $$\log L(\theta) = \sum_{i=1}^n \log P(x_i \mid \theta)$$
 
-**Move 3 — set derivative to zero.** For a smooth likelihood, the peak is where $\frac{d \log L}{d\theta} = 0$. Solve for $\theta$; that's $\hat\theta_{\text{MLE}}$.
+**Move 3 — set derivative to zero.** For a smooth likelihood, the peak is where $\frac{d \log L}{d\theta} = 0$. Solve for $\theta$; that's $\hat\theta_{\text{MLE}}$. The hat on $\hat\theta$ marks it as an *estimate* computed from data, distinct from the (unknown) true $\theta$.
 
 By convention we flip the sign and *minimize* the **negative log-likelihood (NLL)** instead — same optimum, and it aligns with the "loss" framing we use for gradient descent. That's the whole story: **NLL is the loss function of most probabilistic ML models.** Cross-entropy loss for a classifier is NLL under a categorical likelihood; MSE for a regressor is NLL under a Gaussian likelihood. More on that in the next subsection.
 
@@ -608,11 +614,11 @@ Different assumed noise distributions yield different MLE losses:
 | Categorical on multiclass     | **Categorical cross-entropy**       |
 | Poisson on count target       | **Poisson NLL**                     |
 
-**The big realization.** Picking a loss function = picking a noise distribution. If your residuals are heavy-tailed, MSE (Gaussian assumption) is wrong — it overweights outliers because the Gaussian thinks big residuals are very unlikely. Try Huber loss or MAE.
+**The big realization.** Picking a loss function = picking a noise distribution. If your residuals are heavy-tailed, MSE (Gaussian assumption) is wrong — it overweights outliers because the Gaussian thinks big residuals are very unlikely. Try Huber loss or MAE. (**heavy-tailed** = extreme values happen much more often than a Gaussian would predict — think the Laplace column in the table below, where a residual of 5 is ~1800× more likely than under Gaussian.)
 
 #### Where does this table come from?
 
-For regression, we model $y = f_\theta(x) + \epsilon$. The noise $\epsilon$ is the random junk making predictions miss. We *choose* a distribution for $\epsilon$ — Gaussian is only the default, not a law of nature.
+For regression, we model $y = f_\theta(x) + \epsilon$, where $f_\theta(x)$ is the model's prediction for input $x$ given parameters $\theta$. The noise $\epsilon$ is the random junk making predictions miss. We *choose* a distribution for $\epsilon$ — Gaussian is only the default, not a law of nature.
 
 Once you pick that distribution, MLE mechanically produces the loss. The recipe is always the same four steps:
 
@@ -622,17 +628,35 @@ Each row of the table above is that recipe applied to a different PDF:
 
 ![Gaussian → MSE, Laplace → MAE, Bernoulli → BCE|697](assets/loss-noise-instances.svg)
 
-Walk through Gaussian → MSE explicitly:
+Walk through Gaussian → MSE explicitly. This is the four MLE moves you already saw, applied to a specific PDF.
 
-$$P(y_i \mid x_i, \theta) = \frac{1}{\sqrt{2\pi}\sigma}\exp\!\left(-\frac{(y_i - f_\theta(x_i))^2}{2\sigma^2}\right)$$
+**Setup.** For data point $i$, the model predicts $f_\theta(x_i)$ and the observation is $y_i$. Call the gap the **residual** $r_i = y_i - f_\theta(x_i)$. Assuming Gaussian noise $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$ means the residual is Gaussian-distributed, so the probability the model assigns to seeing $y_i$ given $x_i$ is:
 
-Take log: $\log P = -\frac{(y_i - f_\theta(x_i))^2}{2\sigma^2} + \text{const}$. Sum, flip sign, drop constants:
+$$P(y_i \mid x_i, \theta) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\frac{r_i^2}{2\sigma^2}\right)$$
 
-$$\text{NLL} \propto \sum_i (y_i - f_\theta(x_i))^2$$
+**Step 1 — Move 1 (factorize).** i.i.d. data means the full likelihood is a product across points:
 
-That's MSE. The **squared** term isn't a design choice — it fell out of the Gaussian's exponent. Same drill for Laplace gives $|r|$ (that's MAE), for Bernoulli gives $-y\log p - (1-y)\log(1-p)$ (that's binary cross-entropy).
+$$L(\theta) = \prod_{i=1}^n P(y_i \mid x_i, \theta) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\frac{r_i^2}{2\sigma^2}\right)$$
 
-So "I chose MSE" and "I assumed my residuals are Gaussian" are the **same statement**. Same optimization problem, same $\hat\theta$.
+**Step 2 — Move 2 (log).** Taking the log turns the product into a sum and cancels the `exp`:
+
+$$\log L(\theta) = \sum_{i=1}^n \left[\; \log\!\underbrace{\tfrac{1}{\sqrt{2\pi\sigma^2}}}_{\text{constant in }\theta} \;-\; \frac{r_i^2}{2\sigma^2} \;\right]$$
+
+**Step 3 — Drop the constant.** The first term doesn't depend on $\theta$, so it's a constant offset. It can't change the *location* of the argmax — only shift the whole surface up or down. Drop it.
+
+$$\log L(\theta) = -\frac{1}{2\sigma^2}\sum_{i=1}^n r_i^2 \;+\; \text{const}$$
+
+**Step 4 — Negate (Move 4).** By convention we minimize NLL rather than maximize log-likelihood. Flip the sign:
+
+$$\text{NLL}(\theta) = \frac{1}{2\sigma^2}\sum_{i=1}^n r_i^2 \;+\; \text{const}$$
+
+**Step 5 — Drop the $\frac{1}{2\sigma^2}$ prefactor.** Since $\sigma^2$ is a fixed positive constant (from the noise model, not $\theta$), scaling the whole thing doesn't change where the minimum sits. Drop it too — you're left with:
+
+$$\text{NLL}(\theta) \;\propto\; \sum_{i=1}^n r_i^2 \;=\; \sum_{i=1}^n (y_i - f_\theta(x_i))^2$$
+
+**That's MSE.** The **squared** term isn't a design choice — it fell out of the exponent of the Gaussian PDF. Same drill for Laplace noise ($\propto \exp(-|r|/b)$) gives $\sum |r_i|$ — that's MAE. For Bernoulli it gives $-\sum [y_i \log p_i + (1-y_i)\log(1-p_i)]$ — that's binary cross-entropy.
+
+**The equivalence.** "I chose MSE" and "I assumed my residuals are Gaussian" are the **same statement**. Same optimization problem, same $\hat\theta$.
 
 #### Why MSE panics at outliers, and MAE doesn't
 
@@ -852,7 +876,7 @@ These all reduce to: *given some randomness, can I trust this difference?*
 3. Pick a **test statistic** — a number summarizing the data (e.g., difference in observed conversion rates).
 4. Figure out the distribution of that statistic *if $H_0$ were true*. (This is the hard part. Tools like the t-test, z-test, chi-squared test give you closed-form answers for common cases.)
 5. Compute the **p-value**: probability of seeing a statistic at least as extreme as observed, *assuming $H_0$*. A tiny p-value means "if $H_0$ were true, we'd almost never see data this extreme."
-6. If $p < \alpha$ (typically 0.05), **reject** $H_0$.
+6. If $p < \alpha$ (the **significance level**, typically 0.05 — the false-positive rate you're willing to tolerate), **reject** $H_0$.
 
 ### What the p-value is *not*
 
@@ -892,7 +916,7 @@ You have features $X$ and a target $y$. You believe (or hope) that $y$ is roughl
 
 ### Build it from intuition
 
-Linear in the features means: $\hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots = X\beta$ (in matrix form, including a bias column).
+Linear in the features means: $\hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots = X\beta$ (in matrix form, including a bias column), where $\beta_0$ is the **intercept** (the model's prediction when all features are 0) and $\beta_1, \ldots, \beta_p$ are the **slopes** — one per feature. (Reusing Greek letters — this $\beta$ is a regression coefficient, unrelated to Type II error $\beta$ in §9.)
 
 "Best fit" means: minimize the sum of squared errors $\sum_i (y_i - \hat{y}_i)^2$.
 
@@ -946,7 +970,7 @@ The closed-form solution + standard inferences (p-values on coefficients, confid
 4. **Normality of errors** — for inference (CIs, p-values). Not strictly needed just for prediction.
 5. **No perfect multicollinearity** — features aren't linearly dependent (else $X^TX$ is singular and you can't invert).
 
-Violations don't always kill you, but they invalidate the *uncertainty* claims about coefficients. Use diagnostic plots (residuals vs. fitted, QQ plots).
+Violations don't always kill you, but they invalidate the *uncertainty* claims about coefficients. Use diagnostic plots (residuals vs. fitted, QQ plots). (**QQ plot** — plots your residuals' quantiles against a Normal's; a straight line means residuals really are Gaussian.)
 
 ### When OLS isn't enough: regularized variants
 

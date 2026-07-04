@@ -43,6 +43,8 @@ flowchart TD
 
 ## 1. From numbers to vectors: why we need a list at all
 
+> **Notation convention.** **Bold** ($\mathbf{x}, \mathbf{v}$) = vectors, plain italic ($x_i, c, \lambda$) = scalars, capitals ($A, V$) = matrices.
+
 ### The problem
 
 You want to describe a single thing — a house. One number isn't enough: you need its size, its bedrooms, its price, its lat/long. So you make a list:
@@ -52,7 +54,7 @@ Now every house in your dataset is a list of 5 numbers. You can't add or compare
 
 ### Three ways to picture the same vector
 
-A vector $\mathbf{x} \in \mathbb{R}^n$ can be seen as:
+A vector $\mathbf{x} \in \mathbb{R}^n$ (where $\mathbb{R}^n$ is the set of all $n$-tuples of real numbers — $n$-dimensional space) can be seen as:
 
 1. **A list of numbers.** The natural ML view: one row of your dataset.
 2. **A point** in $n$-dimensional space. Useful when thinking about distances, neighbors, clusters.
@@ -71,7 +73,7 @@ Two operations, infinite ML applications. Every "average over a batch" is vector
 
 ### The problem: how long is this vector?
 
-If a vector represents a "size of error," you want a number for that size. If a vector is a parameter weight, you want a number for "how big are these weights" (so you can penalize them in regularization).
+If a vector represents a "size of error," you want a number for that size. If a vector is a parameter weight, you want a number for "how big are these weights" (so you can penalize them in **regularization** — adding a penalty on weight size to the loss, discouraging overfitting).
 
 You'd think there's *one* answer. There isn't. There are several reasonable definitions of "length," called **norms**, and each has different ML consequences.
 
@@ -111,7 +113,7 @@ These pictures *explain* why L1 induces sparsity and L2 doesn't. When you minimi
 
 ![L2 circle, L1 diamond, and L∞ square unit balls. Loss contours grazing the L1 diamond snap to an axis corner, forcing x₁ = 0.|697](assets/norm-balls-l1-l2-linf.svg)
 
-This is why **lasso (L1) does feature selection** and **ridge (L2) only shrinks**.
+This is why **lasso (L1) does feature selection** and **ridge (L2) only shrinks**. (Lasso = linear regression with an L1 penalty on coefficients, which drives many to zero; ridge = the same with an L2 penalty, which shrinks all toward zero without zeroing them.)
 
 See the geometry play out on a toy problem — a 3-feature dataset where only feature 0 is actually relevant. L1 zeros the irrelevant coefficients; L2 just shrinks them:
 
@@ -137,8 +139,10 @@ The lasso coefficients on features 1 and 2 collapse to exactly `0.0`; the ridge 
 How similar are two vectors? Multiply componentwise and sum:
 $$\mathbf{x}^T\mathbf{y} = \sum_i x_i y_i$$
 
+Here $\mathbf{x}^T$ is the **transpose** — the row form of a column vector; more generally the transpose flips a matrix over its diagonal, so $A^T_{ij} = A_{ji}$.
+
 The geometric meaning, which is the one to remember:
-$$\mathbf{x}^T\mathbf{y} = \|\mathbf{x}\|\|\mathbf{y}\|\cos\theta$$
+$$\mathbf{x}^T\mathbf{y} = \|\mathbf{x}\|\|\mathbf{y}\|\cos\theta \quad \text{where } \theta \text{ is the angle between the two vectors.}$$
 
 - Big positive dot product → vectors point in similar directions.
 - Zero → perpendicular.
@@ -146,7 +150,7 @@ $$\mathbf{x}^T\mathbf{y} = \|\mathbf{x}\|\|\mathbf{y}\|\cos\theta$$
 
 ### Cosine similarity: the unit-vector trick
 
-If you only care about *direction*, not magnitude (which is usually true for embeddings — "cat" and "kitten" should be close regardless of how loud you wrote them):
+If you only care about *direction*, not magnitude (which is usually true for **embeddings** — learned vector representations of items (words, users, images) where geometry encodes meaning; "cat" and "kitten" should be close regardless of how loud you wrote them):
 $$\cos\theta = \frac{\mathbf{x}^T\mathbf{y}}{\|\mathbf{x}\|\|\mathbf{y}\|}$$
 
 This is **cosine similarity**. ML appearances:
@@ -182,11 +186,11 @@ The simplest non-trivial functions are **linear** — they preserve addition and
 
 ### The "where do the basis vectors go" trick
 
-You can describe a linear transformation entirely by where it sends the standard basis vectors $\mathbf{e}_1, \mathbf{e}_2, \dots$. Stack those destinations as columns. That's the matrix:
+You can describe a linear transformation entirely by where it sends the standard basis vectors $\mathbf{e}_1, \mathbf{e}_2, \dots$ ($\mathbf{e}_j$ = the vector with a 1 in position $j$ and 0 elsewhere — the $j$-th standard basis vector). Stack those destinations as columns. That's the matrix:
 
 $$A = [\,\mathbf{a}_1\, |\, \mathbf{a}_2\, |\, \dots\, |\, \mathbf{a}_n\,], \quad A\mathbf{e}_j = \mathbf{a}_j$$
 
-The $j$-th column of $A$ is "where the $j$-th basis vector lands after $A$ is applied." Once you see that, $A\mathbf{x}$ becomes natural: $\mathbf{x}$ is a recipe for combining basis vectors, and $A\mathbf{x}$ is the same recipe applied to where they landed.
+The $j$-th column of $A$ is "where the $j$-th basis vector lands after $A$ is applied." Once you see that, $A\mathbf{x}$ becomes natural: $\mathbf{x}$ is a recipe for combining basis vectors (a **linear combination** of vectors = a weighted sum $c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots$), and $A\mathbf{x}$ is the same recipe applied to where they landed.
 
 ![Standard grid with basis vectors e₁, e₂ on the left; on the right the same grid warped by A, with the parallelogram spanned by A's columns a₁, a₂. A point x = 1.5·e₁ + 0.5·e₂ maps to Ax = 1.5·a₁ + 0.5·a₂.|697](assets/matrix-as-transformation.svg)
 
@@ -273,7 +277,7 @@ If your code computes an inverse, it's probably a bug or a missed optimization.
 The **Moore-Penrose pseudoinverse** $A^+$ generalizes the inverse. For tall matrices with linearly independent columns:
 $$A^+ = (A^TA)^{-1}A^T$$
 
-Recognize this? It's the OLS regression formula. Linear regression *is* a pseudoinverse computation. And the pseudoinverse projects onto the column space of $A$ in the least-squares sense.
+Recognize this? It's the **OLS (ordinary least squares)** regression formula — fit a linear model by minimizing $\|A\mathbf{x} - \mathbf{b}\|_2^2$. Linear regression *is* a pseudoinverse computation. And the pseudoinverse projects onto the column space of $A$ (defined in §5 below) in the least-squares sense.
 
 ### Determinant: the volume scaler
 
@@ -316,6 +320,8 @@ The **rank** of a matrix is the number of linearly independent columns (equivale
 
 **ML.** Real-world data is *almost always* low-rank. A user-item ratings matrix is millions × millions, but the ratings actually lie on a low-dimensional manifold (genres, user types). Recommender systems exploit this: factorize the matrix into two low-rank pieces and you've compressed it, learned latent features, and filled in missing entries — all at once.
 
+**Rank-nullity theorem**: $\dim(\text{null}(A)) + \text{rank}(A) = $ number of columns of $A$.
+
 A rank-deficient matrix in the flesh — row 3 is row 1 + row 2, so rank is 2, not 3:
 
 ```python
@@ -337,7 +343,7 @@ print("A @ null_vec =", A @ ns[:, 0])  # ~ zero vector
 # A @ null_vec = [1.55431223e-15 8.88178420e-16 1.33226763e-15]
 ```
 
-Rank 2 out of 3, so the null space is 1-dimensional (rank-nullity: `dim(null) + rank = # cols`). `A @ ns[:, 0]` is essentially zero — that direction is what $A$ destroys.
+Rank 2 out of 3, so the null space is 1-dimensional (by rank-nullity above). `A @ ns[:, 0]` is essentially zero — that direction is what $A$ destroys.
 
 ## 5. Vector spaces: the playground for everything above
 
@@ -370,11 +376,11 @@ You have a target vector $\mathbf{b}$. Your model can only produce vectors of th
 Drop a perpendicular from $\mathbf{b}$ onto $\text{Col}(A)$. That's the projection:
 $$\text{proj} = A(A^TA)^{-1}A^T\mathbf{b}$$
 
-This is *exactly* OLS regression. You're projecting your target onto the subspace of vectors your model can express. The residual lives in the *left null space* — orthogonal to your model's column space, hence the model can't capture it. That orthogonality is what "least squares" buys you geometrically.
+This is *exactly* OLS regression. You're projecting your target onto the subspace of vectors your model can express. The **residual** $\mathbf{b} - A\hat{\mathbf{x}}$ (what the model can't capture) lives in the *left null space* — orthogonal to your model's column space, hence the model can't capture it. That orthogonality is what "least squares" buys you geometrically.
 
 ![A tilted plane through the origin (Col(A)) with columns a₁, a₂ lying in it, target b floating above, projection Aĥx lying in the plane below b, and a residual b − Aĥx perpendicular to the plane.|697](assets/projection-column-space.svg)
 
-Build the projection matrix and confirm two properties: idempotence ($P^2 = P$) and that $Pb$ equals the least-squares fit $A\hat{\mathbf{x}}$:
+Build the projection matrix and confirm two properties: idempotence ($P^2 = P$) and that $Pb$ equals the least-squares fit $A\hat{\mathbf{x}}$ (the hat means "estimated / best-fit"; $\hat{\mathbf{x}}$ is the solution minimizing $\|A\mathbf{x} - \mathbf{b}\|_2$):
 
 ```python
 import numpy as np
@@ -425,7 +431,7 @@ Imagine $A$ is a rubber sheet stretching transformation. Most arrows on the shee
 ### Why ML cares
 
 - Eigenvalues of repeated matrices control growth/decay. RNN gradients pass through the same weight matrix many times. If eigenvalues > 1, gradients explode. If < 1, gradients vanish. Decades of recurrent network design (LSTMs, GRUs, careful init) are about controlling these eigenvalues.
-- For *symmetric* matrices, eigenvectors are orthogonal — they form a perfect coordinate system. Covariance matrices, Hessians, kernel matrices, normal-equation matrices — all symmetric. Their eigendecompositions reveal structure cleanly.
+- For *symmetric* matrices, eigenvectors are orthogonal — they form a perfect coordinate system. Covariance matrices, Hessians, kernel matrices, normal-equation matrices — all symmetric. (**Kernel matrix**: $K_{ij} = k(\mathbf{x}_i, \mathbf{x}_j)$ — pairwise similarity of data points under some similarity function $k$.) Their eigendecompositions reveal structure cleanly.
 - **The Hessian is where eigenvalues meet optimization.** The Hessian $H$ is the local quadratic approximation of a loss surface — think of it as an ellipsoid bowl (or saddle) fitted to the loss at a point. Its **eigenvectors are the axes of that bowl**, and its **eigenvalues are the curvature along each axis**. All positive → bowl (local min). All negative → dome (local max). Mixed signs → saddle. This is why second-order optimizers (Newton, natural gradient) *rescale* gradients by $H^{-1}$: they stretch the bowl into a sphere so gradient descent takes uniform steps in every direction. See [calculus](calculus.md).
 - PCA literally finds eigenvectors of the covariance matrix.
 
@@ -495,13 +501,13 @@ Three operations. Universal. Works on rectangular, singular, anything.
 
 ### The killer application: low-rank approximation
 
-If you keep only the top $k$ singular values, you get the best rank-$k$ approximation to $A$ (best in Frobenius norm — total squared error). This is the **Eckart-Young theorem**, and it powers a stunning amount of ML:
+If you keep only the top $k$ singular values, you get the best rank-$k$ approximation to $A$ (best in **Frobenius norm** $\|A\|_F = \sqrt{\sum_{i,j} A_{ij}^2}$ — the L2 norm applied to the matrix flattened into a vector; equivalently, total squared error). This is the **Eckart-Young theorem**, and it powers a stunning amount of ML:
 
 - **PCA** — top singular vectors of centered data are the principal components.
 - **Recommender systems** — factor a giant user-item matrix into two thin matrices.
-- **LSI / topic modeling** — SVD on a term-document matrix gives semantic topics.
+- **LSI (Latent Semantic Indexing) / topic modeling** — SVD on a term-document matrix gives semantic topics.
 - **Image compression** — drop small singular values, reconstruct close to original.
-- **Model compression / LoRA** — replace a big weight matrix with a low-rank correction during fine-tuning.
+- **Model compression / LoRA (Low-Rank Adaptation)** — replace a big weight matrix with a low-rank correction during fine-tuning.
 - **Numerical pseudoinverse** — $A^+ = V\Sigma^+ U^T$ where $\Sigma^+$ inverts non-zero singular values. Stable when $A^TA$ would be singular.
 
 ### When the singular values "fall off a cliff"
@@ -629,7 +635,7 @@ The **condition number** $\kappa(A) = \sigma_{\max} / \sigma_{\min}$ — ratio o
 
 ### Why ridge regression helps multicollinearity
 
-If features are highly correlated, $X^TX$ has a tiny smallest eigenvalue (near-singular). Condition number is huge. Coefficients are wild.
+**Multicollinearity** = predictor features are (near-)linearly dependent, making $X^TX$ near-singular and coefficient estimates unstable. If features are highly correlated, $X^TX$ has a tiny smallest eigenvalue (near-singular). Condition number is huge. Coefficients are wild.
 
 Ridge adds $\lambda I$ to $X^TX$. The smallest eigenvalue becomes $\lambda_{\min} + \lambda$, lifted off zero. Condition number drops. Solutions stabilize. Same effect, two perspectives: numerical (better conditioning) and Bayesian (Gaussian prior). They're the same fact wearing different clothes.
 
