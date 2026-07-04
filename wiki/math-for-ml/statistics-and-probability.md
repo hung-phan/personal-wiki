@@ -538,7 +538,9 @@ $$\log L(\theta) = \sum_{i=1}^n \log P(x_i \mid \theta)$$
 
 *Problem.* We want the peak of $\log L(\theta)$. How do you find the peak of a smooth function?
 
-*The move.* At a peak, the tangent line is flat — the derivative is zero. So we compute $\frac{d \log L}{d\theta}$, set it to zero, and solve for $\theta$. That $\theta$ is $\hat\theta_{\text{MLE}}$. (The hat marks it as an *estimate* computed from data, distinct from the unknown true $\theta$.)
+*Why the derivative = 0 trick works.* Not convention — it's a geometric fact about smooth curves. Think about walking along the graph of a smooth function. Going *uphill* means the tangent slopes up (derivative positive). Going *downhill* means the tangent slopes down (derivative negative). At the exact instant you're crossing over from uphill to downhill — the peak — the tangent is momentarily flat: derivative = zero. Same for a valley (crossing downhill → uphill). So *every extremum of a smooth function has zero derivative*, which means the peak we're looking for must live among the solutions of $\frac{d \log L}{d\theta} = 0$. (Caveats: works only for smooth functions, and it also flags valleys and saddles. In MLE those rarely bite — the log-likelihood is usually concave, so the only critical point *is* the peak.)
+
+*The move.* Compute $\frac{d \log L}{d\theta}$, set it to zero, and solve for $\theta$. That $\theta$ is $\hat\theta_{\text{MLE}}$. (The hat marks it as an *estimate* computed from data, distinct from the unknown true $\theta$.)
 
 *Payoff.* We've converted an optimization problem ("find where the max is") into an algebra problem ("solve one equation"). For a lot of textbook likelihoods — Gaussian, Bernoulli, Poisson — this gives a **closed-form answer**: no computer needed, just calculus. When there's no closed form (e.g. neural networks), you fall back to gradient descent — but that's *still the same idea*, just done numerically instead of algebraically: keep stepping until the gradient is (near) zero.
 
@@ -583,29 +585,59 @@ The grid-search peak and the calculus-derived answer agree. And the peak is only
 
 ### Worked example 2 — Gaussian sample (two parameters)
 
-You have $n$ measurements $x_1, \ldots, x_n$ and want to fit a Normal $\mathcal{N}(\mu, \sigma^2)$. Same three moves.
+**Setup.** You have $n$ measurements $x_1, \ldots, x_n$ — say the heights of $n$ adults in centimeters. You want to fit a Normal distribution $\mathcal{N}(\mu, \sigma^2)$ to them. Two unknowns this time: the mean $\mu$ (where the bell is centered) and the variance $\sigma^2$ (how wide it is). Same three moves as before — just with two parameters instead of one, so we'll differentiate twice.
 
-**Factorize:**
+**Move 1 — factorize.**
 
-$$L(\mu, \sigma^2) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}} \exp\!\left(-\frac{(x_i - \mu)^2}{2\sigma^2}\right)$$
+Each measurement is one draw from the Gaussian PDF, so the likelihood of all $n$ measurements together is a product:
 
-**Log:**
+$$L(\mu, \sigma^2) = \prod_{i=1}^n \underbrace{\frac{1}{\sqrt{2\pi\sigma^2}} \exp\!\left(-\frac{(x_i - \mu)^2}{2\sigma^2}\right)}_{\text{Gaussian PDF, evaluated at }x_i}$$
+
+**Move 2 — log.**
+
+Now unpack it step by step. Log of a product = sum of logs:
+
+$$\log L = \sum_{i=1}^n \log\!\left[\frac{1}{\sqrt{2\pi\sigma^2}} \exp\!\left(-\frac{(x_i - \mu)^2}{2\sigma^2}\right)\right]$$
+
+Two more log identities finish it: $\log(ab) = \log a + \log b$ splits each term into the prefactor plus the exponent, and $\log(\exp(z)) = z$ collapses the second half:
+
+$$\log L = \sum_{i=1}^n \left[\; \log \tfrac{1}{\sqrt{2\pi\sigma^2}} \;-\; \frac{(x_i - \mu)^2}{2\sigma^2} \;\right]$$
+
+The first term inside the brackets doesn't depend on $i$, so summing it $n$ times just multiplies by $n$. Pull the $\frac{1}{2\sigma^2}$ out of the sum. That leaves:
 
 $$\log L = -\frac{n}{2}\log(2\pi\sigma^2) \;-\; \frac{1}{2\sigma^2} \sum_{i=1}^n (x_i - \mu)^2$$
 
-**Derivative in $\mu$**, set to zero — only the second term depends on $\mu$:
+Look at what this says: **log-likelihood = constant that penalizes wider bells − a "sum of squared residuals" divided by variance.** Big $\mu$-errors and big $\sigma$-choices both hurt it.
 
-$$\frac{\partial \log L}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^n (x_i - \mu) = 0 \;\;\Longrightarrow\;\; \hat\mu = \frac{1}{n}\sum_{i=1}^n x_i = \bar x$$
+**Move 3a — solve for $\hat\mu$.**
 
-The MLE for the mean of a Gaussian is *the sample average*. That's not a coincidence — it's *because* we assumed Gaussian noise that "take the average" is the right thing to do. Under Laplace noise, the MLE for the center is the *median*, not the mean.
+Taking the derivative with respect to $\mu$ is easier than it looks: **only the second term depends on $\mu$**. The first term is entirely $\sigma^2$-and-constants — its $\mu$-derivative is zero. So we only differentiate the sum, using the chain rule on $(x_i - \mu)^2$:
 
-**Derivative in $\sigma^2$**, set to zero — both terms depend on it:
+$$\frac{\partial \log L}{\partial \mu} = -\frac{1}{2\sigma^2} \sum_{i=1}^n 2(x_i - \mu)\cdot(-1) = \frac{1}{\sigma^2}\sum_{i=1}^n (x_i - \mu)$$
 
-$$\frac{\partial \log L}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum_{i=1}^n (x_i - \hat\mu)^2 = 0 \;\;\Longrightarrow\;\; \hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \bar x)^2$$
+Set that to zero. Since $\sigma^2$ is positive, the fraction dies iff the sum is zero:
 
-Note the $\frac{1}{n}$, **not** $\frac{1}{n-1}$. MLE gives the *population* variance formula (`np.var(x, ddof=0)`). The $\frac{1}{n-1}$ "unbiased" version (`ddof=1`, Bessel's correction) is a different thing — it corrects for a small downward bias in MLE's variance estimate. MLE doesn't care about bias, only likelihood.
+$$\sum_{i=1}^n (x_i - \mu) = 0 \;\;\Longrightarrow\;\; \sum_i x_i = n\mu \;\;\Longrightarrow\;\; \boxed{\;\hat\mu = \frac{1}{n}\sum_{i=1}^n x_i = \bar x\;}$$
 
-Verify in code:
+**The MLE for the mean of a Gaussian is the sample average.** That's not a coincidence — it's a *consequence of assuming Gaussian noise*. "Just take the average" is the right answer *because* the noise is Gaussian. If the noise were Laplace-distributed instead (heavier tails), the same derivation gives the **median**, not the mean. If it were Poisson, something else entirely. The tool "take the mean" isn't neutral — it's a Gaussianity assumption in disguise.
+
+**Move 3b — solve for $\hat\sigma^2$.**
+
+Now differentiate with respect to $\sigma^2$. **This time both terms depend on $\sigma^2$**, so both contribute. Treat $\sigma^2$ as a single variable $v$ if that helps ($v = \sigma^2$); the algebra is cleaner. Then $\frac{d}{dv}\log v = \frac{1}{v}$, and $\frac{d}{dv}(1/v) = -1/v^2$.
+
+$$\frac{\partial \log L}{\partial \sigma^2} = -\frac{n}{2}\cdot\frac{1}{\sigma^2} \;+\; \frac{1}{2\sigma^4}\sum_{i=1}^n (x_i - \hat\mu)^2$$
+
+(We've already fixed $\mu$ at its MLE $\hat\mu = \bar x$ from Move 3a — that's why $\hat\mu$ appears in the sum.) Set to zero:
+
+$$\frac{n}{2\sigma^2} = \frac{1}{2\sigma^4}\sum_i (x_i - \hat\mu)^2 \;\;\Longrightarrow\;\; n\sigma^2 = \sum_i (x_i - \hat\mu)^2$$
+
+$$\boxed{\;\hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \bar x)^2\;}$$
+
+**The MLE for the variance is the sample's average squared deviation from its mean.**
+
+**The $\frac{1}{n}$ vs $\frac{1}{n-1}$ subtlety.** MLE gives $\frac{1}{n}$ — the **population** variance formula (numpy's `np.var(x, ddof=0)`, the default). The $\frac{1}{n-1}$ version (`ddof=1`, **Bessel's correction**) is a *different* estimator that fixes a small downward bias in MLE's variance — MLE systematically underestimates $\sigma^2$ because it evaluates deviations from $\hat\mu$ (which is *fit* to the same data) rather than the true unknown $\mu$. MLE doesn't care about bias, only about maximizing likelihood. Both estimators converge to the truth as $n \to \infty$; the correction only matters at small $n$.
+
+**Verify in code.**
 
 ```python
 import numpy as np
@@ -625,9 +657,9 @@ print(f"Unbiased σ̂² = {sigma2_hat_unbiased:.3f}")
 # Unbiased σ̂² = 3.820
 ```
 
-MLE variance is *slightly* smaller than the unbiased version — that's the bias Bessel corrects. Both converge to the truth as $n \to \infty$.
+MLE variance (3.816) is *slightly* smaller than the unbiased version (3.820) — that's the bias Bessel corrects. With $n = 1000$ the gap is tiny. Both approach the truth $\sigma^2 = 4$ as $n \to \infty$.
 
-**Zoom out.** Every MLE problem is these same three moves. Only the algebra of Move 3 changes. Once you can do it for the coin and the Gaussian by hand, you can do it for anything — and once you know the answer is called "the loss function," the whole zoo of ML losses stops being a zoo.
+**Zoom out.** Every MLE problem is these same three moves. Only the algebra of Move 3 changes with the distribution you chose. Once you can do it for the coin (one parameter, Bernoulli) and the Gaussian (two parameters, Normal) by hand, you can do it for anything — and once you know the answer is called "the loss function," the whole zoo of ML losses stops being a zoo.
 
 ### The connection that unlocks loss design
 
