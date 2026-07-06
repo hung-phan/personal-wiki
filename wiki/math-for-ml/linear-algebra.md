@@ -205,6 +205,20 @@ You've computed `cos_sim = (X @ y) / (‖X‖ ‖y‖)` and now have a number in
 
 **Matrix-multiply framing (why this is fast).** In practice you don't compute cosine similarity one pair at a time — you *L2-normalize each row* of your matrix of embeddings, then one matrix multiply gives you *all pairwise similarities at once*:
 
+![Blue M×d document matrix D_norm on the left, yellow d-length query vector q_norm in the middle, green M-length output vector sims on the right. A highlighted doc row and its corresponding output entry are connected by a red arrow labeled "row i · q_norm → sims[i]". Footer shows (M×d) @ (d,) = (M,), one BLAS call, ~1000× faster than a Python loop, with the all-pairs (M×d) @ (d×N) = (M×N) generalization.](assets/embedding-matmul-flow.svg)
+
+**How the trick works — three moves:**
+
+1. **Stack all $M$ document vectors as rows of one matrix $D$**, shape $(M \times d)$ — one row per doc, columns are the $d = 384$ embedding dimensions.
+2. **Normalize each row to unit length**: `D_norm = D / np.linalg.norm(D, axis=1, keepdims=True)`. Now every row has L2 norm 1. Do the same for the query. The `keepdims=True` argument keeps the shape as $(M, 1)$ so broadcasting divides row-wise cleanly.
+3. **One matrix-vector product**: `sims = D_norm @ q_norm`. Because every row of `D_norm` and `q_norm` itself is unit-length, the raw dot product is *already* cosine similarity — the $\|\cdot\|$ divisors are all 1. Row $i$ of the output is $\hat{\mathbf{d}}_i \cdot \hat{\mathbf{q}} = \cos\theta_i$.
+
+Shape-check: $(M \times d) \, @ \, (d,) = (M,)$. One number per document, all computed in a single call.
+
+**Why this is dramatically faster than a Python loop.** The single `@` is one Python function call that hands the work to **BLAS** — a heavily optimized C library (OpenBLAS / MKL / Apple Accelerate) that uses SIMD (8 multiplies per CPU instruction), cache tiling, and multi-threading. A Python `for` loop over $M$ docs does $M$ Python function calls with all that hardware capability disabled. Real numbers on a laptop for $M = 10{,}000, d = 384$: Python double-loop ≈ 100 ms, `numpy` `@` ≈ 2 ms — same answer, ~50× faster on CPU alone. On GPU with `torch`, another ~100× on top.
+
+**All-pairs generalization.** Have $M$ docs *and* $N$ queries? Stack both into matrices $D$ ($M \times d$) and $Q$ ($N \times d$) — both normalized — then $S = D_{\text{norm}} \cdot Q_{\text{norm}}^T$ gives you the entire $M \times N$ pairwise similarity matrix in one shot. `S[i, j]` = cosine similarity of doc $i$ against query $j$. Every real-world vector database (Pinecone, Weaviate, Milvus, pgvector, FAISS) is built on this primitive — normalize once, matmul at query time, and top-$k$ over the result. Approximate nearest-neighbor indexes (HNSW, IVF-PQ) only kick in past ~1M vectors, when even a full matmul is too slow; below that, this three-step trick is the whole story.
+
 ```python
 import numpy as np
 rng = np.random.default_rng(0)
