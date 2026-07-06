@@ -148,6 +148,10 @@ $$\mathbf{x}^T\mathbf{y} = \|\mathbf{x}\|\|\mathbf{y}\|\cos\theta \quad \text{wh
 - Zero → perpendicular.
 - Negative → opposite directions.
 
+![Left: three example y-vectors (30°, 90°, 170°) compared to a fixed x pointing right. Right: as y rotates 0°→360° around x, cosine similarity traces out cos θ — peaks at +1 when aligned, hits 0 at perpendicular, bottoms at −1 when opposite.](assets/dot-product-cosine.svg)
+
+The left panel shows the three cases as arrows; the right panel plots cos θ as y sweeps around the circle — that single cosine curve *is* how cosine similarity varies with the angle between two vectors.
+
 ### Cosine similarity: the unit-vector trick
 
 If you only care about *direction*, not magnitude (which is usually true for **embeddings** — learned vector representations of items (words, users, images) where geometry encodes meaning; "cat" and "kitten" should be close regardless of how loud you wrote them):

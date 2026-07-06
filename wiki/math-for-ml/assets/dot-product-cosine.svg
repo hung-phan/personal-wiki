@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14">
+  <style>
+    .ax     { stroke: #64748b; stroke-width: 1.5; }
+    .grid   { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 4; }
+    .curve  { stroke: #2563eb; stroke-width: 3; fill: none; }
+    .xarrow { stroke: #0f172a; stroke-width: 2.5; fill: none; }
+    .yblue  { stroke: #2563eb; stroke-width: 2.5; fill: none; }
+    .yorang { stroke: #f97316; stroke-width: 2.5; fill: none; }
+    .yred   { stroke: #dc2626; stroke-width: 2.5; fill: none; }
+    .marker-blue { fill: #2563eb; }
+    .marker-orange { fill: #f97316; }
+    .marker-red { fill: #dc2626; }
+    .marker-black { fill: #0f172a; }
+    .arc    { stroke: #64748b; stroke-width: 1.2; fill: none; }
+    .txt    { fill: #0f172a; }
+    .tick   { fill: #475569; font-size: 12px; }
+    .title  { font-weight: 700; font-size: 15px; fill: #0f172a; }
+    .note   { fill: #475569; font-size: 11px; }
+    @media (prefers-color-scheme: dark) {
+      .ax { stroke: #94a3b8; }
+      .grid { stroke: #475569; }
+      .curve { stroke: #60a5fa; }
+      .xarrow { stroke: #e2e8f0; }
+      .marker-black { fill: #e2e8f0; }
+      .yblue { stroke: #60a5fa; }
+      .marker-blue { fill: #60a5fa; }
+      .yorang { stroke: #fb923c; }
+      .marker-orange { fill: #fb923c; }
+      .yred { stroke: #f87171; }
+      .marker-red { fill: #f87171; }
+      .arc { stroke: #cbd5e1; }
+      .txt, .title { fill: #e2e8f0; }
+      .tick, .note { fill: #cbd5e1; }
+    }
+  </style>
+
+  <defs>
+    <marker id="ah-black" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="marker-black"/>
+    </marker>
+    <marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="marker-blue"/>
+    </marker>
+    <marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="marker-orange"/>
+    </marker>
+    <marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="marker-red"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="200" y="26" text-anchor="middle">Three y-vectors compared to a fixed x</text>
+
+  <line class="ax" x1="60"  y1="200" x2="340" y2="200"/>
+  <line class="ax" x1="200" y1="60"  x2="200" y2="340"/>
+
+  <line class="grid" x1="80"  y1="60" x2="80"  y2="340"/>
+  <line class="grid" x1="140" y1="60" x2="140" y2="340"/>
+  <line class="grid" x1="260" y1="60" x2="260" y2="340"/>
+  <line class="grid" x1="320" y1="60" x2="320" y2="340"/>
+  <line class="grid" x1="60"  y1="80"  x2="340" y2="80"/>
+  <line class="grid" x1="60"  y1="140" x2="340" y2="140"/>
+  <line class="grid" x1="60"  y1="260" x2="340" y2="260"/>
+  <line class="grid" x1="60"  y1="320" x2="340" y2="320"/>
+
+  <text class="tick" x="80"  y="215" text-anchor="middle">−1</text>
+  <text class="tick" x="140" y="215" text-anchor="middle">−0.5</text>
+  <text class="tick" x="260" y="215" text-anchor="middle">0.5</text>
+  <text class="tick" x="320" y="215" text-anchor="middle">1</text>
+
+  <line class="xarrow" x1="200" y1="200" x2="320" y2="200" marker-end="url(#ah-black)"/>
+  <text class="txt" x="326" y="197" font-weight="700">x (fixed)</text>
+
+  <line class="yblue" x1="200" y1="200" x2="304" y2="140" marker-end="url(#ah-blue)"/>
+  <text class="txt" x="308" y="140" fill="#2563eb" font-weight="700">y₁ — similar (30°)</text>
+
+  <line class="yorang" x1="200" y1="200" x2="200" y2="80" marker-end="url(#ah-orange)"/>
+  <text class="txt" x="204" y="72" fill="#f97316" font-weight="700">y₂ — perp. (90°)</text>
+
+  <line class="yred" x1="200" y1="200" x2="82" y2="179" marker-end="url(#ah-red)"/>
+  <text class="txt" x="60"  y="170" fill="#dc2626" font-weight="700">y₃ — opposite (170°)</text>
+
+  <path class="arc" d="M 240 200 A 40 40 0 0 0 234.6 179.9"/>
+  <text class="note" x="248" y="192">θ</text>
+
+  <text class="title" x="670" y="26" text-anchor="middle">cos_sim = cos θ  (as y rotates around x)</text>
+
+  <line class="ax" x1="440" y1="320" x2="900" y2="320"/>
+  <line class="ax" x1="440" y1="60"  x2="440" y2="340"/>
+
+  <g>
+    <line class="grid" x1="497.5" y1="60" x2="497.5" y2="320"/>
+    <text class="tick" x="497.5" y="338" text-anchor="middle">45</text>
+    <line class="grid" x1="555.0" y1="60" x2="555.0" y2="320"/>
+    <text class="tick" x="555.0" y="338" text-anchor="middle">90</text>
+    <line class="grid" x1="612.5" y1="60" x2="612.5" y2="320"/>
+    <text class="tick" x="612.5" y="338" text-anchor="middle">135</text>
+    <line class="grid" x1="670.0" y1="60" x2="670.0" y2="320"/>
+    <text class="tick" x="670.0" y="338" text-anchor="middle">180</text>
+    <line class="grid" x1="727.5" y1="60" x2="727.5" y2="320"/>
+    <text class="tick" x="727.5" y="338" text-anchor="middle">225</text>
+    <line class="grid" x1="785.0" y1="60" x2="785.0" y2="320"/>
+    <text class="tick" x="785.0" y="338" text-anchor="middle">270</text>
+    <line class="grid" x1="842.5" y1="60" x2="842.5" y2="320"/>
+    <text class="tick" x="842.5" y="338" text-anchor="middle">315</text>
+    <line class="grid" x1="900.0" y1="60" x2="900.0" y2="320"/>
+    <text class="tick" x="900.0" y="338" text-anchor="middle">360</text>
+    <text class="tick" x="440"  y="338" text-anchor="middle">0</text>
+  </g>
+  <text class="tick" x="670" y="358" text-anchor="middle">θ  (angle between x and y, degrees)</text>
+
+  <line class="grid" x1="440" y1="80"  x2="900" y2="80"/>
+  <text class="tick" x="435" y="84" text-anchor="end">+1</text>
+  <line class="grid" x1="440" y1="140" x2="900" y2="140"/>
+  <text class="tick" x="435" y="144" text-anchor="end">+0.5</text>
+  <line class="grid" x1="440" y1="200" x2="900" y2="200"/>
+  <text class="tick" x="435" y="204" text-anchor="end">0</text>
+  <line class="grid" x1="440" y1="260" x2="900" y2="260"/>
+  <text class="tick" x="435" y="264" text-anchor="end">−0.5</text>
+  <text class="tick" x="435" y="324" text-anchor="end">−1</text>
+
+  <text class="tick" x="410" y="200" text-anchor="middle" transform="rotate(-90 410,200)">cosine similarity</text>
+
+  <polyline class="curve" points="440.0,80.0 446.4,80.5 452.8,81.8 459.2,84.1 465.6,87.2 471.9,91.2 478.3,96.1 484.7,101.7 491.1,108.1 497.5,115.1 503.9,122.9 510.3,131.2 516.7,140.0 523.1,149.3 529.4,159.0 535.8,168.9 542.2,179.2 548.6,189.5 555.0,200.0 561.4,210.5 567.8,220.8 574.2,231.1 580.6,241.0 586.9,250.7 593.3,260.0 599.7,268.8 606.1,277.1 612.5,284.9 618.9,291.9 625.3,298.3 631.7,303.9 638.1,308.8 644.4,312.8 650.8,315.9 657.2,318.2 663.6,319.5 670.0,320.0 676.4,319.5 682.8,318.2 689.2,315.9 695.6,312.8 701.9,308.8 708.3,303.9 714.7,298.3 721.1,291.9 727.5,284.9 733.9,277.1 740.3,268.8 746.7,260.0 753.1,250.7 759.4,241.0 765.8,231.1 772.2,220.8 778.6,210.5 785.0,200.0 791.4,189.5 797.8,179.2 804.2,168.9 810.6,159.0 816.9,149.3 823.3,140.0 829.7,131.2 836.1,122.9 842.5,115.1 848.9,108.1 855.3,101.7 861.7,96.1 868.1,91.2 874.4,87.2 880.8,84.1 887.2,81.8 893.6,80.5 900.0,80.0"/>
+
+  <circle cx="478.3" cy="96.1" r="5" class="marker-blue"/>
+  <text class="txt" x="484" y="86" fill="#2563eb">y₁ · x ≈ 0.87</text>
+
+  <circle cx="555.0" cy="200.0" r="5" class="marker-orange"/>
+  <text class="txt" x="561" y="196" fill="#f97316">y₂ · x = 0.00</text>
+
+  <circle cx="657.2" cy="318.2" r="5" class="marker-red"/>
+  <text class="txt" x="530" y="310" fill="#dc2626">y₃ · x ≈ −0.98</text>
+</svg>
