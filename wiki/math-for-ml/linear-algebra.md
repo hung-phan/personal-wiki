@@ -203,7 +203,34 @@ You've computed `cos_sim = (X @ y) / (‖X‖ ‖y‖)` and now have a number in
 2. **Plot the distribution.** Compute `cos_sim` for many pairs from your data. You usually see two humps — a "similar-pair" bump and a "random-pair" bump. Pick the threshold in the valley between them.
 3. **Calibrate on labeled pairs.** If you have "known similar" and "known different" example pairs, sweep the threshold and pick the point that gives the precision/recall you want.
 
-**Matrix-multiply framing (why this is fast).** In practice you don't compute cosine similarity one pair at a time — you *L2-normalize each row* of your matrix of embeddings, then one matrix multiply gives you *all pairwise similarities at once*:
+### Why "normalize first, then dot product" is the same math
+
+Before the fast trick, one algebraic step to make it obvious. Cosine similarity's formula has a *product* in the denominator:
+
+$$\cos\theta \;=\; \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\| \, \|\mathbf{y}\|}$$
+
+Because $\|\mathbf{x}\|$ and $\|\mathbf{y}\|$ are just **scalars** (single numbers), you can apply the grade-school **fraction-multiplication rule** in reverse — split one fraction with a product in the denominator into a product of two fractions:
+
+$$\frac{a \cdot c}{b \cdot d} \;=\; \frac{a}{b} \cdot \frac{c}{d}$$
+
+Apply that to $\cos\theta$:
+
+$$\cos\theta \;=\; \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\| \, \|\mathbf{y}\|} \;=\; \frac{\mathbf{x}}{\|\mathbf{x}\|} \cdot \frac{\mathbf{y}}{\|\mathbf{y}\|} \;=\; \hat{\mathbf{x}} \cdot \hat{\mathbf{y}}$$
+
+**Cosine similarity is the dot product of the two *unit vectors*.** The division moved from *after* the dot product to *inside* each vector. Same answer, different order of operations.
+
+Why the pull-in is allowed: the dot product is *linear in each argument*, so multiplying either vector by a scalar $c$ pulls the scalar cleanly out — $(c\mathbf{x}) \cdot \mathbf{y} = c\,(\mathbf{x} \cdot \mathbf{y})$. Setting $c = 1/\|\mathbf{x}\|$ (and again on the other side with $1/\|\mathbf{y}\|$) is the entire derivation.
+
+**Why this reorder wins in practice.** In the original formula, division happens *once per query, per document*. In the split form:
+- Each document is normalized **once**, when it's first indexed — divide once, store the unit vector, forget the norm.
+- Each query is normalized **once**, when it arrives — divide once.
+- Comparisons are just dot products from then on. **No division at query time**, no re-computing norms.
+
+For $M$ documents that get compared against millions of queries over their lifetime, this saves $O(M \cdot \text{queries})$ divisions and $O(\text{queries})$ norm computations. That's why every vector database stores its embeddings pre-normalized on disk — the moment vectors go in, they're already unit-length, so *comparison* is only ever a dot product.
+
+### Matrix-multiply framing (why this is fast)
+
+Now scale that idea to all $M$ docs at once. In practice you don't compute cosine similarity one pair at a time — you *L2-normalize each row* of your matrix of embeddings, then one matrix multiply gives you *all pairwise similarities at once*:
 
 ![Blue M×d document matrix D_norm on the left, yellow d-length query vector q_norm in the middle, green M-length output vector sims on the right. A highlighted doc row and its corresponding output entry are connected by a red arrow labeled "row i · q_norm → sims[i]". Footer shows (M×d) @ (d,) = (M,), one BLAS call, ~1000× faster than a Python loop, with the all-pairs (M×d) @ (d×N) = (M×N) generalization.](assets/embedding-matmul-flow.svg)
 
