@@ -180,6 +180,68 @@ print("cos_sim:", cos_sim, "angle (deg):", np.degrees(theta), "cos(theta):", np.
 
 L2 of $(3, -4, 12)$ is $13$, L1 is $19$, L∞ is $12$. `cos_sim` and `cos(theta)` match — the definition is self-consistent.
 
+### So which values mean "similar"?
+
+You've computed `cos_sim = (X @ y) / (‖X‖ ‖y‖)` and now have a number in $[-1, +1]$. How do you decide whether two vectors are similar or different? Rough conventions:
+
+![Cosine similarity number line from -1 to +1, with six colored bands: semantically-opposite (rare), unrelated, loosely related, related, very similar, near-duplicate. Five example points A/B/C/D/E from the earlier snippet plotted with their values and verdicts underneath.](assets/cosine-similarity-thresholds.svg)
+
+| `cos_sim` | Angle θ | Interpretation | Typical use |
+|---|---|---|---|
+| **0.95–1.00** | 0°–18° | Near-duplicate / synonym | Deduplication |
+| **0.80–0.95** | 18°–37° | Very similar / same topic | Semantic search top-k |
+| **0.60–0.80** | 37°–53° | Related | RAG relevance cutoff |
+| **0.30–0.60** | 53°–73° | Loosely related | Discovery / "you might also like" |
+| **~0–0.30** | ~73°–90° | Unrelated | Below the noise floor |
+| **< 0** | > 90° | Semantically opposite | Rare in modern embeddings — most sit in $[0, 1]$ |
+
+**Important caveat.** These ranges are **calibration-dependent**. Different embedding models put things at different similarity levels — OpenAI's `text-embedding-3-small` might score "car" vs "vehicle" at 0.65, while `all-MiniLM-L6-v2` scores the same pair at 0.82. The *absolute* threshold depends on the model; the *ordering* is what's reliable.
+
+**How to pick a threshold in practice** — three tactics, in order of rigor:
+
+1. **Rank, don't threshold.** Return the top-$k$ closest results instead of "everything above 0.7." Ranking is model-invariant; the raw numbers aren't.
+2. **Plot the distribution.** Compute `cos_sim` for many pairs from your data. You usually see two humps — a "similar-pair" bump and a "random-pair" bump. Pick the threshold in the valley between them.
+3. **Calibrate on labeled pairs.** If you have "known similar" and "known different" example pairs, sweep the threshold and pick the point that gives the precision/recall you want.
+
+**Matrix-multiply framing (why this is fast).** In practice you don't compute cosine similarity one pair at a time — you *L2-normalize each row* of your matrix of embeddings, then one matrix multiply gives you *all pairwise similarities at once*:
+
+```python
+import numpy as np
+rng = np.random.default_rng(0)
+
+d = 384
+base = rng.normal(size=d)                          # topic anchor
+docs = np.stack([
+    base + 0.1 * rng.normal(size=d),   # A — near
+    base + 0.3 * rng.normal(size=d),   # B — close
+    base + 0.8 * rng.normal(size=d),   # C — loose
+    rng.normal(size=d),                # D — unrelated
+    rng.normal(size=d),                # E — unrelated
+])
+query = base + 0.2 * rng.normal(size=d)
+labels = ["A (near)", "B (close)", "C (loose)", "D (unrel)", "E (unrel)"]
+
+q = query / np.linalg.norm(query)                             # unit-length query
+D = docs / np.linalg.norm(docs, axis=1, keepdims=True)        # unit-length rows
+cos_sims = D @ q                                              # one matmul → all sims
+
+for lab, cs in sorted(zip(labels, cos_sims), key=lambda t: -t[1]):
+    verdict = ("near-dup"     if cs > 0.95 else
+               "very similar" if cs > 0.80 else
+               "related"      if cs > 0.60 else
+               "loosely rel." if cs > 0.30 else
+               "unrelated")
+    print(f"{lab:11s} cos={cs:+.3f}  →  {verdict}")
+# Expected output:
+# A (near)    cos=+0.977  →  near-dup
+# B (close)   cos=+0.945  →  very similar
+# C (loose)   cos=+0.743  →  related
+# E (unrel)   cos=+0.021  →  unrelated
+# D (unrel)   cos=-0.013  →  unrelated
+```
+
+Those five values are the A/B/C/D/E markers on the diagram above — you can trace each one into its bucket. Notice how A crossed the "near-dup" threshold (0.95), B landed in "very similar," C fell into "related," and D/E clustered near zero as expected for genuinely independent vectors (D actually came out slightly negative — just noise, well inside the "unrelated" band). **That's the whole workflow**: matrix-multiply → per-pair cosines → look up the bucket → decision.
+
 ## 3. Matrices: the transformation view
 
 ### The problem

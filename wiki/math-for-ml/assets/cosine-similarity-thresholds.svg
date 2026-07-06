@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
+  <style>
+    .axis    { stroke: #0f172a; stroke-width: 2; }
+    .tick    { stroke: #64748b; stroke-width: 1.2; }
+    .txt     { fill: #0f172a; }
+    .label   { fill: #475569; font-size: 12px; }
+    .title   { font-weight: 700; font-size: 16px; fill: #0f172a; }
+    .cap     { font-size: 12px; fill: #475569; font-style: italic; }
+
+    .band-nd { fill: #dc2626; opacity: 0.85; }
+    .band-vs { fill: #f97316; opacity: 0.8; }
+    .band-r  { fill: #eab308; opacity: 0.8; }
+    .band-l  { fill: #84cc16; opacity: 0.75; }
+    .band-un { fill: #94a3b8; opacity: 0.6; }
+    .band-op { fill: #6366f1; opacity: 0.55; }
+
+    .marker   { fill: #0f172a; }
+    .marker-line { stroke: #0f172a; stroke-width: 1.5; }
+    .marker-lbl  { font-size: 12px; font-weight: 700; fill: #0f172a; }
+
+    @media (prefers-color-scheme: dark) {
+      .axis { stroke: #e2e8f0; }
+      .tick { stroke: #cbd5e1; }
+      .txt, .title, .marker-lbl { fill: #e2e8f0; }
+      .label, .cap { fill: #cbd5e1; }
+      .marker { fill: #e2e8f0; }
+      .marker-line { stroke: #e2e8f0; }
+    }
+  </style>
+
+  <text class="title" x="460" y="30" text-anchor="middle">How to read a cosine-similarity value</text>
+  <text class="cap"   x="460" y="52" text-anchor="middle">Rough calibration — exact thresholds depend on the embedding model. Rank, don't threshold, when possible.</text>
+
+  <rect class="band-op" x="60"  y="90" width="280" height="50"/>
+  <rect class="band-un" x="340" y="90" width="240" height="50"/>
+  <rect class="band-l"  x="580" y="90" width="120" height="50"/>
+  <rect class="band-r"  x="700" y="90" width="80"  height="50"/>
+  <rect class="band-vs" x="780" y="90" width="60"  height="50"/>
+  <rect class="band-nd" x="840" y="90" width="20"  height="50"/>
+
+  <text class="txt" x="200" y="118" text-anchor="middle" font-weight="700" fill="white">semantically opposite</text>
+  <text class="label" x="200" y="134" text-anchor="middle" fill="white">(rare in modern embeddings)</text>
+
+  <text class="txt" x="460" y="118" text-anchor="middle" font-weight="700" fill="white">unrelated / independent</text>
+  <text class="label" x="460" y="134" text-anchor="middle" fill="white">nothing meaningful to conclude</text>
+
+  <text class="txt" x="640" y="118" text-anchor="middle" font-weight="700" fill="white">loosely</text>
+  <text class="txt" x="640" y="134" text-anchor="middle" font-weight="700" fill="white">related</text>
+
+  <text class="txt" x="740" y="118" text-anchor="middle" font-weight="700" fill="white">related</text>
+  <text class="label" x="740" y="134" text-anchor="middle" fill="white">RAG</text>
+
+  <text class="txt" x="810" y="118" text-anchor="middle" font-weight="700" fill="white">very</text>
+  <text class="txt" x="810" y="134" text-anchor="middle" font-weight="700" fill="white">similar</text>
+
+  <text class="txt" x="850" y="80" text-anchor="middle" font-weight="700" fill="#dc2626">near-dup</text>
+
+  <line class="axis" x1="60" y1="190" x2="860" y2="190"/>
+
+  <g>
+    <line class="tick" x1="60"  y1="185" x2="60"  y2="200"/>
+    <text class="txt" x="60"  y="220" text-anchor="middle" font-weight="700">−1.0</text>
+
+    <line class="tick" x1="200" y1="185" x2="200" y2="200"/>
+    <text class="txt" x="200" y="220" text-anchor="middle">−0.5</text>
+
+    <line class="tick" x1="340" y1="185" x2="340" y2="200"/>
+    <text class="txt" x="340" y="220" text-anchor="middle">−0.3</text>
+
+    <line class="tick" x1="460" y1="185" x2="460" y2="200"/>
+    <text class="txt" x="460" y="220" text-anchor="middle" font-weight="700">0.0</text>
+
+    <line class="tick" x1="580" y1="185" x2="580" y2="200"/>
+    <text class="txt" x="580" y="220" text-anchor="middle">0.3</text>
+
+    <line class="tick" x1="700" y1="185" x2="700" y2="200"/>
+    <text class="txt" x="700" y="220" text-anchor="middle">0.6</text>
+
+    <line class="tick" x1="780" y1="185" x2="780" y2="200"/>
+    <text class="txt" x="780" y="220" text-anchor="middle">0.8</text>
+
+    <line class="tick" x1="840" y1="185" x2="840" y2="200"/>
+    <text class="txt" x="840" y="220" text-anchor="middle">0.95</text>
+
+    <line class="tick" x1="860" y1="185" x2="860" y2="200"/>
+    <text class="txt" x="860" y="220" text-anchor="middle" font-weight="700">1.0</text>
+  </g>
+
+  <text class="txt" x="460" y="245" text-anchor="middle">cos_sim  = (x · y) / (‖x‖ ‖y‖)</text>
+
+  <g>
+    <line class="marker-line" x1="851" y1="255" x2="851" y2="285"/>
+    <circle class="marker" cx="851" cy="285" r="5"/>
+    <text class="marker-lbl" x="851" y="305" text-anchor="middle">A</text>
+    <text class="label" x="878" y="320" text-anchor="end">0.977</text>
+    <text class="label" x="878" y="336" text-anchor="end">"near-dup"</text>
+
+    <line class="marker-line" x1="838" y1="255" x2="838" y2="358"/>
+    <circle class="marker" cx="838" cy="358" r="5"/>
+    <text class="marker-lbl" x="838" y="378" text-anchor="middle">B</text>
+    <text class="label" x="838" y="392" text-anchor="middle">0.945 — "very similar"</text>
+
+    <line class="marker-line" x1="757" y1="255" x2="757" y2="285"/>
+    <circle class="marker" cx="757" cy="285" r="5"/>
+    <text class="marker-lbl" x="757" y="305" text-anchor="middle">C</text>
+    <text class="label" x="757" y="320" text-anchor="middle">0.743</text>
+    <text class="label" x="757" y="336" text-anchor="middle">"related"</text>
+
+    <line class="marker-line" x1="455" y1="255" x2="455" y2="285"/>
+    <circle class="marker" cx="455" cy="285" r="5"/>
+    <text class="marker-lbl" x="455" y="305" text-anchor="middle">D</text>
+    <text class="label" x="455" y="320" text-anchor="middle">−0.013</text>
+    <text class="label" x="455" y="336" text-anchor="middle">"unrelated"</text>
+
+    <line class="marker-line" x1="468" y1="255" x2="468" y2="357"/>
+    <circle class="marker" cx="468" cy="357" r="5"/>
+    <text class="marker-lbl" x="468" y="377" text-anchor="middle">E</text>
+    <text class="label" x="468" y="392" text-anchor="middle">0.021</text>
+  </g>
+
+  <text class="label" x="60"  y="405" text-anchor="start">A/B/C/D/E are the 5 docs from the snippet — you can see where each lands.</text>
+</svg>
