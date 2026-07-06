@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 620" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 700" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
   <style>
     .title    { font-weight: 700; font-size: 16px; fill: #0f172a; }
     .subtitle { font-weight: 700; font-size: 14px; fill: #0f172a; }
@@ -49,151 +49,145 @@
     </marker>
   </defs>
 
-  <text class="title" x="470" y="32" text-anchor="middle">solve(A, b) vs inv(A) @ b — same math on paper, very different on a computer</text>
+  <text class="title" x="560" y="34" text-anchor="middle">solve(A, b) vs inv(A) @ b — same math on paper, very different on a computer</text>
 
-  <!-- ============ SOLVE pipeline (top) ============ -->
-  <text class="subtitle" x="60"  y="72" fill="#16a34a">solve(A, b)  —  the right way</text>
+  <!-- SOLVE pipeline: three boxes with 120 & 150 px gaps between them for labels -->
+  <text class="subtitle" x="60"  y="70" fill="#16a34a">solve(A, b)  —  the right way</text>
 
-  <rect class="step-solve" x="60"  y="84" width="130" height="46" rx="6"/>
-  <text class="txt" x="125" y="105" text-anchor="middle" font-weight="700">A</text>
-  <text class="label" x="125" y="120" text-anchor="middle">input matrix</text>
+  <rect class="step-solve" x="60"  y="84" width="120" height="52" rx="6"/>
+  <text class="txt"   x="120" y="106" text-anchor="middle" font-weight="700">A</text>
+  <text class="label" x="120" y="124" text-anchor="middle">input matrix</text>
 
-  <path class="arrow-green" d="M 190 107 L 235 107" marker-end="url(#ah-g)"/>
-  <text class="cost-solve" x="212" y="100" text-anchor="middle" font-size="11">LU factor</text>
-  <text class="label" x="212" y="122" text-anchor="middle">(2/3)n³</text>
+  <text class="cost-solve" x="240" y="102" text-anchor="middle" font-size="11">LU factor</text>
+  <text class="label"      x="240" y="118" text-anchor="middle">(2/3)n³</text>
+  <path class="arrow-green" d="M 180 130 L 300 130" marker-end="url(#ah-g)"/>
 
-  <rect class="step-solve" x="240" y="84" width="130" height="46" rx="6"/>
-  <text class="txt" x="305" y="105" text-anchor="middle" font-weight="700">L, U</text>
-  <text class="label" x="305" y="120" text-anchor="middle">triangular factors</text>
+  <rect class="step-solve" x="300" y="84" width="120" height="52" rx="6"/>
+  <text class="txt"   x="360" y="106" text-anchor="middle" font-weight="700">L, U</text>
+  <text class="label" x="360" y="124" text-anchor="middle">triangular factors</text>
 
-  <path class="arrow-green" d="M 370 107 L 415 107" marker-end="url(#ah-g)"/>
-  <text class="cost-solve" x="392" y="100" text-anchor="middle" font-size="11">fwd + back sub</text>
-  <text class="label" x="392" y="122" text-anchor="middle">2n²</text>
+  <text class="cost-solve" x="495" y="102" text-anchor="middle" font-size="11">fwd + back sub</text>
+  <text class="label"      x="495" y="118" text-anchor="middle">2n²</text>
+  <path class="arrow-green" d="M 420 130 L 570 130" marker-end="url(#ah-g)"/>
 
-  <rect class="step-solve" x="420" y="84" width="120" height="46" rx="6"/>
-  <text class="txt" x="480" y="105" text-anchor="middle" font-weight="700">x</text>
-  <text class="label" x="480" y="120" text-anchor="middle">answer</text>
+  <rect class="step-solve" x="570" y="84" width="120" height="52" rx="6"/>
+  <text class="txt"   x="630" y="106" text-anchor="middle" font-weight="700">x</text>
+  <text class="label" x="630" y="124" text-anchor="middle">answer</text>
 
-  <rect class="step-solve" x="600" y="82" width="260" height="52" rx="6"/>
-  <text class="txt" x="730" y="103" text-anchor="middle" font-weight="700" font-size="14">Total ≈ (2/3)n³ + 2n²</text>
-  <text class="label" x="730" y="122" text-anchor="middle">baseline cost</text>
+  <rect class="step-solve" x="780" y="82" width="300" height="56" rx="6"/>
+  <text class="txt"   x="930" y="106" text-anchor="middle" font-weight="700" font-size="14">Total ≈ (2/3)n³ + 2n²</text>
+  <text class="label" x="930" y="126" text-anchor="middle">baseline cost</text>
 
-  <!-- ============ INV pipeline ============ -->
-  <text class="subtitle" x="60" y="180" fill="#dc2626">inv(A) @ b  —  the "textbook" way that's wasteful and lossy</text>
+  <!-- INV pipeline: 4 boxes + 3 arrow gaps, 60..950. Total sits in its own row below. -->
+  <text class="subtitle" x="60" y="190" fill="#dc2626">inv(A) @ b  —  the "textbook" way that's wasteful and lossy</text>
 
-  <rect class="step-inv" x="60" y="192" width="130" height="46" rx="6"/>
-  <text class="txt" x="125" y="213" text-anchor="middle" font-weight="700">A</text>
-  <text class="label" x="125" y="228" text-anchor="middle">input matrix</text>
+  <rect class="step-inv" x="60" y="204" width="120" height="52" rx="6"/>
+  <text class="txt"   x="120" y="226" text-anchor="middle" font-weight="700">A</text>
+  <text class="label" x="120" y="244" text-anchor="middle">input matrix</text>
 
-  <path class="arrow-red" d="M 190 215 L 235 215" marker-end="url(#ah-r)"/>
-  <text class="cost-inv" x="212" y="208" text-anchor="middle" font-size="11">LU factor</text>
-  <text class="label" x="212" y="230" text-anchor="middle">(2/3)n³</text>
+  <text class="cost-inv" x="240" y="222" text-anchor="middle" font-size="11">LU factor</text>
+  <text class="label"    x="240" y="238" text-anchor="middle">(2/3)n³</text>
+  <path class="arrow-red" d="M 180 250 L 300 250" marker-end="url(#ah-r)"/>
 
-  <rect class="step-inv" x="240" y="192" width="130" height="46" rx="6"/>
-  <text class="txt" x="305" y="213" text-anchor="middle" font-weight="700">L, U</text>
-  <text class="label" x="305" y="228" text-anchor="middle">triangular factors</text>
+  <rect class="step-inv" x="300" y="204" width="120" height="52" rx="6"/>
+  <text class="txt"   x="360" y="226" text-anchor="middle" font-weight="700">L, U</text>
+  <text class="label" x="360" y="244" text-anchor="middle">triangular factors</text>
 
-  <path class="arrow-red" d="M 370 215 L 415 215" marker-end="url(#ah-r)"/>
-  <text class="cost-inv" x="392" y="208" text-anchor="middle" font-size="11">solve n times</text>
-  <text class="label" x="392" y="230" text-anchor="middle">once per e_i column</text>
-  <text class="label" x="392" y="243" text-anchor="middle">2n³ (!)</text>
+  <!-- The heavy middle step gets three lines of label; use a wider 150-px gap and shift the arrow down -->
+  <text class="cost-inv" x="495" y="216" text-anchor="middle" font-size="11">solve n times</text>
+  <text class="label"    x="495" y="232" text-anchor="middle">(once per e_i column)</text>
+  <text class="cost-inv" x="495" y="272" text-anchor="middle" font-size="11">2n³ (!)</text>
+  <path class="arrow-red" d="M 420 250 L 570 250" marker-end="url(#ah-r)"/>
 
-  <rect class="step-inv" x="420" y="192" width="130" height="46" rx="6"/>
-  <text class="txt" x="485" y="213" text-anchor="middle" font-weight="700">A⁻¹</text>
-  <text class="label" x="485" y="228" text-anchor="middle">explicit inverse</text>
+  <rect class="step-inv" x="570" y="204" width="130" height="52" rx="6"/>
+  <text class="txt"   x="635" y="226" text-anchor="middle" font-weight="700">A⁻¹</text>
+  <text class="label" x="635" y="244" text-anchor="middle">explicit inverse</text>
 
-  <path class="arrow-red" d="M 550 215 L 590 215" marker-end="url(#ah-r)"/>
-  <text class="cost-inv" x="570" y="208" text-anchor="middle" font-size="11">A⁻¹ @ b</text>
-  <text class="label" x="570" y="230" text-anchor="middle">n²</text>
+  <text class="cost-inv" x="760" y="222" text-anchor="middle" font-size="11">A⁻¹ @ b</text>
+  <text class="label"    x="760" y="238" text-anchor="middle">n²</text>
+  <path class="arrow-red" d="M 700 250 L 820 250" marker-end="url(#ah-r)"/>
 
-  <rect class="step-inv" x="595" y="192" width="105" height="46" rx="6"/>
-  <text class="txt" x="647" y="213" text-anchor="middle" font-weight="700">x</text>
-  <text class="label" x="647" y="228" text-anchor="middle">noisier answer</text>
+  <rect class="step-inv" x="820" y="204" width="130" height="52" rx="6"/>
+  <text class="txt"   x="885" y="226" text-anchor="middle" font-weight="700">x</text>
+  <text class="label" x="885" y="244" text-anchor="middle">noisier answer</text>
 
-  <rect class="step-inv" x="720" y="190" width="200" height="52" rx="6"/>
-  <text class="txt" x="820" y="211" text-anchor="middle" font-weight="700" font-size="14">Total ≈ (8/3)n³ + n²</text>
-  <text class="label" x="820" y="230" text-anchor="middle">4× more work, worse answer</text>
+  <!-- Total row for inv (below, full-width) -->
+  <rect class="step-inv" x="60" y="310" width="890" height="46" rx="6"/>
+  <text class="txt" x="505" y="331" text-anchor="middle" font-weight="700" font-size="14">
+    Total ≈ (8/3)n³ + n²  —  4× more work than solve, and produces a worse answer
+  </text>
 
-  <!-- Middle-band commentary -->
-  <text class="note" x="470" y="290" text-anchor="middle" fill="#dc2626">
+  <!-- Commentary strip -->
+  <text class="note" x="505" y="385" text-anchor="middle" fill="#dc2626">
     The extra "solve n times" step produces a full inverse matrix — any noise in it gets multiplied by b at the end.
   </text>
-  <text class="note" x="470" y="308" text-anchor="middle" fill="#dc2626">
+  <text class="note" x="505" y="403" text-anchor="middle" fill="#dc2626">
     Solve's error grows as κ(A) · ε.   Invert-then-multiply's error grows as κ(A)² · ε in bad cases.
   </text>
 
-  <!-- ============ BOTTOM LEFT: mental model ============ -->
+  <!-- BOTTOM LEFT: mental model -->
   <g>
-    <rect class="step-solve" x="60" y="340" width="470" height="220" rx="6"/>
-    <text class="subtitle" x="295" y="365" text-anchor="middle">Mental model — why inversion is wasteful and lossy</text>
+    <rect class="step-solve" x="60" y="430" width="510" height="230" rx="6"/>
+    <text class="subtitle" x="315" y="457" text-anchor="middle">Mental model — why inversion is wasteful and lossy</text>
 
-    <text class="txt" x="80" y="395" font-weight="700" font-size="13">Cost:</text>
-    <text class="label" x="80" y="413">Both paths build the same LU factors — solve stops there.</text>
-    <text class="label" x="80" y="429">Invert keeps going: run n more back-substitutions to produce</text>
-    <text class="label" x="80" y="445">every column of A⁻¹. That's 3× the arithmetic, then one more matmul.</text>
+    <text class="txt" x="82" y="490" font-weight="700" font-size="13">Cost</text>
+    <text class="label" x="82" y="510">Both paths build the same LU factors — solve stops there.</text>
+    <text class="label" x="82" y="528">Invert keeps going: run n more back-substitutions to produce</text>
+    <text class="label" x="82" y="546">every column of A⁻¹. That's 3× the arithmetic, then one more matmul.</text>
 
-    <text class="txt" x="80" y="480" font-weight="700" font-size="13">Stability:</text>
-    <text class="label" x="80" y="498">Each column of A⁻¹ carries floating-point noise proportional to κ(A).</text>
-    <text class="label" x="80" y="514">Multiplying that noisy matrix by b mixes and amplifies the noise —</text>
-    <text class="label" x="80" y="530">final error tracks κ(A)² in worst cases. Solve avoids the middle-man.</text>
-    <text class="label" x="80" y="548" font-style="italic">Rule of thumb: if your code computes A⁻¹, it's a bug or a missed opt.</text>
+    <text class="txt" x="82" y="580" font-weight="700" font-size="13">Stability</text>
+    <text class="label" x="82" y="600">Each column of A⁻¹ carries floating-point noise proportional to κ(A).</text>
+    <text class="label" x="82" y="618">Multiplying that noisy matrix by b mixes and amplifies the noise —</text>
+    <text class="label" x="82" y="636">final error tracks κ(A)² in worst cases. Solve avoids the middle-man.</text>
+    <text class="label" x="82" y="654" font-style="italic">Rule of thumb: if your code computes A⁻¹, it's probably a bug.</text>
   </g>
 
-  <!-- ============ BOTTOM RIGHT: error-vs-condition chart ============ -->
-  <text class="subtitle" x="740" y="365" text-anchor="middle">Relative error vs. condition number κ(A)</text>
+  <!-- BOTTOM RIGHT: error-vs-condition chart -->
+  <text class="subtitle" x="850" y="457" text-anchor="middle">Relative error vs. condition number κ(A)</text>
 
-  <!-- Chart area: x=580..900 for κ 10²..10¹¹; y=380..560 for log10 err from -3 (top) to -16 (bottom) -->
   <g>
-    <line class="ax" x1="580" y1="380" x2="580" y2="560"/>
-    <line class="ax" x1="580" y1="560" x2="900" y2="560"/>
+    <line class="ax" x1="650" y1="480" x2="650" y2="660"/>
+    <line class="ax" x1="650" y1="660" x2="1080" y2="660"/>
 
-    <!-- x ticks at 10², 10⁵, 10⁸, 10¹¹ -->
-    <line class="grid" x1="580" y1="380" x2="580" y2="560"/>
-    <text class="tick" x="580" y="574" text-anchor="middle">10²</text>
-    <line class="grid" x1="686.7" y1="380" x2="686.7" y2="560"/>
-    <text class="tick" x="686.7" y="574" text-anchor="middle">10⁵</text>
-    <line class="grid" x1="793.3" y1="380" x2="793.3" y2="560"/>
-    <text class="tick" x="793.3" y="574" text-anchor="middle">10⁸</text>
-    <line class="grid" x1="900" y1="380" x2="900" y2="560"/>
-    <text class="tick" x="900" y="574" text-anchor="middle">10¹¹</text>
-    <text class="tick" x="740" y="592" text-anchor="middle">condition number κ(A)</text>
+    <line class="grid" x1="650"  y1="480" x2="650"  y2="660"/>
+    <text class="tick" x="650"  y="675" text-anchor="middle">10²</text>
+    <line class="grid" x1="793"  y1="480" x2="793"  y2="660"/>
+    <text class="tick" x="793"  y="675" text-anchor="middle">10⁵</text>
+    <line class="grid" x1="937"  y1="480" x2="937"  y2="660"/>
+    <text class="tick" x="937"  y="675" text-anchor="middle">10⁸</text>
+    <line class="grid" x1="1080" y1="480" x2="1080" y2="660"/>
+    <text class="tick" x="1080" y="675" text-anchor="middle">10¹¹</text>
 
-    <!-- y ticks: y=380..560 corresponds to log10(err) -3..-16 -->
-    <!-- helper: y_px(log10err) = 380 + ((-3) - log_e) / ((-3) - (-16)) * 180 -->
-    <!-- log_e = -3 -> y=380 ; -6 -> 421.5 ; -9 -> 463.1 ; -12 -> 504.6 ; -15 -> 546.2 ; -16 -> 560 -->
-    <line class="grid" x1="580" y1="380" x2="900" y2="380"/>
-    <text class="tick" x="575" y="384" text-anchor="end">10⁻³</text>
-    <line class="grid" x1="580" y1="421.5" x2="900" y2="421.5"/>
-    <text class="tick" x="575" y="425.5" text-anchor="end">10⁻⁶</text>
-    <line class="grid" x1="580" y1="463.1" x2="900" y2="463.1"/>
-    <text class="tick" x="575" y="467.1" text-anchor="end">10⁻⁹</text>
-    <line class="grid" x1="580" y1="504.6" x2="900" y2="504.6"/>
-    <text class="tick" x="575" y="508.6" text-anchor="end">10⁻¹²</text>
-    <line class="grid" x1="580" y1="546.2" x2="900" y2="546.2"/>
-    <text class="tick" x="575" y="550.2" text-anchor="end">10⁻¹⁵</text>
-    <text class="tick" x="550" y="470" text-anchor="middle" transform="rotate(-90 550,470)">relative error</text>
+    <line class="grid" x1="650" y1="480"   x2="1080" y2="480"/>
+    <text class="tick" x="645" y="484" text-anchor="end">10⁻³</text>
+    <line class="grid" x1="650" y1="521.5" x2="1080" y2="521.5"/>
+    <text class="tick" x="645" y="525.5" text-anchor="end">10⁻⁶</text>
+    <line class="grid" x1="650" y1="563.1" x2="1080" y2="563.1"/>
+    <text class="tick" x="645" y="567.1" text-anchor="end">10⁻⁹</text>
+    <line class="grid" x1="650" y1="604.6" x2="1080" y2="604.6"/>
+    <text class="tick" x="645" y="608.6" text-anchor="end">10⁻¹²</text>
+    <line class="grid" x1="650" y1="646.2" x2="1080" y2="646.2"/>
+    <text class="tick" x="645" y="650.2" text-anchor="end">10⁻¹⁵</text>
 
-    <!-- benchmark points -->
-    <!-- solve: κ=10²→1.13e-14 (log -13.95, y=531.7);  10⁵→1.69e-12 (log -11.77, y=502.5);
-                 10⁸→1.34e-9 (log -8.87, y=463.4);  10¹¹→9.89e-7 (log -6.005, y=421.6) -->
-    <polyline class="line-solve" points="580,531.7 686.7,502.5 793.3,463.4 900,421.6"/>
-    <circle class="dot-solve" cx="580"   cy="531.7" r="4"/>
-    <circle class="dot-solve" cx="686.7" cy="502.5" r="4"/>
-    <circle class="dot-solve" cx="793.3" cy="463.4" r="4"/>
-    <circle class="dot-solve" cx="900"   cy="421.6" r="4"/>
+    <!-- benchmark points, remapped to y offset +20 vs previous version -->
+    <polyline class="line-solve" points="650,631.7 793,602.5 937,563.4 1080,521.6"/>
+    <circle class="dot-solve" cx="650"  cy="631.7" r="4"/>
+    <circle class="dot-solve" cx="793"  cy="602.5" r="4"/>
+    <circle class="dot-solve" cx="937"  cy="563.4" r="4"/>
+    <circle class="dot-solve" cx="1080" cy="521.6" r="4"/>
 
-    <!-- inv: κ=10²→4.25e-14 (log -13.37, y=524.7);  10⁵→1.54e-11 (log -10.81, y=489.6);
-              10⁸→2.17e-8 (log -7.66, y=447.6);  10¹¹→1.43e-5 (log -4.845, y=406.0) -->
-    <polyline class="line-inv" points="580,524.7 686.7,489.6 793.3,447.6 900,406.0"/>
-    <circle class="dot-inv" cx="580"   cy="524.7" r="4"/>
-    <circle class="dot-inv" cx="686.7" cy="489.6" r="4"/>
-    <circle class="dot-inv" cx="793.3" cy="447.6" r="4"/>
-    <circle class="dot-inv" cx="900"   cy="406.0" r="4"/>
+    <polyline class="line-inv" points="650,624.7 793,589.6 937,547.6 1080,506.0"/>
+    <circle class="dot-inv" cx="650"  cy="624.7" r="4"/>
+    <circle class="dot-inv" cx="793"  cy="589.6" r="4"/>
+    <circle class="dot-inv" cx="937"  cy="547.6" r="4"/>
+    <circle class="dot-inv" cx="1080" cy="506.0" r="4"/>
 
-    <!-- Legend -->
-    <line class="line-solve" x1="600" y1="395" x2="630" y2="395"/>
-    <text class="txt" x="636" y="399" fill="#16a34a">solve(A, b)</text>
-    <line class="line-inv" x1="600" y1="413" x2="630" y2="413"/>
-    <text class="txt" x="636" y="417" fill="#dc2626">inv(A) @ b</text>
+    <text class="tick" x="865" y="692" text-anchor="middle">condition number κ(A)</text>
+    <text class="tick" x="615" y="570" text-anchor="middle" transform="rotate(-90 615,570)">relative error</text>
+
+    <line class="line-solve" x1="920" y1="492" x2="950" y2="492"/>
+    <text class="txt" x="956" y="496" fill="#16a34a">solve(A, b)</text>
+    <line class="line-inv" x1="920" y1="510" x2="950" y2="510"/>
+    <text class="txt" x="956" y="514" fill="#dc2626">inv(A) @ b</text>
   </g>
 </svg>
