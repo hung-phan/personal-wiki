@@ -71,7 +71,7 @@
 
     <text class="txt" x="262" y="195" fill="#dc2626" font-weight="700">v₁</text>
     <text class="txt" x="205" y="138" fill="#2563eb" font-weight="700">v₂</text>
-    <text class="sub" x="200" y="395" text-anchor="middle">All arrows have length 1.  Red & blue are the eigenvectors.</text>
+    <text class="sub" x="200" y="395" text-anchor="middle">All arrows have length 1.  Red &amp; blue are the eigenvectors.</text>
   </g>
 
   <!-- Middle: matrix + arrow -->
@@ -84,7 +84,7 @@
 
   <!-- ============ RIGHT: After ============ -->
   <g transform="translate(480,50)">
-    <text class="title" x="200" y="16" text-anchor="middle">After A  —  most rotate; red & blue only stretch</text>
+    <text class="title" x="200" y="16" text-anchor="middle">After A  —  most rotate; red &amp; blue only stretch</text>
     <line class="ax" x1="30" y1="200" x2="370" y2="200"/>
     <line class="ax" x1="200" y1="30" x2="200" y2="370"/>
     <line class="grid" x1="140" y1="30" x2="140" y2="370"/>
