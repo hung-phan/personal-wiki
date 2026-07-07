@@ -381,7 +381,51 @@ In practice, you almost never compute $A^{-1}$ explicitly. To solve $A\mathbf{x}
 
 **2. Stability: inverting compounds floating-point error.** Every matrix has a **condition number** $\kappa(A) = \sigma_{\max}/\sigma_{\min}$ that governs how sensitive $A\mathbf{x} = \mathbf{b}$ is to noise. Rule of thumb: if $\kappa \approx 10^k$, you lose about $k$ digits of accuracy solving the system. Both methods hit that ceiling, but `inv(A) @ b` hits it *twice*: first when computing $A^{-1}$ (each column carries $\sim\kappa \cdot \varepsilon$ error), then when multiplying that noisy matrix by $\mathbf{b}$ (mixing errors together). Worst-case error tracks $\kappa^2 \cdot \varepsilon$ instead of $\kappa \cdot \varepsilon$.
 
-Watch it happen — build matrices with a known condition number, compare the two methods:
+Watch it happen — build matrices with a known condition number, compare the two methods. The construction uses two helpers, `np.linalg.qr` and `V.T`, that deserve a quick tour before the benchmark itself.
+
+**First, `V.T` — transpose.** For a proper 2-D matrix like the `V` used below, `V.T` swaps rows and columns: shape $(n, n) \to (n, n)$ but with $V^T_{ij} = V_{ji}$. It's the numpy equivalent of the math superscript $V^T$. (Gotcha for later: on a flat 1-D array, `.T` is a *no-op* because numpy's 1-D arrays have no row/column orientation — you'd need to reshape via `v[:, None]` first. But that doesn't matter here since `V` is 2-D.)
+
+**Second, `np.linalg.qr` — QR decomposition.** This factors a matrix $A$ into $A = Q R$ where $Q$ is **orthogonal** (columns are unit-length and pairwise perpendicular, so $Q^T Q = I$) and $R$ is **upper triangular** (zeros below the diagonal). Geometrically, QR *straightens the columns of $A$ into an orthonormal basis*, and $R$ records how to rebuild the original columns from that basis.
+
+Tiny worked example — walk through it before the benchmark:
+
+```python
+import numpy as np
+
+# A 3×2 matrix whose two columns are neither unit-length nor perpendicular
+A = np.array([[1.0, 1.0],
+              [1.0, 0.0],
+              [0.0, 1.0]])
+Q, R = np.linalg.qr(A)
+
+print("Q =")
+print(np.round(Q, 3))                       # orthonormal columns
+print("R =")
+print(np.round(R, 3))                       # upper triangular
+
+# Verify Q is orthogonal (Q^T Q = I) and A = Q @ R
+print("Q^T @ Q =")
+print(np.round(Q.T @ Q, 10))                # identity
+print("max |A - Q@R| =", np.abs(A - Q @ R).max())   # ~ 1e-16
+# Expected output:
+# Q =
+# [[-0.707  0.408]
+#  [-0.707 -0.408]
+#  [-0.     0.816]]
+# R =
+# [[-1.414 -0.707]
+#  [ 0.     1.225]]
+# Q^T @ Q =
+# [[1. 0.]
+#  [0. 1.]]
+# max |A - Q@R| = 5.551115123125783e-16
+```
+
+Read `Q`'s columns as two *unit vectors at 90° to each other* that span exactly the same plane as the original columns of $A$. `R`'s upper-triangular form says "column $k$ of $A$ uses only $\mathbf{q}_1, \ldots, \mathbf{q}_k$ — no later basis vectors needed." Signs may flip vs. hand-derivation (numpy picks a sign convention); that's fine, $-\mathbf{q}$ is just as valid a unit vector as $\mathbf{q}$.
+
+**Why the benchmark uses QR.** We want to *construct* a matrix with a chosen condition number $\kappa$. The recipe is: pick two random orthogonal matrices $U$ and $V$, pick singular values spanning $\kappa : 1$, then form $A = U \, \text{diag}(s) \, V^T$ (SVD in reverse). The tricky part is *getting random orthogonal matrices* — you can't just draw random entries, they wouldn't be orthonormal. The standard trick: draw a random Gaussian matrix and QR-decompose it, keeping the $Q$ (which is uniformly distributed over orthogonal matrices) and discarding the $R$.
+
+Now the benchmark:
 
 ```python
 import numpy as np
