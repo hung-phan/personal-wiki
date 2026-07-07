@@ -390,9 +390,20 @@ n = 200
 
 def experiment(cond_number):
     """Build a matrix with a target condition number, solve two ways."""
-    U, _ = np.linalg.qr(rng.normal(size=(n, n)))      # random orthogonal
-    V, _ = np.linalg.qr(rng.normal(size=(n, n)))      # another random orthogonal
+    # np.linalg.qr(M) factors M = Q · R where Q is orthogonal (rotation/reflection —
+    # columns are unit-length and mutually perpendicular, Q^T Q = I) and R is upper
+    # triangular. We only want Q, so we throw R away with the underscore.
+    # QR-ing a random normal matrix is the standard trick to sample a *random*
+    # orthogonal matrix uniformly — we need two of them to build A via its SVD below.
+    U, _ = np.linalg.qr(rng.normal(size=(n, n)))      # random orthogonal (rotation) #1
+    V, _ = np.linalg.qr(rng.normal(size=(n, n)))      # random orthogonal (rotation) #2
+
+    # np.geomspace lays out n values on a geometric progression from cond_number down
+    # to 1 — so the singular values span cond_number : 1, giving κ(A) = cond_number.
     s = np.geomspace(cond_number, 1.0, n)              # singular values κ..1
+
+    # Reconstruct A from its SVD (U · Σ · V^T). Because U and V are orthogonal and
+    # s are the singular values by construction, κ(A) = s.max() / s.min() = cond_number.
     A = U @ np.diag(s) @ V.T                           # A now has exactly this κ
 
     x_true = rng.normal(size=n)
