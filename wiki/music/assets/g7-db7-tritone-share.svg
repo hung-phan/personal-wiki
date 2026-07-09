@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto;border-radius:12px">
+  <rect width="720" height="380" rx="12" fill="#fdfcf7"/>
+  <rect width="720" height="380" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+
+  <!-- title -->
+  <text x="360" y="28" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="15" font-weight="800" fill="#1f2937">G7 and D♭7 share the B–F tritone (red) — that's why they substitute</text>
+
+  <!-- ============================================================
+       FRETBOARD GEOMETRY
+       6 strings (E A D G B E) at y = 80, 110, 140, 170, 200, 230
+       6 fret slots: nut (x=80) + 5 frets, each 100 px wide
+       fret centers (for placing dots) at x = 130, 230, 330, 430, 530
+       nut at x=80, last fret line at x=580
+       ============================================================ -->
+
+  <!-- nut (thick) -->
+  <line x1="80" y1="230" x2="80" y2="80" stroke="#1f2937" stroke-width="5"/>
+  <!-- frets -->
+  <line x1="180" y1="230" x2="180" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="280" y1="230" x2="280" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="380" y1="230" x2="380" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="480" y1="230" x2="480" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="580" y1="230" x2="580" y2="80" stroke="#9aa0a6" stroke-width="2"/>
+
+  <!-- strings (thickness from low to high) -->
+  <line x1="80" y1="230"  x2="580" y2="230"  stroke="#1f2937" stroke-width="2.4"/>
+  <line x1="80" y1="200" x2="580" y2="200" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="80" y1="170" x2="580" y2="170" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="80" y1="140" x2="580" y2="140" stroke="#1f2937" stroke-width="1.8"/>
+  <line x1="80" y1="110" x2="580" y2="110" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="80" y1="80" x2="580" y2="80" stroke="#1f2937" stroke-width="1.4"/>
+
+  <!-- string labels (left) -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937">
+    <text x="60" y="230">E (low)</text>
+    <text x="60" y="200">A</text>
+    <text x="60" y="170">D</text>
+    <text x="60" y="140">G</text>
+    <text x="60" y="110">B</text>
+    <text x="60" y="80">e (high)</text>
+  </g>
+
+  <!-- fret number labels (below) -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">
+    <text x="130" y="252">1</text>
+    <text x="230" y="252">2</text>
+    <text x="330" y="252">3</text>
+    <text x="430" y="252">4</text>
+    <text x="530" y="252">5</text>
+  </g>
+
+  <!-- ===================== G7  (open-position 320001 plus F on string 1 fret 1) ===================== -->
+  <!-- Voicing used here:  E:3(G)  A:2(B)  D:0(D)  G:0(G)  B:0(B)  e:1(F)
+       This makes the tritone B(string 5 fret 2) ↔ F(string 1 fret 1) visible. -->
+
+  <!-- G  on low E, fret 3 -->
+  <circle cx="330" cy="230" r="14" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <text x="330" y="230" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">G</text>
+
+  <!-- B  on A, fret 2 -- TRITONE -->
+  <circle cx="230" cy="200" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="230" y="200" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">B</text>
+
+  <!-- D  open string D -->
+  <circle cx="50" cy="170" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
+  <text x="50" y="170" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">D</text>
+
+  <!-- G  open string G (use small 'o' marker style on the same string line) -->
+  <circle cx="50" cy="140" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
+  <text x="50" y="140" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">G</text>
+
+  <!-- B  open string B -- the open-B is part of G7 (still a chord tone), but the tritone B is the fretted one at string A, fret 2 -->
+  <circle cx="50" cy="110" r="11" fill="none" stroke="#d97757" stroke-width="2.5"/>
+  <text x="50" y="110" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#d97757">B</text>
+
+  <!-- F  on high e, fret 1 -- TRITONE -->
+  <circle cx="130" cy="80" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="130" y="80" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">F</text>
+
+  <!-- highlight the tritone with a connecting line -->
+  <line x1="230" y1="200" x2="130" y2="80" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" opacity="0.7"/>
+
+  <!-- label -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="600" y="230" width="100" height="60" rx="8" fill="#d97757"/>
+    <text x="650" y="100" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">G7</text>
+    <text x="650" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3 2 0 0 0 1</text>
+    <text x="650" y="132" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">V of C major</text>
+  </g>
+
+  <!-- ===================== D♭7  (movable shape:  x 4 3 4 2 x ) ===================== -->
+  <!-- Place a second mini-fretboard below the first one? No - same fretboard with another color, but spatially overlapping is messy.
+       Better: draw a second fretboard underneath. -->
+
+  <!-- =============================================================
+        FRETBOARD #2  (D♭7  voicing x 4 3 4 2 x)
+        Same X mapping but Y shifted down by 100 px region:
+        strings at y = 290 (skipped, mute), 300 (A), 310 (D), 320 (G), 330 (B), 340 (mute)
+        Actually let me put the WHOLE second fretboard below cleanly.
+       ============================================================= -->
+  <line x1="80" y1="290" x2="80" y2="350" stroke="#1f2937" stroke-width="5"/>
+  <line x1="180" y1="290" x2="180" y2="350" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="280" y1="290" x2="280" y2="350" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="380" y1="290" x2="380" y2="350" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="480" y1="290" x2="480" y2="350" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="580" y1="290" x2="580" y2="350" stroke="#9aa0a6" stroke-width="2"/>
+  <!-- 4 inner strings for D♭7 voicing -->
+  <line x1="80" y1="290" x2="580" y2="290" stroke="#1f2937" stroke-width="2.0"/>
+  <line x1="80" y1="310" x2="580" y2="310" stroke="#1f2937" stroke-width="1.9"/>
+  <line x1="80" y1="330" x2="580" y2="330" stroke="#1f2937" stroke-width="1.7"/>
+  <line x1="80" y1="350" x2="580" y2="350" stroke="#1f2937" stroke-width="1.5"/>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="end" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937">
+    <text x="60" y="290">A</text>
+    <text x="60" y="310">D</text>
+    <text x="60" y="330">G</text>
+    <text x="60" y="350">B</text>
+  </g>
+  <!-- D♭7:  A:4(D♭)   D:3(F)   G:4(B=C♭)   B:2(C♯)  -->
+  <!-- Wait — let me re-derive cleanly.
+       Standard 'A7' open shape is x 0 2 0 2 0 (A C♯ G C♯ E? No.)
+       The A-shape barre at fret 4 -> root on A string fret 4 = C♯ = D♭.
+       Shape (relative to barre): A:4(root)  D:6(5th, often muted)  G:4(♭7)  B:5(3rd)  high-e:4(root)
+       Simpler 4-string voicing of D♭7:  A:4 D:3 G:4 B:2  giving D♭ F C♭(=B) E♭?  hmm
+       Cleanest small-shape D♭7 = "x 4 3 4 2 x" :
+         A string fret 4 = C♯/D♭    (root)
+         D string fret 3 = F        (3rd)
+         G string fret 4 = B = C♭   (♭7)
+         B string fret 2 = C♯/D♭    (root octave)
+       So F and B (=C♭) are the shared tritone with G7.
+   -->
+  <!-- D♭ on A string fret 4 -->
+  <circle cx="430" cy="290" r="14" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="430" y="290" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">D♭</text>
+  <!-- F on D string fret 3 -- TRITONE -->
+  <circle cx="330" cy="310" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="330" y="310" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">F</text>
+  <!-- B (=Cb) on G string fret 4 -- TRITONE -->
+  <circle cx="430" cy="330" r="14" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="430" y="330" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#fff">B</text>
+  <!-- D♭ on B string fret 2 -->
+  <circle cx="230" cy="350" r="14" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <text x="230" y="350" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="800" fill="#fff">D♭</text>
+
+  <!-- connect the tritone -->
+  <line x1="330" y1="310" x2="430" y2="330" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" opacity="0.7"/>
+
+  <!-- label -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="600" y="290" width="100" height="60" rx="8" fill="#3b82c4"/>
+    <text x="650" y="310" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">D♭7</text>
+    <text x="650" y="328" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">x 4 3 4 2 x</text>
+    <text x="650" y="342" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">♭II7 (tritone sub)</text>
+  </g>
+
+  <!-- fret number labels for second fretboard -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280">
+    <text x="130" y="372">1</text>
+    <text x="230" y="372">2</text>
+    <text x="330" y="372">3</text>
+    <text x="430" y="372">4</text>
+    <text x="530" y="372">5</text>
+  </g>
+</svg>

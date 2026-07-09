@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px;display:block;margin:0 auto;border-radius:12px">
+  <defs>
+    <radialGradient id="bgWheel1" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5f2e8"/>
+    </radialGradient>
+  </defs>
+  <rect width="480" height="480" rx="12" fill="url(#bgWheel1)"/>
+  <rect width="480" height="480" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+
+  <!-- two reference rings -->
+  <circle cx="240" cy="240" r="200" fill="none" stroke="#bfb8a3" stroke-width="1.5"/>
+  <circle cx="240" cy="240" r="140" fill="none" stroke="#d4cdb8" stroke-width="1.2"/>
+  <circle cx="240" cy="240" r="60"  fill="#f0eada" stroke="#bfb8a3" stroke-width="1.2"/>
+
+  <!-- 12 spokes between the two main rings -->
+  <g stroke="#cfc8b3" stroke-width="0.8">
+    <line x1="240"   y1="100"  x2="240"   y2="40"/>
+    <line x1="310"   y1="118.7" x2="362.5" y2="65"/>
+    <line x1="361.2" y1="170"  x2="415"   y2="117.5"/>
+    <line x1="380"   y1="240"  x2="440"   y2="240"/>
+    <line x1="361.2" y1="310"  x2="415"   y2="362.5"/>
+    <line x1="310"   y1="361.2" x2="362.5" y2="415"/>
+    <line x1="240"   y1="380"  x2="240"   y2="440"/>
+    <line x1="170"   y1="361.2" x2="117.5" y2="415"/>
+    <line x1="118.7" y1="310"  x2="65"    y2="362.5"/>
+    <line x1="100"   y1="240"  x2="40"    y2="240"/>
+    <line x1="118.7" y1="170"  x2="65"    y2="117.5"/>
+    <line x1="170"   y1="118.7" x2="117.5" y2="65"/>
+  </g>
+
+  <!-- example diameter: C ↔ F♯/G♭ (tritone partners) -->
+  <line x1="240" y1="80" x2="240" y2="400" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+
+  <!-- 12 major key labels (outer ring, r ≈ 170) -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" fill="#1f2937">
+    <text x="240"   y="80"  font-size="24" font-weight="800">C</text>
+    <text x="325"   y="102.8" font-size="22" font-weight="700">G</text>
+    <text x="377.2" y="155"   font-size="22" font-weight="700">D</text>
+    <text x="400"   y="240"   font-size="22" font-weight="700">A</text>
+    <text x="377.2" y="325"   font-size="22" font-weight="700">E</text>
+    <text x="325"   y="377.2" font-size="22" font-weight="700">B</text>
+    <text x="240"   y="400"   font-size="18" font-weight="800" fill="#b45309">F♯ / G♭</text>
+    <text x="155"   y="377.2" font-size="22" font-weight="700">D♭</text>
+    <text x="102.8" y="325"   font-size="22" font-weight="700">A♭</text>
+    <text x="80"    y="240"   font-size="22" font-weight="700">E♭</text>
+    <text x="102.8" y="155"   font-size="22" font-weight="700">B♭</text>
+    <text x="155"   y="102.8" font-size="22" font-weight="700">F</text>
+  </g>
+
+  <!-- key signatures outside the wheel -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="700">
+    <text x="240"   y="22"  fill="#6b7280">0</text>
+    <text x="340"   y="46.5" fill="#b45309">1♯</text>
+    <text x="421.5" y="125"  fill="#b45309">2♯</text>
+    <text x="458"   y="240"  fill="#b45309">3♯</text>
+    <text x="421.5" y="355"  fill="#b45309">4♯</text>
+    <text x="340"   y="433.5" fill="#b45309">5♯</text>
+    <text x="240"   y="458"  fill="#6b7280">6♯ = 6♭</text>
+    <text x="140"   y="433.5" fill="#1e3a5f">5♭</text>
+    <text x="58.5"  y="355"  fill="#1e3a5f">4♭</text>
+    <text x="22"    y="240"  fill="#1e3a5f">3♭</text>
+    <text x="58.5"  y="125"  fill="#1e3a5f">2♭</text>
+    <text x="140"   y="46.5" fill="#1e3a5f">1♭</text>
+  </g>
+
+  <!-- relative-minor labels (inner ring, r ≈ 105) -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" fill="#3b82c4" font-size="14" font-weight="700">
+    <text x="240"   y="135">Am</text>
+    <text x="292.5" y="149.1">Em</text>
+    <text x="330.9" y="187.5">Bm</text>
+    <text x="345"   y="240">F♯m</text>
+    <text x="330.9" y="292.5">C♯m</text>
+    <text x="292.5" y="330.9">G♯m</text>
+    <text x="240"   y="345">E♭m</text>
+    <text x="187.5" y="330.9">B♭m</text>
+    <text x="149.1" y="292.5">Fm</text>
+    <text x="135"   y="240">Cm</text>
+    <text x="149.1" y="187.5">Gm</text>
+    <text x="187.5" y="149.1">Dm</text>
+  </g>
+
+  <!-- center label -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central">
+    <text x="240" y="228" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="2">CIRCLE</text>
+    <text x="240" y="245" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="2">OF FIFTHS</text>
+    <text x="240" y="262" font-size="9"  fill="#9aa0a6">major / minor</text>
+  </g>
+
+  <!-- legend strip across the top -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600">
+    <text x="380" y="12" fill="#b45309" text-anchor="end">→ CW: +1 sharp</text>
+    <text x="100" y="12" fill="#1e3a5f" text-anchor="start">CCW: +1 flat ←</text>
+  </g>
+</svg>

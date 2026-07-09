@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 640 540" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:720px;display:block;margin:0 auto;border-radius:12px">
+  <defs>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d97757"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82c4"/>
+    </marker>
+    <radialGradient id="bgWheel4" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5f2e8"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="540" rx="12" fill="url(#bgWheel4)"/>
+  <rect width="640" height="540" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+
+  <!-- title -->
+  <text x="320" y="32" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" font-size="16" font-weight="800" fill="#1f2937">Tritone Substitution: G7 and D♭7 → C</text>
+
+  <!-- wheel centered at (320, 290), r=170 -->
+  <circle cx="320" cy="290" r="180" fill="none" stroke="#bfb8a3" stroke-width="1.5"/>
+  <circle cx="320" cy="290" r="130" fill="#f5f2e8" stroke="#cfc8b3" stroke-width="1.2"/>
+
+  <!-- 12 base dots: faint sand on cream so positions are visible but recede -->
+  <!-- positions (radius 180 from 320,290):
+       0  top                C        (320, 110)
+       1  1 o'clock          G        (410, 134.1)
+       2  2 o'clock          D        (475.9, 200)
+       3  3 o'clock          A        (500, 290)
+       4  4 o'clock          E        (475.9, 380)
+       5  5 o'clock          B        (410, 445.9)
+       6  bottom             F#/Gb    (320, 470)
+       7  7 o'clock          Db       (230, 445.9)
+       8  8 o'clock          Ab       (164.1, 380)
+       9  9 o'clock          Eb       (140, 290)
+       10 10 o'clock         Bb       (164.1, 200)
+       11 11 o'clock         F        (230, 134.1)
+  -->
+  <g fill="#d1cfc8">
+    <circle cx="320"   cy="110"  r="5"/>
+    <circle cx="410"   cy="134.1" r="5"/>
+    <circle cx="475.9" cy="200"  r="5"/>
+    <circle cx="500"   cy="290"  r="5"/>
+    <circle cx="475.9" cy="380"  r="5"/>
+    <circle cx="410"   cy="445.9" r="5"/>
+    <circle cx="320"   cy="470"  r="5"/>
+    <circle cx="230"   cy="445.9" r="5"/>
+    <circle cx="164.1" cy="380"  r="5"/>
+    <circle cx="140"   cy="290"  r="5"/>
+    <circle cx="164.1" cy="200"  r="5"/>
+    <circle cx="230"   cy="134.1" r="5"/>
+  </g>
+
+  <!-- root diameter G <-> Db (gray dashed) -->
+  <line x1="410" y1="134.1" x2="230" y2="445.9" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.7"/>
+
+  <!-- THE shared tritone diameter B <-> F (red, solid, bold) -->
+  <line x1="410" y1="445.9" x2="230" y2="134.1" stroke="#dc2626" stroke-width="3"/>
+
+  <!-- G7 chord tones (warm orange, white border)
+       G (1), B (5), D (2), F (11) — B and F are shared -->
+  <circle cx="410"   cy="134.1" r="12" fill="#d97757" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="475.9" cy="200"   r="10" fill="#d97757" stroke="#fff" stroke-width="2"/>
+  <!-- Db7 chord tones (cool blue)
+       Db (7), F (11), Ab (8), Cb=B (5) — F and B shared -->
+  <circle cx="230"   cy="445.9" r="12" fill="#3b82c4" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="164.1" cy="380"   r="10" fill="#3b82c4" stroke="#fff" stroke-width="2"/>
+  <!-- SHARED B and F: red with white border on top -->
+  <circle cx="410" cy="445.9" r="12" fill="#dc2626" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="230" cy="134.1" r="12" fill="#dc2626" stroke="#fff" stroke-width="2.5"/>
+  <!-- C target on top -->
+  <circle cx="320" cy="110" r="14" fill="#1f2937" stroke="#fff" stroke-width="2.5"/>
+
+  <!-- note labels (outside dots) -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="800" fill="#1f2937">
+    <text x="320" y="82">C</text>
+    <text x="436" y="116">G</text>
+    <text x="504" y="184">D</text>
+    <text x="404" y="464">B</text>
+    <text x="200" y="464">D♭</text>
+    <text x="138" y="396">A♭</text>
+    <text x="200" y="116">F</text>
+  </g>
+
+  <!-- resolution arrows: from G7 root -> C and from Db7 root -> C -->
+  <path d="M 410 134.1 Q 380 95 332 102" fill="none" stroke="#d97757" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
+  <path d="M 230 445.9 Q 220 240 308 102" fill="none" stroke="#3b82c4" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- right-side label for G7 -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="528" y="118" width="100" height="76" rx="8" fill="#d97757"/>
+    <text x="578" y="138" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">G7</text>
+    <text x="578" y="156" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">G · B · D · F</text>
+    <text x="578" y="172" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">V of C major</text>
+    <text x="578" y="186" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">(orig. dominant)</text>
+  </g>
+
+  <!-- left-side label for Db7 -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="12" y="386" width="100" height="76" rx="8" fill="#3b82c4"/>
+    <text x="62" y="406" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">D♭7</text>
+    <text x="62" y="424" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">D♭ · F · A♭ · C♭</text>
+    <text x="62" y="440" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">tritone sub</text>
+    <text x="62" y="454" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">of G7</text>
+  </g>
+
+  <!-- center callout: the shared tritone -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central">
+    <rect x="240" y="250" width="160" height="80" rx="10" fill="#fff" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="320" y="266" font-size="11" font-weight="800" fill="#dc2626" letter-spacing="2">SHARED TRITONE</text>
+    <text x="320" y="284" font-size="14" font-weight="800" fill="#dc2626">B  ↔  F</text>
+    <text x="320" y="302" font-size="10" font-weight="600" fill="#1f2937">B → C  (leading tone, +1)</text>
+    <text x="320" y="316" font-size="10" font-weight="600" fill="#1f2937">F → E  (chord ♭7, −1)</text>
+  </g>
+
+  <!-- legend strip -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#1f2937">
+    <circle cx="50" cy="510" r="6" fill="#d97757" stroke="#fff" stroke-width="1.5"/>
+    <text x="60" y="510" text-anchor="start" dominant-baseline="central">G7 tones</text>
+
+    <circle cx="160" cy="510" r="6" fill="#3b82c4" stroke="#fff" stroke-width="1.5"/>
+    <text x="170" y="510" text-anchor="start" dominant-baseline="central">D♭7 tones</text>
+
+    <circle cx="290" cy="510" r="6" fill="#dc2626" stroke="#fff" stroke-width="1.5"/>
+    <text x="300" y="510" text-anchor="start" dominant-baseline="central">shared (the tritone)</text>
+
+    <line x1="460" y1="510" x2="500" y2="510" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="508" y="510" text-anchor="start" dominant-baseline="central">root diameter</text>
+  </g>
+</svg>

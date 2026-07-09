@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 1000" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto;border-radius:12px">
+  <rect width="720" height="1000" rx="12" fill="#fdfcf7"/>
+  <rect width="720" height="1000" rx="12" fill="none" stroke="#d8d2c0" stroke-width="1.5"/>
+  <!-- title row -->
+  <text x="360" y="26" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="800" fill="#1f2937">Chord shapes on the circle  ·  root = C (top)</text>
+  <text x="120" y="50" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="2">TRIADS</text>
+  <text x="360" y="50" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="2">7TH CHORDS · 1</text>
+  <text x="600" y="50" font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="2">7TH CHORDS · 2</text>
+
+  <!-- =================================================================== -->
+  <!-- ROW 1: maj / min / dim                                                -->
+  <!-- =================================================================== -->
+
+  <!-- C major: {0, 1, 4} - "open CW fan" -->
+  <g transform="translate(120,200)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <!-- 12 empty dots -->
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- shape edges: 0 -> 1 -> 4 -> 0 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 35,-60.62 60.62,35"/>
+    <!-- lit + root -->
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="35" cy="-60.62" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="60.62" cy="35" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="56" y="-82">G</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="88" y="56">E</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="114">C major</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="132">1 – 3 – 5</text>
+  </g>
+
+  <!-- C minor: {0, 1, 9} - mirror of major (3rd flips side) -->
+  <g transform="translate(360,200)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- 0 -> 1 -> 9 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 35,-60.62 -70,0"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="35" cy="-60.62" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-70" cy="0" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="56" y="-82">G</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-94" y="0">E♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="114">C minor</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="132">1 – ♭3 – 5</text>
+  </g>
+
+  <!-- C dim: {0, 6, 9} - has tritone -->
+  <g transform="translate(600,200)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- tritone diameter explicit (0 -> 6) -->
+    <line stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" x1="0" y1="-70" x2="0" y2="70"/>
+    <!-- triangle 0 -> 9 -> 6 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 -70,0 0,70"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-70" cy="0" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="0" cy="70" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-94" y="0">E♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="94">G♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="118">C dim</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="136">1 – ♭3 – ♭5</text>
+  </g>
+
+  <!-- =================================================================== -->
+  <!-- ROW 2: aug / maj7 / dom7                                              -->
+  <!-- =================================================================== -->
+
+  <!-- C aug: {0, 4, 8} - equilateral triangle -->
+  <g transform="translate(120,480)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- equilateral 0 -> 4 -> 8 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 60.62,35 -60.62,35"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="60.62" cy="35" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-60.62" cy="35" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="88" y="56">E</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-88" y="56">A♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="114">C aug</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="132">1 – 3 – ♯5</text>
+  </g>
+
+  <!-- Cmaj7: {0, 1, 4, 5} - tight CW cluster -->
+  <g transform="translate(360,480)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- 0 -> 1 -> 4 -> 5 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 35,-60.62 60.62,35 35,60.62"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="35" cy="-60.62" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="60.62" cy="35" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="35" cy="60.62" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="56" y="-82">G</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="88" y="56">E</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="56" y="84">B</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="114">C maj7</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="132">1 – 3 – 5 – 7</text>
+  </g>
+
+  <!-- C7: {0, 1, 4, 10} - has tritone 4<->10 -->
+  <g transform="translate(600,480)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- highlight the internal tritone between E (4) and Bb (10) -->
+    <line stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" x1="60.62" y1="35" x2="-60.62" y2="-35"/>
+    <!-- internal tritone: E (4) ↔ Bb (10) -->
+    <line stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" x1="60.62" y1="35" x2="-60.62" y2="-35"/>
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 35,-60.62 60.62,35 -60.62,-35"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="35" cy="-60.62" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="60.62" cy="35" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-60.62" cy="-35" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="56" y="-82">G</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="88" y="56">E</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-88" y="-56">B♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="114">C7  (dom)</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="132">1 – 3 – 5 – ♭7</text>
+  </g>
+
+  <!-- =================================================================== -->
+  <!-- ROW 3: m7 / m7b5 / dim7                                               -->
+  <!-- =================================================================== -->
+
+  <!-- Cm7: {0, 1, 9, 10} - CCW cluster -->
+  <g transform="translate(120,760)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- 0 -> 1 -> 9 -> 10 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 35,-60.62 -70,0 -60.62,-35"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="35" cy="-60.62" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-70" cy="0" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-60.62" cy="-35" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="56" y="-82">G</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-94" y="0">E♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-88" y="-56">B♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="114">C m7</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="132">1 – ♭3 – 5 – ♭7</text>
+  </g>
+
+  <!-- Cm7b5: {0, 6, 9, 10} -->
+  <g transform="translate(360,760)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- tritone: 0 <-> 6 -->
+    <line stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" x1="0" y1="-70" x2="0" y2="70"/>
+    <!-- 0 -> 9 -> 6 -> 10 -->
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 -70,0 0,70 -60.62,-35"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-70" cy="0" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="0" cy="70" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-60.62" cy="-35" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-94" y="0">E♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="94">G♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-88" y="-56">B♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="118">C m7♭5</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="136">1 – ♭3 – ♭5 – ♭7</text>
+  </g>
+
+  <!-- Cdim7: {0, 3, 6, 9} - perfect square -->
+  <g transform="translate(600,760)">
+    <circle fill="#f5f2e8" stroke="#bfb8a3" stroke-width="1.2" cx="0" cy="0" r="70"/>
+    <circle fill="#d1cfc8" cx="0"     cy="-70" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="-60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="70"    cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="35"    cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="0"     cy="70" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="60.62" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="35" r="3"/>
+    <circle fill="#d1cfc8" cx="-70"   cy="0" r="3"/>
+    <circle fill="#d1cfc8" cx="-60.62" cy="-35" r="3"/>
+    <circle fill="#d1cfc8" cx="-35"   cy="-60.62" r="3"/>
+    <!-- square 0 -> 3 -> 6 -> 9 -->
+    <!-- two crossing tritones: C↔Gb and Eb↔A -->
+    <line stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" x1="0" y1="-70" x2="0" y2="70"/>
+    <line stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3" x1="-70" y1="0" x2="70" y2="0"/>
+    <polygon fill="rgba(31,41,55,0.10)" stroke="#1f2937" stroke-width="2.2" points="0,-70 70,0 0,70 -70,0"/>
+    <circle fill="#dc2626" stroke="#fff" stroke-width="2" cx="0" cy="-70" r="5.5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="70" cy="0" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="0" cy="70" r="5"/>
+    <circle fill="#1f2937" stroke="#fff" stroke-width="2" cx="-70" cy="0" r="5"/>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="-94">C</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="94" y="0">A</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="0" y="94">G♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="800" fill="#1f2937" paint-order="stroke" stroke="#fdfcf7" stroke-width="4" x="-94" y="0">E♭</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#1f2937" x="0" y="118">C dim7</text>
+    <text font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#6b7280"  x="0" y="136">1 – ♭3 – ♭5 – 𝄫7</text>
+  </g>
+
+  <!-- legend -->
+  <g transform="translate(60,960)" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#1f2937">
+    <circle cx="0"   cy="0" r="6" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+    <text   x="14"   y="0" text-anchor="start" dominant-baseline="central">root</text>
+
+    <circle cx="120" cy="0" r="6" fill="#1f2937" stroke="#fff" stroke-width="2"/>
+    <text   x="134"  y="0" text-anchor="start" dominant-baseline="central">chord tone</text>
+
+    <line   x1="290" y1="0" x2="330" y2="0" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5 3"/>
+    <text   x="340"  y="0" text-anchor="start" dominant-baseline="central">internal tritone (tension)</text>
+  </g>
+</svg>
