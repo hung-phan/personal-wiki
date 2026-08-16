@@ -1,8 +1,8 @@
 ---
 name: mojo-fundamentals
-description: Mojo learning note for a Python user. Covers what Mojo is (Python-compatible systems language by Modular), defining functions with `def`, variables and `var`, ownership and the four argument conventions (`var`/`mut`/default-immutable/`ref`), the `^` transfer sigil, structs and lifecycle traits (`Copyable`/`Movable`/`@fieldwise_init`), traits and generic functions, compile-time parameters in square brackets like `[T, N]` for types and sizes, Python interop via `Python.import_module`, and SIMD/GPU notes. Reach for this when "what does `mut`/`var`/`^` mean", "what's the difference between `[...]` and `(...)` parameters", or "how do I call NumPy from Mojo".
+description: Mojo learning note for a Python user, updated for the stable 1.0.0 release (Aug 2026). Covers what Mojo is (Python-compatible systems language by Modular), defining functions with `def` (the `fn` keyword is now deprecated), variables and `var`, ownership and the four argument conventions (`var`/`mut`/default-immutable/`ref`) plus `out`/`deinit` and the `ref` local binding, the `^` transfer sigil, structs and lifecycle traits (`Copyable` is explicit-copy needing `.copy()` vs `ImplicitlyCopyable`, plus `Movable`/move-only/immovable and `@fieldwise_init`), the `__deinit__` destructor (renamed from `__del__`), copy/move constructors as `__init__(*, copy/deinit move)`, traits and generic functions, compile-time parameters in square brackets like `[T, N]`, SIMD/GPU notes, and Python interop (calling into CPython via `Python.import_module`, extracting values with `Int(py=...)`, `PythonObject` aliasing, calling Mojo from Python, GIL, numpy zero-copy). Also covers everyday Python that differs — catching errors with `try`/`except`, `Optional[T]`/`None`, template strings `t"..."` (no f-strings), no `match`, `with`, closures/`lambda` with brace capture — and tooling (install via pixi not pip, `mojo run`/`build`/`repl`/`format`, no `mojo test` (use `TestSuite`), multi-file packages needing `__init__.mojo`, `std.` import prefix). Includes a renaming table for older `fn`/`let`/`borrowed`/`inout`/`owned`/`@value`/`alias`/`__del__`/`__copyinit__`/`StringSlice`/`InlineArray`/`mojo package` syntax. Reach for this when "what does `mut`/`var`/`^` mean", "`[...]` vs `(...)` parameters", "why doesn't `fn` work anymore", "how do I catch an error / return None / interpolate a string in Mojo", "how do I install and run Mojo", or "how do I call NumPy from Mojo".
 created: 2026-06-20
-updated: 2026-06-20
+updated: 2026-08-14
 tags: [mojo, modular, python, systems-programming, ownership, simd, gpu, ai]
 ---
 
@@ -18,6 +18,8 @@ tags: [mojo, modular, python, systems-programming, ownership, simd, gpu, ai]
 - You see `def main():` and `def foo(mut x: Int):` and want to know what's Python and what's not
 - You're confused by `mut`/`var`/`ref`/`^` in argument lists
 - You hit `[T: AnyType, N: Int](...)` and want to understand `[...]` vs `(...)`
+- Your Python muscle memory won't compile — f-strings, `try`/`except`, `None`, `match`, `**kwargs` (§9)
+- You need to actually install, run, or test Mojo and `pip install mojo` / `python foo.py` didn't work (§10)
 - You want to call NumPy or PyTorch from Mojo (and vice versa)
 - You're choosing between Python (productivity), Mojo (Python-compatible + fast), or Rust (no-Python + safer)
 
@@ -39,6 +41,8 @@ tags: [mojo, modular, python, systems-programming, ownership, simd, gpu, ai]
 - [§6. Compile-Time Parameters — the `[...]` Square Brackets](#6-compile-time-parameters--the--square-brackets)
 - [§7. SIMD, Tensors, and Hardware Awareness](#7-simd-tensors-and-hardware-awareness)
 - [§8. Python Interop](#8-python-interop)
+- [§9. Everyday Python That Behaves Differently](#9-everyday-python-that-behaves-differently)
+- [§10. Tooling — Install, Run, Test, Ship](#10-tooling--install-run-test-ship)
 - [Trade-offs](#trade-offs)
 - [Common Pitfalls](#common-pitfalls)
 - [Decision Table](#decision-table)
@@ -50,6 +54,8 @@ tags: [mojo, modular, python, systems-programming, ownership, simd, gpu, ai]
 ## 0. Mental Model — Mojo at a Glance
 
 > *TL;DR — Python-syntax on the outside, Rust-style semantics on the inside. One keyword for functions (`def`), with types and explicit error-propagation. `(...)` for runtime args, `[...]` for compile-time parameters. Ownership without lifetimes.*
+
+> **Version note.** This note tracks **Mojo 1.0.0**, the first stable release ([shipped 2026-08-11](https://mojolang.org/docs/changelog)). The 1.0.0 milestone stabilises the language surface described here and consolidates several older spellings — `fn` is now deprecated in favour of `def`, the destructor dunder is `__deinit__` (not `__del__`), and a few stdlib types were renamed. See the [renaming table](#older-syntax-youll-see-in-tutorials-renamed-or-removed) in §1 for the migration you'll need when reading pre-1.0 blog posts and tutorials.
 
 Mojo is built by [Modular](https://www.modular.com) (Chris Lattner — same person behind [LLVM](https://llvm.org) and [Swift](https://www.swift.org)) to give AI/numerical Python the speed of C while keeping the Python surface. Its design has three big claims:
 
@@ -103,6 +109,32 @@ This is **not** the loose, Python-style `def` you may know. Mojo's `def` is stat
 - **Typed errors supported.** `def validate(x: Int) raises ValidationError -> Int: ...` lets you constrain the error type.
 - **Overloading.** Since types are mandatory, multiple-type support means defining overloads (same name, different parameter types).
 
+### `def` is the one function keyword — `fn` is deprecated
+
+If you've read older Mojo material you'll have seen `fn` everywhere, often paired with `def` as "the strict one vs the loose one." **That split is gone.** As of 1.0.0, `def` *is* the strict, statically-typed function keyword documented above, and `fn` is deprecated — the docs say it "should not be used for new function declarations." Write `def`; if you inherit `fn` code it still compiles for now, but it's on the way out.
+
+### Older syntax you'll see in tutorials (renamed or removed)
+
+Most Mojo content online predates 1.0.0. When a snippet won't compile, it's usually one of these renames — the *concepts* in this note are unchanged, only the spelling moved:
+
+| Old (pre-1.0) | Now (1.0.0) | What changed |
+|---|---|---|
+| `fn foo():` | `def foo():` | `fn` deprecated; `def` is the single function keyword |
+| `let x = 5` | `var x = 5` (or implicit) | `let` was removed; `var` (or bare assignment) declares |
+| `borrowed x` | `x` (no keyword) | immutable borrow is now the unnamed default (§3) |
+| `inout x` | `mut x` | mutable-borrow convention (§3) |
+| `owned x` | `var x` | take-ownership convention (§3) |
+| `@value` | `@fieldwise_init` + `Copyable`/`Movable` | the old catch-all decorator split into an init generator plus explicit trait conformance (§4) |
+| `alias X = ...` | `comptime X = ...` | compile-time binding keyword (§6) |
+| `def __del__(...)` | `def __deinit__(...)` | destructor dunder renamed for parity with `__init__`; `__del__` still works but is deprecated (§4) |
+| `fn __copyinit__` / `fn __moveinit__` | `__init__(out self, *, copy: Self)` / `__init__(out self, *, deinit move: Self)` | copy/move constructors are now named `__init__` overloads (§4) |
+| `SIMD[dt, size=N]` | `SIMD[dt, N]` or `SIMD[dt, length=N]` | SIMD's second parameter renamed `size` → `length`; positional use is unchanged (§7) |
+| `ImplicitlyDeletable` / `ImplicitlyDestructible` | `Deinitable` | the "has a destructor" trait was renamed (§6) |
+| `StringSlice` | `StringSpan` | non-owning string view renamed; `StringSlice` kept as a compatibility alias (§2) |
+| `InlineArray` | `Array` | fixed-size array renamed; `InlineArray` kept as a compatibility alias (§2) |
+| `from math import sqrt` | `from std.math import sqrt` | the stdlib now lives under the `std.` package (§10) |
+| `mojo package` → `.mojopkg` | `mojo precompile` → `.mojoc` | the package-build command and artifact were renamed (§10) |
+
 ---
 
 ## 2. Variables, Types, and Mutability
@@ -139,11 +171,18 @@ This is the single biggest difference from Python — bindings are statically ty
 | `Bool` | `True` / `False` |
 | `String` | heap-allocated, mutable UTF-8 string |
 | `StringLiteral` | compile-time string literal (`"hi"` in source) |
+| `StringSpan` | non-owning *view* into existing UTF-8 — a zero-copy substring (`StringSlice` is a compat alias) |
 | `SIMD[DType.float32, 4]` | a 4-wide vector of `f32` — the building block for vectorised math |
-| `List[T]` | growable array (Python-style) |
+| `List[T]` | growable array (Python-style, heap) |
+| `Array[T, N]` | **fixed-size**, compile-time-length array (`InlineArray` is a compat alias) |
 | `Dict[K, V]` | hash map (Python-style) |
 
 `SIMD` is the standout — it's not a library type but a built-in for direct hardware vector control. More in §7.
+
+Two of these have no Python analogue and are worth flagging:
+
+- **`StringSpan` is a view, not a copy.** Python's `s[1:5]` always allocates a new string; a `StringSpan` borrows into the original's bytes (zero-copy), so it's cheap but tied to the source's lifetime.
+- **`Array` vs `List` is a real choice.** `Array[Int, 3]` has its length baked in at compile time (stack-friendly, no allocation); `List[Int]` grows at runtime (heap). Python only gives you the growable `list`; Mojo makes you pick. A bare literal like `[1, 2, 3]` infers `List` when unannotated, but coerces to `Array` if the binding is typed `Array[Int, 3]`.
 
 ### Control flow
 
@@ -188,6 +227,13 @@ This is Mojo's most Rust-like aspect — and the part that confuses Python migra
 | `mut` | mutable reference | may be modified |
 | `var` | takes ownership | gone (or copied, see below) |
 | `ref` | reference with parametric mutability | depends on the parametric annotation |
+
+These four are what you reach for on ordinary arguments. Two more conventions exist for a narrower job — you'll only write them on `self`:
+
+- **`out`** — the value starts *uninitialised* and must be filled in before the function returns. This is what `__init__(out self, ...)` uses (§4), and it also names function results.
+- **`deinit`** — the value starts *initialised* and is left *uninitialised* on return. This marks a destructor or a consuming move, i.e. `__deinit__(deinit self)` (§4).
+
+(One naming note for Rust migrants: Mojo spells "take ownership" as `var`, not `owned` — `owned` was the pre-1.0 keyword.)
 
 ### Default — borrowed, immutable
 
@@ -303,6 +349,20 @@ The caller's context decides which version gets used. From outside, `get_first` 
 
 You rarely write `ref` yourself for application code — the four conventions (default / `mut` / `var` / explicit copy) cover almost everything. But every collection you reach for already uses `ref` internally, and reading stdlib code will go smoother once you can parse the syntax.
 
+### Holding a returned reference — the `ref` binding
+
+`ref` isn't only an argument convention; it's also a **local binding form**. This matters the moment you index a collection. In Python, `x = mylist[0]` aliases the element for free. In Mojo, `var x = mylist[0]` *copies* it (or errors if the element type isn't copyable) — and mutating `x` won't touch the list. To alias instead of copy, bind with `ref`:
+
+```mojo
+var nums = [10, 20, 30]
+
+var a = nums[0]        # a is a COPY — a = 99 leaves nums unchanged
+ref b = nums[0]        # b is an alias into the list
+b = 99                 # writes through — nums is now [99, 20, 30]
+```
+
+This is the piece that closes the `get_first` example above: the returned `ref` only stays a reference if the caller catches it with a `ref` binding.
+
 ### Argument exclusivity
 
 Same rule as Rust: if a function receives a mutable reference to a value, it can't receive any other reference (mutable or immutable) to the same value.
@@ -380,7 +440,7 @@ The `self` parameter follows the same conventions as any other argument (§3) �
 
 ### Copy and move via traits
 
-If you want `Counter` to be copyable (so callers can pass it around freely), declare conformance to the `Copyable` trait:
+**By default a Mojo struct can be neither copied nor moved.** This is the biggest surprise for a Python dev: `var b = a` on your own struct is a *compile error* until you opt in. You opt in by conforming to traits, and the compiler generates the machinery:
 
 ```mojo
 @fieldwise_init
@@ -388,19 +448,50 @@ struct Counter(Copyable):
     var n: Int
 ```
 
-The compiler then *generates* the copy implementation. `Copyable` automatically implies `Movable`.
+But "copyable" in Mojo does **not** mean "copies silently like a Python assignment." There are two distinct copy traits, and the difference is exactly the trap:
 
-| Trait | Auto-generates | When you want it |
+| Trait | What it enables | `var b = a` does… |
 |---|---|---|
-| `Movable` | move constructor | always (almost free; lets `^` work) |
-| `Copyable` | copy + move constructors | for value-types that can be duplicated cheaply |
-| `ImplicitlyCopyable` | as `Copyable`, but copies happen implicitly | for types that *should* feel like values (e.g., `Int`-shaped) |
+| `Movable` | move constructor — the `^` transfer works | error (no copy) — must write `a^` to move |
+| `Copyable` | **explicit** copy — you call `.copy()` | **error** — you must write `var b = a.copy()` |
+| `ImplicitlyCopyable` | **implicit** copy — assignment/passing copies for you | copies, exactly like Python |
 
-The compiler generates the copy and move constructors for you when you conform to these traits — you don't write them by hand.
+So a struct marked only `Copyable` still rejects `var b = a`; the compiler tells you to call `a.copy()`. That's deliberate — copies of heavyweight types are made *visible* in the source. Only `ImplicitlyCopyable` (which the built-in scalars like `Int` use) restores the Python reflex of "assignment just copies." `Copyable` implies `Movable`; `ImplicitlyCopyable` implies `Copyable`.
 
-### Destructor: `__del__`
+```mojo
+var i = 5
+var i2 = i            # OK — Int is ImplicitlyCopyable
 
-Mojo calls `__del__` automatically when a value's owner goes out of scope. You only define one if you need custom cleanup:
+@fieldwise_init
+struct Big(Copyable):  # explicit-copy only
+    var data: List[Int]
+
+var a = Big([1, 2, 3])
+var b = a              # ERROR: use a.copy()
+var c = a.copy()       # OK — the copy is spelled out
+```
+
+### Move-only and immovable types
+
+Because the traits are opt-in, you can also *deliberately* leave them off:
+
+- **Move-only** (`Movable` but not `Copyable`): the value can be transferred with `^` but never duplicated. This is how unique-ownership types like `OwnedPointer` work — a Python dev has no analogue for "a value you literally cannot copy."
+- **Immovable** (neither trait): the value is pinned in place and can be neither copied nor moved (e.g. `Atomic`). It can only be borrowed.
+
+### The generated constructors — and when you must write them by hand
+
+For plain data structs the compiler writes the copy/move constructors for you, so you rarely see their spelling. When you *do* hand-write one (1.0.0 renamed these — pre-1.0 code uses `__copyinit__`/`__moveinit__`):
+
+```mojo
+def __init__(out self, *, copy: Self): ...        # copy constructor
+def __init__(out self, *, deinit move: Self): ...  # move constructor
+```
+
+**You are forced to write these when your struct holds a raw `UnsafePointer`** (or points at itself). The compiler's default copy would duplicate the *pointer*, giving you two structs aliasing the same buffer (double-free / dangling on destruction); the default move breaks self-references. So a buffer/arena/linked-node type needs a custom copy constructor that allocates fresh memory, and often a custom move. This is the one place the friendly "the compiler handles it" story stops.
+
+### Destructor: `__deinit__`
+
+Mojo calls `__deinit__` automatically when a value's owner goes out of scope. You only define one if you need custom cleanup:
 
 ```mojo
 struct FileHandle:
@@ -409,11 +500,13 @@ struct FileHandle:
     def __init__(out self, path: String):
         self.fd = open_file(path)
 
-    def __del__(deinit self):
+    def __deinit__(deinit self):
         close_file(self.fd)
 ```
 
-The `deinit self` annotation marks the destructor — `self` is alive on entry, uninitialised on exit.
+The `deinit self` convention marks the destructor — `self` is alive on entry, uninitialised on exit (§3).
+
+> **Renamed in 1.0.0.** The destructor dunder was `__del__` before 1.0.0; it's now `__deinit__`, matching `__init__`. `__del__` still compiles but emits a deprecation warning with a fix-it to rename it.
 
 ---
 
@@ -526,12 +619,12 @@ struct FixedBuffer[size: Int]:
 ### Type parameters
 
 ```mojo
-struct GenericArray[T: Copyable & ImplicitlyDeletable]:
+struct GenericArray[T: Copyable & Deinitable]:
     var data: UnsafePointer[T]
     var size: Int
 ```
 
-`[T: ...]` is "any type satisfying these traits" — Mojo's equivalent of `<T>` plus trait bounds.
+`[T: ...]` is "any type satisfying these traits" — Mojo's equivalent of `<T>` plus trait bounds. (`Deinitable` is the 1.0.0 trait meaning "has a destructor"; older tutorials spell it `ImplicitlyDeletable` / `ImplicitlyDestructible`.)
 
 ### Parameter inference
 
@@ -571,7 +664,7 @@ else:
 
 ## 7. SIMD, Tensors, and Hardware Awareness
 
-> *TL;DR — `SIMD[dtype, width]` is a built-in vector type. `Int` is just `SIMD[DType.index, 1]`. Tensor work uses the `LayoutTensor` family. GPU programming has dedicated language support.*
+> *TL;DR — `SIMD[dtype, length]` is a built-in vector type. A single-lane SIMD is a `Scalar` — and `Int` is just `Scalar[DType.int]` (i.e. `SIMD[DType.int, 1]`). Tensor work uses the `LayoutTensor` family. GPU programming has dedicated language support.*
 
 This is the "superpowers" half of the Python-with-superpowers tagline.
 
@@ -585,7 +678,9 @@ var sum = v + w                   # 4 lanes added in one instruction
 
 The compiler emits one vector-add instruction (`vaddps` on x86 AVX, `fadd` on NEON). No library, no intrinsic call — just an arithmetic operator.
 
-`Int` itself is defined as `SIMD[DType.index, 1]`. Mojo's numeric stack is SIMD all the way down.
+The scalar types are the degenerate one-lane case: `Scalar` is `SIMD[length=1]`, `Float32` is `Scalar[DType.float32]`, and `Int` is `Scalar[DType.int]`. Mojo's numeric stack is SIMD all the way down — a plain `Int` is a one-wide integer vector.
+
+> **Renamed in 1.0.0.** SIMD's second parameter was called `size`; it's now `length`. Positional use (`SIMD[DType.float32, 4]`) is unchanged, but the keyword form is now `length=4` — passing `size=4` is an error, and reading `v.size` warns.
 
 ### Why this is a Python improvement
 
@@ -603,29 +698,88 @@ Mojo has first-class GPU primitives (kernels, layouts, async memory copies, warp
 
 ## 8. Python Interop
 
-> *TL;DR — `from python import Python; np = Python.import_module("numpy")`. NumPy arrays, dataclasses, anything pip-installed — all reachable from Mojo.*
+> *TL;DR — `from std.python import Python; np = Python.import_module("numpy")`. NumPy arrays, dataclasses, anything pip-installed — all reachable from Mojo. Getting native values back out uses `Int(py=obj)`-style constructors, and the interop call must live inside a function (no top-level code).*
 
 This is the killer feature that makes Mojo viable as a *gradual* migration from Python.
 
 ### Calling Python from Mojo
 
 ```mojo
-from python import Python
+from std.python import Python
 
 def main() raises:
-    var np = Python.import_module("numpy")
+    var np = Python.import_module("numpy")   # the CPython numpy you pip-installed
     var ar = np.arange(15).reshape(3, 5)
     print(ar)
     print(ar.shape)
 ```
 
-That `numpy` is the Python NumPy you already have installed. Mojo loads CPython under the hood and calls into it.
+That `numpy` is the Python NumPy you already have installed. Mojo loads CPython under the hood (as `libpython`) and calls into it.
+
+Two things a Python dev trips over immediately:
+
+- **The import path is `std.python`,** not `python`. (Pre-1.0 tutorials wrote `from python import Python`.)
+- **`import_module` must live *inside* a function.** Mojo has no top-level executable code, so a module-level `import numpy` / `Python.import_module(...)` won't work — put it in `main()` or a helper. This is also why `def main()` needs **`raises`**: interop can throw.
+
+### Getting values back out — `PythonObject` isn't a Mojo value
+
+`import_module` and every Python call return a `PythonObject`, a boxed handle to a CPython object. You can keep chaining Python calls on it (`ar.reshape(...)`, `ar.shape`), but **most typed Mojo APIs won't accept a `PythonObject`** — you have to convert it back:
+
+```mojo
+from std.python import Python
+
+def main() raises:
+    var os = Python.import_module("os")
+    var n_py = os.cpu_count()          # PythonObject
+    var n = Int(py=n_py)               # -> native Int via the `py=` constructor
+    print(n * 2)                        # now it's a real Mojo Int
+```
+
+`Int`, `Float64`, `Bool`, and `String` all have a keyword-only `py=` constructor (the `ConvertibleFromPython` trait). Going the *other* way, only those four primitives auto-convert Mojo→Python; Mojo collections do **not** marshal automatically — build Python containers explicitly with `Python.list(...)`, `Python.dict()`, `Python.tuple(...)`, or `Python.evaluate("...")`.
+
+### `PythonObject` keeps Python's reference semantics
+
+Everything else in this note is value-semantic (§2–§4). `PythonObject` is the exception — it aliases like a normal Python variable:
+
+```mojo
+var a = Python.list(1, 2, 3)
+var b = a          # NOT a copy — b and a are the same CPython list
+b.append(4)
+print(a)           # [1, 2, 3, 4]  — a changed too
+print(a is b)      # True — `is` works, same identity
+```
+
+So inside interop you're back in Python's mutable-shared-object world; the ownership rules only re-apply once you convert to native Mojo values.
 
 The `raises` keyword on `def main()` is important — Python interop can throw, so the function must declare it can raise.
 
 ### Calling Mojo from Python
 
-A separate workflow: build Mojo code as a Python extension module, then `import` it from regular Python. Useful for replacing one hot function in an existing Python pipeline without rewriting everything.
+The reverse direction — build Mojo as a Python extension module and `import` it from regular Python — is what makes "speed up one hot function" possible. **In 1.0.0 this is explicitly early-development/beta**: the manual warns to "expect a lot of changes to the API and ergonomics." Practical limits to know before you lean on it:
+
+- You export functions via a `PythonModuleBuilder` and build with `mojo build --emit shared-lib`.
+- An exported function takes **at most 6 `PythonObject` arguments**, and native Mojo `*args`/`**kwargs` aren't supported at the boundary.
+- The `abi("C")` entry point **can't be `raises`**.
+
+For a Python dev this undercuts the tidy "just move the bottleneck to Mojo" pitch — it works, but the ergonomics are still rough. The *calling Python from Mojo* direction (above) is the mature one.
+
+### The performance boundary — GIL and zero-copy
+
+Two realities govern whether interop actually pays off:
+
+- **The GIL still applies.** Mojo loads unmodified CPython as `libpython`, so every interop call holds Python's Global Interpreter Lock. Mojo threads calling into Python serialise just as Python threads do — interop buys you native *single-thread* speed, not free parallelism.
+- **Bulk data can be shared without copying.** Marshalling a big array element-by-element through `PythonObject` is slow. For NumPy, grab the raw buffer once and index it natively:
+
+  ```mojo
+  var np = Python.import_module("numpy")
+  var arr = np.arange(1_000_000, dtype=np.int64)
+  var ptr = arr.ctypes.data.unsafe_get_as_pointer[DType.int64]()  # zero-copy view
+  var total: Int64 = 0
+  for i in range(1_000_000):
+      total += ptr[i]                                              # native speed, no CPython per element
+  ```
+
+  (The newer `python.numpy` `from_numpy_array`/`copy_to_numpy_array` helpers exist only in **nightly**, not 1.0.0 — use the `ctypes.data` route on stable.)
 
 ### When this is worth it
 
@@ -640,13 +794,205 @@ A separate workflow: build Mojo code as a Python extension module, then `import`
 
 ---
 
+## 9. Everyday Python That Behaves Differently
+
+> *TL;DR — the constructs you use on line one of every Python file — catching errors, `None`, f-strings, `match`, `with`, `lambda`, `**kwargs` — all exist but with sharp edges. This section is the "muscle-memory won't compile" list.*
+
+The earlier sections cover the big new *concepts*. This one covers small, high-frequency Python habits that look identical but differ — the stuff that stops you writing basic code on day one.
+
+### Catching errors — `try` / `except`
+
+§1 showed how to *raise* (`raises` on the signature). Catching looks like Python but with real restrictions:
+
+```mojo
+def parse(s: String) raises -> Int:
+    if s == "":
+        raise "empty input"       # a bare string is auto-wrapped in an Error
+    return atol(s)
+
+def main():
+    try:
+        var n = parse("")
+        print(n)
+    except e:                     # bind with `except e:` — NOT `except SomeError as e:`
+        print("failed:", e)
+    else:
+        print("ok")               # else/finally work like Python
+    finally:
+        print("done")
+```
+
+The traps, all different from Python:
+
+- **One `except` per `try`.** You can't stack `except ValueError:` / `except KeyError:` — there's a single clause.
+- **No type matching.** `except SomeError as e:` isn't supported; the error type is inferred, and you bind it with `except e:` (or omit the name). Mojo errors are plain values, not a class hierarchy you match on.
+- **`raise "text"`** auto-wraps the string in an `Error`. There's no `raise ValueError(...)` taxonomy.
+- Errors are **values, not stack-unwinding exceptions** — cheap, but there's no traceback by default (set `MODULAR_DEBUG=stack-trace-on-error` to get one).
+
+### `None` isn't free — `Optional[T]`
+
+In Python any variable can be `None`. In statically-typed Mojo, `var x: Int = None` is a type error. "Might be absent" is its own type, `Optional[T]`:
+
+```mojo
+from std.collections import Optional
+
+def first_even(nums: List[Int]) -> Optional[Int]:
+    for n in nums:
+        if n % 2 == 0:
+            return n
+    return None                    # allowed: Optional[Int] accepts None
+
+def main():
+    var r = first_even([1, 3, 4])
+    if r:                          # __bool__ tests presence
+        print(r.value())           # unwrap — but see the trap below
+    print(first_even([1, 3]).or_else(-1))   # -1 default if empty
+```
+
+The trap for a Python dev: **`.value()` on an empty `Optional` aborts the whole process** (not a catchable exception). Guard with `if opt:` / `opt is not None`, or use `.or_else(default)` / `.take()`. Returning bare `None` from a function typed `-> Int` won't compile — the reflex "return None on not-found" forces you to change the return type to `Optional[Int]`.
+
+### No f-strings — template strings `t"..."`
+
+`f"{x}"` doesn't exist. The note has used `"a " + name` throughout because that's the portable form; for interpolation, 1.0.0 has **template strings**:
+
+```mojo
+var count = 3
+var msg = t"Give me {count} items."   # t"..." → a TString, lazy (no alloc yet)
+print(msg)                            # materialises here
+var s = String(msg)                   # or force it to a String explicitly
+```
+
+`t"..."` (and raw `rt"..."`) is a `TString` — the `{...}` fields take arbitrary expressions like Python's f-string, but the type is distinct and doesn't allocate until you print/convert it. Plain `+` concatenation and `String("x=", x)` also work.
+
+### No `match` statement
+
+Python 3.10+ `match`/`case` has no Mojo equivalent yet — the docs say so outright. Use `if`/`elif`. (Ternary `a if cond else b` and `for…else` / `while…else` *do* work.)
+
+### `with` still works
+
+RAII via `__deinit__` (§4) does *not* replace context managers — `with` is alive and behaves like Python, including multiple managers in one statement and custom `__enter__`/`__exit__` dunders:
+
+```mojo
+with open("f.txt", "r") as f:
+    print(f.read())
+```
+
+### Closures and `lambda` — capture is explicit
+
+Python closures capture surrounding names implicitly. Mojo makes the capture list explicit, in braces, and each captured name takes a convention (same vocabulary as arguments, §3):
+
+```mojo
+def apply_scaled(x: Int, factor: Int) -> Int:
+    def scale(v: Int) {imm factor} -> Int:   # {imm factor}: capture factor by immutable ref
+        return v * factor
+    return scale(x)
+```
+
+Capture modes: bare name or `{imm x}` = immutable (default), `{var x}` = owned copy, `{mut x}` = mutable, `{var x^}` = moved in, `{ref x}` = caller-determined. There's also a typed `lambda` for one-off single-expression closures, using the same brace-capture syntax — handy for callbacks and comparators:
+
+```mojo
+var inc = lambda (x: Int) -> Int: x + 1     # body is a single expression
+print(inc(41))                              # 42
+```
+
+A `lambda`/closure with no captures can be passed where a compile-time function pointer is expected; one that captures is a runtime value.
+
+### `*args` / `**kwargs` have rules
+
+They exist but aren't the free-for-all Python bags:
+
+- `*args` is either **homogeneous** (`*vals: Int` → a `VariadicList`) or **heterogeneous** (a `VariadicPack` you iterate with `comptime for`).
+- `**kwargs` must use the `var` convention, and **all values must share one type** that's `Copyable` (you read them as a `StringDict`). Dict-unpacking a call (`f(**d)`) is "not supported yet."
+- Default values **can't** go on a `mut` argument. The `/` (positional-only) and `*` (keyword-only) markers work as in Python.
+
+---
+
+## 10. Tooling — Install, Run, Test, Ship
+
+> *TL;DR — there's no `pip install mojo` and no `python foo.py`. You install with **pixi**, run with `mojo run` (JIT) or `mojo build` (native binary), test with a `TestSuite` (there is no `mojo test`), and split code into files where a directory needs `__init__.mojo` to be a package.*
+
+The note's `mojo hello.mojo` only works *inside a project environment*. Here's the zero-to-running path a Python dev actually needs.
+
+### Install — via `pixi`, not pip
+
+Mojo 1.0.0 ships through **pixi** (Modular's chosen package manager) against a conda channel:
+
+```bash
+curl -fsSL https://pixi.sh/install.sh | sh          # one-time: install pixi
+pixi init myproj -c https://conda.modular.com/max/ -c conda-forge
+cd myproj
+pixi add mojo                                        # adds the compiler to this project
+pixi shell                                           # enter the env (or prefix commands with `pixi run`)
+```
+
+`pip install mojo` does not exist. Mojo is project-scoped, like a `venv` created for you — outside the pixi env the `mojo` command isn't on your PATH.
+
+### The `mojo` CLI
+
+```bash
+mojo run app.mojo        # JIT-compile and execute (the everyday `python app.py`)
+mojo build app.mojo      # AOT-compile to a standalone native binary → ./app
+mojo repl                # interactive shell (the `python` REPL)
+mojo format app.mojo     # autoformat (the black/ruff analogue)
+mojo debug --vscode app.mojo   # launch under LLDB in VS Code
+mojo doc / mojo demangle / mojo precompile   # docs, symbol demangling, package precompile
+```
+
+The `run` vs `build` split is the key idea: `run` is for iteration, `build` gives you a dependency-free binary — the payoff Python can't offer. Note what's **absent**: there is **no `mojo test`** and no `mojo package` subcommand (both existed in older tooling).
+
+### Testing — `TestSuite`, run through `mojo run`
+
+Since there's no `mojo test`, you assemble tests yourself and execute them like any program:
+
+```mojo
+from std.testing import assert_equal, TestSuite
+
+def test_add():                # module-scope, name starts with test_, no args, raises on failure
+    assert_equal(1 + 1, 2)
+
+def main() raises:
+    TestSuite.discover_tests[__functions_in_module()]().run()
+```
+
+Run with `mojo run test_math.mojo` (add `-I src` to point at your source tree); filter with `--only` / `--skip`.
+
+### Splitting code across files — modules and packages
+
+- A **module** is a single `.mojo` file; a sibling file can `from helpers import my_fn`.
+- A **package** is a *directory*, and it **requires an `__init__.mojo`** — without that file Mojo won't treat the directory as importable (mirrors `__init__.py`, but the file is mandatory).
+- **Unlike Python, top-level code doesn't run on import.** You can't put executable statements in `__init__.mojo` and have them fire when the package is imported — only declarations and re-exports.
+- Importing across directories needs the search path flag: `mojo run -I src main.mojo`.
+
+### Standard-library imports use the `std.` prefix
+
+Built-ins (`print`, `List`, `Dict`, `String`, `Int`, `Optional` after import) need no import, but everything else is under `std.`:
+
+```mojo
+from std.python import Python
+from std.math import sqrt
+from std.collections import Dict
+```
+
+Pre-1.0 code wrote `from python import Python` / `from math import sqrt` — drop the `std.` and it won't resolve.
+
+### Shipping a package
+
+`mojo precompile mypkg -o mypkg.mojoc` produces a `.mojoc` archive — but it's **tied to the exact compiler version** that built it, so it's not a general-purpose distributable the way a wheel is. (Older tutorials say `mojo package` → `.mojopkg`; both are renamed.) For an application, prefer `mojo build` to a native binary.
+
+### Editor
+
+Modular ships an **official VS Code extension** (and Open-VSX builds) with completion, hover docs, formatting, and a language server — this is where deprecation fix-its (like `__del__` → `__deinit__`) surface. There's no first-party PyCharm/pylance path; VS Code is the supported story.
+
+---
+
 ## Trade-offs
 
 - **Python compatibility is partial.** Mojo accepts most Python *syntax* (def, indentation, control flow). It does not accept arbitrary Python *semantics* — class inheritance, dynamic dispatch, monkey-patching, descriptors, metaclasses, the GIL. Treat it as "starts looking like Python; quickly diverges."
 - **`def` is statically typed.** Don't expect Python's dynamic-typing flexibility — every parameter needs a type annotation, return types are explicit, and errors don't propagate unless `raises` is on the signature. The Python *syntax* lets you start; the *semantics* are systems-language strict.
 - **Ownership without lifetimes is friendlier than Rust — until it isn't.** No `<'a>` annotations is great. But when you eventually need parametric references (`ref [origin] T`), the model gets denser. Most Python users hit a ceiling much later than they'd hit Rust's.
 - **Compile-time parameters are powerful and verbose.** `SIMD[DType.float32, 4]` is precise but noisy. Many functions end up with `[]` parameters that feel like ceremony until you start writing performance-critical code.
-- **Ecosystem is small.** As of 2026, Mojo's package ecosystem is in its infancy. You get NumPy/PyTorch via Python interop, but native Mojo libraries for web servers, async runtimes, CLI parsing, JSON, etc. are scarce. For non-AI work, Rust/Go/Python have much more.
+- **Ecosystem is small.** The 1.0.0 release (Aug 2026) stabilises the *language*, not the *ecosystem* — the package ecosystem is still young. You get NumPy/PyTorch via Python interop, but native Mojo libraries for web servers, async runtimes, CLI parsing, JSON, etc. are scarce. For non-AI work, Rust/Go/Python have much more.
+- **Most docs and tutorials predate 1.0.0.** The stable release renamed a chunk of surface syntax (`fn`→`def`, `__del__`→`__deinit__`, `size`→`length`, the ownership keywords, `@value`, `alias`, `let`). Blog posts and older courses will not compile verbatim — budget time to translate them via the [renaming table](#older-syntax-youll-see-in-tutorials-renamed-or-removed).
 - **Vendor lock-in concerns.** Mojo is open under the Apache 2.0 license but tightly bound to Modular's MAX platform for production deployment. The bet you make: Modular's stack will dominate AI inference. If it doesn't, your Mojo code becomes orphaned.
 
 ---
@@ -654,6 +1000,9 @@ A separate workflow: build Mojo code as a Python extension module, then `import`
 ## Common Pitfalls
 
 - **Using `let`** — it's gone. **Fix:** `var`.
+- **Using `fn`** — deprecated as of 1.0.0. **Why:** `def` absorbed the strict, typed function role; `fn` is on its way out. **Fix:** write `def`.
+- **Defining `__del__`** — the destructor dunder was renamed. **Why:** parity with `__init__`. **Fix:** `def __deinit__(deinit self):` (`__del__` still compiles but warns).
+- **Passing `size=` to `SIMD`** — compile error since 1.0.0. **Why:** the parameter was renamed to `length`. **Fix:** use positional `SIMD[dt, N]` or `length=N`.
 - **Writing `def main():` then calling Python without `raises`** — compile error. **Why:** Python interop can throw. **Fix:** `def main() raises:`.
 - **Forgetting `^` when passing to a `var` parameter** — Mojo tries to copy; fails if the type isn't `Copyable`. **Fix:** explicit `value^` to transfer ownership.
 - **Using a value after `^`** — uninitialised use. **Why:** transfer ends the source's lifetime. **Fix:** restructure so the producer is the last code that touches the value, or copy before transferring.
@@ -663,6 +1012,15 @@ A separate workflow: build Mojo code as a Python extension module, then `import`
 - **Conforming a struct to `Copyable` without all fields being `Copyable`** — compile error. **Fix:** check the field types; non-copyable fields propagate.
 - **Expecting Python's iterator protocol everywhere** — Mojo's `for x in container` works for things that implement the right iterator trait, not arbitrary `__iter__` like Python. **Fix:** check the trait requirement for the container you're iterating.
 - **Treating Python interop as zero-cost** — every call crosses into CPython, which is expensive. **Fix:** batch your interop crossings (one big `np.dot` call beats a thousand `np.array` constructions).
+- **Returning bare `None` from a typed function** — `-> Int` can't be `None`. **Why:** absence is its own type. **Fix:** return `Optional[Int]` and `return None` (§9).
+- **Calling `.value()` on an empty `Optional`** — this *aborts the process*, it doesn't raise a catchable error. **Fix:** guard with `if opt:` / `opt is not None`, or use `.or_else(default)` (§9).
+- **Writing an f-string `f"{x}"`** — not supported. **Fix:** template string `t"{x}"` or `String(...)` / `+` (§9).
+- **`except SomeError as e:`** — Mojo has one `except` per `try` and no type matching. **Fix:** `except e:` (§9).
+- **`var b = a` on a struct marked only `Copyable`** — compile error. **Why:** `Copyable` is *explicit* copy; only `ImplicitlyCopyable` copies on assignment. **Fix:** `var b = a.copy()` (§4).
+- **Top-level `import numpy` / `Python.import_module` at module scope** — Mojo runs no top-level code. **Fix:** put the import inside `main()` or a helper (§8).
+- **`pip install mojo` / `python app.mojo`** — neither exists. **Fix:** install via `pixi`, run with `mojo run app.mojo` inside the project env (§10).
+- **Looking for `mojo test`** — there isn't one. **Fix:** write `test_*` functions and drive them with `TestSuite.discover_tests[...]().run()` via `mojo run` (§10).
+- **Directory import fails silently** — a package folder needs an `__init__.mojo`, and top-level code in it does *not* run on import. **Fix:** add the file; keep it declarations/re-exports only (§10).
 
 ---
 
@@ -688,7 +1046,8 @@ A separate workflow: build Mojo code as a Python extension module, then `import`
 ## References
 
 ### Primary
-- [Mojo Manual](https://mojolang.org/docs/manual/) — official, regularly updated
+- [Mojo Manual](https://mojolang.org/docs/manual/) — official, regularly updated (docs are versioned; this note tracks 1.0.0)
+- [Mojo changelog / releases](https://mojolang.org/docs/changelog) — per-version change lists; 1.0.0 shipped 2026-08-11. **Watch for nightly-only entries** — the changelog mixes released and unreleased changes, so cross-check the versioned manual before trusting a claim
 - [Mojo Language Basics](https://mojolang.org/docs/manual/basics) — syntax intro
 - [Value ownership](https://mojolang.org/docs/manual/values/) — the `mut`/`var`/`ref` system
 - [Value lifecycle](https://mojolang.org/docs/manual/lifecycle/) — constructors, destructors, traits
@@ -697,7 +1056,14 @@ A separate workflow: build Mojo code as a Python extension module, then `import`
 - [Structs](https://mojolang.org/docs/manual/structs) — defining types
 - [Parameters](https://mojolang.org/docs/manual/parameters/) — compile-time parameter system
 - [Python interop](https://mojolang.org/docs/manual/python/) — calling Python from Mojo and back
+- [Python types & conversion](https://mojolang.org/docs/manual/python/types) — `PythonObject`, `py=` constructors, auto-conversion rules
 - [GPU programming](https://mojolang.org/docs/manual/gpu/architecture/) — kernels and layouts
+- [Error handling](https://mojolang.org/docs/manual/errors) — `try`/`except`, `raise`, context managers (§9)
+- [Functions & closures](https://mojolang.org/docs/manual/functions) — args/kwargs, capture lists, `lambda` (§9)
+- [Get started / install](https://mojolang.org/docs/manual/get-started) — pixi setup and first project (§10)
+- [Mojo CLI](https://mojolang.org/docs/cli) — `run`/`build`/`repl`/`format`/`doc`/`debug` (§10)
+- [Testing](https://mojolang.org/docs/tools/testing) — `TestSuite`, assert helpers (§10)
+- [Packages & modules](https://mojolang.org/docs/manual/packages) — `__init__.mojo`, imports, `precompile` (§10)
 
 ### Background and context
 - [Modular blog](https://www.modular.com/blog) — language announcements and design rationale
