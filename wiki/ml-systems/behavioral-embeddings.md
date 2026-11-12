@@ -5,7 +5,6 @@ created: 2026-11-12
 updated: 2026-11-12
 tags: [embeddings, recommender-systems, collaborative-filtering, two-tower, contrastive-learning, implicit-feedback, retrieval, machine-learning]
 ---
-
 # Embeddings from Behavior Signals
 
 > **How to read this note.** It builds on [embedding-training](embedding-training.md): there, "similar" came from text pairs; here it comes from **what people do** — buy, click, rate, watch in sequence. The training move is the same (positive should outscore negatives). What changes is where positives come from, how you pick negatives and how you evaluate. Sections 2–5 cover one signal type each; read only the ones you need. Sections 6–7 (cold start, evaluation) apply to all of them.
@@ -30,7 +29,7 @@ tags: [embeddings, recommender-systems, collaborative-filtering, two-tower, cont
 
 ## Diagrams
 
-![Four signal types, the training pair each produces, and the typical model family](assets/beh-signal-to-pairs.svg)
+![Four signal types, the training pair each produces, and the typical model family|700](assets/beh-signal-to-pairs.svg)
 
 ## 1. The one idea, mapped from text embeddings
 
@@ -86,7 +85,7 @@ User 0 never touched items 0–1, but other sci-fi buyers did, so they score abo
 ### Two-tower model — the industry workhorse
 Replace "one free vector per user/item ID" with two neural networks: a **user tower** (ID, recent history, country, device, time) and an **item tower** (ID, category, title text, price). Score = dot product. Train with in-batch softmax over each batch's items.
 
-![Two-tower: towers trained together with in-batch softmax and logQ correction; served apart via an ANN index](assets/beh-two-tower.svg)
+![Two-tower: towers trained together with in-batch softmax and logQ correction; served apart via an ANN index|700](assets/beh-two-tower.svg)
 
 **The logQ correction.** In-batch negatives are other users' clicks, so a popular item shows up as a negative in proportion to its popularity. Without correction, the model over-punishes popular items during training. The fix (Yi et al. 2019): subtract $\log Q(\text{item})$ — the item's sampling probability — from each logit **during training only**.
 

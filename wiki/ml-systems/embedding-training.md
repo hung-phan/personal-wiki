@@ -5,7 +5,6 @@ created: 2026-11-12
 updated: 2026-11-12
 tags: [embeddings, contrastive-learning, infonce, retrieval, sentence-transformers, representation-learning, machine-learning]
 ---
-
 # Training an Encoder for Embeddings
 
 > **How to read this note.** It answers one question: *"to get an encoder that produces good embeddings, do we train an autoencoder and keep the encoder?"* Short answer: usually not. Section 1 shows why. Sections 2–5 give the standard recipe. If your similarity signal comes from **user behavior** (clicks, purchases, ratings) instead of text pairs, read this note first, then [behavioral-embeddings](behavioral-embeddings.md).
@@ -29,7 +28,7 @@ tags: [embeddings, contrastive-learning, infonce, retrieval, sentence-transforme
 
 ## Diagrams
 
-![Autoencoder vs masked LM vs contrastive: what each objective teaches the encoder](assets/emb-objectives.svg)
+![Autoencoder vs masked LM vs contrastive: what each objective teaches the encoder|700](assets/emb-objectives.svg)
 
 ## 1. Why not just train an autoencoder?
 
@@ -83,7 +82,7 @@ $$\mathcal{L} = -\frac{1}{B}\sum_{i=1}^{B} \log \frac{\exp(\cos(q_i, p_i)/\tau)}
 
 That's **InfoNCE**: a $B$-way softmax classification per row, "which column is mine?". The other rows' passages are **in-batch negatives** — free.
 
-![B by B similarity matrix: positives on the diagonal, in-batch negatives off-diagonal, plus a hard-negative column](assets/emb-in-batch-negatives.svg)
+![B by B similarity matrix: positives on the diagonal, in-batch negatives off-diagonal, plus a hard-negative column|700](assets/emb-in-batch-negatives.svg)
 
 ```python
 import numpy as np
