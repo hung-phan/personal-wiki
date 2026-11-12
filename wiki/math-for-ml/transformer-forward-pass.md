@@ -5,7 +5,6 @@ created: 2026-11-12
 updated: 2026-11-12
 tags: [transformer, attention, gpt, llm, deep-learning, linear-algebra, machine-learning, learning-journey]
 ---
-
 # Transformer (GPT) Forward Pass — A Guided Path
 
 > **How to read this note.** It's a companion to the 45-slide *GPT-3 Walkthrough* deck (Wesam Khallaf): 18 steps that push "The cat sat on the mat" through a decoder-only transformer. The deck has good pictures but no map — every slide looks equally important and you lose the thread around step 6. This note gives you the map: **4 stages, 1 question each, a shape you can check after every step.** Read one stage here, then its slides, then run the snippet. Don't move on until the "check yourself" questions feel easy.
@@ -31,7 +30,7 @@ tags: [transformer, attention, gpt, llm, deep-learning, linear-algebra, machine-
 
 The whole deck on one page. Step numbers match the slides. Keep this open while reading — each stage below also opens with its own close-up picture in the deck's style.
 
-![GPT decoder forward pass with step numbers and shapes](assets/gpt-decoder-forward-pass.svg)
+![GPT decoder forward pass with step numbers and shapes|700](assets/gpt-decoder-forward-pass.svg)
 
 ## 0. Three numbers to hold before you start
 
@@ -66,7 +65,7 @@ Skip on first read: slides 3–4 (BPE details), 7–8 (repeat slide 6), 26 (repe
 
 **The question.** A neural net needs numbers. Words aren't numbers, and "cat sat" ≠ "sat cat". So we need (1) a number per word piece and (2) a way to mark position.
 
-![Stage A: tokens to IDs, embedding row lookup, plus position vector](assets/tf-a-text-to-vectors.svg)
+![Stage A: tokens to IDs, embedding row lookup, plus position vector|700](assets/tf-a-text-to-vectors.svg)
 
 **Step 1 — tokenize.** A fixed lookup (BPE) chops text into sub-word pieces and gives each an integer ID. `"unhappiness"` → `un · happ · iness`. No learning, no meaning — just a dictionary.
 
@@ -101,11 +100,11 @@ print(pe.round(4))
 
 Match query to keys → get relevance scores → take a weighted average of values. That's all attention is.
 
-![Stage B: LN(X) projected by W_Q, W_K, W_V into Q, K, V with the library analogy](assets/tf-b1-qkv.svg)
+![Stage B: LN(X) projected by W_Q, W_K, W_V into Q, K, V with the library analogy|700](assets/tf-b1-qkv.svg)
 
 And here's steps 6–9 for one head at a glance — scores, mask, softmax, weighted sum — following the row for "sat". The sub-sections below explain each panel.
 
-![Stage B: 6x6 score matrix, causal mask, softmax weights, and the weighted sum for the token sat](assets/tf-b2-attention-matrix.svg)
+![Stage B: 6x6 score matrix, causal mask, softmax weights, and the weighted sum for the token sat|695](assets/tf-b2-attention-matrix.svg)
 
 ### Step 4 — LayerNorm first
 Each row is rescaled to mean 0 / variance 1 so the next matrix multiply sees well-behaved numbers. Row by row, no mixing. (Details in Stage C.)
@@ -165,7 +164,7 @@ $Z = AV$: row "sat" becomes $0.06\,v_{The} + 0.08\,v_{cat} + 0.86\,v_{sat}$ — 
 ### Step 10 — output projection $W_O$
 Concatenation just stacks head outputs next to each other. $ZW_O$ ($512 \times 512$) lets every output column mix information from *all* heads.
 
-![Stage B: Q/K/V columns split into 4 heads, each head's output concatenated, then mixed by W_O](assets/tf-b3-multihead.svg)
+![Stage B: Q/K/V columns split into 4 heads, each head's output concatenated, then mixed by W_O|700](assets/tf-b3-multihead.svg)
 
 **The whole of Stage B in one line:**
 
@@ -177,7 +176,7 @@ $$\text{Attn}(X) = \text{concat}_{h}\Big[\text{softmax}\Big(\tfrac{Q_hK_h^\top}{
 
 **The question.** Attention gathered context. Now: how do we (a) not lose what the token already knew, (b) give the model room to compute new features, and (c) keep numbers from blowing up across 96 layers?
 
-![Stage C: residual add with numbers, LayerNorm as bar charts, FFN 512-2048-512, attention vs FFN](assets/tf-c-residual-ffn.svg)
+![Stage C: residual add with numbers, LayerNorm as bar charts, FFN 512-2048-512, attention vs FFN|700](assets/tf-c-residual-ffn.svg)
 
 ### Residual connection — "add, don't replace"
 $X \leftarrow X + \text{Attn}(\text{LN}(X))$. The block computes a *correction* and adds it to the original. If a block has nothing useful to say, it outputs ~0 and the token passes through unchanged. This copy path is also what lets gradients reach layer 1 in a 96-layer stack.
@@ -217,7 +216,7 @@ x = x + FFN(LN₂(x))
 
 **The question.** We have a refined 6 × 512 table. How do we get a word out?
 
-![Stage D: final rows to logits, softmax on the last row, next-word probabilities, autoregressive loop](assets/tf-d-predict.svg)
+![Stage D: final rows to logits, softmax on the last row, next-word probabilities, autoregressive loop|700](assets/tf-d-predict.svg)
 
 1. **Stack** — repeat the block $N$ times (96 for GPT-3 175B). Same shape in and out, different weights per block.
 2. **Final LayerNorm** (step 15) — one last rescale of each row.
