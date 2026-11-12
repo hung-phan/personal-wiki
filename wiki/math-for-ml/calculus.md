@@ -5,7 +5,6 @@ created: 2026-06-08
 updated: 2026-07-03
 tags: [calculus, math, machine-learning, foundations, gradient-descent, backpropagation, optimization, chain-rule, derivatives, autograd, learning-journey]
 ---
-
 # Calculus for Machine Learning
 
 > **How to read this note.** Each section opens with the *kind of problem* a calculus tool was invented to handle. The formulas come *after* the intuition, never before. If you find yourself staring at a derivative without remembering why we wanted it, scroll up — that's where the *want* was set up.

@@ -5,7 +5,6 @@ created: 2026-06-20
 updated: 2026-08-14
 tags: [mojo, modular, python, systems-programming, ownership, simd, gpu, ai]
 ---
-
 # Mojo Fundamentals — for Python People Who Want the Whole Picture
 
 ## Why This Exists

@@ -5,7 +5,6 @@ created: 2026-06-19
 updated: 2026-06-19
 tags: [golang, go, slices, channels, goroutines, context, errors, interfaces, generics, concurrency]
 ---
-
 # Go Fundamentals — Cheatsheet for Easy Stuff, Teaching Journey for Hard Stuff
 
 ## Why This Exists

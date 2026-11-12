@@ -5,7 +5,6 @@ created: 2026-06-08
 updated: 2026-11-12
 tags: [math, machine-learning, roadmap, index, foundations]
 ---
-
 # Math for Machine Learning — Roadmap
 
 ## Why This Exists

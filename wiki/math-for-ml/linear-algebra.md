@@ -5,7 +5,6 @@ created: 2026-06-08
 updated: 2026-07-03
 tags: [linear-algebra, math, machine-learning, foundations, vectors, matrices, eigenvalues, svd, pca, tensors, learning-journey]
 ---
-
 # Linear Algebra for Machine Learning
 
 > **How to read this note.** Each section starts with the *kind of problem* that pushed people to invent the math. Once you see the problem, the formula isn't a thing to memorize — it's the natural answer. If you're reading symbols and feel lost, scroll up to where the symbol was *born*.

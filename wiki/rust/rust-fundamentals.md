@@ -6,7 +6,6 @@ updated: 2026-06-19
 
 tags: [rust, ownership, borrowing, lifetimes, generics, traits, closures, iterators, error-handling, async, tokio, concurrency]
 ---
-
 # Rust Fundamentals — Cheatsheet for Easy Stuff, Teaching Journey for Hard Stuff
 
 ## Why This Exists

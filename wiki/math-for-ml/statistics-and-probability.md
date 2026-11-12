@@ -5,7 +5,6 @@ created: 2026-06-08
 updated: 2026-07-03
 tags: [statistics, probability, machine-learning, math, foundations, bayes, distributions, regression, mle, learning-journey]
 ---
-
 # Statistics & Probability for Machine Learning
 
 > **How to read this note.** Each section starts with a *problem you'd actually face*, then walks toward the math that solves it. The formulas come *after* the intuition. If you find yourself reading a formula and not knowing where it came from, scroll up — the prior paragraph is where the formula was born.

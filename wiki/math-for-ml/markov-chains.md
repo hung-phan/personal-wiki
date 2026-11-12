@@ -5,7 +5,6 @@ created: 2026-07-03
 updated: 2026-07-03
 tags: [markov-chains, probability, stochastic-processes, mcmc, machine-learning, math, foundations, learning-journey]
 ---
-
 # Markov Chains
 
 > **How to read this note.** Same arc as the rest of the math-for-ml wiki — start with a concrete problem, build to the formula, then see it in code. If a formula looks strange, scroll up: the paragraph above is where it was born.

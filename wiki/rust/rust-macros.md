@@ -5,7 +5,6 @@ created: 2026-06-20
 updated: 2026-06-20
 tags: [rust, macros, macro_rules, proc-macros, derive, syn, quote, metaprogramming]
 ---
-
 # Rust Macros — Declarative, Derive, and Procedural
 
 ## Why This Exists
