@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="560" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >HOW ENCODERS LEARN</text><text x="30" y="62" class="h1" text-anchor="start" >Three ways to train an encoder</text><line x1="30" y1="72" x2="480" y2="72" class="uline"/><rect x="30" y="92" width="280" height="342" rx="8" class="note"/><text x="170" y="118" class="h2" text-anchor="middle" >Autoencoder</text><rect x="340" y="92" width="280" height="342" rx="8" class="note"/><text x="480" y="118" class="h2" text-anchor="middle" >Masked LM (BERT)</text><rect x="650" y="92" width="280" height="342" rx="8" class="note"/><text x="790" y="118" class="h2" text-anchor="middle" >Contrastive</text><rect x="50" y="140" width="240" height="30" rx="4" class="cell"/><text x="170" y="160" class="ink" text-anchor="middle" >reset my password</text><line x1="170" y1="172" x2="170" y2="190" class="ln" marker-end="url(#ar)"/><rect x="90" y="192" width="160" height="30" rx="4" class="blu"/><text x="170" y="212" class="ink" text-anchor="middle" >encoder</text><line x1="170" y1="224" x2="170" y2="240" class="ln" marker-end="url(#ar)"/><rect x="140" y="242" width="60" height="26" rx="4" class="pur"/><text x="170" y="260" class="h2" text-anchor="middle" >z</text><line x1="170" y1="270" x2="170" y2="286" class="ln" marker-end="url(#ar)"/><rect x="90" y="288" width="160" height="30" rx="4" class="pnk"/><text x="170" y="308" class="ink" text-anchor="middle" >decoder</text><line x1="170" y1="320" x2="170" y2="336" class="ln" marker-end="url(#ar)"/><rect x="50" y="338" width="240" height="30" rx="4" class="cell"/><text x="170" y="358" class="ink" text-anchor="middle" >reset my password</text><rect x="360" y="140" width="240" height="30" rx="4" class="cell"/><text x="480" y="160" class="ink" text-anchor="middle" >reset my [MASK]</text><line x1="480" y1="172" x2="480" y2="190" class="ln" marker-end="url(#ar)"/><rect x="400" y="192" width="160" height="46" rx="4" class="blu"/><text x="480" y="220" class="ink" text-anchor="middle" >encoder</text><line x1="480" y1="240" x2="480" y2="266" class="ln" marker-end="url(#ar)"/><rect x="430" y="268" width="100" height="26" rx="4" class="yel"/><text x="480" y="286" class="num" text-anchor="middle" >tiny head</text><line x1="480" y1="296" x2="480" y2="336" class="ln" marker-end="url(#ar)"/><rect x="360" y="338" width="240" height="30" rx="4" class="cell"/><text x="480" y="358" class="ink" text-anchor="middle" >“password”</text><text x="490" y="320" class="mut" text-anchor="start" >(thrown away)</text><rect x="660" y="140" width="125" height="30" rx="4" class="cell"/><text x="722" y="160" class="num" text-anchor="middle" >reset password</text><rect x="795" y="140" width="125" height="30" rx="4" class="cell"/><text x="857" y="160" class="num" text-anchor="middle" >forgot my login</text><line x1="722" y1="172" x2="760" y2="196" class="ln" marker-end="url(#ar)"/><line x1="857" y1="172" x2="820" y2="196" class="ln" marker-end="url(#ar)"/><rect x="710" y="198" width="160" height="40" rx="4" class="blu"/><text x="790" y="216" class="ink" text-anchor="middle" >SAME encoder</text><text x="790" y="232" class="mut" text-anchor="middle" >(shared weights)</text><line x1="760" y1="240" x2="730" y2="270" class="ln" marker-end="url(#ar)"/><line x1="820" y1="240" x2="850" y2="270" class="ln" marker-end="url(#ar)"/><circle cx="726" cy="284" r="13" class="grn"/><text x="726" y="289" class="h2" text-anchor="middle" >q</text><circle cx="854" cy="284" r="13" class="grn"/><text x="854" y="289" class="h2" text-anchor="middle" >p</text><path d="M742,284 L838,284" class="lnr" marker-end="url(#arr)"/><path d="M838,284 L742,284" class="lnr" marker-end="url(#arr)"/><text x="790" y="276" class="hand" text-anchor="middle" >pull together</text><text x="790" y="318" class="mut" text-anchor="middle" >push apart from every</text><text x="790" y="334" class="mut" text-anchor="middle" >other item in the batch</text><rect x="670" y="338" width="240" height="30" rx="4" class="grn"/><text x="790" y="358" class="ink" text-anchor="middle" >InfoNCE loss</text><text x="46" y="392" class="h2" text-anchor="start" >loss: rebuild the input</text><text x="46" y="410" class="hand" text-anchor="start" >learns everything, incl. spelling</text><text x="46" y="426" class="hand" text-anchor="start" >→ only surface similarity</text><text x="356" y="392" class="h2" text-anchor="start" >loss: fill in the blanks</text><text x="356" y="410" class="hand" text-anchor="start" >learns language, but raw vectors</text><text x="356" y="426" class="hand" text-anchor="start" >aren't tuned for search</text><text x="666" y="392" class="h2" text-anchor="start" >loss: pull pairs together</text><text x="666" y="410" class="hand" text-anchor="start" >learns what YOUR pairs call</text><text x="666" y="426" class="hand" text-anchor="start" >similar → good embeddings</text><rect x="30" y="446" width="900" height="96" rx="6" class="note"/><text x="44" y="468" class="h2" text-anchor="start" >The usual recipe</text><text x="44" y="488" class="handk" text-anchor="start" >1. Pretrain with masked LM (or start from a pretrained LLM) — cheap, no labels, learns language.</text><text x="44" y="506" class="handk" text-anchor="start" >2. Fine-tune contrastively on pairs (question↔answer, query↔click, paraphrases) — this makes the geometry.</text><text x="44" y="524" class="handk" text-anchor="start" >Autoencoders win when you want compression or generation, not similarity (VAE latents, MAE backbones).</text></svg>

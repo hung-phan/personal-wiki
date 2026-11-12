@@ -335,3 +335,4 @@ Also unmentioned: GPT-3 alternates dense attention with locally banded sparse at
 - [calculus](calculus.md) — softmax Jacobian, why residuals help gradient flow, AdamW for training transformers.
 - [statistics-and-probability](statistics-and-probability.md) — softmax + cross-entropy as MLE over a categorical distribution.
 - [markov-chains](markov-chains.md) — autoregressive generation as a (very high-order) Markov chain.
+- [embedding-training](../ml-systems/embedding-training.md) — turning the per-token vectors into one embedding (pooling) and training it contrastively.
