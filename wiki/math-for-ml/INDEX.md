@@ -2,7 +2,7 @@
 name: math-for-ml-index
 description: Roadmap for the math foundations of AI/ML — statistics & probability, linear algebra, calculus, Markov chains — what to learn, why each pillar matters, where each concept shows up in machine learning, and curated study resources.
 created: 2026-06-08
-updated: 2026-07-03
+updated: 2026-11-12
 tags: [math, machine-learning, roadmap, index, foundations]
 ---
 
@@ -45,11 +45,12 @@ The cheatsheet-style tables at the end of each note (Decision Table, etc.) exist
 | Linear Algebra | The language of data — vectors, matrices, transformations on multidimensional inputs | [linear-algebra](linear-algebra.md) |
 | Calculus | The language of change — how loss responds to parameters, the engine of training | [calculus](calculus.md) |
 
-## Companion notes (probabilistic dynamics)
+## Companion notes (applications of the pillars)
 
 | Note | One-line role |
 |------|---------------|
 | [markov-chains](markov-chains.md) | State-transition dynamics — transition matrices, stationary distribution, mixing time, MCMC, HMMs, PageRank, and the RL / language-model connection |
+| [transformer-forward-pass](transformer-forward-pass.md) | Guided path through a GPT forward pass — embeddings, Q/K/V attention, causal mask, residual + LayerNorm, FFN, logits — with shape tracker, 25-line numpy GPT, and errata for the GPT-3 Walkthrough deck |
 
 ## Learning Order (Pragmatic)
 
@@ -80,6 +81,7 @@ Quick lookup so you know which note to open when a term comes up:
 | Derivative, gradient, partial derivative, directional derivative | Calculus |
 | Chain rule, backpropagation, Jacobian, Hessian | Calculus |
 | Gradient descent, learning rate, convexity, saddle point | Calculus + Optimization |
+| Attention, Q/K/V, softmax over scores, LayerNorm, transformer block | [transformer-forward-pass](transformer-forward-pass.md) (built on Linear Algebra) |
 
 ## Recommended Resources (Verified)
 

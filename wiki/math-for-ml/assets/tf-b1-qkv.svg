@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="560" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >STAGE B · STEP 5</text><text x="30" y="62" class="h1" text-anchor="start" >Three views of every token: Q, K, V</text><line x1="30" y1="72" x2="555" y2="72" class="uline"/><text x="110" y="104" class="h2" text-anchor="middle" >LN(X) · 6 × 512</text><text x="52" y="134" class="ink" text-anchor="end" >The</text><rect x="60" y="116" width="110" height="26" rx="0" class="cell"/><text x="115" y="134" class="numf" text-anchor="middle" >· · · · · ·</text><text x="52" y="160" class="ink" text-anchor="end" >cat</text><rect x="60" y="142" width="110" height="26" rx="0" class="cell"/><text x="115" y="160" class="numf" text-anchor="middle" >· · · · · ·</text><text x="52" y="186" class="ink" text-anchor="end" >sat</text><rect x="60" y="168" width="110" height="26" rx="0" class="cell"/><text x="115" y="186" class="numf" text-anchor="middle" >· · · · · ·</text><text x="52" y="212" class="ink" text-anchor="end" >on</text><rect x="60" y="194" width="110" height="26" rx="0" class="cell"/><text x="115" y="212" class="numf" text-anchor="middle" >· · · · · ·</text><text x="52" y="238" class="ink" text-anchor="end" >the</text><rect x="60" y="220" width="110" height="26" rx="0" class="cell"/><text x="115" y="238" class="numf" text-anchor="middle" >· · · · · ·</text><text x="52" y="264" class="ink" text-anchor="end" >mat</text><rect x="60" y="246" width="110" height="26" rx="0" class="cell"/><text x="115" y="264" class="numf" text-anchor="middle" >· · · · · ·</text><path d="M170,194 C 210,194 210,140 250,140" class="ln" marker-end="url(#ar)"/><rect x="252" y="114" width="120" height="52" rx="6" class="pur"/><text x="312" y="138" class="h2" text-anchor="middle" >× W_Q</text><text x="312" y="156" class="mut" text-anchor="middle" >512 × 512, learned</text><line x1="372" y1="140" x2="410" y2="140" class="ln" marker-end="url(#ar)"/><rect x="412" y="104" width="92" height="72" rx="3" class="pur"/><text x="458" y="136" class="h1" text-anchor="middle" >Q</text><text x="458" y="158" class="mut" text-anchor="middle" >6 × 512</text><rect x="530" y="106" width="400" height="68" rx="6" class="note"/><text x="546" y="128" class="h2" text-anchor="start" >Q · query</text><text x="546" y="148" class="handk" text-anchor="start" >“What am I looking for?”</text><text x="546" y="166" class="hand" text-anchor="start" >e.g. sat: “who did the sitting?”</text><path d="M170,194 C 210,194 210,270 250,270" class="ln" marker-end="url(#ar)"/><rect x="252" y="244" width="120" height="52" rx="6" class="grn"/><text x="312" y="268" class="h2" text-anchor="middle" >× W_K</text><text x="312" y="286" class="mut" text-anchor="middle" >512 × 512, learned</text><line x1="372" y1="270" x2="410" y2="270" class="ln" marker-end="url(#ar)"/><rect x="412" y="234" width="92" height="72" rx="3" class="grn"/><text x="458" y="266" class="h1" text-anchor="middle" >K</text><text x="458" y="288" class="mut" text-anchor="middle" >6 × 512</text><rect x="530" y="236" width="400" height="68" rx="6" class="note"/><text x="546" y="258" class="h2" text-anchor="start" >K · key</text><text x="546" y="278" class="handk" text-anchor="start" >“What do I contain?”</text><text x="546" y="296" class="hand" text-anchor="start" >e.g. cat: “I'm a noun, an animal”</text><path d="M170,194 C 210,194 210,400 250,400" class="ln" marker-end="url(#ar)"/><rect x="252" y="374" width="120" height="52" rx="6" class="yel"/><text x="312" y="398" class="h2" text-anchor="middle" >× W_V</text><text x="312" y="416" class="mut" text-anchor="middle" >512 × 512, learned</text><line x1="372" y1="400" x2="410" y2="400" class="ln" marker-end="url(#ar)"/><rect x="412" y="364" width="92" height="72" rx="3" class="yel"/><text x="458" y="396" class="h1" text-anchor="middle" >V</text><text x="458" y="418" class="mut" text-anchor="middle" >6 × 512</text><rect x="530" y="366" width="400" height="68" rx="6" class="note"/><text x="546" y="388" class="h2" text-anchor="start" >V · value</text><text x="546" y="408" class="handk" text-anchor="start" >“What do I hand over if picked?”</text><text x="546" y="426" class="hand" text-anchor="start" >e.g. cat: its actual features</text><text x="30" y="470" class="ink" text-anchor="start" >Same input, three different learned matrices → three different “perspectives”.</text><rect x="30" y="486" width="900" height="62" rx="6" class="note"/><text x="44" y="508" class="h2" text-anchor="start" >Library analogy</text><text x="44" y="528" class="handk" text-anchor="start" >Query = what you type in the search box.  Key = the label on each book's spine.</text><text x="44" y="540" class="handk" text-anchor="start" >Value = what's inside the book. Match query to keys, then read the matching books.</text></svg>
