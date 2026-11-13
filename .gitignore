@@ -1,3 +1,4 @@
 .agents/
 .claude/
 .project-state/
+__pycache__/
