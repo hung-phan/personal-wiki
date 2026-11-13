@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="560" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >ANN · PART 1</text><text x="30" y="62" class="h1" text-anchor="start" >One neuron, then a layer of them</text><line x1="30" y1="72" x2="510" y2="72" class="uline"/><text x="40" y="100" class="h2" text-anchor="start" >1. one neuron = weighted sum, then a squash</text><circle cx="90" cy="140" r="16" class="yel"/><text x="64" y="144" class="mut" text-anchor="end" >age</text><line x1="106" y1="140" x2="222" y2="200" class="ln" marker-end="url(#ar)"/><text x="165" y="166.0" class="hand" text-anchor="middle" >w₁</text><circle cx="90" cy="200" r="16" class="yel"/><text x="64" y="204" class="mut" text-anchor="end" >active?</text><line x1="106" y1="200" x2="222" y2="200" class="ln" marker-end="url(#ar)"/><text x="165" y="196.0" class="hand" text-anchor="middle" >w₂</text><circle cx="90" cy="260" r="16" class="yel"/><text x="64" y="264" class="mut" text-anchor="end" >products</text><line x1="106" y1="260" x2="222" y2="200" class="ln" marker-end="url(#ar)"/><text x="165" y="226.0" class="hand" text-anchor="middle" >w₃</text><circle cx="250" cy="200" r="28" class="blu"/><text x="250" y="196" class="h2" text-anchor="middle" >Σ + b</text><text x="250" y="212" class="mut" text-anchor="middle" >z</text><line x1="278" y1="200" x2="320" y2="200" class="ln" marker-end="url(#ar)"/><rect x="322" y="176" width="70" height="48" rx="6" class="pnk"/><text x="357" y="205" class="h2" text-anchor="middle" >φ(z)</text><line x1="392" y1="200" x2="432" y2="200" class="ln" marker-end="url(#ar)"/><circle cx="450" cy="200" r="16" class="grn"/><text x="450" y="232" class="mut" text-anchor="middle" >output</text><text x="40" y="300" class="handk" text-anchor="start" >z = w₁·age + w₂·active + w₃·products + b,   output = φ(z)</text><text x="530" y="100" class="h2" text-anchor="start" >2. the squash φ — four common choices</text><rect x="540" y="120" width="180" height="84" rx="6" class="cell"/><line x1="550" y1="174" x2="710" y2="174" class="lnd"/><polyline points="550,174.0 554,174.0 558,174.0 562,174.0 566,174.0 570,174.0 574,174.0 578,174.0 582,174.0 586,174.0 590,174.0 594,174.0 598,174.0 602,174.0 606,174.0 610,174.0 614,174.0 618,174.0 622,174.0 626,174.0 630,174.0 634,140.0 638,140.0 642,140.0 646,140.0 650,140.0 654,140.0 658,140.0 662,140.0 666,140.0 670,140.0 674,140.0 678,140.0 682,140.0 686,140.0 690,140.0 694,140.0 698,140.0 702,140.0 706,140.0 710,140.0" class="lnr" stroke-width="2"/><text x="550" y="136" class="h2" text-anchor="start" >step</text><text x="550" y="198" class="mut" text-anchor="start" >yes/no</text><rect x="740" y="120" width="180" height="84" rx="6" class="cell"/><line x1="750" y1="174" x2="910" y2="174" class="lnd"/><polyline points="750,173.4 754,173.3 758,173.1 762,172.9 766,172.7 770,172.4 774,172.1 778,171.6 782,171.2 786,170.6 790,169.9 794,169.2 798,168.3 802,167.3 806,166.1 810,164.9 814,163.5 818,162.0 822,160.4 826,158.7 830,157.0 834,155.3 838,153.6 842,152.0 846,150.5 850,149.1 854,147.9 858,146.7 862,145.7 866,144.8 870,144.1 874,143.4 878,142.8 882,142.4 886,141.9 890,141.6 894,141.3 898,141.1 902,140.9 906,140.7 910,140.6" class="lnr" stroke-width="2"/><text x="750" y="136" class="h2" text-anchor="start" >sigmoid</text><text x="750" y="198" class="mut" text-anchor="start" >0–1, a probability</text><rect x="540" y="220" width="180" height="84" rx="6" class="cell"/><line x1="550" y1="274" x2="710" y2="274" class="lnd"/><polyline points="550,308.0 554,308.0 558,307.9 562,307.9 566,307.9 570,307.8 574,307.7 578,307.6 582,307.4 586,307.2 590,306.8 594,306.2 598,305.3 602,304.1 606,302.3 610,299.9 614,296.6 618,292.3 622,286.9 626,280.7 630,274.0 634,267.3 638,261.1 642,255.7 646,251.4 650,248.1 654,245.7 658,243.9 662,242.7 666,241.8 670,241.2 674,240.8 678,240.6 682,240.4 686,240.3 690,240.2 694,240.1 698,240.1 702,240.1 706,240.0 710,240.0" class="lnr" stroke-width="2"/><text x="550" y="236" class="h2" text-anchor="start" >tanh</text><text x="550" y="298" class="mut" text-anchor="start" >−1 to 1</text><rect x="740" y="220" width="180" height="84" rx="6" class="cell"/><line x1="750" y1="274" x2="910" y2="274" class="lnd"/><polyline points="750,274.0 754,274.0 758,274.0 762,274.0 766,274.0 770,274.0 774,274.0 778,274.0 782,274.0 786,274.0 790,274.0 794,274.0 798,274.0 802,274.0 806,274.0 810,274.0 814,274.0 818,274.0 822,274.0 826,274.0 830,274.0 834,271.7 838,269.5 842,267.2 846,264.9 850,262.7 854,260.4 858,258.1 862,255.9 866,253.6 870,251.3 874,249.1 878,246.8 882,244.5 886,242.3 890,240.0 894,237.7 898,235.5 902,233.2 906,230.9 910,228.7" class="lnr" stroke-width="2"/><text x="750" y="236" class="h2" text-anchor="start" >ReLU</text><text x="750" y="298" class="mut" text-anchor="start" >0 or z: hidden-layer default</text><text x="40" y="350" class="h2" text-anchor="start" >3. hidden neurons = learned combinations (churn example, illustrative)</text><rect x="40" y="366" width="280" height="54" rx="6" class="note"/><text x="54" y="388" class="handk" text-anchor="start" >older AND inactive</text><text x="54" y="408" class="hand" text-anchor="start" >→ likely to leave</text><rect x="340" y="366" width="280" height="54" rx="6" class="note"/><text x="354" y="388" class="handk" text-anchor="start" >3+ products</text><text x="354" y="408" class="hand" text-anchor="start" >→ unhappy bundle</text><rect x="640" y="366" width="280" height="54" rx="6" class="note"/><text x="654" y="388" class="handk" text-anchor="start" >Germany AND high balance</text><text x="654" y="408" class="hand" text-anchor="start" >→ shops around</text><rect x="30" y="436" width="900" height="108" rx="6" class="note"/><text x="44" y="458" class="h2" text-anchor="start" >Key idea</text><text x="44" y="478" class="handk" text-anchor="start" >No hidden layer = one weighted sum = logistic regression. Hidden layers let the net build its own</text><text x="44" y="496" class="handk" text-anchor="start" >features from combinations of inputs — nobody hand-codes "older AND inactive"; training finds what helps.</text><text x="44" y="514" class="handk" text-anchor="start" >Recipe: ReLU in hidden layers; sigmoid output for yes/no, softmax for many classes, nothing for numbers.</text></svg>
