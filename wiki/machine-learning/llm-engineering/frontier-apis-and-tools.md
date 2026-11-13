@@ -105,25 +105,31 @@ The "transcript in one message" pattern generalises: any time the context doesn'
 
 **Gradio** builds a web UI from a Python function. You hand it the function (a **callback**); it calls the function when the user acts.
 - `gr.Interface(fn, inputs, outputs)` — one function, typed inputs and outputs (Textbox, Markdown, Dropdown, Image, Audio). `launch(share=True)` gives a temporary public link through a tunnel; `auth=("user", "pw")` adds a login; `inbrowser=True` opens a tab.
-- `gr.ChatInterface(fn)` — the callback receives `(message, history)`, where history is a list of `{"role", "content"}` dicts (plus extra keys you should strip before sending to a strict API).
+- `gr.ChatInterface(fn)` — the callback receives `(message, history)`, where history is a list of `{"role", "content", ...}` dicts. In Gradio 6 (checked on 6.32.0) each `content` is a **list of typed blocks** such as `[{"type": "text", "text": "hi"}]`, not a string, and extra keys (`metadata`, `options`) ride along. OpenAI and Anthropic accept text blocks, but code that treats content as a string, file blocks, and strict OpenAI-compatible endpoints do not, so flatten text blocks and keep only `role` + `content`.
 - **Streaming** — make the callback a generator and `yield` the text **so far** (not each new piece); Gradio re-renders.
 - `gr.Blocks` — lay out your own rows and columns and wire events (`textbox.submit(fn).then(next_fn, …)`). Underneath, Gradio is a Svelte front end talking to a Python server, one route per callback.
 
 ```python
 import gradio as gr
+def text_of(content):                                      # Gradio 6: content is a list of typed blocks
+    if isinstance(content, str): return content
+    return "".join(b["text"] for b in content if b.get("type") == "text")   # drop file/component blocks
 def chat(message, history):                                # Gradio calls this on every user message
     msgs = [{"role": "system", "content": "You are a helpful shop assistant."}]
-    msgs += [{"role": h["role"], "content": h["content"]} for h in history]   # keep only role + content
+    msgs += [{"role": h["role"], "content": text_of(h["content"])} for h in history]   # role + plain text only
     msgs.append({"role": "user", "content": message})
-    reply = f"(the LLM would see {len(msgs)} messages)"    # here you would call the model, ideally streaming
+    reply = f"(the LLM would see {len(msgs)} messages; last past turn: {msgs[-2]['content']!r})"
     for i in range(1, len(reply) + 1):
         yield reply[:i]                                    # yield the text SO FAR -> Gradio streams it
 demo = gr.ChatInterface(fn=chat)                            # demo.launch() opens it in the browser
-history = [{"role": "user", "content": "Do you sell belts?"}, {"role": "assistant", "content": "Yes, in aisle 3."}]
+raw = [{"role": "user", "content": "Do you sell belts?"}, {"role": "assistant", "content": "Yes, in aisle 3."}]
+history = gr.Chatbot().preprocess(gr.Chatbot().postprocess(raw))   # the shape the callback really receives
+print("history[0]:", history[0]["content"])
 print("callback output:", list(chat("How much are they?", history))[-1])
 print("gradio", gr.__version__, "| built:", type(demo).__name__)
 # Expected output:
-# callback output: (the LLM would see 4 messages)
+# history[0]: [{'text': 'Do you sell belts?', 'type': 'text'}]
+# callback output: (the LLM would see 4 messages; last past turn: 'Yes, in aisle 3.')
 # gradio 6.32.0 | built: ChatInterface
 ```
 
@@ -191,7 +197,7 @@ The final assistant chains several models behind one Gradio Blocks layout: the c
 
 ## 7. What has aged
 
-Model names (GPT-4.1, GPT-5, Claude Sonnet 4.5, Gemini 2.5, Grok 4) and prices date from late 2025. DALL-E 3 has been superseded by newer image models; Gradio 6 changed some defaults (the `messages` history format is now standard); `reasoning_effort` values differ between model generations; OpenAI's newer Responses API sits alongside Chat Completions. The mechanics in this note — base_url, caching by prefix, the tool loop — haven't changed.
+Model names (GPT-4.1, GPT-5, Claude Sonnet 4.5, Gemini 2.5, Grok 4) and prices date from late 2025. DALL-E 3 has been superseded by newer image models; Gradio 6 changed some defaults (the `messages` history format is now standard, with `content` as a list of typed blocks); `reasoning_effort` values differ between model generations; OpenAI's newer Responses API sits alongside Chat Completions. The mechanics in this note — base_url, caching by prefix, the tool loop — haven't changed.
 
 ## Trade-offs
 
@@ -207,7 +213,7 @@ Model names (GPT-4.1, GPT-5, Claude Sonnet 4.5, Gemini 2.5, Grok 4) and prices d
 - **`if` instead of `while`.** After seeing a result the model may want another tool. Loop until it stops — with a cap.
 - **Dispatching with `eval` or `globals()`.** A model-chosen string must never become arbitrary code; use an explicit name → function dict.
 - **Dynamic content at the top of the prompt.** The date or user question first kills caching. Fixed content first.
-- **Passing UI history straight to a strict API.** Gradio adds keys (`metadata`, `options`); keep only `role` and `content`.
+- **Passing UI history straight to a strict API.** Gradio adds keys (`metadata`, `options`) and, in Gradio 6, makes `content` a list of blocks; keep only `role` and `content`, flattened to text.
 - **Yielding deltas from a Gradio streaming callback.** Yield the accumulated text, or the UI shows only the last piece.
 - **Leaving `share=True` links open.** Anyone with the link can use your app (and your API key's budget); add `auth`.
 - **Reading personality tests as benchmarks.** One run of a puzzle or game is an anecdote.

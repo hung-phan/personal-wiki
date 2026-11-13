@@ -121,22 +121,24 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.inspection import partial_dependence
+from sklearn.model_selection import train_test_split
 rng = np.random.default_rng(0)
 X = rng.uniform(0, 1, (3000, 2))                           # two features: income and age, both scaled 0-1
 y = (rng.random(3000) < 1 / (1 + np.exp(-(6 * (X[:, 0] - 0.5) - 8 * (X[:, 1] - 0.6) ** 2 * 3)))).astype(int)
-lin = LogisticRegression().fit(X, y)
-gb = GradientBoostingClassifier(random_state=0).fit(X, y)
-print("logistic coefficients (interpretable):", np.round(lin.coef_[0], 2), "| accuracy", round(lin.score(X, y), 3))
-print("gradient boosting accuracy:", round(gb.score(X, y), 3), "(no coefficients to read)")
-pd = partial_dependence(gb, X, features=[1], grid_resolution=6)   # average effect of age, in log-odds
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0)   # score on held-out rows
+lin = LogisticRegression().fit(X_tr, y_tr)
+gb = GradientBoostingClassifier(random_state=0).fit(X_tr, y_tr)
+print("logistic coefficients (interpretable):", np.round(lin.coef_[0], 2), "| test accuracy", round(lin.score(X_te, y_te), 3))
+print("gradient boosting test accuracy:", round(gb.score(X_te, y_te), 3), f"(train {gb.score(X_tr, y_tr):.3f}; no coefficients to read)")
+pd = partial_dependence(gb, X_tr, features=[1], grid_resolution=6)   # average effect of age, in log-odds
 print("partial dependence on age:", np.round(pd["average"][0], 2), "at", np.round(pd["grid_values"][0], 2))
 # Expected output:
-# logistic coefficients (interpretable): [4.45 2.17] | accuracy 0.792
-# gradient boosting accuracy: 0.871 (no coefficients to read)
-# partial dependence on age: [-3.52 -2.03  0.11  0.75  0.55 -1.52] at [0.05 0.23 0.41 0.59 0.77 0.95]
+# logistic coefficients (interpretable): [4.63 2.23] | test accuracy 0.77
+# gradient boosting test accuracy: 0.819 (train 0.887; no coefficients to read)
+# partial dependence on age: [-3.44 -2.32 -0.48  0.82  0.61 -1.7 ] at [0.05 0.23 0.41 0.59 0.77 0.96]
 ```
 
-The logistic model is readable — but its age coefficient (+2.17) says "older is always better", which is wrong. The gradient-boosting model is more accurate and has no coefficients; its partial dependence on age reveals the real shape: approval rises toward middle age and falls again (values are in log-odds). Interpretable doesn't mean correct, and a black box can still be explained.
+The logistic model is readable — but its age coefficient (+2.23) says "older is always better", which is wrong. On held-out rows the gradient-boosting model is modestly more accurate (0.819 vs 0.77 here; over five different splits the gap was 4–7 points) and has no coefficients; its training accuracy (0.887) is higher still, which is why the comparison has to use test data. Its partial dependence on age reveals the real shape: approval rises toward middle age and falls again (values are in log-odds). Interpretable doesn't mean correct, and a black box can still be explained.
 
 ## Trade-offs
 

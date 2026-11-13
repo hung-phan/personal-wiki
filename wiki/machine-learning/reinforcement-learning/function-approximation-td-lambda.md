@@ -67,9 +67,9 @@ Bins waste resolution where states never go and are too coarse where they do (ch
 
 ## 3. RBF features and a linear Q per action
 
-**The idea.** A radial basis function $\phi(x) = \exp(-\gamma \lVert x - c \rVert^2)$ is 1 at its centre $c$ and fades with distance (here $\gamma$ is the width parameter, not the discount). Scatter many centres over the state space, and each state becomes a vector of "how close am I to each centre". A linear model on those features can represent a curved value surface. Two ways to see it: a linear model on fixed features, or a network with one hidden layer of RBF units whose weights never train.
+**The idea.** A radial basis function $\phi(x) = \exp(-\gamma \lVert x - c \rVert^2)$ is 1 at its centre $c$ and fades with distance (here $\gamma$ is an *inverse* width, not the discount: larger $\gamma$ means a narrower bump, width $\propto 1/\sqrt{\gamma}$). Scatter many centres over the state space, and each state becomes a vector of "how close am I to each centre". A linear model on those features can represent a curved value surface. Two ways to see it: a linear model on fixed features, or a network with one hidden layer of RBF units whose weights never train.
 
-**The course's MountainCar setup**, reproduced: scale states with `StandardScaler`, then four `RBFSampler`s (random Fourier features approximating an RBF kernel) with widths 5, 2, 1 and 0.5 and 500 components each, joined by `FeatureUnion` into 2,000 features; one `SGDRegressor` per action, i.e. $Q(s, a) = w_a^\top \phi(s)$ — the same layout as a network with one output per action. Q-learning updates only the model of the action taken.
+**The course's MountainCar setup**, reproduced: scale states with `StandardScaler`, then four `RBFSampler`s (random Fourier features approximating an RBF kernel) with $\gamma$ = 5, 2, 1 and 0.5 (narrowest to widest) and 500 components each. `RBFSampler` has no centres: `fit` only reads the number of input dimensions and draws random frequencies $W \sim \mathcal N(0, 2\gamma)$ and offsets $b$, giving features $\cos(Wx + b)$ whose inner products approximate the RBF kernel. The sampled states only matter for fitting the `StandardScaler`. The four banks are joined by `FeatureUnion` into 2,000 features; one `SGDRegressor` per action, i.e. $Q(s, a) = w_a^\top \phi(s)$ — the same layout as a network with one output per action. Q-learning updates only the model of the action taken.
 
 ```python
 import numpy as np, gymnasium as gym
@@ -77,13 +77,13 @@ from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import StandardScaler
 from sklearn.kernel_approximation import RBFSampler      # random Fourier features approximating an RBF kernel
 from sklearn.linear_model import SGDRegressor
-env = gym.make("MountainCar-v0"); env.action_space.seed(0)   # reward −1 per step, 200-step cap
+env = gym.make("MountainCar-v0"); env.action_space.seed(0); env.observation_space.seed(0)   # each space has its own RNG; reward −1 per step, 200-step cap
 samples = np.array([env.observation_space.sample() for _ in range(10000)])
 scaler = StandardScaler().fit(samples)
 rbf = FeatureUnion([(f"rbf{g}", RBFSampler(gamma=g, n_components=500, random_state=0)) for g in (5.0, 2.0, 1.0, 0.5)])
-rbf.fit(scaler.transform(samples))                      # 4 widths x 500 = 2,000 features
+rbf.fit(scaler.transform(samples))                      # 4 gammas x 500 = 2,000 features
 phi = lambda s: rbf.transform(scaler.transform([s]))
-models = [SGDRegressor(learning_rate="constant", eta0=0.01) for _ in range(3)]   # one linear Q per action
+models = [SGDRegressor(learning_rate="constant", eta0=0.01, random_state=0) for _ in range(3)]   # one linear Q per action
 for m in models: m.partial_fit(phi(env.reset(seed=0)[0]), [0])   # start every Q near 0: optimistic, since returns < 0
 Q = lambda f: np.array([m.predict(f)[0] for m in models])
 lengths = []
@@ -98,13 +98,13 @@ for ep in range(200):
 print("first episode that reached the flag:", next(i for i, l in enumerate(lengths) if l < 200) + 1)
 print("mean steps, last 20 episodes:", np.mean(lengths[-20:]), " (200 = never reached it)")
 # Expected output:
-# first episode that reached the flag: 40
-# mean steps, last 20 episodes: 146.6  (200 = never reached it)
+# first episode that reached the flag: 41
+# mean steps, last 20 episodes: 185.7  (200 = never reached it)
 ```
 
-**Optimistic initial values.** Fitting each model once on a target of 0 makes every Q-value start near 0. MountainCar's returns are always negative, so 0 is *optimistic*: every untried action looks better than the ones the agent has tried and been disappointed by. Acting greedily then explores on its own — no ε needed. It took 32 episodes to reach the flag the first time and then kept getting faster. The course trains 300 episodes with γ = 0.99 and plots the **cost-to-go** $-\max_a Q(s, a)$ over (position, velocity) — a surface showing how many steps each state is from the goal.
+**Optimistic initial values.** Fitting each model once on a target of 0 makes every Q-value start near 0. MountainCar's returns are always negative, so 0 is *optimistic*: every untried action looks better than the ones the agent has tried and been disappointed by. Acting greedily then explores on its own — no ε needed. With these seeds it first reached the flag in episode 41. Changing only the observation-space seed (0–4) moved that to episodes 32–41 and the last-20 mean to 145.6–185.7 steps; seed 0 is the worst of the five. Over 300 episodes, every seed's 50-episode mean dropped from about 190–199 steps to about 130–189 by episodes 51–100 and then levelled off or crept back up (to 153–186 in episodes 251–300), so it gets faster quickly and then stalls instead of improving steadily. The course trains 300 episodes with γ = 0.99 and plots the **cost-to-go** $-\max_a Q(s, a)$ over (position, velocity) — a surface showing the *discounted* number of steps from each state to the goal. With reward −1 per step, $-\max_a Q = (1-\gamma^k)/(1-\gamma)$ for a state $k$ steps away, which is about 63 for $k = 100$ and never above 100. It equals the step count only when $\gamma = 1$.
 
-**CartPole with RBFs.** Sampling centres from the observation space fails here (velocity bounds are infinite), so the course hand-picks ranges, uses four widths (0.05, 1, 0.5, 0.1) × 1,000 centres, writes its own one-line SGD regressor (learning rate 0.1) and later ports it to Theano and TF.
+**CartPole with RBFs.** Sampling states from the observation space to fit the scaler fails here (velocity bounds are infinite), so the course hand-picks ranges, uses four $\gamma$ values (0.05, 1, 0.5, 0.1) × 1,000 components, writes its own one-line SGD regressor (learning rate 0.1) and later ports it to Theano and TF.
 
 **Why not just a neural network?** The section's last lecture explains what goes wrong: consecutive samples come from one episode in order and are highly correlated, and the network fits recent states while forgetting earlier ones (**catastrophic forgetting**). Experience replay and target networks, introduced with DQN, are the fixes ([deep-q-learning](deep-q-learning.md) §2).
 
@@ -174,7 +174,7 @@ Intermediate λ (0.4–0.8) beats both extremes, and the best step size shrinks 
 
 ## Common Pitfalls
 
-- **Sampling RBF centres from unbounded spaces.** CartPole's velocity bounds are infinite; sample centres from visited states instead.
+- **Fitting the scaler on samples from unbounded spaces.** CartPole's velocity bounds are infinite, so `observation_space.sample()` can't draw them uniformly (Gymnasium 1.x falls back to a standard normal for those dimensions), and the scaler ends up fitted to a distribution unrelated to the states the agent visits. Fit the scaler on visited states instead. (`RBFSampler`'s random frequencies don't depend on the data; if you place Gaussian centres by hand, take them from visited states too.)
 - **Forgetting to scale.** RBF widths only mean something if every input dimension has a similar scale.
 - **Misreading `SGDRegressor`.** `alpha` is the L2 penalty, not the learning rate (`eta0` is); the course mixes them up.
 - **Large α with long traces.** Updates add up across many states and diverge; shrink α as λ grows.

@@ -46,7 +46,7 @@ Recommend Ex Machina to everyone and 10% bite; to Interstellar fans, 17.5% — a
 
 ## 2. Apriori, and Eclat
 
-**Apriori:** set a minimum support and confidence; find all itemsets above the support threshold (growing them one item at a time, only from frequent ones); turn them into rules; keep rules above the confidence threshold; sort by lift. **Eclat** only finds frequent itemsets and ranks them by support — no rules, no direction.
+**Apriori:** set a minimum support and confidence; find all itemsets above the support threshold (growing them one item at a time, only from frequent ones); turn them into rules; keep rules above the confidence threshold; sort by lift. **Eclat** mines the same frequent itemsets by a different search: it stores each item's list of basket IDs (a vertical tid-list), goes depth-first, and gets an itemset's support by intersecting those lists instead of rescanning the baskets. Rules can be built from its itemsets in the same way (arules: `ruleInduction`). The course just stops at the itemsets, ranked by support, with no rules and no direction.
 
 ```python
 import random
@@ -96,7 +96,7 @@ Both planted associations come out on top by lift; the third most frequent pair 
 | Scenario | Use this | Not that | Why |
 |----------|----------|----------|-----|
 | "Frequently bought together" | Apriori sorted by lift | Raw co-occurrence counts | Corrects for popularity |
-| Only itemset frequency needed | Eclat / frequent itemsets | Rules | Simpler |
+| Only itemset frequency needed | Frequent itemsets (Eclat or Apriori) | Rules | Simpler output |
 | Millions of baskets | FP-Growth (`mlxtend`, Spark MLlib) | apyori | Speed |
 | Personalised suggestions | Collaborative filtering / embeddings | Global rules | Per-user signal |
 

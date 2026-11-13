@@ -114,25 +114,30 @@ results = {
     "constant (train mean)": np.full(len(y_te), y_tr.mean()),
     "linear: weight + length": LinearRegression().fit(feats(train_rows), y_tr).predict(feats(test_rows)),
     "bag of words + linear": LinearRegression().fit(Xb_tr, y_tr).predict(Xb_te),
+    "bag of words + linear, log target": np.exp(LinearRegression().fit(Xb_tr, np.log(y_tr)).predict(Xb_te)),
     "random forest": RandomForestRegressor(100, random_state=0, n_jobs=-1).fit(Xb_tr, y_tr).predict(Xb_te),
+    "gradient boosting, raw target": HistGradientBoostingRegressor(random_state=0).fit(Xb_tr.toarray(), y_tr).predict(Xb_te.toarray()),
     "gradient boosting, log target": np.exp(HistGradientBoostingRegressor(random_state=0)
                                       .fit(Xb_tr.toarray(), np.log(y_tr)).predict(Xb_te.toarray())),
 }
-for name, p in results.items(): print(f"{name:32s} MAE ${mae(p):6.2f}   R² {r2(p):5.2f}")
+for name, p in results.items(): print(f"{name:34s} MAE ${mae(p):6.2f}   R² {r2(p):5.2f}")
 # Expected output:
-# random $1-999                    MAE $407.27   R² -10.40
-# constant (train mean)            MAE $ 95.13   R² -0.00
-# linear: weight + length          MAE $ 82.74   R²  0.24
-# bag of words + linear            MAE $ 55.70   R²  0.64
-# random forest                    MAE $ 45.18   R²  0.75
-# gradient boosting, log target    MAE $ 41.11   R²  0.76
+# random $1-999                      MAE $407.27   R² -10.40
+# constant (train mean)              MAE $ 95.13   R² -0.00
+# linear: weight + length            MAE $ 82.74   R²  0.24
+# bag of words + linear              MAE $ 55.70   R²  0.64
+# bag of words + linear, log target  MAE $ 39.36   R²  0.80
+# random forest                      MAE $ 45.12   R²  0.75
+# gradient boosting, raw target      MAE $ 42.64   R²  0.78
+# gradient boosting, log target      MAE $ 41.11   R²  0.76
 ```
 
 Read the ladder:
 - **Random** guesses are wildly wrong (negative R²). **Constant** (the training mean) defines R² = 0.
 - **Hand-made features** (weight, text length) help a little — **feature engineering** was the core craft of classical data science.
 - **Bag of words** — count each word, regress on the counts — is the big jump: the words carry the price signal.
-- **Random forest** and **gradient boosting** capture interactions ("premium" *and* "electronics"). Training on **log price** helps because prices are skewed and errors are proportional; the course trains on raw prices.
+- **Random forest** and **gradient boosting** can capture interactions ("premium" *and* "electronics") and beat linear regression on raw prices.
+- **Log target, compared like for like.** This synthetic catalogue is log-linear by construction (price = category base × word multipliers × weight factor × lognormal noise), so the log of the price is a sum of word effects. That is why plain linear regression on log price ($39.36, R² 0.80) beats both trees here. For gradient boosting the log target changes little: MAE $42.64 → $41.11, but R² falls 0.78 → 0.76. Gaps of a few dollars on 500 test items are within noise, so don't read them as a win for either. On real data, test the log target with the same model before claiming it helps. The course trains on raw prices.
 
 The course's ladder on real data had the same shape: random $382, constant $106, linear on weight and length $102, bag of words $77, random forest $72, XGBoost $68. The instructor priced 100 items by hand: $88.
 
@@ -184,7 +189,7 @@ ci = 1.96 * np.array([err[:k].std() / np.sqrt(k) for k in range(1, len(err) + 1)
 b.plot(run); b.fill_between(range(len(err)), run - ci, run + ci, alpha=0.3); b.set(xlabel="test items", ylabel="mean abs error ($)")
 plt.show()
 # Expected output:
-# neural net MAE $40.35   R² 0.78
+# neural net MAE $40.36   R² 0.78
 # within $40 or 20%: 73%
 ```
 
@@ -235,7 +240,7 @@ Teaching a model a **new specialised skill from lots of data** suits an open mod
 - **Classical ML vs LLM.** Cheap, fast, explainable, needs features vs world knowledge out of the box, costs per call.
 - **More data vs better data.** Curation (filters, dedup, rebalancing, LLM rewriting) often beats more volume.
 - **Frontier fine-tuning vs better prompting.** Locked-in style/format vs a quick, reversible change; for knowledge tasks, prompting or RAG usually wins.
-- **Raw vs log target.** Matches the dollar metric directly vs handles skew and proportional errors better.
+- **Raw vs log target.** Matches the dollar metric directly vs handles skew and proportional errors. The log target helps most when price really is multiplicative (here: linear $55.70 → $39.36); for trees the gain was within noise. Compare both with the same model.
 - **Big test set vs cost.** Tighter error bars vs more API calls per evaluation.
 
 ## Common Pitfalls
@@ -255,7 +260,7 @@ Teaching a model a **new specialised skill from lots of data** suits an open mod
 |----------|----------|----------|-----|
 | First pass at a prediction task | Baseline ladder: constant → linear → BoW → boosting | Jumping to an LLM | Know what "good" means |
 | Text describes the item | Bag of words / hashed features + boosting or NN | Hand features only | The words carry the signal |
-| Skewed numeric target | Log target, MAE reported in original units | Raw MSE | Proportional errors, readable metric |
+| Skewed, multiplicative target | Try a log target, with the same model on raw vs log; report MAE in dollars | Assuming log always helps | Big gain for linear here, noise-level for trees |
 | Need world knowledge, small data | Frontier model zero-shot (+ RAG) | Training from scratch | Knowledge comes for free |
 | Want a fixed tone/format | Frontier fine-tune with 50–100 examples | Thousands of noisy labels | Behaviour, not knowledge |
 | Want a new specialised skill | Open-model QLoRA on lots of data ([qlora-fine-tuning](qlora-fine-tuning.md)) | Frontier SFT | Full control, beats frontier here |

@@ -1,6 +1,6 @@
 ---
 name: rl-foundations-mc-td
-description: Reinforcement learning foundations from returns to TD with runnable numpy code — episodic vs continuing tasks, reward design (why +1 only at the exit gives no signal and −1 per step does), states built from stacked observations, the return G_t = r + γ G_(t+1), the Bellman expectation equation solved exactly as a linear system with np.linalg.solve, prediction vs control, V vs Q, counting |A|^|S| policies, Monte Carlo prediction with returns computed backwards, the incremental mean and constant-α averages, generalized policy iteration, multi-armed bandits and why greedy gets stuck (ε-greedy comparison), TD(0) as bootstrapping and "semi-gradient", Q-learning as off-policy; MC vs TD error on a random walk; Theano/TF1 basics mapped to PyTorch; course appendix advice. Study guide for Deep Reinforcement Learning in Python, sections 1–2 and 8–13.
+description: Reinforcement learning foundations from returns to TD with runnable numpy code — episodic vs continuing tasks, reward design (why +1 only at the exit gives no signal and −1 per step does), states built from stacked observations, the return G_t = r + γ G_(t+1), the Bellman expectation equation solved exactly as a linear system with np.linalg.solve, prediction vs control, V vs Q, counting |A|^|S| policies, Monte Carlo prediction with returns computed backwards, the incremental mean and constant-α averages, generalized policy iteration, multi-armed bandits and why greedy gets stuck (ε-greedy comparison), TD(0) as bootstrapping and "semi-gradient", Q-learning as off-policy; MC (1/n and constant-α) vs TD error on a random walk averaged over 100 seeds; Theano/TF1 basics mapped to PyTorch; course appendix advice. Study guide for Deep Reinforcement Learning in Python, sections 1–2 and 8–13.
 created: 2026-11-13
 updated: 2026-11-13
 tags: [reinforcement-learning, monte-carlo, temporal-difference, bellman-equation, bandits, epsilon-greedy, numpy, study-guide, deep-rl-python]
@@ -86,33 +86,31 @@ Using your own estimate inside the target is **bootstrapping**. Derived as gradi
 
 ```python
 import numpy as np
-rng = np.random.default_rng(0)
-n = 5
-def episode():                                          # returns visited states and the final reward
-    s, path = 2, []
-    while 0 <= s < n:
-        path.append(s); s += rng.choice([-1, 1])
-    return path, 1.0 if s == n else 0.0
-V_mc, V_td, counts = np.zeros(n), np.full(n, 0.5), np.zeros(n)
-for ep in range(1, 101):
-    path, R = episode()
-    for s in set(path):                                 # Monte Carlo: average the full return (gamma = 1)
-        counts[s] += 1; V_mc[s] += (R - V_mc[s]) / counts[s]   # incremental mean
-    for t, s in enumerate(path):                        # TD(0): bootstrap from the next state's estimate
-        target = R if t == len(path) - 1 else V_td[path[t + 1]]
-        V_td[s] += 0.1 * (target - V_td[s])
-    if ep in (10, 100):
-        true = np.arange(1, 6) / 6
-        print(f"after {ep:3d} episodes  RMS error  MC {np.sqrt(((V_mc - true)**2).mean()):.3f}"
-              f"  TD {np.sqrt(((V_td - true)**2).mean()):.3f}")
-print("MC:", V_mc.round(2), " TD:", V_td.round(2))
+n, true = 5, np.arange(1, 6) / 6                        # true V from the linear solve above
+def run(seed, n_eps=100):
+    rng = np.random.default_rng(seed)                   # one seeded RNG per run
+    V = {k: np.full(n, 0.5) for k in ("MC 1/n", "MC a=0.1", "TD a=0.1")}; cnt = np.zeros(n); err = []
+    for ep in range(1, n_eps + 1):
+        s, path = 2, []
+        while 0 <= s < n: path.append(s); s += rng.choice([-1, 1])
+        R = 1.0 if s == n else 0.0                      # gamma = 1, so every state's return is R
+        for x in set(path):                             # Monte Carlo: move toward the full return
+            cnt[x] += 1; V["MC 1/n"][x] += (R - V["MC 1/n"][x]) / cnt[x]; V["MC a=0.1"][x] += 0.1 * (R - V["MC a=0.1"][x])
+        for t, x in enumerate(path):                    # TD(0): move toward the next state's estimate
+            V["TD a=0.1"][x] += 0.1 * ((R if t == len(path) - 1 else V["TD a=0.1"][path[t + 1]]) - V["TD a=0.1"][x])
+        if ep in (10, 100): err.append([np.sqrt(((v - true) ** 2).mean()) for v in V.values()])
+    return np.array(err)                                # shape (2 checkpoints, 3 methods)
+E = np.array([run(seed) for seed in range(100)])        # 100 independent runs
+for i, ep in enumerate((10, 100)):
+    m = E[:, i].mean(axis=0)                            # mean RMS error over seeds
+    print(f"after {ep:3d} episodes  mean RMS  MC 1/n {m[0]:.3f}  MC a=0.1 {m[1]:.3f}  TD a=0.1 {m[2]:.3f}"
+          f"  TD beats MC 1/n in {(E[:, i, 2] < E[:, i, 0]).mean():.0%} of seeds")
 # Expected output:
-# after  10 episodes  RMS error  MC 0.115  TD 0.124
-# after 100 episodes  RMS error  MC 0.095  TD 0.075
-# MC: [0.28 0.43 0.61 0.77 0.86]  TD: [0.22 0.4  0.58 0.76 0.91]
+# after  10 episodes  mean RMS  MC 1/n 0.156  MC a=0.1 0.152  TD a=0.1 0.129  TD beats MC 1/n in 57% of seeds
+# after 100 episodes  mean RMS  MC 1/n 0.045  MC a=0.1 0.090  TD a=0.1 0.054  TD beats MC 1/n in 33% of seeds
 ```
 
-After 10 episodes the two are about equal; after 100, TD is closer to the truth. TD learns online, works for continuing tasks, and its targets are less noisy (one random step instead of a whole random path) — at the cost of being biased while its estimates are still wrong. MC is unbiased but noisy and must wait for episodes to end.
+Averaged over 100 seeds, TD is ahead early (0.129 vs 0.156 after 10 episodes). By 100 episodes $1/n$ MC has caught up and passed it (0.045 vs 0.054; TD wins only 33% of seeds), because a true average keeps shrinking its error while constant-$\alpha$ TD settles at a noise floor set by $\alpha$. The fair comparison, both with $\alpha = 0.1$ as in Sutton & Barto's Example 6.2, favours TD at both points (0.054 vs 0.090). Any single seed can say otherwise, so judge on averages. TD learns online, works for continuing tasks, and its targets are less noisy (one random step instead of a whole random path) — at the cost of being biased while its estimates are still wrong. MC is unbiased but noisy and must wait for episodes to end.
 
 **Q-learning** is TD for action values, with a max in the target ([q-learning](q-learning.md) §5). The max makes it **off-policy**: the agent can explore however it likes while learning the values of the greedy policy.
 
@@ -120,17 +118,16 @@ After 10 episodes the two are about equal; after 100, TD is closer to the truth.
 
 **The question.** If an agent always picks the action with the highest estimate, what goes wrong?
 
-A three-armed bandit (slot machines that pay 1 with probabilities 0.2, 0.5, 0.75) where the agent starts out believing machine 0 is good:
+A three-armed bandit (slot machines that pay 1 with probabilities 0.2, 0.5, 0.75), all estimates starting at 0:
 
 ```python
 import numpy as np
 rng = np.random.default_rng(0)
 true_means = np.array([0.2, 0.5, 0.75])                 # three slot machines, win probabilities
 def run(eps, steps=2000):
-    Q, N, total = np.zeros(3), np.zeros(3), 0.0
-    Q[0] = 1.0                                          # a lucky early belief about machine 0
+    Q, N, total = np.zeros(3), np.zeros(3), 0.0         # all estimates start at 0
     for t in range(steps):
-        a = rng.integers(3) if rng.random() < eps else int(np.argmax(Q))
+        a = rng.integers(3) if rng.random() < eps else int(np.argmax(Q))  # argmax breaks ties toward index 0
         r = float(rng.random() < true_means[a])         # pay 1 with the machine's probability
         N[a] += 1; Q[a] += (r - Q[a]) / N[a]; total += r
     return total / steps, N.astype(int)
@@ -146,7 +143,7 @@ print("best possible 0.750, random 0.483")
 # best possible 0.750, random 0.483
 ```
 
-Pure greed ($\epsilon = 0$) keeps pulling the worst machine: it's never disappointed enough to switch, because it never tries the others. A little randomness finds the best machine; too much (0.3) wastes pulls on known-bad ones. ε-greedy is the only exploration method the course teaches; optimistic initial values appear in [function-approximation-td-lambda](function-approximation-td-lambda.md) §3, and UCB and Thompson sampling are the usual next steps.
+Pure greed ($\epsilon = 0$) keeps pulling the worst machine. All estimates tie at 0, `argmax` picks the first index, and since rewards are never negative machine 0's estimate never drops below the untried machines' 0 — so it never tries the others. (Setting a high initial `Q[0]` wouldn't change this: the first $1/N$ update overwrites it.) A little randomness finds the best machine; too much (0.3) wastes pulls on known-bad ones. ε-greedy is the only exploration method the course teaches; optimistic initial values appear in [function-approximation-td-lambda](function-approximation-td-lambda.md) §3, and UCB and Thompson sampling are the usual next steps.
 
 ## 5. Course logistics, Theano/TF basics and the appendix
 
@@ -165,13 +162,13 @@ Pure greed ($\epsilon = 0$) keeps pulling the worst machine: it's never disappoi
 ## Trade-offs
 
 - **Exact solve vs sampling.** Exact and instant for small known models vs works without the rules but needs many episodes.
-- **MC vs TD.** Unbiased, needs complete episodes vs online, lower variance, biased early.
+- **MC vs TD.** Unbiased, needs complete episodes vs online, lower-variance targets, biased early. With constant $\alpha$ TD stalls at a noise floor; $1/n$ MC keeps improving and overtakes it on this walk by 100 episodes.
 - **$1/n$ vs constant $\alpha$.** True average of a fixed target vs tracks a moving target (needed in control).
 - **More vs less exploration.** Finds better actions vs wastes steps on known-bad ones; decay ε over time.
 
 ## Common Pitfalls
 
-- **Greedy without exploration.** One lucky early estimate locks the agent in forever.
+- **Greedy without exploration.** Untried actions keep their initial estimate, so once a tried action looks at least that good (here: any non-negative reward vs an initial 0, with ties going to index 0) the agent never tries anything else.
 - **Rewards only at the goal.** Sparse rewards give no signal until the goal is found by chance; shape them carefully (a step cost) or explore harder.
 - **Computing returns forwards.** Walk rewards backwards with `G = r + gamma * G`; forwards needs a nested loop.
 - **Bootstrapping from terminal states.** $V(\text{terminal}) = 0$; don't add $\gamma V(s')$ after the episode ended.

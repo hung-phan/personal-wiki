@@ -1,6 +1,6 @@
 ---
 name: self-organizing-maps
-description: Self-organizing maps (SOM, Kohonen map) explained with runnable numpy code — node weights as coordinates in input space, best matching unit (BMU), Gaussian neighbourhood pull that shrinks over time, topology preservation, no backprop; K-Means warm-up with WCSS, the elbow method and the random-initialisation trap vs k-means++ and n_init; U-matrix (mean inter-neuron distance, MiniSom distance_map) on a credit-application table to flag possible fraud, compared with quantisation-error ranking and a random baseline; why the hybrid SOM-then-ANN model learns pseudo-labels, not fraud. Study guide for Deep Learning A-Z Part 4 (sections 15–17).
+description: Self-organizing maps (SOM, Kohonen map) explained with runnable numpy code — node weights as coordinates in input space, best matching unit (BMU), Gaussian neighbourhood pull that shrinks over time, topology preservation, no backprop; K-Means warm-up with WCSS, the elbow method and the random-initialisation trap vs k-means++ and n_init; U-matrix (mean inter-neuron distance, MiniSom distance_map with scaling=mean, not the default sum) on a credit-application table to flag possible fraud, compared with quantisation-error ranking and a random baseline; why the hybrid SOM-then-ANN model learns pseudo-labels, not fraud. Study guide for Deep Learning A-Z Part 4 (sections 15–17).
 created: 2026-11-13
 updated: 2026-11-13
 tags: [deep-learning, self-organizing-maps, som, kohonen, k-means, clustering, anomaly-detection, unsupervised-learning, numpy, keras, study-guide, deep-learning-a-z]
@@ -157,7 +157,7 @@ The course shows a SOM of countries on ~40 World Bank quality-of-life indicators
 
 ## 3. Reading a SOM: the U-matrix
 
-A trained 10×10 map has 100 nodes, each a 15-number vector. To see it, colour each cell by how far its node is from its grid neighbours — the **U-matrix** (unified distance matrix; the course calls it *mean inter-neuron distance*, MID; MiniSom's `distance_map()`):
+A trained 10×10 map has 100 nodes, each a 15-number vector. To see it, colour each cell by how far its node is from its grid neighbours — the **U-matrix** (unified distance matrix; the course calls it *mean inter-neuron distance*, MID; MiniSom's `distance_map(scaling="mean")` — its default `scaling="sum"` adds the distances instead, so edge and corner cells, with fewer neighbours, come out darker):
 
 - **Dark cell** — the node is close to its neighbours. It sits inside a dense region of data.
 - **White cell** — the node is far from its neighbours. It sits in a gap: on the border between two clusters, or alone near a few unusual rows.
@@ -201,7 +201,7 @@ for t in range(T):
 Wg = W.reshape(R, C, -1)
 U = np.array([[np.mean([np.linalg.norm(Wg[r, c] - Wg[i, j]) for i in range(max(r - 1, 0), min(r + 2, R))
                for j in range(max(c - 1, 0), min(c + 2, C)) if (i, j) != (r, c)]) for c in range(C)] for r in range(R)])
-U /= U.max()                                              # U-matrix (MiniSom's distance_map): mean distance to neighbours
+U /= U.max()                                              # U-matrix: mean distance to neighbours (MiniSom distance_map(scaling="mean"))
 dist = ((X[:, None] - W[None]) ** 2).sum(-1)
 bmu = dist.argmin(1); qe = np.sqrt(dist.min(1))           # each row's winning node, and how far it is from it
 order = np.argsort(U.ravel())[::-1]                       # cells from whitest to darkest
@@ -237,7 +237,7 @@ for iters in (0, 100, 10_000):                             # course: 100 iterati
     som.random_weights_init(X)                             # start nodes on randomly chosen rows
     if iters: som.train_random(X, iters)
     print(f"{iters:>6} iterations: quantisation error {som.quantization_error(X):.3f}")
-U = som.distance_map()                                     # U-matrix, scaled to max 1
+U = som.distance_map(scaling="mean")                     # U-matrix: mean distance to neighbours, max 1 (default is "sum")
 cells = som.win_map(X)                                     # {(i, j): rows whose BMU is that node}
 i, j = np.unravel_index(U.argmax(), U.shape)
 print("whitest cell:", (int(i), int(j)), "| rows in it:", len(cells.get((i, j), [])), "| U shape:", U.shape)
@@ -245,7 +245,7 @@ print("whitest cell:", (int(i), int(j)), "| rows in it:", len(cells.get((i, j), 
 #      0 iterations: quantisation error 0.445
 #    100 iterations: quantisation error 0.437
 #  10000 iterations: quantisation error 0.395
-# whitest cell: (3, 8) | rows in it: 5 | U shape: (10, 10)
+# whitest cell: (3, 0) | rows in it: 4 | U shape: (10, 10)
 ```
 
 Note what `num_iteration=100` means: 100 *single rows*, not 100 passes over the data. With 690 rows, the course's map has seen each row about once at most, and barely moved from its starting point. Use thousands of iterations (or `train(X, n, random_order=True)` for several passes).
@@ -279,7 +279,7 @@ for t in range(T):
 Wg = W.reshape(R, C, -1)
 U = np.array([[np.mean([np.linalg.norm(Wg[r, c] - Wg[i, j]) for i in range(max(r - 1, 0), min(r + 2, R))
                for j in range(max(c - 1, 0), min(c + 2, C)) if (i, j) != (r, c)]) for c in range(C)] for r in range(R)])
-U /= U.max()                                              # U-matrix (MiniSom's distance_map): mean distance to neighbours
+U /= U.max()                                              # U-matrix: mean distance to neighbours (MiniSom distance_map(scaling="mean"))
 dist = ((X[:, None] - W[None]) ** 2).sum(-1)
 bmu = dist.argmin(1); qe = np.sqrt(dist.min(1))           # each row's winning node, and how far it is from it
 order = np.argsort(U.ravel())[::-1]                       # cells from whitest to darkest
@@ -298,11 +298,11 @@ top = np.argsort(p)[-20:]                                 # the course's output:
 print(f"precision vs TRUE fraud, top 20:  ANN ranking {fraud[top].mean():.0%}   SOM flags {fraud[flag > 0].mean():.0%}   random {fraud.mean():.0%}")
 # Expected output:
 # ANN accuracy vs SOM flags 97.1%   'never fraud' scores 97.1%
-# precision vs TRUE fraud, top 20:  ANN ranking 10%   SOM flags 40%   random 3%
+# precision vs TRUE fraud, top 20:  ANN ranking 30%   SOM flags 40%   random 3%
 ```
 
 - **97.1% accuracy** sounds great, and is exactly what you'd get by predicting "not fraud" for everyone, because only 20 of 690 rows are flagged.
-- **Its top 20 contains 2 true frauds**; the SOM's own flags held 8. Imitating a noisy labeller with a tiny network, from 2 epochs, loses most of what the labeller knew.
+- **Its top 20 contains 6 true frauds**; the SOM's own flags held 8. On 20 rows that gap alone is within noise, but seed 0 is the ANN's best case: Keras seeds 1–4 gave 10%, 5%, 5% and 15%. Imitating a noisy labeller with a tiny network, from 2 epochs, loses some of what the labeller knew, and how much depends on the seed.
 
 What the hybrid is *for*, honestly: turning the SOM's hard in/out flags into a smooth score you can apply to new applications. If you do that, at least compare it with the quantisation-error ranking (§4), which already gives a score, and get a few cases labelled by humans to measure precision.
 

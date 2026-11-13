@@ -185,7 +185,7 @@ Streaming doesn't make the answer faster to finish; it makes the first words app
 ## 6. JSON output and chaining calls: the brochure project
 
 **The course project.** Given a company's website, write a brochure for customers, investors and recruits. Two LLM calls:
-1. **Pick the useful links.** Scrape the homepage's links and ask a cheap model which ones matter (about page, careers, products — not privacy or terms pages). Ask for JSON, and give **one example of the exact shape** in the system prompt (one-shot prompting). Turn on **JSON mode** (`response_format={"type": "json_object"}`), which constrains decoding so the output always parses.
+1. **Pick the useful links.** Scrape the homepage's links and ask a cheap model which ones matter (about page, careers, products — not privacy or terms pages). Ask for JSON, and give **one example of the exact shape** in the system prompt (one-shot prompting). Turn on **JSON mode** (`response_format={"type": "json_object"}`), which constrains decoding to valid JSON — unless the reply is cut off at the token limit (`finish_reason == "length"`), which leaves truncated JSON. OpenAI also requires the word "JSON" somewhere in the messages.
 2. **Write the brochure.** Fetch those pages, paste their text (truncated to ~5,000 characters) into a second prompt, and stream the markdown result.
 
 ```python
@@ -205,7 +205,8 @@ links_prompt = ('Pick the links useful for a company brochure. Reply in JSON lik
                 '{"links": [{"type": "about page", "url": "https://..."}]}. Skip privacy and terms pages.')   # one-shot example
 r1 = client.chat.completions.create(model="demo", response_format={"type": "json_object"},
         messages=[{"role": "system", "content": links_prompt}, {"role": "user", "content": "Links: /about /jobs /privacy"}])
-links = json.loads(r1.choices[0].message.content)["links"]   # JSON mode: safe to parse
+assert r1.choices[0].finish_reason == "stop", "reply cut off: JSON may be truncated"   # "length" = hit max_tokens
+links = json.loads(r1.choices[0].message.content)["links"]   # valid JSON once it finished normally
 urls = ", ".join(l["url"] for l in links)
 r2 = client.chat.completions.create(model="demo", messages=[{"role": "user", "content": urls}])
 print(links); print(r2.choices[0].message.content)
@@ -278,7 +279,7 @@ Two definitions of **agent** appear early: an LLM that controls its own workflow
 | Private data, no budget | Local model via Ollama | Frontier API | Nothing leaves the machine |
 | Hard maths/logic/code | Reasoning model | Chat model | Thinking tokens buy accuracy |
 | Fast, cheap, fluent text | Small chat model | Reasoning model | Lower latency and cost |
-| Output feeds code | JSON mode / structured outputs + validation | Regex on prose | Guaranteed to parse |
+| Output feeds code | JSON mode / structured outputs + validation | Regex on prose | Parses unless cut off at max_tokens (check `finish_reason`) |
 | Long chat getting slow/expensive | Trim/summarise history, prompt caching | Sending everything forever | Input cost grows every turn |
 | Show progress to a user | `stream=True` | Waiting for the full reply | First words appear immediately |
 

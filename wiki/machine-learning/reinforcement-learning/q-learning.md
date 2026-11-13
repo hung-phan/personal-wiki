@@ -129,7 +129,7 @@ for living in (0.0, -0.04, -0.3, -2.0):                           # reward for e
 (Each row of the printout is one grid row: `^ > v <` are up, right, down, left.) Watch the cell directly under the pit (row 3, last column):
 - **0** — it steps *down*, away from the pit. Moving left would risk a 10% slip up into it, and walking around is free, so take no risk at all.
 - **−0.04** — it heads *left* toward the goal, accepting the 10% slip risk: dawdling now costs something.
-- **−0.3** — it steps *up, into the pit*. Five paid steps on the safe route (plus the risk of slipping) now cost more than the 2-point gap between the goal's +1 and the pit's −1.
+- **−0.3** — it steps *up*, toward the pit (80% of the time it lands in it). The safe route is 5 paid steps on paper, which costs only 1.5, less than the 2-point gap between the goal's +1 and the pit's −1. Slips are what tip it: following the safe route from this cell takes about 7.4 moves on average (so roughly 6.4 paid steps, about 1.9 in cost) and still ends in the pit about 11% of the time. With $\gamma = 0.9$ the distant +1 also shrinks. It is a near-tie: Q(up) ≈ −1.025 against Q(left) ≈ −1.064. With $\gamma = 1$ the cell still chooses up (−1.042 against −1.132), so discounting is not the main cause.
 - **−2.0** — even the start row races right toward the pit to end the episode sooner.
 
 The course's 3×4 maze shows the same progression, including a policy that deliberately bumps into a wall to avoid any chance of slipping into the pit.
@@ -213,7 +213,7 @@ The course's implementation is a downloadable exercise: route a warehouse robot 
 
 - **No discounting on a path problem.** All cells on any successful path look equally good.
 - **No exploration.** The agent locks onto the first route it finds.
-- **Mis-sized step rewards.** A step cost larger than the worst terminal penalty makes "end it now" optimal.
+- **Mis-sized step rewards.** A step cost larger than the worst terminal penalty is enough to make "end it now" optimal, but a much smaller one can do it too. What counts is the *expected* cost of the safe route, slips and detours included, so in §3 a −0.3 step cost already sends one cell into the pit.
 - **Treating a plan as a policy.** In random environments you need an action for every state.
 - **Expecting values for unvisited states.** Q-learning knows nothing about states it never reaches; start states and exploration matter.
 - **Tables for big state spaces.** The table explodes; move to function approximation.

@@ -220,6 +220,7 @@ The stand-in dataset below: noisy 64×64 RGB images with either a circle ("cat",
 ```python
 import numpy as np, torch, torch.nn as nn
 torch.manual_seed(0); rng = np.random.default_rng(0)
+torch.set_num_threads(1)                            # CPU results shift with thread count; pin it to reproduce the output
 def shapes(n):                                      # stand-in for cats/dogs: circle = 0, square = 1, uint8 RGB 64x64
     yy, xx = np.mgrid[:64, :64]
     y = rng.integers(0, 2, n); X = rng.integers(0, 120, (n, 64, 64, 3)).astype(np.uint8)   # noisy background
@@ -252,12 +253,12 @@ print("forgot /255 -> accuracy:", round(((raw > 0.5) == yte.bool()).float().mean
       "| share of outputs at exactly 0 or 1:", round(((raw < 1e-6) | (raw > 1 - 1e-6)).float().mean().item(), 3))
 # Expected output:
 # majority-class baseline: 0.512
-# CNN test accuracy: 0.918
+# CNN test accuracy: 0.957
 # forgot /255 -> accuracy: 0.488 | share of outputs at exactly 0 or 1: 1.0
 ```
 
 Three things to read:
-- **Baseline first.** Classes are balanced, so always guessing the bigger class scores 51%. The CNN's 92% is the real gain.
+- **Baseline first.** Classes are balanced, so always guessing the bigger class scores 51%. The CNN's 96% is the real gain.
 - **Augmentation only on training batches.** The flip happens inside the training loop; test images are never flipped. Augmenting test data would just add noise to the score.
 - **Forgetting the rescale breaks everything.** The model learned on pixels in [0, 1]. Feed it raw 0–255 pixels and every activation is ~255× too large, so every sigmoid output saturates to exactly 0 or 1 and accuracy falls to coin-flip (49%). The course's single-image prediction does exactly this (see below).
 
@@ -265,8 +266,9 @@ Three things to read:
 
 ```python
 import os; os.environ.setdefault("KERAS_BACKEND", "torch")
-import numpy as np, keras
+import numpy as np, keras, torch
 keras.utils.set_random_seed(0); rng = np.random.default_rng(0)
+torch.set_num_threads(1)                            # torch backend: pin CPU threads so the output reproduces
 def shapes(n):                                      # same circle (0) vs square (1) stand-in, channels-last uint8
     yy, xx = np.mgrid[:64, :64]
     y = rng.integers(0, 2, n); X = rng.integers(0, 120, (n, 64, 64, 3)).astype(np.uint8)
@@ -292,11 +294,11 @@ print("CNN test accuracy:", round(float(((p > 0.5) == yte).mean()), 3))
 print("params:", cnn.count_params())
 # Expected output:
 # majority-class baseline: 0.512
-# CNN test accuracy: 0.755
+# CNN test accuracy: 0.865
 # params: 813217
 ```
 
-Same architecture, same 250 update steps, 813,217 parameters as in the table. Keras lands lower here (76% vs 92%) mainly because its default weight initialisation (Glorot) differs from PyTorch's (Kaiming) and the run is short; more epochs close the gap. Same architecture ≠ same training run.
+Same architecture, same 250 update steps, 813,217 parameters as in the table. Keras lands lower on this seed (87% vs 96%), but don't read that as a framework difference: one seed of a 250-step run on 1,600 images is too noisy. Rerunning both snippets with seeds 0–4 (data fixed, one CPU thread) gave PyTorch 0.67–0.96 (mean 0.83) and Keras 0.64–0.91 (mean 0.80), and Keras won on seed 1. The two loops also differ in more than the framework: Keras starts from Glorot-uniform weights while PyTorch uses `kaiming_uniform_(a=√5)`, `fit()` shuffles every epoch while the torch loop doesn't, and Adam's default epsilon differs (1e-7 vs 1e-8). None of these was tested on its own. The scores even shift with the CPU thread count, which is why both snippets pin it. Same architecture ≠ same training run.
 
 The important change is `Rescaling(1/255)` and `RandomFlip` *as layers*. The model takes raw pixels, so no caller can forget to rescale, and augmentation layers switch themselves off in `predict()` and `evaluate()`.
 
@@ -347,7 +349,7 @@ print("one image for predict():", np.expand_dims(img, 0).shape, "max", img.max()
 | `flow_from_directory(dir, target_size, class_mode="binary")` | `keras.utils.image_dataset_from_directory(dir, image_size, label_mode="binary")` |
 | `rescale=1./255` | `keras.layers.Rescaling(1/255)` as the model's first layer |
 | `horizontal_flip=True`, `zoom_range=0.2` | `keras.layers.RandomFlip("horizontal")`, `keras.layers.RandomZoom(0.2)` |
-| `shear_range=0.2` | no built-in layer in Keras 3; `RandomRotation` or `RandomTranslation` cover similar ground |
+| `shear_range=0.2` | `keras.layers.RandomShear(x_factor=0.2)` (Keras 3.8+, released Jan 2025). Units differ: `shear_range` was an angle in degrees, while `x_factor` is the fraction of the image width to shear across, so 0.2 here is a much stronger shear |
 | separate generator without augmentation for test data | not needed: augmentation layers are inactive outside `fit()` |
 | `keras.preprocessing.image.load_img` / `img_to_array` | `keras.utils.load_img` / `keras.utils.img_to_array` |
 | `training_set.class_indices` | `dataset.class_names` (alphabetical: cats = 0, dogs = 1) |

@@ -119,7 +119,7 @@ The two classes differ only along a direction with little variance; PCA keeps th
 - **Forgetting to standardise before PCA.** Large-unit features dominate the components.
 - **Assuming high variance means useful.** See §3; check downstream accuracy.
 - **Reading components as original features.** Each is a mix of all 13.
-- **Using LDA with many classes and few rows.** Scatter matrices become unstable; regularise (`solver="eigen", shrinkage="auto"`).
+- **Using plain LDA with many features and few rows.** The pooled within-class covariance has rank at most rows − classes, so it is singular once features exceed that and noisy when they come close. Regularise with `solver="lsqr"` or `"eigen"` plus `shrinkage="auto"`; the default `"svd"` solver doesn't support shrinkage.
 
 ## Decision Table
 

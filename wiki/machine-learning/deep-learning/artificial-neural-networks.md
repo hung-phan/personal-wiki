@@ -70,7 +70,7 @@ A network with no hidden layer is one weighted sum — with a sigmoid output, th
 ## 3. How it learns
 
 ### Cost
-Compare the prediction $\hat y$ with the truth $y$. Squared error $\tfrac12(\hat y - y)^2$ for numbers; **cross-entropy** for probabilities (it punishes confident wrong answers much harder, which gives stronger gradients — see [convolutional-neural-networks](convolutional-neural-networks.md) §5).
+Compare the prediction $\hat y$ with the truth $y$. Squared error $\tfrac12(\hat y - y)^2$ for numbers; **cross-entropy** for probabilities (it punishes confident wrong answers much harder, which gives stronger gradients — see [convolutional-neural-networks](convolutional-neural-networks.md) §4).
 
 ### Gradient descent
 Trying every weight combination is hopeless (25 weights × 1000 values each = $10^{75}$ tries). Instead compute the slope of the cost with respect to each weight and step downhill. The **learning rate** sets the step size:

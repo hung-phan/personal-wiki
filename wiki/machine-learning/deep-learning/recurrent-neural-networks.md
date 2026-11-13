@@ -209,7 +209,9 @@ rmse = lambda p: np.sqrt(((p - test) ** 2).mean())
 print(f"test RMSE  LSTM {rmse(pred):.2f}   naive yesterday {rmse(naive):.2f}")
 up = np.diff(price[1257:]) > 0                           # did the price actually go up that day?
 print(f"direction accuracy  LSTM {((pred > naive) == up).mean():.2f}   always 'up' {up.mean():.2f}")
-print(f"LSTM error vs today {rmse(pred):.2f}  vs YESTERDAY {np.sqrt(((pred - naive) ** 2).mean()):.2f}")
+ma = lambda k: np.convolve(price, np.ones(k) / k, "valid")[1258 - k:-1]   # mean of the k days ending yesterday
+print(f"LSTM error vs today {rmse(pred):.2f}" + "".join(
+    f"   vs {k}-day mean {np.sqrt(((pred - ma(k)) ** 2).mean()):.2f}" for k in (1, 5, 10)))
 
 plt.figure(figsize=(8, 3)); d = np.arange(190, 250)        # last 60 test days, zoomed in
 plt.plot(d, test[d], "k", label="real"); plt.plot(d, pred[d], "r", label="LSTM"); plt.plot(d, naive[d], "b:", label="yesterday")
@@ -218,15 +220,15 @@ plt.legend(); plt.title("the LSTM draws a smoothed, lagging copy of the price");
 # test days outside the training price range: 0.0
 # test RMSE  LSTM 7.05   naive yesterday 4.19
 # direction accuracy  LSTM 0.58   always 'up' 0.49
-# LSTM error vs today 7.05  vs YESTERDAY 6.60
+# LSTM error vs today 7.05   vs 1-day mean 6.60   vs 5-day mean 4.36   vs 10-day mean 3.48
 ```
 
 Read the numbers:
 - **The naive forecast wins**, 4.2 vs 7.1. The LSTM is *worse* than repeating yesterday's price.
-- **The LSTM's output is closer to yesterday's price than to today's** (6.6 vs 7.1). It has learned to draw a smoothed copy of recent prices — a moving average. The plot shows it: the red line is the black line, delayed and blurred. That is what "it lags but follows the trend" means.
+- **The LSTM's output tracks a trailing average, not the current price.** It sits 7.05 from today's price, 6.60 from yesterday's, but only 4.36 from the 5-day mean and 3.48 from the 10-day mean — the last two printed lines are the lag check, and they say the output is closest to a smoothed version of the recent past. The plot shows it: the red line is the black line, delayed and blurred. That is what "it lags but follows the trend" means.
 - **Direction accuracy 0.58** looks like skill but isn't: the daily changes here are independent random draws, so no model can predict them. With 250 days, the 95% range for pure luck is roughly 0.44–0.56; 0.58 is a mildly lucky sample (it stays at 0.58 across model seeds because it's a property of this price path, not the model). On 20 days, as in the course, anything from 0.3 to 0.7 is noise.
 
-**Extrapolation failure.** Change `default_rng(2)` to `default_rng(0)`: that walk drifts above its training-period high, 82% of the test days fall outside the range the scaler saw, and the LSTM's RMSE jumps to about 61 against the naive 4. A MinMax-scaled LSTM learned to output values in roughly [0, 1]; it can't follow a price to a level it never saw. Predict *changes* (returns) instead of levels, and this problem — and most of the lag illusion — goes away.
+**Extrapolation failure.** The path above is the kind one: zero test days fall outside the training price range, so the comparison above is about lag alone. Most other seeds aren't that kind — with an upward drift the walk usually ends above its training-period high, nearly every test day lands outside the scaler's range, and the LSTM's RMSE goes to tens of points while the naive baseline stays near 4. Change `default_rng(2)` to `default_rng(0)`: that walk drifts above its training-period high, 82% of the test days fall outside the range the scaler saw, and the LSTM's RMSE jumps to about 61 against the naive 4. A MinMax-scaled LSTM learned to output values in roughly [0, 1]; it can't follow a price to a level it never saw. Predict *changes* (returns) instead of levels, and this problem — and most of the lag illusion — goes away.
 
 ### Keras
 
@@ -255,7 +257,7 @@ naive = price[1257:-1]
 rmse = lambda p: np.sqrt(((p - test) ** 2).mean())
 print(f"test RMSE  LSTM {rmse(pred):.2f}   naive yesterday {rmse(naive):.2f}   params {model.count_params()}")
 # Expected output:
-# test RMSE  LSTM 7.22   naive yesterday 4.19   params 71051
+# test RMSE  LSTM 7.26   naive yesterday 4.19   params 71051
 ```
 
 Same data, same 20 epochs × 38 batches, and the same conclusion: about 7 vs the naive 4. Seventy-one thousand parameters to lose to a one-line baseline.

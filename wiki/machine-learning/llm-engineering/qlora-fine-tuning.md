@@ -131,8 +131,9 @@ def predict(m, t):
     s = re.findall(r"\d+", tok.decode(out[0, ids["input_ids"].shape[1]:]))
     return float(s[0]) if s else 0.0
 test = [item() for _ in range(30)]
+train_mean = np.mean([item()[1] for _ in range(200)])       # constant guess from training-style items, not the test set
 mae = lambda m: np.mean([abs(predict(m, t) - p) for t, p in test])
-print(f"base model MAE: ${mae(model):.0f}   (constant baseline ${np.mean([abs(np.mean([p for _, p in test]) - p) for _, p in test]):.0f})")
+print(f"base model MAE: ${mae(model):.0f}   (constant baseline ${np.mean([abs(train_mean - p) for _, p in test]):.0f})")
 model = get_peft_model(model, LoraConfig(r=8, lora_alpha=16, lora_dropout=0.1,
                                           target_modules=["q_proj", "k_proj", "v_proj", "o_proj"], task_type="CAUSAL_LM"))
 model.print_trainable_parameters()
@@ -149,15 +150,15 @@ for step in range(60):
     if step in (0, 20, 59): print(f"step {step:2d} loss {loss.item():.3f}")
 model.eval(); print(f"after LoRA fine-tune MAE: ${mae(model):.0f}")
 # Expected output:
-# base model MAE: $197   (constant baseline $269)
+# base model MAE: $197   (constant baseline $266)
 # trainable params: 921,600 || all params: 135,436,608 || trainable%: 0.6805
-# step  0 loss 3.701
-# step 20 loss 1.563
-# step 59 loss 1.220
-# after LoRA fine-tune MAE: $24
+# step  0 loss 4.317
+# step 20 loss 1.449
+# step 59 loss 1.124
+# after LoRA fine-tune MAE: $18
 ```
 
-Before training the base model is worse than useless (it's off by $197; always guessing the average is $269). After 60 small steps on 0.7% of the parameters it's off by $24. The course's story at full scale: base Llama 3.2 3B $110.72 (worse than the constant guess) → light run $65.40 → full run **$39.85**.
+Before training the base model is poor (off by $197, only modestly better than always guessing the training average, $266). After 60 small steps on 0.7% of the parameters it's off by $18 (one seeded run; small-sample numbers move a few dollars with the seed). The course's story at full scale: base Llama 3.2 3B $110.72 (worse than the $106.18 constant guess) → light run $65.40 → full run **$39.85**.
 
 **Why round prices to whole dollars for training?** Cross-entropy grades every token equally, so cents would get as much weight as dollars. And Llama 3's tokenizer has a single token for every integer 0–999, so a price is often one token: price prediction becomes **classification over number tokens**. That has a consequence worth seeing:
 

@@ -54,7 +54,7 @@ print("xgboost's first split:", tree["split"], "<", tree["split_condition"], " g
 
 The hand computation and XGBoost's own first split agree exactly — the gain formula *is* the algorithm (for squared error, each point's hessian is 1, so $n$ in the denominator is the sum of hessians). The course's toy example: gain 43 + 123 − 16 = 150.
 
-**XGBoost for classification.** Start every point at probability 0.5. Residuals are $y - p$; the similarity score's denominator becomes $\sum p(1 - p) + \lambda$ (the hessians of the log-loss), and leaf outputs are in **log-odds**, added up across trees and converted back with the sigmoid (the course: $0 + 2 + 1.51 = 3.51$ log-odds → probability 0.97). Points in the same leaf can end with different probabilities because their starting probabilities differed.
+**XGBoost for classification.** The course starts every point at probability 0.5. The library doesn't by default: since XGBoost 2.0 it estimates `base_score` from the labels (on xgboost 3.4.1, breast-cancer data gives 0.6274, the positive-class rate), so set `base_score=0.5` if you want to match a hand computation. Residuals are $y - p$; the similarity score's denominator becomes $\sum p(1 - p) + \lambda$ (the hessians of the log-loss), and leaf outputs are in **log-odds**, added up across trees and converted back with the sigmoid (the course: $0 + 2 + 1.51 = 3.51$ log-odds → probability 0.97). Points in the same leaf can end with different probabilities because their starting probabilities differed.
 
 ## 2. LightGBM: making the search fast
 

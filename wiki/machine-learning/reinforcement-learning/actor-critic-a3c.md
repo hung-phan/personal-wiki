@@ -7,7 +7,7 @@ tags: [reinforcement-learning, actor-critic, deep-rl-python, a3c, a2c, policy-gr
 ---
 # Actor-Critic, A3C, PPO and SAC
 
-> **How to read this note.** Study guide for *AI A-Z*, Part 7 (A3C, sections 15–16: playing Kung Fu Master) and Part 8 (PPO and SAC, section 17). Part 8 is a two-minute motivation video plus a link to an external one-hour AWS DeepRacer workshop that trains PPO and SAC for a self-driving car; that workshop isn't part of the course text, so §5 covers the two algorithms' core ideas on its own. Read [q-learning](q-learning.md) and [deep-q-learning](deep-q-learning.md) first; [policy-gradients](policy-gradients.md) derives the actor's loss. §6 adds the threaded A3C from *Deep Reinforcement Learning in Python* (section 7). The snippets need `torch` and `gymnasium`; the CartPole actor-critic trains in about 5 seconds.
+> **How to read this note.** Study guide for *AI A-Z*, Part 7 (A3C, sections 15–16: playing Kung Fu Master) and Part 8 (PPO and SAC, section 17). Part 8 is a two-minute motivation video plus a link to an external one-hour AWS DeepRacer workshop that trains PPO and SAC for a self-driving car; that workshop isn't part of the course text, so §5 covers the two algorithms' core ideas on its own. Read [q-learning](q-learning.md) and [deep-q-learning](deep-q-learning.md) first; [policy-gradients](policy-gradients.md) derives the actor's loss. §6 adds the threaded A3C from *Deep Reinforcement Learning in Python* (section 7). The snippets need `torch` and `gymnasium`; the CartPole actor-critic trains in about 10 seconds.
 
 ## Why This Exists
 
@@ -69,17 +69,20 @@ net = ActorCritic(); opt = torch.optim.Adam(net.parameters(), lr=7e-4)
 gamma, beta = 0.99, 0.01                                   # discount, entropy bonus weight
 s, _ = envs.reset(seed=0); ep_ret, finished = np.zeros(N), []
 for it in range(2000):
-    logps, values, ents, rewards, alive = [], [], [], [], []
+    logps, values, ents, rewards, cont, tails = [], [], [], [], [], []
     for _ in range(STEPS):                                 # collect a short rollout from every env
         logits, v = net(torch.tensor(s)); dist = torch.distributions.Categorical(logits=logits); a = dist.sample()
-        s, r, term, trunc, _ = envs.step(a.numpy())
-        logps.append(dist.log_prob(a)); values.append(v); ents.append(dist.entropy())
-        rewards.append(torch.tensor(r, dtype=torch.float32)); alive.append(torch.tensor(1.0 - (term | trunc), dtype=torch.float32))
-        ep_ret += r; done = term | trunc; finished += list(ep_ret[done]); ep_ret[done] = 0
+        s, r, term, trunc, info = envs.step(a.numpy())
+        tail = torch.zeros(N)                              # time-limit cut: bootstrap from V(final_obs), not from the reset state s
+        if trunc.any():
+            with torch.no_grad(): tail[trunc] = net(torch.tensor(np.stack(info["final_obs"][trunc])))[1]
+        logps.append(dist.log_prob(a)); values.append(v); ents.append(dist.entropy()); tails.append(tail)
+        done = term | trunc; rewards.append(torch.tensor(r, dtype=torch.float32)); cont.append(torch.tensor(1.0 - done, dtype=torch.float32))
+        ep_ret += r; finished += list(ep_ret[done]); ep_ret[done] = 0
     with torch.no_grad(): R = net(torch.tensor(s))[1]      # bootstrap from the critic after the last step
     returns = []
-    for r, m in zip(reversed(rewards), reversed(alive)):  # n-step return: r_t + γ r_t+1 + ... + γ^n V(s_t+n)
-        R = r + gamma * R * m; returns.insert(0, R)
+    for r, c, t in zip(reversed(rewards), reversed(cont), reversed(tails)):   # n-step return: r_t + γ r_t+1 + ... + γ^n V(s_t+n)
+        R = r + gamma * (R * c + t); returns.insert(0, R)  # terminated: 0 future value; truncated: V(final_obs)
     adv = torch.stack(returns) - torch.stack(values)       # advantage: better or worse than the critic expected?
     actor_loss = -(torch.stack(logps) * adv.detach()).mean()   # raise probability of better-than-expected actions
     critic_loss = adv.pow(2).mean()                        # critic learns to predict the return
@@ -89,11 +92,11 @@ for it in range(2000):
 # Expected output:
 # update 500: mean return of last 20 episodes   35.4
 # update 1000: mean return of last 20 episodes   81.3
-# update 1500: mean return of last 20 episodes  145.3
-# update 2000: mean return of last 20 episodes  218.6
+# update 1500: mean return of last 20 episodes  132.2
+# update 2000: mean return of last 20 episodes  154.9
 ```
 
-Returns climb from ~35 to ~220 in 2,000 small updates, a few seconds of CPU. A one-step version of the same code (the course's choice) learned too, but much more noisily. Two Gymnasium 1.x details matter: vector environments **reset finished episodes automatically**, and the default mode does it on the *next* call — mixing a bogus transition into training. `AutoresetMode.SAME_STEP` avoids that.
+Returns climb from ~35 to ~155 in 2,000 small updates, about 10 seconds of CPU. That is one seed: over seeds 0–4 the mean return at update 2,000 ranged from 124 to 210 (torch 2.15 CPU, gymnasium 1.4), and the curve is not monotone (seeds 1 and 4 dipped between updates 1,500 and 2,000). The course uses one-step advantages instead (§4). Three Gymnasium 1.x details matter: vector environments **reset finished episodes automatically**, and the default mode does it on the *next* call — mixing a bogus transition into training. `AutoresetMode.SAME_STEP` avoids that, but it means `s` after a finished step is already the *new* episode's first observation. So a **terminated** step (the pole fell) gets zero future value, while a **truncated** step (CartPole's 500-step time limit) is bootstrapped from $V$ of `info["final_obs"]`, the state the episode was cut at — the same terminated-vs-truncated rule as [deep-q-learning](deep-q-learning.md).
 
 ## 4. The course's Kung Fu Master agent
 
@@ -145,7 +148,7 @@ With a good action (A = +2), pushing its probability 60% higher only counts as 2
 **Soft Actor-Critic** targets continuous actions (steering, throttle). It's off-policy — it learns from a replay buffer like DQN — and maximises reward **plus an entropy bonus** $\alpha H(\pi)$, so among equally good behaviours it prefers the most random one. That keeps exploring and makes it robust; it typically learns from fewer environment steps than PPO.
 
 ### The DeepRacer workshop
-The course's Part 8 link trains both on **AWS DeepRacer** (a 1/18-scale autonomous car in a simulator): PPO with discrete and continuous steering, SAC with continuous. You write a reward function (e.g. stay near the centre line), pick an algorithm and train in the AWS console.
+The course's Part 8 link trains both on **AWS DeepRacer** (a 1/18-scale autonomous car in a simulator): PPO with discrete and continuous steering, SAC with continuous. You write a reward function (e.g. stay near the centre line), pick an algorithm and train. Note: as of 15 December 2025 AWS DeepRacer is no longer available as a service in the AWS Console and the cars are no longer sold (AWS DeepRacer FAQ); to reproduce the workshop you deploy the open-source *DeepRacer on AWS* solution into your own AWS account.
 
 ## 6. A real A3C in *Deep RL in Python* (Breakout)
 
@@ -176,6 +179,7 @@ Compared with the AI A-Z version (§4): separate value and policy losses instead
 - **No entropy bonus.** The policy collapses to one action early and stops exploring.
 - **Unscaled rewards.** Large game scores blow up losses; scale or normalise (the course multiplies by 0.01).
 - **Vector-env autoreset surprises.** Know your library's reset mode, and don't bootstrap across episode boundaries.
+- **Treating time-limit truncation as termination.** Zeroing the bootstrap at a time limit tells the critic the state is worth nothing when the episode was merely cut off; bootstrap truncated steps from $V$ of the final observation (with `SAME_STEP` autoreset, `info["final_obs"]`).
 - **Single frames in games.** Stack frames (or use recurrence) so the state shows motion.
 - **Calling batched A2C "A3C".** Fine in conversation; matters when you reproduce papers.
 
@@ -195,7 +199,7 @@ Compared with the AI A-Z version (§4): separate value and policy losses instead
 - [Schulman et al. — Proximal Policy Optimization (2017)](https://arxiv.org/abs/1707.06347) · [Generalized Advantage Estimation (2015)](https://arxiv.org/abs/1506.02438)
 - [Haarnoja et al. — Soft Actor-Critic (2018)](https://arxiv.org/abs/1801.01290)
 - [OpenAI Spinning Up — key concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html) · [Sutton & Barto, 2nd ed., ch. 13 (policy gradients)](http://incompleteideas.net/book/the-book-2nd.html)
-- [ALE Kung Fu Master](https://ale.farama.org/environments/kung_fu_master/) · [AWS DeepRacer](https://aws.amazon.com/deepracer/)
+- [ALE Kung Fu Master](https://ale.farama.org/environments/kung_fu_master/) · [AWS DeepRacer FAQ (service ended 2025-12-15)](https://aws.amazon.com/deepracer/faqs/)
 
 ## See Also
 

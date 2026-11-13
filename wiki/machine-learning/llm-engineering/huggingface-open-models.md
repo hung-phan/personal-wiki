@@ -55,7 +55,7 @@ gen = pipeline("text-generation", model="HuggingFaceTB/SmolLM2-135M-Instruct", d
 out = gen([{"role": "user", "content": "Give me one word that rhymes with cat."}], max_new_tokens=10, do_sample=False)
 print(out[0]["generated_text"][-1])                        # pipelines apply the chat template for you
 # Expected output:
-# {'role': 'assistant', 'content': 'The word "cat" is a great example of'}
+# {'role': 'assistant', 'content': "I'm sorry for the confusion, but as a"}
 ```
 
 The pipeline handled the chat template and decoding; the 135M model's answer shows why size matters. Two warnings from the course's runs: if you omit `model=`, a default is chosen for you (fine for exploring, not for production — pin it); and task models misread tone — a sarcastic "I should be more excited" came back POSITIVE with 90% confidence. Small task-specific models (translation, NER, classification) are cheap, fast and private compared with calling a frontier model for the same job.
@@ -112,18 +112,18 @@ print("next-token candidates:", [(tok.decode(int(i)), round(float(p), 3)) for p,
 out = model.generate(**inputs, max_new_tokens=12, do_sample=False)   # greedy: always the top token
 print("greedy answer:", tok.decode(out[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True))
 # Expected output:
-# next-token candidates: [('The', 0.84), ('Paris', 0.042), ('As', 0.017), ('Bon', 0.014), ('I', 0.012)]
+# next-token candidates: [('The', 0.844), ('Paris', 0.042), ('As', 0.015), ('Bon', 0.014), ('I', 0.014)]
 # greedy answer: The capital of France is Paris.
 ```
 
 The model is 84% sure the answer begins with "The", only 4% "Paris" — it plans to answer in a full sentence, and greedy decoding duly writes "The capital of France is Paris." The course visualises this as a tree of the top-3 candidates at each step (via an API's `logprobs`), which makes temperature concrete: low temperature follows the thickest branch; higher temperature sometimes takes another.
 
-The course's standard recipe, on a GPU:
+The course's standard recipe on a GPU, updated for transformers v5:
 
 1. `tokenizer.pad_token = tokenizer.eos_token` (many tokenizers ship without a pad token).
-2. `inputs = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt").to("cuda")`.
+2. `inputs = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt", return_dict=True).to("cuda")`. In v5 this returns a dict (`input_ids`, `attention_mask`), not a bare tensor.
 3. `model = AutoModelForCausalLM.from_pretrained(name, device_map="auto", quantization_config=bnb_config)`.
-4. `model.generate(inputs, max_new_tokens=80, streamer=TextStreamer(tokenizer))` to stream tokens as they come.
+4. `model.generate(**inputs, max_new_tokens=80, streamer=TextStreamer(tokenizer))` to stream tokens as they come.
 5. Free memory afterwards (`del model`, `gc.collect()`, `torch.cuda.empty_cache()`) before loading the next model.
 
 ## 5. What's inside: printing the model
@@ -204,7 +204,7 @@ The course loads five instruct models with the same recipe and asks each for a j
 
 ## 8. What has aged
 
-Model choices (Llama 3.1/3.2, Phi-4-mini, Qwen2.5/Qwen3-2507, DeepSeek V3.1) have successors; Hub counts and Colab prices move; `torch_dtype` is now `dtype`; the course pins `datasets==3.6.0` for one dataset. Two small corrections to the lectures: Llama's norms are **RMSNorm**, not LayerNorm, and rotary position embeddings live in the attention layers, not the embedding layer. Setting `pad_token = eos_token` is a common idiom but can teach a fine-tuned model never to stop; prefer a dedicated pad token when the tokenizer has one.
+Model choices (Llama 3.1/3.2, Phi-4-mini, Qwen2.5/Qwen3-2507, DeepSeek V3.1) have successors; Hub counts and Colab prices move; `torch_dtype` is now `dtype`; in transformers v5 `apply_chat_template` defaults to `return_dict=True` and returns a dict, so the course's `model.generate(inputs)` must become `model.generate(**inputs)` (or pass `return_dict=False` to get the old tensor); the course pins `datasets==3.6.0` for one dataset. Two small corrections to the lectures: Llama's norms are **RMSNorm**, not LayerNorm, and rotary position embeddings live in the attention layers, not the embedding layer. Setting `pad_token = eos_token` is a common idiom but can teach a fine-tuned model never to stop; prefer a dedicated pad token when the tokenizer has one.
 
 ## Trade-offs
 

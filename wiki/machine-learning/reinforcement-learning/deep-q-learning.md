@@ -80,7 +80,7 @@ CartPole: balance a pole on a cart by pushing left or right; +1 per step, up to 
 
 ```python
 import random, collections, numpy as np, torch, torch.nn as nn, gymnasium as gym
-torch.manual_seed(0); random.seed(0); np.random.seed(0); torch.set_num_threads(1)   # 1 thread: bit-for-bit repeatable
+torch.manual_seed(0); random.seed(0); np.random.seed(0); torch.set_num_threads(1)   # repeatable on one machine + library versions only
 env = gym.make("CartPole-v1"); env.action_space.seed(0)   # 4 numbers in, 2 actions; seed the action sampler too
 def net(): return nn.Sequential(nn.Linear(4, 64), nn.ReLU(), nn.Linear(64, 64), nn.ReLU(), nn.Linear(64, 2))
 q, target = net(), net(); target.load_state_dict(q.state_dict())   # online network + slow-moving target copy
@@ -113,13 +113,13 @@ print("random policy mean score:", np.mean([random_episode(1000 + i) for i in ra
 # episodes   1- 50: mean score   17.0
 # episodes  51-100: mean score   10.8
 # episodes 101-150: mean score   11.9
-# episodes 151-200: mean score   86.6
-# episodes 201-250: mean score  106.3
-# episodes 251-300: mean score  170.5
-# random policy mean score: 23.2
+# episodes 151-200: mean score   87.1
+# episodes 201-250: mean score  102.9
+# episodes 251-300: mean score  124.9
+# random policy mean score: 24.64
 ```
 
-Random pushing keeps the pole up for ~23 steps; after 300 episodes the agent averages 170 over its last 50. The first ~100 episodes show nothing — the buffer is filling and ε is high — which is normal. Two details that cause silent bugs: Gymnasium returns **`terminated`** (the pole fell: no future reward) and **`truncated`** (time limit hit: the future still exists); only `terminated` should zero the bootstrap term. And `env.action_space` has its *own* random generator — seed it, or runs won't repeat.
+Random pushing keeps the pole up for ~21–25 steps; after 300 episodes this run averages 125 over its last 50. That number is one seed: changing all seeds to 1–4 gave 108–137 (torch 2.15 CPU, Gymnasium 1.4), and another seeding scheme reached ~190 — either way, far above random. Your exact numbers can differ from these on another platform or library version even with every seed fixed. The first ~100 episodes show nothing — the buffer is filling and ε is high — which is normal. Two details that cause silent bugs: Gymnasium returns **`terminated`** (the pole fell: no future reward) and **`truncated`** (time limit hit: the future still exists); only `terminated` should zero the bootstrap term. And `env.action_space` has its *own* random generator — seed it, or runs won't repeat.
 
 ## 5. The course's lunar lander
 
@@ -230,7 +230,7 @@ Section 6 of *Advanced AI: Deep Reinforcement Learning in Python* builds a DQN f
 - **Training on consecutive steps.** Without replay, learning is unstable; sample at random.
 - **No target network.** Targets move with every update; training oscillates or diverges.
 - **Bootstrapping through a time-limit truncation.** Only true terminations should zero the future value.
-- **Unseeded action sampling.** `env.action_space.sample()` uses its own RNG; seed it for repeatable runs.
+- **Unseeded action sampling.** `env.action_space.sample()` uses its own RNG; seed it for repeatable runs — and even then, results only repeat on the same platform and library versions; compare across several seeds, not one run.
 - **Judging too early.** DQN often looks flat for the first hundreds of episodes.
 - **One frame for a moving world.** Stack frames (or add velocity) so the state is Markov.
 - **Version drift.** `LunarLander-v2`, the old Gym API and `Deterministic-v0` Atari ids need updating for Gymnasium 1.x / ALE.
@@ -250,6 +250,7 @@ Section 6 of *Advanced AI: Deep Reinforcement Learning in Python* builds a DQN f
 - [Mnih et al. — Playing Atari with Deep Reinforcement Learning (2013)](https://arxiv.org/abs/1312.5602) · [Human-level control through deep RL (Nature, 2015)](https://www.nature.com/articles/nature14236)
 - [van Hasselt et al. — Double DQN (2015)](https://arxiv.org/abs/1509.06461) · [Schaul et al. — Prioritized Experience Replay (2015)](https://arxiv.org/abs/1511.05952)
 - [Gymnasium LunarLander](https://gymnasium.farama.org/environments/box2d/lunar_lander/) · [ALE Ms. Pac-Man](https://ale.farama.org/environments/ms_pacman/)
+- [PyTorch — Reproducibility](https://pytorch.org/docs/stable/notes/randomness.html) — fixed seeds don't guarantee identical results across platforms or releases.
 - [Sutton & Barto, 2nd ed.](http://incompleteideas.net/book/the-book-2nd.html) — ch. 7 (n-step) and ch. 12 (eligibility traces).
 
 ## See Also

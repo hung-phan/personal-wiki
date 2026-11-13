@@ -140,7 +140,7 @@ plt.xscale("log"); plt.xlabel("cost to run the benchmark ($, log)"); plt.ylabel(
 
 (The numbers are illustrative.) It's a first filter, not a decision: an "intelligence index" blends tasks that may not resemble yours, and it ignores latency, rate limits and licences. Note also that cost-to-run differs from price per token: a model that writes many reasoning tokens can cost more overall despite a lower per-token price.
 
-**Arenas.** LM Arena shows two anonymous models' answers side by side and lets people vote. Votes become **Elo ratings** (as in chess): after each vote, the winner gains points in proportion to how surprising the win was.
+**Arenas.** LM Arena shows two anonymous models' answers side by side and lets people vote. Votes become ratings on the **Elo scale** (as in chess). The intuition is online Elo: after each vote, the winner gains points in proportion to how surprising the win was. The real leaderboard doesn't update vote by vote, though. Online Elo depends on vote order and the step size K, so Chatbot Arena fits a **Bradley–Terry** model (logistic regression on all pairwise votes at once) and reports the fitted strengths on the Elo scale. The toy below shows the online version for intuition only.
 
 ```python
 import numpy as np
@@ -160,7 +160,7 @@ print("a 50-point gap means the stronger model wins %.0f%% of votes" % (100 / (1
 # a 50-point gap means the stronger model wins 57% of votes
 ```
 
-Elo recovers the ordering and roughly the gaps, but a 50-point lead only means winning 57% of head-to-head votes. Arenas measure what voters *like* — style, length, formatting — which isn't always what's correct. The course also shows its own "Connect Four" arena where models explain their threats and strategy before each move: a fun reminder that you can build a task-specific arena.
+Online Elo recovers the ordering and roughly the gaps (a Bradley–Terry fit to the same votes would not depend on their order), but a 50-point lead only means winning 57% of head-to-head votes. Arenas measure what voters *like* — style, length, formatting — which isn't always what's correct. The course also shows its own "Connect Four" arena where models explain their threats and strategy before each move: a fun reminder that you can build a task-specific arena.
 
 ## 5. Model-centric vs business-centric metrics
 

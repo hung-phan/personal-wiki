@@ -59,7 +59,7 @@ print("embedded sentence shape (T x D):", W[X[0]].shape)
 # embedded sentence shape (T x D): (5, 3)
 ```
 
-**The tokenizer conventions** the course relies on (Keras `Tokenizer` + `pad_sequences`): ids start at 1 because **0 means padding**; words beyond the vocabulary cap are dropped or mapped to an unknown id; every sequence is padded or cut to a fixed length T (the course: T = 100, vocabulary 20,000). So the embedding layer needs `vocab_size + 1` rows. Keras 3 replaces both with a `TextVectorization` layer.
+**The tokenizer conventions** the course relies on (Keras `Tokenizer` + `pad_sequences`): ids start at 1 because **0 means padding**; words beyond the vocabulary cap are dropped or mapped to an unknown id; every sequence is padded or cut to a fixed length T (the course: T = 100, vocabulary 20,000). So the embedding layer needs `vocab_size + 1` rows. Keras 3 (checked on 3.15.1) drops `Tokenizer` (`keras.preprocessing.text` is gone; use the `TextVectorization` layer), but `pad_sequences` survives as `keras.utils.pad_sequences`.
 
 **Pretrained embeddings** (GloVe, word2vec) are transfer learning: fill the matrix with vectors trained on billions of words instead of random numbers. Words missing from the file get zero rows. The course freezes them (`trainable=False`) and notes that fine-tuning sometimes made results worse — try both. Modern practice: contextual embeddings from a transformer, where "bank" gets a different vector by the river and at the ATM.
 
@@ -93,7 +93,7 @@ P = model.predict(Xte, verbose=0)
 print("per-label AUC:", [round(roc_auc_score(Yte[:, k], P[:, k]), 3) for k in range(3)])
 print("accuracy of predicting 'clean' for everything:", (Yte == 0).mean().round(3), "-> accuracy misleads; AUC of a constant = 0.5")
 # Expected output:
-# per-label AUC: [0.995, 0.992, 0.981]
+# per-label AUC: [0.994, 0.989, 0.998]
 # accuracy of predicting 'clean' for everything: 0.932 -> accuracy misleads; AUC of a constant = 0.5
 ```
 
@@ -178,7 +178,7 @@ The appendix (sections 9–13) is shared across the instructor's courses: enviro
 - **Embedding size off by one.** Ids start at 1, so the layer needs `vocab_size + 1` rows.
 - **Padding the wrong side without masking.** Post-padding feeds zeros after the text into an RNN's final state; pre-pad, mask, or pool.
 - **Mixing up GRU gate conventions.** Formulas differ between sources by $z \leftrightarrow 1 - z$; check against your framework.
-- **Copy-pasting TF1-era Keras.** `Adam(lr=...)`, `keras.preprocessing` and Theano backends are gone; use `learning_rate=` and `TextVectorization`.
+- **Copy-pasting TF1-era Keras.** `Adam(lr=...)`, `keras.preprocessing.text.Tokenizer` and Theano backends are gone in Keras 3; use `learning_rate=` and `TextVectorization` (padding code can stay, via `keras.utils.pad_sequences`).
 
 ## Decision Table
 

@@ -128,13 +128,13 @@ for k, v in preds.items(): print(f"{k:27s} predicts {v/1e3:7.1f}k for level 6.5"
 # random forest (10 trees)    predicts   124.0k for level 6.5
 ```
 
-The straight line is far off (it's dragged up by the top levels); the curve-capable models land between the neighbouring levels; the single tree just returns level 6's salary. The course's results on its own table: linear ~330k, polynomial (degree 4) ~158k, SVR 170k (R: 177k), decision tree 150k in Python but 250k in R (rpart prunes the tree unless `minsplit` is lowered), random forest 167k with 10 trees (R: 141k, 166k and 160k for 10, 100 and 500 trees). With 10 points and no test set, all of these are interpolations from possibly overfit curves.
+The straight line is far off (it's dragged up by the top levels); the curve-capable models land between the neighbouring levels; the single tree just returns level 6's salary. The course's results on its own table: linear ~330k, polynomial (degree 4) ~158k, SVR 170k (R: 177k), decision tree 150k in Python but 250k in R (rpart's default `minsplit = 20` blocks any split on a 10-row table, so the tree is just the root and predicts the mean salary, 249.5k; `rpart.control(minsplit = 1)` lets it grow), random forest 167k with 10 trees (R: 141k, 166k and 160k for 10, 100 and 500 trees). With 10 points and no test set, all of these are interpolations from possibly overfit curves.
 
 ## 4. Scoring regressions: R² and adjusted R²
 
 $$R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}} = 1 - \frac{\sum (y - \hat y)^2}{\sum (y - \bar y)^2}$$
 
-compares your errors with those of always predicting the mean: 1 is perfect, 0 is no better than the mean, and on test data it can go **negative**. Adding any feature never lowers training R², so **adjusted R²** penalises the number of features $k$: $1 - (1 - R^2)\frac{n - 1}{n - k - 1}$.
+compares your errors with those of always predicting the mean: 1 is perfect, 0 is no better than the mean, and on test data it can go **negative**. Adding any feature never lowers training R², so **adjusted R²** penalises the number of features $k$: $1 - (1 - R^2)\frac{n - 1}{n - k - 1}$. It is a correction to the *training* fit of a model with $k$ fitted coefficients. Don't apply it to held-out R², and don't use it for SVR or trees, where $k$ has no meaning. On a test set, compare plain test R² (or RMSE) directly.
 
 The course's model-selection exercise trains all models on a power-plant dataset and compares test R²: multiple linear 0.93, polynomial 0.946, SVR 0.948, decision tree 0.922, random forest 0.96. On a standard non-linear benchmark:
 
@@ -150,25 +150,27 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 X, y = make_friedman1(n_samples=1000, noise=1.0, random_state=0)
 Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=0)
-def adj_r2(r2, n, k): return 1 - (1 - r2) * (n - 1) / (n - k - 1)   # penalise every extra feature
 models = {"predict the mean": None, "multiple linear": LinearRegression(),
           "polynomial (deg 2)": make_pipeline(PolynomialFeatures(2), LinearRegression()),
-          "SVR (RBF)": make_pipeline(StandardScaler(), SVR(C=10)), "decision tree": DecisionTreeRegressor(random_state=0),
+          "SVR (RBF, C=1)": make_pipeline(StandardScaler(), SVR()),          # sklearn default C=1.0
+          "SVR (RBF, C=10)": make_pipeline(StandardScaler(), SVR(C=10)),     # C hand-set, not searched
+          "decision tree": DecisionTreeRegressor(random_state=0),
           "random forest": RandomForestRegressor(300, random_state=0)}
 for name, m in models.items():
     pred = np.full(len(yte), ytr.mean()) if m is None else m.fit(Xtr, ytr).predict(Xte)
     r2 = 1 - ((yte - pred) ** 2).sum() / ((yte - yte.mean()) ** 2).sum()   # R² = 1 − SS_res / SS_tot on the test set
-    print(f"{name:20s} test R² {r2:6.3f}   adjusted (k=10) {adj_r2(r2, len(yte), 10):6.3f}")
+    print(f"{name:20s} test R² {r2:6.3f}")
 # Expected output:
-# predict the mean     test R² -0.009   adjusted (k=10) -0.062
-# multiple linear      test R²  0.732   adjusted (k=10)  0.717
-# polynomial (deg 2)   test R²  0.885   adjusted (k=10)  0.879
-# SVR (RBF)            test R²  0.904   adjusted (k=10)  0.899
-# decision tree        test R²  0.640   adjusted (k=10)  0.621
-# random forest        test R²  0.849   adjusted (k=10)  0.841
+# predict the mean     test R² -0.009
+# multiple linear      test R²  0.732
+# polynomial (deg 2)   test R²  0.885
+# SVR (RBF, C=1)       test R²  0.827
+# SVR (RBF, C=10)      test R²  0.904
+# decision tree        test R²  0.640
+# random forest        test R²  0.849
 ```
 
-The ranking depends on the data: here a tuned SVR wins and a single tree loses badly. Gaps of 0.002 (like the course's 0.946 vs 0.948) are within the noise of one split — use cross-validation to choose ([model-selection-boosting](model-selection-boosting.md)).
+The ranking depends on the data and on the hyperparameters. Here SVR with a hand-set C=10 comes first and a single tree loses badly. At sklearn's default C=1 the SVR scores 0.827 and falls behind the random forest, so the "winner" depends on one hand-picked value. No model here was tuned, and the others are all at their defaults. Gaps of 0.002 (like the course's 0.946 vs 0.948) are within the noise of one split — use cross-validation to choose ([model-selection-boosting](model-selection-boosting.md)).
 
 ## 5. Course extras (articles)
 

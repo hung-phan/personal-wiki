@@ -42,7 +42,7 @@ replacing $Q$ by a sampled return $G_t$ (its expectation). Average over an episo
 
 $$\text{loss} = -\sum_t G_t \log \pi(a_t \mid s_t).$$
 
-This is **REINFORCE** (the course doesn't use the name). Read the single-sample step $\theta \leftarrow \theta + \alpha\, G\, \nabla \pi / \pi$: the push is proportional to the return, in the direction that raises the action's probability, and *divided* by that probability — so a rare action that paid off gets a big boost. It's a Monte Carlo method: it needs the whole episode's returns. (The derivation drops a $\gamma^t$ factor and the state distribution; every practical implementation does the same.)
+This is **REINFORCE** (the course doesn't use the name). Read the single-sample step $\theta \leftarrow \theta + \alpha\, G\, \nabla \pi / \pi$: the push is proportional to the return, in the direction that raises the action's probability, and *divided* by that probability — so a rare action that paid off gets a big boost. It's a Monte Carlo method: it needs the whole episode's returns. (The state distribution $\mu$ isn't dropped: sampling states on-policy supplies it. What practical implementations drop is a $\gamma^t$ factor on each step's term, which makes the estimate biased for the discounted objective. It's standard practice anyway.)
 
 ## 2. The baseline: same direction, less noise
 
@@ -75,8 +75,8 @@ for b in (False, True):
     print(f"baseline={b!s:5}  mean length of last 50 episodes over 3 seeds:", [train(b, seed=k) for k in range(3)])
 print("random policy: about 22")
 # Expected output:
-# baseline=False  mean length of last 50 episodes over 3 seeds: [329, 348, 217]
-# baseline=True   mean length of last 50 episodes over 3 seeds: [414, 444, 461]
+# baseline=False  mean length of last 50 episodes over 3 seeds: [314, 290, 208]
+# baseline=True   mean length of last 50 episodes over 3 seeds: [378, 446, 376]
 # random policy: about 22
 ```
 
@@ -152,7 +152,7 @@ Three weights (position, velocity, bias) are enough: the found policy pushes in 
 ## Trade-offs
 
 - **Policy gradients vs Q-learning.** Continuous and stochastic actions, smooth policy changes vs less sample-efficient (on-policy), high-variance gradients.
-- **REINFORCE vs actor-critic.** Unbiased, simple, waits for episode ends vs every-step updates and lower variance, but a biased critic.
+- **REINFORCE vs actor-critic.** Unbiased (only if the $\gamma^t$ factor is kept, see §1), simple, waits for episode ends vs every-step updates and lower variance, but a biased critic.
 - **Gradient methods vs hill climbing.** Scale to millions of parameters vs robust to deceptive rewards and trivial to implement, but only for a handful of parameters.
 - **Entropy weight.** More exploration vs slower convergence.
 

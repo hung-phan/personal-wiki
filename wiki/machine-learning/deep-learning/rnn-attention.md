@@ -1,13 +1,13 @@
 ---
 name: rnn-attention
-description: "Attention for RNN encoder-decoders (Bahdanau-style) with runnable PyTorch code — why one thought vector bottlenecks long inputs, a bidirectional encoder keeping one vector per input position, alignment scores from a tiny neural network over [decoder state s_(t−1); encoder state h_j], softmax over time (not features), the context vector Σ α_j h_j concatenated with the previous word, teacher forcing with attention, seq2seq with vs without attention on 16-symbol reversal (0.52 vs 0.995 token accuracy), reading attention maps and why they're not reliable explanations, the course's Keras implementation (softmax_over_time, RepeatVector, Concatenate, Dot, shared global layers, a manual loop over output steps) and its Twitter chatbot variant, how this leads to Transformers. Study guide for Deep Learning: Advanced NLP and RNNs, section 5."
+description: "Attention for RNN encoder-decoders (Bahdanau-style) with runnable PyTorch code — why one thought vector bottlenecks long inputs, a bidirectional encoder keeping one vector per input position, alignment scores from a tiny neural network over [decoder state s_(t−1); encoder state h_j], softmax over time (not features), the context vector Σ α_j h_j concatenated with the previous word, teacher forcing with attention, seq2seq with vs without attention on 16-symbol reversal (0.66 vs 1.00 token accuracy), reading attention maps and why they're not reliable explanations, the course's Keras implementation (softmax_over_time, RepeatVector, Concatenate, Dot, shared global layers, a manual loop over output steps) and its Twitter chatbot variant, how this leads to Transformers. Study guide for Deep Learning: Advanced NLP and RNNs, section 5."
 created: 2026-11-13
 updated: 2026-11-13
 tags: [nlp, attention, bahdanau-attention, seq2seq, encoder-decoder, machine-translation, pytorch, keras, study-guide, advanced-nlp-rnn]
 ---
 # Attention for Seq2Seq
 
-> **How to read this note.** Study guide for *Deep Learning: Advanced NLP and RNNs*, section 5 (lectures 35–43): attention theory, the Keras implementation for translation, visualising the weights, and a chatbot built from the same code. Read [seq2seq-bidirectional-rnns](seq2seq-bidirectional-rnns.md) first. The snippet uses the same toy reversal task, made long enough (16 symbols) that a single thought vector struggles, and trains an encoder-decoder with and without attention side by side (about 30 seconds on a CPU). Transformers take this idea further: [transformer-forward-pass](../math-for-ml/transformer-forward-pass.md).
+> **How to read this note.** Study guide for *Deep Learning: Advanced NLP and RNNs*, section 5 (lectures 35–43): attention theory, the Keras implementation for translation, visualising the weights, and a chatbot built from the same code. Read [seq2seq-bidirectional-rnns](seq2seq-bidirectional-rnns.md) first. The snippet uses the same toy reversal task, made long enough (16 symbols) that a single thought vector struggles, and trains an encoder-decoder with and without attention side by side (about a minute on a CPU). Transformers take this idea further: [transformer-forward-pass](../math-for-ml/transformer-forward-pass.md).
 
 ## Why This Exists
 
@@ -38,7 +38,7 @@ At output step $t$, with previous decoder state $s_{t-1}$ and encoder states $h_
 3. **Context**: $c_t = \sum_j \alpha_{t,j}\, h_j$.
 4. **Decode**: the decoder LSTM's input is $[\text{previous word embedding}; c_t]$; with teacher forcing the previous word is the true one.
 
-The encoder is bidirectional, so each $h_j$ describes word $j$ *in context* (size $2M$). The decoder starts from zeros instead of the encoder's final state — the context vectors carry the information. Cost: $T_x$ scores at each of $T_y$ steps.
+The encoder is bidirectional, so each $h_j$ describes word $j$ *in context* (size $2M$). Bahdanau et al. initialise the decoder from the encoder, $s_0 = \tanh(W_s \overleftarrow{h}_1)$ (the backward state at the first word; paper appendix A.2.2); the course, and the snippet below, start it from zeros instead. Either works, because the context vectors carry the information. Cost: $T_x$ scores at each of $T_y$ steps.
 
 ## 2. Does it help? Seq2seq with and without attention
 
@@ -61,7 +61,7 @@ class Model(nn.Module):
                 e = self.score(torch.cat([s.unsqueeze(1).expand(-1, L, -1), hs], -1)).squeeze(-1)
                 a = e.softmax(1); ctx = (a.unsqueeze(-1) * hs).sum(1); alphas.append(a)   # softmax over time -> context
             else:
-                ctx = hs[:, -1]                               # no attention: the same summary at every step
+                ctx = torch.cat([hs[:, -1, :H], hs[:, 0, H:]], -1)   # no attention: [last forward; first backward], same every step
             s = self.dec(torch.cat([self.emb(prev), ctx], -1), s); logits.append(self.out(s))
             prev = y[:, t] if y is not None else logits[-1].argmax(-1)   # teacher forcing vs own predictions
         return torch.stack(logits, 1), (torch.stack(alphas, 1) if alphas else None)
@@ -74,12 +74,12 @@ for att in (False, True):
     print(f"attention={att!s:5}  tokens right: {acc:.3f}")
 print("output step t looks mostly at input position:", A[0].argmax(1).tolist())
 # Expected output:
-# attention=False  tokens right: 0.516
-# attention=True   tokens right: 0.995
-# output step t looks mostly at input position: [15, 15, 13, 12, 11, 11, 10, 9, 8, 7, 5, 5, 4, 3, 2, 0]
+# attention=False  tokens right: 0.663
+# attention=True   tokens right: 1.000
+# output step t looks mostly at input position: [15, 14, 13, 12, 11, 10, 9, 8, 7, 7, 5, 4, 3, 2, 2, 0]
 ```
 
-Same encoder, decoder, data and training budget: the model without attention (which sees only the encoder's last state at every step) gets about half the tokens right; with attention, 99.5%. The last line shows where the attention points for one example: output step 1 looks at input position 15, step 2 at 15, then 13, 12, 11 … 0 — roughly the reversal. Not exactly, because a bidirectional encoder state at position $j$ also knows about its neighbours, so attending to $j \pm 1$ can work just as well. That's also why attention maps are a hint, not an explanation.
+Same encoder, decoder, data and training budget (one seed): the model without attention gets 66% of the tokens right; with attention, 100%. The no-attention arm sees one fixed summary at every step: the forward state after the last token joined with the backward state after the first token, the proper bidirectional summary. (Taking `hs[:, -1]` instead would pair the forward summary with a backward state that has read only the last token, a weaker baseline that makes the gap look bigger.) Both arms start the decoder from zeros. The last line shows where the attention points for one example: output step 1 looks at input position 15, then 14, 13 … 7, 7, 5 … 2, 2, 0 — roughly the reversal. Not exactly, because a bidirectional encoder state at position $j$ also knows about its neighbours, so attending to $j \pm 1$ can work just as well. That's also why attention maps are a hint, not an explanation.
 
 ## 3. The course's Keras implementation
 
@@ -106,6 +106,7 @@ Results are described only as slightly better than plain seq2seq and still overf
 - **Softmax over the wrong axis.** Weights must sum to 1 over input positions, not over features; check the shape.
 - **Creating layers inside the step loop.** Each call then has its own weights; define layers once and reuse.
 - **Reading attention maps as explanations.** Contextual encoder states blur positions; different weights can give the same output.
+- **Taking `hs[:, -1]` as a bidirectional encoder's summary.** Its backward half has read only the last token; the real summary is `[hs[:, -1, :H]; hs[:, 0, H:]]` (last forward, first backward).
 - **Training-inference mismatch.** Teacher forcing still applies; the one-step inference model must recompute attention every step.
 - **Expecting a chatbot from 20k pairs.** Fluent nonsense; real assistants are pretrained LLMs.
 

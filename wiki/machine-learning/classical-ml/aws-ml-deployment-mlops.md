@@ -36,7 +36,7 @@ tags: [machine-learning, mlops, aws, sagemaker, deployment, inference, ci-cd, co
 
 | Type | Payload / time limit (course) | Use it for |
 |---|---|---|
-| Real-time endpoint | 6 MB, 60 s | Steady traffic, low latency; instance always on |
+| Real-time endpoint | 6 MB, 60 s (AWS docs, Nov 2026: 25 MB; 60 s regular, 8 min streaming) | Steady traffic, low latency; instance always on |
 | Serverless | 6 MB, 60 s (AWS docs: 4 MB) | Spiky or low traffic; pay per request, cold starts |
 | Asynchronous | 1 GB, 1 hour | Large inputs, long processing; requests queued, results to S3 |
 | Batch transform | 100 MB per record, long jobs | Score a whole dataset offline, no endpoint |
@@ -49,7 +49,7 @@ The hands-on enables ML Ops in the Canvas user profile and deploys the Part 12 m
 
 ## 2. CI/CD (Part 14)
 
-**CodePipeline** orchestrates stages; **CodeBuild** runs builds and tests from a `buildspec`; **CodeDeploy** rolls releases out — **in-place** (update existing instances) or **blue/green** (stand up a new fleet, shift traffic, keep the old one for rollback); **CodeCommit** hosted Git repositories (closed to new customers since 2024 — GitHub or GitLab sources are the usual choice now). CI = automatically build and test every change; CD = automatically release what passes.
+**CodePipeline** orchestrates stages; **CodeBuild** runs builds and tests from a `buildspec`; **CodeDeploy** rolls releases out — **in-place** (update existing instances) or **blue/green** (stand up a new fleet, shift traffic, keep the old one for rollback); **CodeCommit** hosted Git repositories (closed to new customers from July 2024, then returned to full General Availability and reopened to new customers on 2025-11-24; GitHub or GitLab sources via CodeConnections work too). CI = automatically build and test every change; CD = automatically release what passes.
 
 The course's CodeBuild project has no source: its inline buildspec runs a from-scratch linear regression. The same idea, with the step a real CI job needs — **fail the build if the model is wrong**:
 
@@ -70,7 +70,7 @@ assert abs(w * 6 - 12) < 0.01                              # a CI step should FA
 
 ## 3. Monitoring and maintenance (Part 15)
 
-**Model Monitor** compares live endpoint traffic with a baseline captured from training data on a schedule: **data quality** (missing values, types, distributions), **model quality** (accuracy once ground truth arrives), **bias drift** and **feature-attribution drift** (with **Clarify**). The demos only tour the dashboards. What "drift" means numerically:
+**Model Monitor** compares live endpoint traffic with a baseline captured from training data on a schedule: **data quality** (missing values, types, distributions), **model quality** (accuracy once ground truth arrives), **bias drift** and **feature-attribution drift** (with **Clarify**). The demos only tour the dashboards. **Status (AWS docs, checked 2026-11-13):** both Model Monitor and Clarify are no longer open to new customers — existing accounts keep working, but no new features are planned. On a new account, build the same check yourself: enable endpoint data capture to S3, then run a scheduled Processing job or Lambda (EventBridge schedule) that computes PSI/KS against the training baseline and publishes a CloudWatch metric with an alarm. What "drift" means numerically:
 
 ```python
 import numpy as np
@@ -116,6 +116,7 @@ The course ends with a congratulations article (share the certificate, tag the i
 - **Endpoints left running.** Real-time endpoints bill per instance-hour even with no traffic.
 - **CI that trains but never tests.** Add assertions on metrics so bad models fail the build.
 - **Alerting on p-values alone.** Large samples make tiny shifts "significant"; use effect-size measures like PSI.
+- **Planning around Model Monitor or Clarify on a new account.** Both are closed to new customers, so onboarding fails; plan a DIY data-capture drift job instead.
 - **Monitoring only accuracy.** Labels arrive late; watch input drift too.
 - **Deleting in the wrong order.** Dependencies block deletion and leave orphans that keep billing.
 
@@ -129,13 +130,13 @@ The course ends with a congratulations article (share the certificate, tag the i
 | Nightly scoring of a table | Batch transform | Endpoint | No idle cost |
 | Repeatable environments | CloudFormation / CDK | Console clicks | Reproducible, deletable |
 | Safe releases | CodeDeploy blue/green | In-place | Rollback |
-| Production drift | Model Monitor baseline + PSI-style alerts | Ad-hoc checks | Continuous |
+| Production drift | Data capture to S3 + scheduled PSI/KS job + CloudWatch alarm (Model Monitor if your account already uses it) | Ad-hoc checks | Continuous; Model Monitor is closed to new customers |
 
 ## References
 
-- [SageMaker — deploy models for inference](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html) · [Serverless inference](https://docs.aws.amazon.com/sagemaker/latest/dg/serverless-endpoints.html) · [Asynchronous inference](https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html)
-- [SageMaker Model Monitor](https://docs.aws.amazon.com/sagemaker/latest/dg/model-monitor.html) · [SageMaker Pipelines](https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html) · [Inference Recommender](https://docs.aws.amazon.com/sagemaker/latest/dg/inference-recommender.html)
-- [AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html) · [CodeDeploy deployment types](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html) · [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
+- [SageMaker — deploy models for inference](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html) · [Serverless inference](https://docs.aws.amazon.com/sagemaker/latest/dg/serverless-endpoints.html) · [Asynchronous inference](https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html) · [Inference options and limits](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model-options.html)
+- [SageMaker Model Monitor](https://docs.aws.amazon.com/sagemaker/latest/dg/model-monitor.html) · [SageMaker Pipelines](https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html) · [Clarify](https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-configure-processing-jobs.html) · [Inference Recommender](https://docs.aws.amazon.com/sagemaker/latest/dg/inference-recommender.html)
+- [AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html) · [CodeDeploy deployment types](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html) · [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) · [CodeCommit returns to GA (2025-11-24)](https://aws.amazon.com/blogs/devops/aws-codecommit-returns-to-general-availability/)
 - [Managed Spot training](https://docs.aws.amazon.com/sagemaker/latest/dg/model-managed-spot-training.html) · [AWS Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)
 
 ## See Also

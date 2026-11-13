@@ -248,8 +248,9 @@ Read it carefully, because this is the real lesson. With a small code (16) the p
 Add a penalty on how much the code changes when the input changes slightly — the size of the encoder's Jacobian. The code becomes insensitive to tiny input wiggles. It has the same goal as denoising, reached analytically instead of by sampling noise. Rarely used today.
 
 ### Stacked vs "deep"
-- **Stacked autoencoder** — more hidden layers (for example 100 → 20 → 10 → 20 → 100), trained end to end with backprop. This is what the course builds; its class is named `SAE` for *stacked*, not sparse.
-- **Deep autoencoder (2006 sense)** — a stack of [restricted Boltzmann machines](boltzmann-machines.md) pre-trained one layer at a time, then "unrolled" into an encoder–decoder and fine-tuned with backprop. Historically important; modern initialization and optimizers made the pre-training unnecessary.
+- **Stacked autoencoder (literature sense)** — shallow autoencoders trained greedily one layer at a time: train the first on the input, train the second on the first one's codes, and so on. The trained encoders are then stacked and the whole network is fine-tuned with backprop (Vincent et al. 2010, §3.5; denoising autoencoders are the usual building block).
+- **Deep autoencoder (2006 sense)** — the same greedy pre-train-then-fine-tune recipe, but each layer is a [restricted Boltzmann machine](boltzmann-machines.md). After pre-training, the stack is "unrolled" into an encoder–decoder and fine-tuned with backprop. The two differ in the building block (autoencoder vs RBM), not in whether there is pre-training.
+- **What the course builds** — a multi-layer autoencoder (for example 100 → 20 → 10 → 20 → 100) trained end to end with backprop and **no** layer-wise pre-training. The course still names its class `SAE` for *stacked* (not sparse), and many people use "stacked" this loosely today. Modern initialization and optimizers are why skipping pre-training works.
 
 ## 4. Reading the course's code with modern eyes
 
