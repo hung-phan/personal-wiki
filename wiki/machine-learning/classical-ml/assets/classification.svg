@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="560" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >CLASSIFICATION</text><text x="30" y="62" class="h1" text-anchor="start" >Seven models, one question: which side of the boundary?</text><line x1="30" y1="72" x2="855" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >1. how each model draws its boundary (age vs salary)</text><rect x="40" y="120" width="205" height="100" rx="6" class="cell"/><text x="142" y="140" class="numb" text-anchor="middle" >logistic</text><text x="142" y="212" class="mut" text-anchor="middle" >a straight line</text><path d="M82,194 L202,150" class="lnr"/><circle cx="102" cy="152" r="4" class="pnk"/><circle cx="117" cy="144" r="4" class="pnk"/><circle cx="177" cy="190" r="4" class="grn"/><circle cx="187" cy="176" r="4" class="grn"/><circle cx="97" cy="192" r="4" class="grn"/><circle cx="172" cy="142" r="4" class="pnk"/><rect x="265" y="120" width="205" height="100" rx="6" class="cell"/><text x="367" y="140" class="numb" text-anchor="middle" >linear SVM</text><text x="367" y="212" class="mut" text-anchor="middle" >the widest-margin line</text><path d="M307,194 L427,150" class="lnr"/><path d="M307,206 L427,162" class="lnd"/><path d="M307,182 L427,138" class="lnd"/><circle cx="327" cy="152" r="4" class="pnk"/><circle cx="342" cy="144" r="4" class="pnk"/><circle cx="402" cy="190" r="4" class="grn"/><circle cx="412" cy="176" r="4" class="grn"/><circle cx="322" cy="192" r="4" class="grn"/><circle cx="397" cy="142" r="4" class="pnk"/><rect x="490" y="120" width="205" height="100" rx="6" class="cell"/><text x="592" y="140" class="numb" text-anchor="middle" >k-NN</text><text x="592" y="212" class="mut" text-anchor="middle" >vote of k neighbours</text><path d="M532,182 L562,188 L582,168 L607,180 L627,158 L652,166" class="lnr"/><circle cx="552" cy="152" r="4" class="pnk"/><circle cx="567" cy="144" r="4" class="pnk"/><circle cx="627" cy="190" r="4" class="grn"/><circle cx="637" cy="176" r="4" class="grn"/><circle cx="547" cy="192" r="4" class="grn"/><circle cx="622" cy="142" r="4" class="pnk"/><rect x="715" y="120" width="205" height="100" rx="6" class="cell"/><text x="817" y="140" class="numb" text-anchor="middle" >kernel SVM</text><text x="817" y="212" class="mut" text-anchor="middle" >curves via a kernel</text><path d="M757,152 C 797,212 837,212 877,152" class="lnr"/><circle cx="777" cy="152" r="4" class="pnk"/><circle cx="792" cy="144" r="4" class="pnk"/><circle cx="852" cy="190" r="4" class="grn"/><circle cx="862" cy="176" r="4" class="grn"/><circle cx="772" cy="192" r="4" class="grn"/><circle cx="847" cy="142" r="4" class="pnk"/><rect x="40" y="238" width="205" height="100" rx="6" class="cell"/><text x="142" y="258" class="numb" text-anchor="middle" >naive Bayes</text><text x="142" y="330" class="mut" text-anchor="middle" >per-class bell curves</text><path d="M82,270 C 122,330 162,330 202,270" class="lnr"/><circle cx="102" cy="270" r="4" class="pnk"/><circle cx="117" cy="262" r="4" class="pnk"/><circle cx="177" cy="308" r="4" class="grn"/><circle cx="187" cy="294" r="4" class="grn"/><circle cx="97" cy="310" r="4" class="grn"/><circle cx="172" cy="260" r="4" class="pnk"/><rect x="265" y="238" width="205" height="100" rx="6" class="cell"/><text x="367" y="258" class="numb" text-anchor="middle" >decision tree</text><text x="367" y="330" class="mut" text-anchor="middle" >axis-aligned boxes</text><path d="M307,294 L357,294 L357,264 L427,264" class="lnr"/><circle cx="327" cy="270" r="4" class="pnk"/><circle cx="342" cy="262" r="4" class="pnk"/><circle cx="402" cy="308" r="4" class="grn"/><circle cx="412" cy="294" r="4" class="grn"/><circle cx="322" cy="310" r="4" class="grn"/><circle cx="397" cy="260" r="4" class="pnk"/><rect x="490" y="238" width="205" height="100" rx="6" class="cell"/><text x="592" y="258" class="numb" text-anchor="middle" >random forest</text><text x="592" y="330" class="mut" text-anchor="middle" >average of many trees</text><path d="M532,298 L562,298 L562,288 L587,288 L587,272 L617,272 L617,264 L652,264" class="lnr"/><circle cx="552" cy="270" r="4" class="pnk"/><circle cx="567" cy="262" r="4" class="pnk"/><circle cx="627" cy="308" r="4" class="grn"/><circle cx="637" cy="294" r="4" class="grn"/><circle cx="547" cy="310" r="4" class="grn"/><circle cx="622" cy="260" r="4" class="pnk"/><rect x="715" y="238" width="215" height="100" rx="6" class="note"/><text x="729" y="260" class="h2" text-anchor="start" >scale first</text><text x="729" y="280" class="handk" text-anchor="start" >distances (k-NN, SVM)</text><text x="729" y="298" class="handk" text-anchor="start" >need comparable axes;</text><text x="729" y="316" class="handk" text-anchor="start" >trees don't care</text><text x="40" y="380" class="h2" text-anchor="start" >2. confusion matrix (sklearn layout)</text><rect x="130" y="396" width="90" height="50" rx="0" class="grn"/><text x="175" y="427" class="numb" text-anchor="middle" >TN</text><rect x="220" y="396" width="90" height="50" rx="0" class="pnk"/><text x="265" y="427" class="numb" text-anchor="middle" >FP</text><rect x="130" y="446" width="90" height="50" rx="0" class="pnk"/><text x="175" y="477" class="numb" text-anchor="middle" >FN</text><rect x="220" y="446" width="90" height="50" rx="0" class="grn"/><text x="265" y="477" class="numb" text-anchor="middle" >TP</text><text x="175" y="512" class="mut" text-anchor="middle" >predicted 0</text><text x="265" y="512" class="mut" text-anchor="middle" >predicted 1</text><text x="120" y="425" class="mut" text-anchor="end" >actual 0</text><text x="120" y="475" class="mut" text-anchor="end" >actual 1</text><text x="40" y="540" class="mut" text-anchor="start" >FP = type I (false alarm), FN = type II (missed)</text><text x="430" y="380" class="h2" text-anchor="start" >3. CAP curve</text><path d="M450,520 L670,520 M450,520 L450,400" class="ln"/><path d="M450,520 L670,400" class="lnd"/><path d="M450,520 L472.0,400 L670,400" class="lnd"/><path d="M450,520 C 480,430 540,405 670,400" class="lnr"/><text x="560.0" y="538" class="mut" text-anchor="middle" >share of people contacted (best scores first)</text><text x="510" y="422" class="hand" text-anchor="start" >model</text><text x="600" y="480" class="mut" text-anchor="start" >random</text><text x="480" y="394" class="mut" text-anchor="start" >perfect</text><rect x="700" y="380" width="230" height="150" rx="6" class="note"/><text x="714" y="402" class="h2" text-anchor="start" >accuracy paradox</text><text x="714" y="422" class="handk" text-anchor="start" >2% positives: 'always no'</text><text x="714" y="440" class="handk" text-anchor="start" >scores 98% and is useless.</text><text x="714" y="458" class="handk" text-anchor="start" >Look at FN/FP, the CAP</text><text x="714" y="476" class="handk" text-anchor="start" >curve or AUC instead.</text></svg>

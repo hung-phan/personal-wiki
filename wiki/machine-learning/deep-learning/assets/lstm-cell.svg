@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="630" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >RECURRENT NETWORKS</text><text x="30" y="62" class="h1" text-anchor="start" >The LSTM cell: a memory line with three valves</text><line x1="30" y1="72" x2="720" y2="72" class="uline"/><rect x="130" y="110" width="470" height="300" rx="12" class="note"/><text x="60" y="154" class="num" text-anchor="middle" >c(t−1)</text><text x="670" y="154" class="numb" text-anchor="middle" >c(t)</text><path d="M90,150 L640,150" class="lnr" marker-end="url(#arr)"/><text x="365" y="132" class="hand" text-anchor="middle" >cell state: the memory line, changed only by × and +</text><circle cx="220" cy="150" r="13" class="cell"/><text x="220" y="155" class="h2" text-anchor="middle" >×</text><circle cx="360" cy="150" r="13" class="cell"/><text x="360" y="155" class="h2" text-anchor="middle" >+</text><path d="M60,370 L560,370" class="ln"/><text x="60" y="392" class="num" text-anchor="start" >[h(t−1), x(t)]</text><rect x="192" y="280" width="56" height="34" rx="4" class="pnk"/><text x="220" y="302" class="num" text-anchor="middle" >f = σ</text><path d="M220,370 L220,316" class="ln" marker-end="url(#ar)"/><text x="220" y="390" class="mut" text-anchor="middle" >forget gate</text><rect x="282" y="280" width="56" height="34" rx="4" class="grn"/><text x="310" y="302" class="num" text-anchor="middle" >i = σ</text><path d="M310,370 L310,316" class="ln" marker-end="url(#ar)"/><text x="310" y="390" class="mut" text-anchor="middle" >input gate</text><rect x="382" y="280" width="56" height="34" rx="4" class="yel"/><text x="410" y="302" class="num" text-anchor="middle" >g = tanh</text><path d="M410,370 L410,316" class="ln" marker-end="url(#ar)"/><text x="410" y="390" class="mut" text-anchor="middle" >candidate</text><rect x="472" y="280" width="56" height="34" rx="4" class="blu"/><text x="500" y="302" class="num" text-anchor="middle" >o = σ</text><path d="M500,370 L500,316" class="ln" marker-end="url(#ar)"/><text x="500" y="390" class="mut" text-anchor="middle" >output gate</text><path d="M220,278 L220,165" class="ln" marker-end="url(#ar)"/><circle cx="360" cy="220" r="12" class="cell"/><text x="360" y="225" class="h2" text-anchor="middle" >×</text><path d="M310,278 L310,220 L346,220" class="ln" marker-end="url(#ar)"/><path d="M410,278 L410,220 L374,220" class="ln" marker-end="url(#ar)"/><path d="M360,208 L360,165" class="ln" marker-end="url(#ar)"/><path d="M560,150 L560,200" class="ln" marker-end="url(#ar)"/><rect x="532" y="200" width="56" height="26" rx="4" class="yel"/><text x="560" y="218" class="num" text-anchor="middle" >tanh</text><circle cx="560" cy="252" r="12" class="cell"/><text x="560" y="257" class="h2" text-anchor="middle" >×</text><path d="M560,226 L560,238" class="ln" marker-end="url(#ar)"/><path d="M500,278 L500,252 L546,252" class="ln" marker-end="url(#ar)"/><path d="M572,252 L640,252 L640,340 L680,340" class="ln" marker-end="url(#ar)"/><text x="690" y="344" class="numb" text-anchor="start" >h(t): output + next step</text><text x="130" y="440" class="handk" text-anchor="start" >σ outputs 0…1 = how far each valve is open;  tanh outputs −1…1 = the content</text><rect x="30" y="460" width="440" height="150" rx="6" class="note"/><text x="44" y="482" class="h2" text-anchor="start" >The six equations</text><text x="44" y="502" class="num" text-anchor="start" >f = σ(W_f·[h(t−1), x(t)] + b_f)</text><text x="44" y="519" class="num" text-anchor="start" >i = σ(W_i·[h(t−1), x(t)] + b_i)</text><text x="44" y="536" class="num" text-anchor="start" >g = tanh(W_g·[h(t−1), x(t)] + b_g)</text><text x="44" y="553" class="num" text-anchor="start" >o = σ(W_o·[h(t−1), x(t)] + b_o)</text><text x="44" y="570" class="num" text-anchor="start" >c(t) = f * c(t−1) + i * g</text><text x="44" y="587" class="num" text-anchor="start" >h(t) = o * tanh(c(t))</text><rect x="490" y="460" width="440" height="150" rx="6" class="note"/><text x="504" y="482" class="h2" text-anchor="start" >Why gradients survive</text><text x="504" y="502" class="handk" text-anchor="start" >Along the memory line, c(t) depends on c(t−1)</text><text x="504" y="520" class="handk" text-anchor="start" >through a multiply by f, not by a weight matrix</text><text x="504" y="538" class="handk" text-anchor="start" >and tanh. With f near 1, the error signal flows</text><text x="504" y="556" class="handk" text-anchor="start" >back many steps almost undamped.</text><text x="504" y="574" class="handk" text-anchor="start" >GRU: 2 gates, no separate c. Peephole: gates also see c.</text></svg>

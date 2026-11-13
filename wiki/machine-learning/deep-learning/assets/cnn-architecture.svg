@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="580" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >CONVOLUTIONAL NETWORKS</text><text x="30" y="62" class="h1" text-anchor="start" >The course's cats-vs-dogs model, layer by layer</text><line x1="30" y1="72" x2="735" y2="72" class="uline"/><path d="M90,183.8 l2.7,-1.62 l40,0 l0,132.4 l-2.7,1.62 z" class="pur" opacity="0.6"/><rect x="90" y="183.8" width="40" height="132.4" rx="0" class="pur"/><text x="110" y="380" class="h2" text-anchor="middle" >input</text><text x="110" y="396" class="mut" text-anchor="middle" ></text><text x="110" y="416" class="num" text-anchor="middle" >64×64×3</text><text x="110" y="434" class="numf" text-anchor="middle" >0</text><path d="M176,183.8 l2.7,-1.62 l40,0 l0,132.4 l-2.7,1.62 z" class="grey" opacity="0.6"/><rect x="176" y="183.8" width="40" height="132.4" rx="0" class="grey"/><text x="196" y="380" class="h2" text-anchor="middle" >Rescaling</text><text x="196" y="396" class="mut" text-anchor="middle" >1/255</text><text x="196" y="416" class="num" text-anchor="middle" >64×64×3</text><text x="196" y="434" class="numf" text-anchor="middle" >0</text><path d="M262,183.8 l2.7,-1.62 l40,0 l0,132.4 l-2.7,1.62 z" class="grey" opacity="0.6"/><rect x="262" y="183.8" width="40" height="132.4" rx="0" class="grey"/><text x="282" y="380" class="h2" text-anchor="middle" >Flip</text><text x="282" y="396" class="mut" text-anchor="middle" >/ Zoom</text><text x="282" y="416" class="num" text-anchor="middle" >train only</text><text x="282" y="434" class="numf" text-anchor="middle" >0</text><path d="M348,185.4 l28.8,-17.28 l40,0 l0,129.2 l-28.8,17.28 z" class="yel" opacity="0.6"/><rect x="348" y="185.4" width="40" height="129.2" rx="0" class="yel"/><text x="368" y="380" class="h2" text-anchor="middle" >Conv2D</text><text x="368" y="396" class="mut" text-anchor="middle" >32, 3×3</text><text x="368" y="416" class="num" text-anchor="middle" >62×62×32</text><text x="368" y="434" class="numb" text-anchor="middle" >896</text><path d="M434,210.2 l28.8,-17.28 l40,0 l0,79.6 l-28.8,17.28 z" class="blu" opacity="0.6"/><rect x="434" y="210.2" width="40" height="79.6" rx="0" class="blu"/><text x="454" y="380" class="h2" text-anchor="middle" >MaxPool</text><text x="454" y="396" class="mut" text-anchor="middle" >2</text><text x="454" y="416" class="num" text-anchor="middle" >31×31×32</text><text x="454" y="434" class="numf" text-anchor="middle" >0</text><path d="M520,211.8 l28.8,-17.28 l40,0 l0,76.4 l-28.8,17.28 z" class="yel" opacity="0.6"/><rect x="520" y="211.8" width="40" height="76.4" rx="0" class="yel"/><text x="540" y="380" class="h2" text-anchor="middle" >Conv2D</text><text x="540" y="396" class="mut" text-anchor="middle" >32, 3×3</text><text x="540" y="416" class="num" text-anchor="middle" >29×29×32</text><text x="540" y="434" class="numb" text-anchor="middle" >9,248</text><path d="M606,223.8 l28.8,-17.28 l40,0 l0,52.400000000000006 l-28.8,17.28 z" class="blu" opacity="0.6"/><rect x="606" y="223.8" width="40" height="52.400000000000006" rx="0" class="blu"/><text x="626" y="380" class="h2" text-anchor="middle" >MaxPool</text><text x="626" y="396" class="mut" text-anchor="middle" >2</text><text x="626" y="416" class="num" text-anchor="middle" >14×14×32</text><text x="626" y="434" class="numf" text-anchor="middle" >0</text><rect x="704" y="175.0" width="16" height="150" rx="3" class="cell"/><text x="712" y="380" class="h2" text-anchor="middle" >Flatten</text><text x="712" y="396" class="mut" text-anchor="middle" ></text><text x="712" y="416" class="num" text-anchor="middle" >6,272</text><text x="712" y="434" class="numf" text-anchor="middle" >0</text><rect x="790" y="205.0" width="16" height="90" rx="3" class="grn"/><text x="798" y="380" class="h2" text-anchor="middle" >Dense</text><text x="798" y="396" class="mut" text-anchor="middle" >128 ReLU</text><text x="798" y="416" class="num" text-anchor="middle" >128</text><text x="798" y="434" class="numb" text-anchor="middle" >802,944</text><rect x="876" y="238.0" width="16" height="24" rx="3" class="pnk"/><text x="884" y="380" class="h2" text-anchor="middle" >Dense</text><text x="884" y="396" class="mut" text-anchor="middle" >1 sigmoid</text><text x="884" y="416" class="num" text-anchor="middle" >1</text><text x="884" y="434" class="numb" text-anchor="middle" >129</text><text x="70" y="416" class="mut" text-anchor="end" >shape</text><text x="70" y="434" class="mut" text-anchor="end" >params</text><text x="238" y="118" class="hand" text-anchor="middle" >inside the model, so predict() can't skip them</text><path d="M196,126 L196,150 M282,126 L282,150" class="lnr"/><rect x="30" y="456" width="430" height="110" rx="6" class="note"/><text x="44" y="478" class="h2" text-anchor="start" >Where the weights are</text><text x="44" y="498" class="handk" text-anchor="start" >Total 813,217 parameters.</text><text x="44" y="516" class="handk" text-anchor="start" >Both conv layers together: 10,144 (1.2%).</text><text x="44" y="534" class="handk" text-anchor="start" >The first dense layer alone: 802,944 (98.7%).</text><text x="44" y="552" class="handk" text-anchor="start" >Pooling and flatten learn nothing.</text><rect x="480" y="456" width="450" height="110" rx="6" class="note"/><text x="494" y="478" class="h2" text-anchor="start" >Why convolution is cheap</text><text x="494" y="498" class="handk" text-anchor="start" >A filter's 3×3×channels weights are reused at</text><text x="494" y="516" class="handk" text-anchor="start" >every position (weight sharing). A dense layer</text><text x="494" y="534" class="handk" text-anchor="start" >on the raw 64×64×3 image would need 12,288</text><text x="494" y="552" class="handk" text-anchor="start" >weights per neuron — and wouldn't know a shifted cat.</text></svg>

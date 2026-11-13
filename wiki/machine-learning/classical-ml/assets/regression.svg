@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 530" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="530" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >REGRESSION</text><text x="30" y="62" class="h1" text-anchor="start" >Five ways to draw a curve through points, and how to score them</text><line x1="30" y1="72" x2="975" y2="72" class="uline"/><rect x="40" y="96" width="280" height="190" rx="6" class="cell"/><text x="180" y="118" class="numb" text-anchor="middle" >least squares</text><text x="180" y="278" class="mut" text-anchor="middle" >minimise Σ (y − ŷ)²</text><path d="M92,235.6 L92,238.66" class="lnd"/><circle cx="92" cy="235.6" r="4" class="pnk"/><path d="M124,223.7 L124,221.32" class="lnd"/><circle cx="124" cy="223.7" r="4" class="pnk"/><path d="M156,198.2 L156,203.98" class="lnd"/><circle cx="156" cy="198.2" r="4" class="pnk"/><path d="M188,194.8 L188,186.64" class="lnd"/><circle cx="188" cy="194.8" r="4" class="pnk"/><path d="M220,165.9 L220,169.3" class="lnd"/><circle cx="220" cy="165.9" r="4" class="pnk"/><path d="M252,164.2 L252,151.95999999999998" class="lnd"/><circle cx="252" cy="164.2" r="4" class="pnk"/><path d="M284,130.2 L284,134.62" class="lnd"/><circle cx="284" cy="130.2" r="4" class="pnk"/><path d="M76.0,247.33 L300.0,125.94999999999999" class="lnr"/><rect x="340" y="96" width="280" height="190" rx="6" class="cell"/><text x="480" y="118" class="numb" text-anchor="middle" >SVR: ε-insensitive tube</text><text x="480" y="278" class="mut" text-anchor="middle" >errors inside the tube are free</text><path d="M376.0,247.33 L600.0,125.94999999999999" class="lnr"/><path d="M376.0,230.32999999999998 L600.0,108.94999999999999" class="lnd"/><path d="M376.0,264.33 L600.0,142.95" class="lnd"/><circle cx="392" cy="235.6" r="4" class="pnk"/><circle cx="424" cy="223.7" r="4" class="pnk"/><circle cx="456" cy="198.2" r="4" class="pnk"/><circle cx="488" cy="194.8" r="4" class="pnk"/><circle cx="520" cy="165.9" r="4" class="pnk"/><circle cx="552" cy="164.2" r="4" class="pnk"/><circle cx="584" cy="130.2" r="4" class="pnk"/><circle cx="472.0" cy="160.8" r="4" class="pnk"/><path d="M472.0,160.8 L472.0,178.31" class="ln"/><text x="478.0" y="174.8" class="hand" text-anchor="start" >slack ξ</text><rect x="640" y="96" width="280" height="190" rx="6" class="cell"/><text x="780" y="118" class="numb" text-anchor="middle" >tree / forest</text><text x="780" y="278" class="mut" text-anchor="middle" >a constant per interval (forest: averaged)</text><path d="M676.0,229.65 L740.0,229.65" class="lnr"/><path d="M740.0,196.5 L804.0,196.5" class="lnr"/><path d="M804.0,165.05 L868.0,165.05" class="lnr"/><path d="M868.0,130.2 L900.0,130.2" class="lnr"/><circle cx="692" cy="235.6" r="4" class="pnk"/><circle cx="724" cy="223.7" r="4" class="pnk"/><circle cx="756" cy="198.2" r="4" class="pnk"/><circle cx="788" cy="194.8" r="4" class="pnk"/><circle cx="820" cy="165.9" r="4" class="pnk"/><circle cx="852" cy="164.2" r="4" class="pnk"/><circle cx="884" cy="130.2" r="4" class="pnk"/><rect x="40" y="312" width="430" height="200" rx="6" class="note"/><text x="54" y="334" class="h2" text-anchor="start" >Linear in what?</text><text x="54" y="354" class="handk" text-anchor="start" >polynomial: y = b0 + b1·x + b2·x² + … + bn·x^n</text><text x="54" y="372" class="handk" text-anchor="start" >is still LINEAR regression: linear in the b's.</text><text x="54" y="390" class="handk" text-anchor="start" ></text><text x="54" y="408" class="handk" text-anchor="start" >multiple: y = b0 + b1·x1 + … + bk·xk</text><text x="54" y="426" class="handk" text-anchor="start" >dummy trap: keep one fewer dummy than</text><text x="54" y="444" class="handk" text-anchor="start" >categories (the intercept is the baseline)</text><text x="54" y="462" class="handk" text-anchor="start" >SVR needs scaled X and y; trees need none</text><rect x="500" y="312" width="430" height="200" rx="6" class="note"/><text x="514" y="334" class="h2" text-anchor="start" >Scoring</text><text x="514" y="354" class="handk" text-anchor="start" >R² = 1 − SS_res / SS_tot</text><text x="514" y="372" class="handk" text-anchor="start" >(1 = perfect, 0 = as good as the mean,</text><text x="514" y="390" class="handk" text-anchor="start" > &lt; 0 = worse than the mean on test data)</text><text x="514" y="408" class="handk" text-anchor="start" ></text><text x="514" y="426" class="handk" text-anchor="start" >adjusted R² = 1 − (1 − R²)(n − 1)/(n − k − 1)</text><text x="514" y="444" class="handk" text-anchor="start" >falls when a useless feature is added</text><text x="514" y="462" class="handk" text-anchor="start" >compare models on held-out data</text></svg>

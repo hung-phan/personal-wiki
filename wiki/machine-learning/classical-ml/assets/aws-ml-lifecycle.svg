@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 522" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="522" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >ML ON AWS</text><text x="30" y="62" class="h1" text-anchor="start" >Parts 11-15 as one lifecycle, a service per step</text><line x1="30" y1="72" x2="750" y2="72" class="uline"/><rect x="30" y="100" width="172" height="200" rx="6" class="yel"/><text x="116" y="124" class="numb" text-anchor="middle" >prepare (Part 11)</text><text x="40" y="152" class="mut" text-anchor="start" >S3: store raw data</text><text x="40" y="178" class="mut" text-anchor="start" >Glue: ETL jobs</text><text x="40" y="204" class="mut" text-anchor="start" >DataBrew: no-code cleaning</text><text x="40" y="230" class="mut" text-anchor="start" >Data Wrangler (Canvas): clean,</text><text x="40" y="256" class="mut" text-anchor="start" >  encode, scale, PCA</text><line x1="202" y1="200" x2="216" y2="200" class="ln" marker-end="url(#ar)"/><rect x="216" y="100" width="172" height="200" rx="6" class="blu"/><text x="302" y="124" class="numb" text-anchor="middle" >develop (Part 12)</text><text x="226" y="152" class="mut" text-anchor="start" >Canvas: AutoML regression /</text><text x="226" y="178" class="mut" text-anchor="start" >  classification, metrics</text><text x="226" y="204" class="mut" text-anchor="start" >built-in XGBoost, tuning</text><text x="226" y="230" class="mut" text-anchor="start" >Model Registry: versions</text><text x="226" y="256" class="mut" text-anchor="start" >AI services: Comprehend, ...</text><line x1="388" y1="200" x2="402" y2="200" class="ln" marker-end="url(#ar)"/><rect x="402" y="100" width="172" height="200" rx="6" class="grn"/><text x="488" y="124" class="numb" text-anchor="middle" >deploy (Part 13)</text><text x="412" y="152" class="mut" text-anchor="start" >endpoints: real-time,</text><text x="412" y="178" class="mut" text-anchor="start" >  serverless, async, batch</text><text x="412" y="204" class="mut" text-anchor="start" >containers: ECR, ECS, EKS</text><text x="412" y="230" class="mut" text-anchor="start" >Lambda for light models</text><text x="412" y="256" class="mut" text-anchor="start" >IaC: CloudFormation, CDK</text><line x1="574" y1="200" x2="588" y2="200" class="ln" marker-end="url(#ar)"/><rect x="588" y="100" width="172" height="200" rx="6" class="pnk"/><text x="674" y="124" class="numb" text-anchor="middle" >automate (Part 14)</text><text x="598" y="152" class="mut" text-anchor="start" >CodePipeline orchestrates:</text><text x="598" y="178" class="mut" text-anchor="start" >  source -&gt; CodeBuild -&gt;</text><text x="598" y="204" class="mut" text-anchor="start" >  CodeDeploy</text><text x="598" y="230" class="mut" text-anchor="start" >SageMaker Pipelines: process,</text><text x="598" y="256" class="mut" text-anchor="start" >  train, register, deploy</text><line x1="760" y1="200" x2="774" y2="200" class="ln" marker-end="url(#ar)"/><rect x="774" y="100" width="172" height="200" rx="6" class="grey"/><text x="860" y="124" class="numb" text-anchor="middle" >monitor (Part 15)</text><text x="784" y="152" class="mut" text-anchor="start" >Model Monitor: drift, quality</text><text x="784" y="178" class="mut" text-anchor="start" >Clarify: bias, explanations</text><text x="784" y="204" class="mut" text-anchor="start" >CloudWatch, X-Ray, Trail</text><text x="784" y="230" class="mut" text-anchor="start" >EventBridge, QuickSight</text><text x="784" y="256" class="mut" text-anchor="start" >Budgets, Spot, Savings Plans</text><path d="M890,300 L890,330 L116,330 L116,302" class="lnd" marker-end="url(#ar)"/><text x="500" y="348" class="hand" text-anchor="middle" >drift or new data -&gt; retrain</text><rect x="30" y="372" width="440" height="130" rx="6" class="note"/><text x="44" y="394" class="h2" text-anchor="start" >Inference options (as taught)</text><text x="44" y="414" class="handk" text-anchor="start" >real-time: low latency, always-on instance</text><text x="44" y="432" class="handk" text-anchor="start" >serverless: pay per request, cold starts</text><text x="44" y="450" class="handk" text-anchor="start" >asynchronous: large payloads, queue, long jobs</text><text x="44" y="468" class="handk" text-anchor="start" >batch transform: score a whole dataset offline</text><rect x="500" y="372" width="430" height="130" rx="6" class="note"/><text x="514" y="394" class="h2" text-anchor="start" >Cost habits from the course</text><text x="514" y="414" class="handk" text-anchor="start" >delete Canvas app, user profile, domain,</text><text x="514" y="432" class="handk" text-anchor="start" >endpoints, endpoint configs and models;</text><text x="514" y="450" class="handk" text-anchor="start" >zero-spend and monthly budgets;</text><text x="514" y="468" class="handk" text-anchor="start" >managed Spot training for interruptible jobs</text></svg>

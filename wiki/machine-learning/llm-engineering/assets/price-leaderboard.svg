@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 610" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="610" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >PRICE IS RIGHT</text><text x="30" y="62" class="h1" text-anchor="start" >Mean absolute error on held-out products (course-reported)</text><line x1="30" y1="72" x2="900" y2="72" class="uline"/><text x="290" y="111" class="num" text-anchor="end" >random guess</text><rect x="300" y="99" width="516.0" height="16" rx="2" class="grey"/><path d="M798.0,97 l6,20 M804.0,97 l6,20" stroke="#f7f0e1" stroke-width="3"/><text x="822.0" y="111" class="numb" text-anchor="start" >$382.08</text><text x="945" y="111" class="mut" text-anchor="end" >wk 6</text><text x="290" y="133" class="num" text-anchor="end" >constant: training mean</text><rect x="300" y="121" width="456.574" height="16" rx="2" class="grey"/><text x="762.5740000000001" y="133" class="numb" text-anchor="start" >$106.18</text><text x="945" y="133" class="mut" text-anchor="end" >wk 6</text><text x="290" y="155" class="num" text-anchor="end" >linear regression, 3 features</text><rect x="300" y="143" width="436.70799999999997" height="16" rx="2" class="yel"/><text x="742.708" y="155" class="numb" text-anchor="start" >$101.56</text><text x="945" y="155" class="mut" text-anchor="end" >wk 6</text><text x="290" y="177" class="num" text-anchor="end" >the instructor (100 items)</text><rect x="300" y="165" width="376.766" height="16" rx="2" class="grey"/><text x="682.7660000000001" y="177" class="numb" text-anchor="start" >$87.62</text><text x="945" y="177" class="mut" text-anchor="end" >wk 6</text><text x="290" y="199" class="num" text-anchor="end" >bag of words + linear</text><rect x="300" y="187" width="330.283" height="16" rx="2" class="yel"/><text x="636.283" y="199" class="numb" text-anchor="start" >$76.81</text><text x="945" y="199" class="mut" text-anchor="end" >wk 6</text><text x="290" y="221" class="num" text-anchor="end" >GPT-4.1-nano fine-tuned (20k)</text><rect x="300" y="209" width="326.41299999999995" height="16" rx="2" class="pnk"/><text x="632.413" y="221" class="numb" text-anchor="start" >$75.91</text><text x="945" y="221" class="mut" text-anchor="end" >wk 6</text><text x="290" y="243" class="num" text-anchor="end" >random forest</text><rect x="300" y="231" width="310.804" height="16" rx="2" class="yel"/><text x="616.804" y="243" class="numb" text-anchor="start" >$72.28</text><text x="945" y="243" class="mut" text-anchor="end" >wk 6</text><text x="290" y="265" class="num" text-anchor="end" >XGBoost</text><rect x="300" y="253" width="293.389" height="16" rx="2" class="yel"/><text x="599.389" y="265" class="numb" text-anchor="start" >$68.23</text><text x="945" y="265" class="mut" text-anchor="end" >wk 6</text><text x="290" y="287" class="num" text-anchor="end" >Llama 3.2 3B QLoRA, light run</text><rect x="300" y="275" width="281.22" height="16" rx="2" class="grn"/><text x="587.22" y="287" class="numb" text-anchor="start" >$65.40</text><text x="945" y="287" class="mut" text-anchor="end" >wk 7</text><text x="290" y="309" class="num" text-anchor="end" >vanilla neural net (669k params)</text><rect x="300" y="297" width="275.07099999999997" height="16" rx="2" class="blu"/><text x="581.0709999999999" y="309" class="numb" text-anchor="start" >$63.97</text><text x="945" y="309" class="mut" text-anchor="end" >wk 6</text><text x="290" y="331" class="num" text-anchor="end" >GPT-4.1-nano zero-shot</text><rect x="300" y="319" width="268.793" height="16" rx="2" class="pnk"/><text x="574.793" y="331" class="numb" text-anchor="start" >$62.51</text><text x="945" y="331" class="mut" text-anchor="end" >wk 6</text><text x="290" y="353" class="num" text-anchor="end" >Gemini 2.5 Flash-Lite</text><rect x="300" y="341" width="252.32399999999998" height="16" rx="2" class="pnk"/><text x="558.324" y="353" class="numb" text-anchor="start" >$58.68</text><text x="945" y="353" class="mut" text-anchor="end" >wk 6</text><text x="290" y="375" class="num" text-anchor="end" >Grok 4.1 Fast</text><rect x="300" y="363" width="247.766" height="16" rx="2" class="pnk"/><text x="553.766" y="375" class="numb" text-anchor="start" >$57.62</text><text x="945" y="375" class="mut" text-anchor="end" >wk 6</text><text x="290" y="397" class="num" text-anchor="end" >Gemini 3 Pro (50 items)</text><rect x="300" y="385" width="217.32199999999997" height="16" rx="2" class="pnk"/><text x="523.322" y="397" class="numb" text-anchor="start" >$50.54</text><text x="945" y="397" class="mut" text-anchor="end" >wk 6</text><text x="290" y="419" class="num" text-anchor="end" >Claude Opus 4.5</text><rect x="300" y="407" width="202.53" height="16" rx="2" class="pnk"/><text x="508.53" y="419" class="numb" text-anchor="start" >$47.10</text><text x="945" y="419" class="mut" text-anchor="end" >wk 6</text><text x="290" y="441" class="num" text-anchor="end" >deep residual net (289M params)</text><rect x="300" y="429" width="199.907" height="16" rx="2" class="blu"/><text x="505.90700000000004" y="441" class="numb" text-anchor="start" >$46.49</text><text x="945" y="441" class="mut" text-anchor="end" >wk 6</text><text x="290" y="463" class="num" text-anchor="end" >GPT-5.1</text><rect x="300" y="451" width="192.382" height="16" rx="2" class="pnk"/><text x="498.382" y="463" class="numb" text-anchor="start" >$44.74</text><text x="945" y="463" class="mut" text-anchor="end" >wk 6</text><text x="290" y="485" class="num" text-anchor="end" >Llama 3.2 3B QLoRA, full run</text><rect x="300" y="473" width="171.355" height="16" rx="2" class="grn"/><text x="477.355" y="485" class="numb" text-anchor="start" >$39.85</text><text x="945" y="485" class="mut" text-anchor="end" >wk 7</text><text x="290" y="507" class="num" text-anchor="end" >GPT-5.1 + RAG (5 similar items)</text><rect x="300" y="495" width="129.817" height="16" rx="2" class="pur"/><text x="435.817" y="507" class="numb" text-anchor="start" >$30.19</text><text x="945" y="507" class="mut" text-anchor="end" >wk 8</text><text x="290" y="529" class="num" text-anchor="end" >ensemble 0.8 RAG + 0.1 + 0.1</text><rect x="300" y="517" width="128.57" height="16" rx="2" class="pur"/><text x="434.57" y="529" class="numb" text-anchor="start" >$29.90</text><text x="945" y="529" class="mut" text-anchor="end" >wk 8</text><rect x="40" y="582" width="14" height="14" rx="2" class="grey"/><text x="60" y="593" class="mut" text-anchor="start" >baselines / human</text><rect x="190" y="582" width="14" height="14" rx="2" class="yel"/><text x="210" y="593" class="mut" text-anchor="start" >classical ML</text><rect x="340" y="582" width="14" height="14" rx="2" class="blu"/><text x="360" y="593" class="mut" text-anchor="start" >neural nets</text><rect x="490" y="582" width="14" height="14" rx="2" class="pnk"/><text x="510" y="593" class="mut" text-anchor="start" >frontier LLMs</text><rect x="640" y="582" width="14" height="14" rx="2" class="grn"/><text x="660" y="593" class="mut" text-anchor="start" >fine-tuned open LLM</text><rect x="790" y="582" width="14" height="14" rx="2" class="pur"/><text x="810" y="593" class="mut" text-anchor="start" >RAG + ensemble</text><text x="300" y="562" class="hand" text-anchor="start" >lower is better · single runs on ~200 test items: differences of a few dollars are noise</text></svg>

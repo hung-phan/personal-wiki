@@ -22,8 +22,8 @@ Frontmatter contract (see CLAUDE.md):
     tags: [tag-one, tag-two]
     ---
 
-Notes live at: wiki/<category>/<topic>.md
-INDEX.md files (per category) are skipped from the manifest.
+Notes live at: wiki/<category>/<topic>.md, or nested: wiki/<category>/<subcategory>/<topic>.md
+INDEX.md files (per folder) are skipped from the manifest.
 """
 
 from __future__ import annotations
@@ -50,6 +50,9 @@ def parse_frontmatter(path: Path) -> dict[str, str] | None:
             fields[current] = value.strip()
         elif current and line.startswith(" "):
             fields[current] = (fields[current] + " " + line.strip()).strip()
+    for key, value in fields.items():  # quoted YAML scalars (needed when a value contains ": ")
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            fields[key] = value[1:-1].replace('\\"', '"') if value[0] == '"' else value[1:-1].replace("''", "'")
     return fields
 
 
@@ -82,7 +85,7 @@ def main() -> int:
     any_mode, keywords = parse_args(sys.argv[1:])
 
     by_category: dict[str, list[tuple[str, str, Path]]] = {}
-    for note in sorted(WIKI_ROOT.glob("*/*.md")):
+    for note in sorted(WIKI_ROOT.rglob("*.md")):
         if note.name == "INDEX.md":
             continue
         fm = parse_frontmatter(note)
@@ -96,7 +99,7 @@ def main() -> int:
         if not matches(haystack, keywords, any_mode):
             continue
         rel = note.relative_to(WIKI_ROOT)
-        by_category.setdefault(note.parent.name, []).append((name, desc, rel))
+        by_category.setdefault(str(rel.parent), []).append((name, desc, rel))  # e.g. "machine-learning/deep-learning"
 
     total = 0
     for category in sorted(by_category):

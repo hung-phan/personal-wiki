@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 575" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="575" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >RAG</text><text x="30" y="62" class="h1" text-anchor="start" >Look it up, paste it in, then answer</text><line x1="30" y1="72" x2="570" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >ingest (once, offline)</text><rect x="40" y="118" width="160" height="46" rx="5" class="cell"/><text x="120.0" y="137" class="numb" text-anchor="middle" >documents</text><text x="120.0" y="154" class="mut" text-anchor="middle" >md, pdf, wiki…</text><line x1="200" y1="141" x2="220" y2="141" class="ln" marker-end="url(#ar)"/><rect x="220" y="118" width="160" height="46" rx="5" class="cell"/><text x="300.0" y="137" class="numb" text-anchor="middle" >chunk</text><text x="300.0" y="154" class="mut" text-anchor="middle" >size + overlap</text><line x1="380" y1="141" x2="400" y2="141" class="ln" marker-end="url(#ar)"/><rect x="400" y="118" width="160" height="46" rx="5" class="pur"/><text x="480.0" y="137" class="numb" text-anchor="middle" >encoder</text><text x="480.0" y="154" class="mut" text-anchor="middle" >text to vector</text><line x1="560" y1="141" x2="580" y2="141" class="ln" marker-end="url(#ar)"/><rect x="580" y="118" width="160" height="46" rx="5" class="grn"/><text x="660.0" y="137" class="numb" text-anchor="middle" >vector store</text><text x="660.0" y="154" class="mut" text-anchor="middle" >chunk + vector + metadata</text><text x="40" y="200" class="h2" text-anchor="start" >query (every question)</text><rect x="40" y="214" width="160" height="46" rx="5" class="blu"/><text x="120.0" y="233" class="numb" text-anchor="middle" >question</text><text x="120.0" y="250" class="mut" text-anchor="middle" >+ chat history</text><line x1="200" y1="237" x2="220" y2="237" class="ln" marker-end="url(#ar)"/><rect x="220" y="214" width="160" height="46" rx="5" class="yel"/><text x="300.0" y="233" class="numb" text-anchor="middle" >rewrite</text><text x="300.0" y="250" class="mut" text-anchor="middle" >standalone query</text><line x1="380" y1="237" x2="400" y2="237" class="ln" marker-end="url(#ar)"/><rect x="400" y="214" width="160" height="46" rx="5" class="pur"/><text x="480.0" y="233" class="numb" text-anchor="middle" >same encoder</text><text x="480.0" y="250" class="mut" text-anchor="middle" >query vector</text><line x1="560" y1="237" x2="580" y2="237" class="ln" marker-end="url(#ar)"/><rect x="580" y="214" width="160" height="46" rx="5" class="grn"/><text x="660.0" y="233" class="numb" text-anchor="middle" >top-k search</text><text x="660.0" y="250" class="mut" text-anchor="middle" >nearest chunks</text><line x1="740" y1="237" x2="760" y2="237" class="ln" marker-end="url(#ar)"/><rect x="760" y="214" width="160" height="46" rx="5" class="yel"/><text x="840.0" y="233" class="numb" text-anchor="middle" >rerank</text><text x="840.0" y="250" class="mut" text-anchor="middle" >keep the best</text><path d="M670,164 L670,214" class="lnd" marker-end="url(#ar)"/><text x="678" y="194" class="mut" text-anchor="start" >searched</text><path d="M840,260 L840,300 L560,300" class="ln" marker-end="url(#ar)"/><rect x="250" y="284" width="300" height="56" rx="6" class="pnk"/><text x="400" y="306" class="numb" text-anchor="middle" >prompt = instructions + chunks + question</text><text x="400" y="326" class="mut" text-anchor="middle" >LLM answers from the pasted text (only text, never vectors)</text><text x="100" y="312" class="hand" text-anchor="middle" >optional steps</text><text x="100" y="328" class="hand" text-anchor="middle" >in yellow</text><text x="40" y="372" class="h2" text-anchor="start" >evaluate</text><rect x="40" y="386" width="430" height="170" rx="6" class="note"/><text x="54" y="408" class="h2" text-anchor="start" >Retrieval (fast loop)</text><text x="54" y="428" class="handk" text-anchor="start" >golden set: question + keywords + reference answer</text><text x="54" y="446" class="handk" text-anchor="start" >MRR = mean of 1 / rank of first relevant chunk</text><text x="54" y="464" class="handk" text-anchor="start" >nDCG = graded hits, discounted by log2(rank + 1)</text><text x="54" y="482" class="handk" text-anchor="start" >recall@k = share of questions with a hit in top k</text><text x="54" y="500" class="handk" text-anchor="start" >(recall matters most: the LLM can skip noise,</text><text x="54" y="518" class="handk" text-anchor="start" > it can't use what was never retrieved)</text><rect x="490" y="386" width="440" height="170" rx="6" class="note"/><text x="504" y="408" class="h2" text-anchor="start" >Answers (closer to the goal)</text><text x="504" y="428" class="handk" text-anchor="start" >LLM-as-judge scores accuracy, completeness and</text><text x="504" y="446" class="handk" text-anchor="start" >relevance 1–5 against the reference answer</text><text x="504" y="464" class="handk" text-anchor="start" >use a strong judge; keep it fixed across runs</text><text x="504" y="482" class="handk" text-anchor="start" ></text><text x="504" y="500" class="handk" text-anchor="start" >change ONE thing per experiment:</text><text x="504" y="518" class="handk" text-anchor="start" >chunk size, encoder, k, rerank, prompt</text></svg>

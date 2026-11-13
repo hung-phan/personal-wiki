@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 570" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="570" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >ACTOR-CRITIC</text><text x="30" y="62" class="h1" text-anchor="start" >One network, two heads: what to do, and how good it is here</text><line x1="30" y1="72" x2="915" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >1. the network (course: Kung Fu Master)</text><rect x="40" y="124" width="120" height="70" rx="4" class="cell"/><text x="100" y="150" class="num" text-anchor="middle" >4 stacked</text><text x="100" y="166" class="num" text-anchor="middle" >42×42 gray</text><text x="100" y="182" class="num" text-anchor="middle" >frames</text><line x1="160" y1="159" x2="190" y2="159" class="ln" marker-end="url(#ar)"/><rect x="190" y="124" width="150" height="70" rx="4" class="yel"/><text x="265" y="150" class="numb" text-anchor="middle" >3 conv layers</text><text x="265" y="168" class="mut" text-anchor="middle" >32 ch, 3×3, stride 2</text><line x1="340" y1="159" x2="370" y2="159" class="ln" marker-end="url(#ar)"/><rect x="370" y="124" width="110" height="70" rx="4" class="blu"/><text x="425" y="150" class="numb" text-anchor="middle" >dense</text><text x="425" y="168" class="mut" text-anchor="middle" >512 to 128</text><line x1="480" y1="145" x2="520" y2="118" class="ln" marker-end="url(#ar)"/><line x1="480" y1="175" x2="520" y2="202" class="ln" marker-end="url(#ar)"/><rect x="520" y="92" width="190" height="50" rx="4" class="pnk"/><text x="615" y="113" class="numb" text-anchor="middle" >actor: 14 logits</text><text x="615" y="131" class="mut" text-anchor="middle" >softmax: π(a|s)</text><rect x="520" y="176" width="190" height="50" rx="4" class="grn"/><text x="615" y="197" class="numb" text-anchor="middle" >critic: 1 number</text><text x="615" y="215" class="mut" text-anchor="middle" >V(s)</text><rect x="730" y="92" width="200" height="134" rx="6" class="note"/><text x="744" y="114" class="h2" text-anchor="start" >Advantage</text><text x="744" y="134" class="handk" text-anchor="start" >A = (r + γ·V(s')) − V(s)</text><text x="744" y="152" class="handk" text-anchor="start" >&gt; 0: better than</text><text x="744" y="170" class="handk" text-anchor="start" >expected, do it more</text><text x="744" y="188" class="handk" text-anchor="start" >&lt; 0: do it less</text><text x="40" y="262" class="h2" text-anchor="start" >2. the losses</text><rect x="40" y="276" width="430" height="120" rx="6" class="note"/><text x="54" y="298" class="h2" text-anchor="start" >loss = actor + critic − entropy bonus</text><text x="54" y="318" class="handk" text-anchor="start" >actor: −log π(a|s) · A (push up good actions)</text><text x="54" y="336" class="handk" text-anchor="start" >critic: A² (predict returns better)</text><text x="54" y="354" class="handk" text-anchor="start" >entropy: keep the policy from collapsing too early</text><text x="54" y="372" class="handk" text-anchor="start" >course: entropy weight 0.001, rewards × 0.01</text><text x="500" y="262" class="h2" text-anchor="start" >3. asynchronous vs synchronous</text><rect x="500" y="286" width="90" height="20" rx="3" class="cell"/><text x="545" y="300" class="num" text-anchor="middle" >worker 1</text><line x1="590" y1="296" x2="640" y2="330" class="ln" marker-end="url(#ar)"/><rect x="500" y="312" width="90" height="20" rx="3" class="cell"/><text x="545" y="326" class="num" text-anchor="middle" >worker 2</text><line x1="590" y1="322" x2="640" y2="330" class="ln" marker-end="url(#ar)"/><rect x="500" y="338" width="90" height="20" rx="3" class="cell"/><text x="545" y="352" class="num" text-anchor="middle" >worker 3</text><line x1="590" y1="348" x2="640" y2="330" class="ln" marker-end="url(#ar)"/><rect x="500" y="364" width="90" height="20" rx="3" class="cell"/><text x="545" y="378" class="num" text-anchor="middle" >worker 4</text><line x1="590" y1="374" x2="640" y2="330" class="ln" marker-end="url(#ar)"/><rect x="640" y="310" width="130" height="40" rx="4" class="pnk"/><text x="705" y="334" class="numb" text-anchor="middle" >shared network</text><text x="780" y="300" class="mut" text-anchor="start" >A3C (2016): each worker</text><text x="780" y="316" class="mut" text-anchor="start" >has its own env + copy,</text><text x="780" y="332" class="mut" text-anchor="start" >sends gradients whenever</text><text x="780" y="348" class="mut" text-anchor="start" >it's ready</text><text x="780" y="374" class="mut" text-anchor="start" >A2C: step all envs together,</text><text x="780" y="390" class="mut" text-anchor="start" >one batched update</text><rect x="40" y="420" width="890" height="128" rx="6" class="note"/><text x="54" y="442" class="h2" text-anchor="start" >Where PPO and SAC fit</text><text x="54" y="462" class="handk" text-anchor="start" >Both are actor-critics. PPO (2017) limits each update: the new/old probability ratio is clipped to [1−ε, 1+ε], so one</text><text x="54" y="480" class="handk" text-anchor="start" >batch can't wreck the policy — the default for games and robotics, and the RL step in RLHF. SAC (2018) is off-policy</text><text x="54" y="498" class="handk" text-anchor="start" >for continuous actions: it maximises reward plus an entropy bonus, reusing a replay buffer like DQN.</text><text x="54" y="516" class="handk" text-anchor="start" >The course's own code is A2C-style: 10 environments stepped together in one process, no LSTM.</text></svg>

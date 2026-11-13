@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 490" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="490" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >POLICY GRADIENTS</text><text x="30" y="62" class="h1" text-anchor="start" >Learn the policy directly: make good actions more likely</text><line x1="30" y1="72" x2="870" y2="72" class="uline"/><rect x="40" y="104" width="200" height="60" rx="6" class="yel"/><text x="140" y="128" class="h2" text-anchor="middle" >play an episode</text><text x="140" y="148" class="num" text-anchor="middle" >sample a ~ π(a|s)</text><line x1="240" y1="134" x2="270" y2="134" class="ln" marker-end="url(#ar)"/><rect x="270" y="104" width="200" height="60" rx="6" class="blu"/><text x="370" y="128" class="h2" text-anchor="middle" >returns</text><text x="370" y="148" class="num" text-anchor="middle" >G_t = r + γ G_(t+1)</text><line x1="470" y1="134" x2="500" y2="134" class="ln" marker-end="url(#ar)"/><rect x="500" y="104" width="200" height="60" rx="6" class="grn"/><text x="600" y="128" class="h2" text-anchor="middle" >advantage</text><text x="600" y="148" class="num" text-anchor="middle" >G_t − V(s_t)</text><line x1="700" y1="134" x2="730" y2="134" class="ln" marker-end="url(#ar)"/><rect x="730" y="104" width="200" height="60" rx="6" class="pnk"/><text x="830" y="128" class="h2" text-anchor="middle" >update</text><text x="830" y="148" class="num" text-anchor="middle" >loss = −Σ adv · log π</text><path d="M840,164 L840,190 L140,190 L140,164" class="ln" marker-end="url(#ar)"/><text x="490" y="184" class="mut" text-anchor="middle" >repeat with the updated policy</text><text x="40" y="232" class="h2" text-anchor="start" >discrete actions: softmax</text><rect x="60" y="390.0" width="60" height="30.0" rx="2" class="blu"/><text x="90" y="384.0" class="num" text-anchor="middle" >0.15</text><text x="90" y="438" class="mut" text-anchor="middle" >left</text><rect x="160" y="300.0" width="60" height="120.0" rx="2" class="blu"/><text x="190" y="294.0" class="num" text-anchor="middle" >0.60</text><text x="190" y="438" class="mut" text-anchor="middle" >stay</text><rect x="260" y="370.0" width="60" height="50.0" rx="2" class="blu"/><text x="290" y="364.0" class="num" text-anchor="middle" >0.25</text><text x="290" y="438" class="mut" text-anchor="middle" >right</text><text x="40" y="466" class="mut" text-anchor="start" >positive advantage: push the taken action's bar up</text><text x="380" y="232" class="h2" text-anchor="start" >continuous actions: Gaussian</text><polyline points="400,413.0 404,411.4 408,409.5 412,407.3 416,404.7 420,401.7 424,398.3 428,394.5 432,390.2 436,385.4 440,380.1 444,374.3 448,368.1 452,361.3 456,354.2 460,346.7 464,339.0 468,331.0 472,323.0 476,314.9 480,306.9 484,299.2 488,291.9 492,285.0 496,278.8 500,273.3 504,268.6 508,264.9 512,262.2 516,260.6 520,260.0 524,260.6 528,262.2 532,264.9 536,268.6 540,273.3 544,278.8 548,285.0 552,291.9 556,299.2 560,306.9 564,314.9 568,323.0 572,331.0 576,339.0 580,346.7 584,354.2 588,361.3 592,368.1 596,374.3 600,380.1 604,385.4 608,390.2 612,394.5 616,398.3 620,401.7 624,404.7 628,407.3 632,409.5 636,411.4 640,413.0" class="ln" fill="none"/><path d="M520,250 L520,420" class="lnd"/><text x="520" y="438" class="mut" text-anchor="middle" >mean μ(s)</text><line x1="520" y1="340" x2="566" y2="340" class="ln" marker-end="url(#ar)"/><text x="543" y="332" class="mut" text-anchor="middle" >σ(s)</text><text x="400" y="452" class="mut" text-anchor="start" >σ via softplus, so it stays &gt; 0</text><text x="400" y="474" class="num" text-anchor="start" >action = clip(μ + σ · noise, −1, 1)</text><rect x="680" y="232" width="250" height="236" rx="6" class="note"/><text x="694" y="254" class="h2" text-anchor="start" >Why it works</text><text x="694" y="274" class="handk" text-anchor="start" >∇ E[G] = E[ G · ∇ log π(a|s) ]</text><text x="694" y="292" class="handk" text-anchor="start" ></text><text x="694" y="310" class="handk" text-anchor="start" >rare actions that paid off</text><text x="694" y="328" class="handk" text-anchor="start" >get a big push (1/π inside</text><text x="694" y="346" class="handk" text-anchor="start" >the log-gradient).</text><text x="694" y="364" class="handk" text-anchor="start" ></text><text x="694" y="382" class="handk" text-anchor="start" >subtracting V(s) changes</text><text x="694" y="400" class="handk" text-anchor="start" >nothing on average but</text><text x="694" y="418" class="handk" text-anchor="start" >removes most of the noise.</text></svg>

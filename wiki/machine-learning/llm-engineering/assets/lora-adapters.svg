@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 570" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="570" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >QLoRA</text><text x="30" y="62" class="h1" text-anchor="start" >Freeze the big matrix, train two thin ones beside it</text><line x1="30" y1="72" x2="810" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >1. one target layer, e.g. q_proj (3072 × 3072)</text><rect x="60" y="130" width="150" height="150" rx="4" class="grey"/><text x="135" y="200" class="h2" text-anchor="middle" >W (frozen)</text><text x="135" y="220" class="mut" text-anchor="middle" >9.4M weights</text><text x="135" y="300" class="hand" text-anchor="middle" >4-bit in QLoRA</text><text x="240" y="210" class="h1" text-anchor="middle" >+</text><rect x="270" y="130" width="22" height="150" rx="3" class="yel"/><text x="281" y="300" class="h2" text-anchor="middle" >A</text><text x="281" y="318" class="mut" text-anchor="middle" >3072×r</text><text x="306" y="210" class="h1" text-anchor="middle" >·</text><rect x="320" y="194" width="150" height="22" rx="3" class="grn"/><text x="395" y="240" class="h2" text-anchor="middle" >B  r×3072</text><text x="395" y="258" class="mut" text-anchor="middle" >starts at 0</text><text x="500" y="210" class="h2" text-anchor="start" >× α / r</text><rect x="30" y="336" width="520" height="120" rx="6" class="note"/><text x="44" y="358" class="h2" text-anchor="start" >Why it works</text><text x="44" y="378" class="handk" text-anchor="start" >the change a fine-tune needs is approximately low-rank:</text><text x="44" y="396" class="handk" text-anchor="start" >B·A has the full shape of W but only r·(in + out) numbers</text><text x="44" y="414" class="handk" text-anchor="start" >B = 0 at the start, so training begins from the base model</text><text x="44" y="432" class="handk" text-anchor="start" >r = 32: 196k numbers instead of 9.4M for this layer</text><text x="600" y="104" class="h2" text-anchor="start" >2. hyperparameters</text><rect x="590" y="116" width="340" height="194" rx="6" class="note"/><text x="604" y="138" class="h2" text-anchor="start" >QLoRA knobs</text><text x="604" y="158" class="handk" text-anchor="start" >r (rank): 8–32 typical; 256 for the full run</text><text x="604" y="176" class="handk" text-anchor="start" >alpha: scale; alpha = 2r is common</text><text x="604" y="194" class="handk" text-anchor="start" >target modules: q, k, v, o first;</text><text x="604" y="212" class="handk" text-anchor="start" >  + gate, up, down for more capacity</text><text x="604" y="230" class="handk" text-anchor="start" >dropout on the adapter input: ~0.1</text><text x="604" y="248" class="handk" text-anchor="start" >base quantised to 4-bit NF4;</text><text x="604" y="266" class="handk" text-anchor="start" >  adapters stay in 16/32-bit</text><text x="600" y="340" class="h2" text-anchor="start" >3. memory for Llama 3.2 3B</text><rect x="720" y="356" width="167.70000000000002" height="20" rx="2" class="pnk"/><text x="710" y="371" class="num" text-anchor="end" >fp32 load</text><text x="893.7" y="371" class="numb" text-anchor="start" >12.9 GB</text><rect x="720" y="386" width="46.800000000000004" height="20" rx="2" class="pnk"/><text x="710" y="401" class="num" text-anchor="end" >8-bit</text><text x="772.8" y="401" class="numb" text-anchor="start" >3.6 GB</text><rect x="720" y="416" width="28.6" height="20" rx="2" class="pnk"/><text x="710" y="431" class="num" text-anchor="end" >4-bit NF4</text><text x="754.6" y="431" class="numb" text-anchor="start" >2.2 GB</text><rect x="720" y="446" width="2" height="20" rx="2" class="grn"/><text x="710" y="461" class="num" text-anchor="end" >LoRA r=32 adapters</text><text x="726.949" y="461" class="numb" text-anchor="start" >73 MB</text><rect x="30" y="476" width="900" height="80" rx="6" class="note"/><text x="44" y="498" class="h2" text-anchor="start" >Training then only updates the adapters</text><text x="44" y="518" class="hand" text-anchor="start" >Gradients and optimiser state exist for ~18M (light run) or ~389M (full run) parameters, not 3.2B —</text><text x="44" y="536" class="hand" text-anchor="start" >that's what lets a 3B model fine-tune on a free 15 GB T4. Saved adapters are a separate small file loaded with PeftModel.</text></svg>

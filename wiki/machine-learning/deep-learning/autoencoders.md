@@ -5,10 +5,9 @@ created: 2026-11-13
 updated: 2026-11-13
 tags: [deep-learning, autoencoders, recommender-systems, pytorch, keras, unsupervised-learning, study-guide, deep-learning-a-z]
 ---
-
 # Autoencoders
 
-> **How to read this note.** Study guide for *Deep Learning A-Z*, Part 6: section 22 (intuition), section 23 (building a movie-rating autoencoder in PyTorch) and section 24 (AWS recommenders, which has no transcript, so it isn't covered here). Read §1–2 before the build lectures and §3 alongside the intuition lectures on variants. §4 maps the course's code onto today's APIs. Every snippet runs on its own with a seeded synthetic dataset shaped like MovieLens, because the course's data files aren't bundled here.
+> **How to read this note.** Study guide for *Deep Learning A-Z*, Part 6: section 22 (intuition), section 23 (building a movie-rating autoencoder in PyTorch) and section 24 (a single article linking to an external YouTube workshop that builds two recommenders on AWS, one for e-commerce and one for Netflix movies; the workshop isn't part of the course, so it isn't summarised here). Read §1–2 before the build lectures and §3 alongside the intuition lectures on variants. §4 maps the course's code onto today's APIs. Every snippet runs on its own with a seeded synthetic dataset shaped like MovieLens, because the course's data files aren't bundled here.
 
 ## Why This Exists
 
@@ -60,6 +59,24 @@ print("rebuilt:", ae(X).argmax(1).tolist())
 ```
 
 The network *learned* the four corners of a square, (+,−), (−,+), (−,−), (+,+), as codes. Nobody told it to. That's the whole idea: the bottleneck forces a compact description.
+
+The course draws the same idea with hand-set weights of +1 and −1 instead of learned ones. Wiring it up by hand shows that two numbers really are enough for four one-hot inputs:
+
+```python
+import numpy as np
+X = np.eye(4)                                       # 4 users, each liked exactly one of 4 movies
+enc = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]])   # hand-picked weights: each movie gets a +/-1 corner
+code = X @ enc                                      # 2 numbers per user
+dec = enc.T                                         # decoder reuses the same +/-1 pattern
+scores = code @ dec                                 # the right movie scores 2, the others 0 or -2
+print("codes:", code.tolist())
+print("scores row 0:", scores[0].tolist(), "| rebuilt:", scores.argmax(1).tolist())
+# Expected output:
+# codes: [[1.0, 1.0], [1.0, -1.0], [-1.0, 1.0], [-1.0, -1.0]]
+# scores row 0: [2.0, 0.0, 0.0, -2.0] | rebuilt: [0, 1, 2, 3]
+```
+
+The decoder's output scores the right movie highest, and softmax (or argmax) picks it. Training finds weights like these on its own, as the learned codes above show.
 
 **Parts and their roles.**
 - **Encoder** — layers that shrink the input to the code. Usually a nonlinearity such as sigmoid, tanh or ReLU.
@@ -246,6 +263,7 @@ The build lectures were recorded on an early PyTorch. The ideas hold up; some de
 | `RMSprop(..., weight_decay=0.5)` described as decay | `weight_decay` is an **L2 penalty on weights**, not learning-rate decay. 0.5 is very strong, which may be why training was slow. Try 1e-4 to 1e-2, or `AdamW`. |
 | One user per optimizer step, 200 epochs | Online SGD (batch size 1). Mini-batches of 32–256 users train faster and more smoothly. |
 | Test input = training row, target = test row | Correct protocol — keep it. |
+| Homework challenge (lecture 140): write the function that turns (user, movie, rating) rows into one list per user with 0 for unrated movies | It's a pivot: `df.pivot_table(index='user', columns='movie', values='rating', fill_value=0)` — or `np.zeros((n_users, n_movies))` filled by fancy indexing `M[users-1, movies-1] = ratings`. |
 | Epochs and sizes tuned against the test score | That turns the test set into a validation set. Hold out a separate validation split for tuning and touch the test set once. |
 | Reported loss = average of per-user RMSE | Not the same as RMSE pooled over all test ratings; users with few ratings count as much as heavy raters. Report pooled RMSE plus a baseline. |
 

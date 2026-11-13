@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 575" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="575" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >QLoRA</text><text x="30" y="62" class="h1" text-anchor="start" >Watch validation loss, keep the best checkpoint</text><line x1="30" y1="72" x2="735" y2="72" class="uline"/><path d="M100.0,470.0 L860.0,470.0 M100.0,470.0 L100.0,140.0" class="ln"/><text x="92.0" y="413.99999999999994" class="num" text-anchor="end" >1.1</text><text x="92.0" y="354.0" class="num" text-anchor="end" >1.2</text><text x="92.0" y="294.0" class="num" text-anchor="end" >1.3</text><text x="92.0" y="234.00000000000006" class="num" text-anchor="end" >1.4</text><text x="92.0" y="174.0" class="num" text-anchor="end" >1.5</text><text x="100.0" y="488.0" class="mut" text-anchor="middle" >0</text><text x="353.3333333333333" y="488.0" class="mut" text-anchor="middle" >epoch 2</text><text x="606.6666666666666" y="488.0" class="mut" text-anchor="middle" >epoch 3</text><text x="860.0" y="488.0" class="mut" text-anchor="middle" >9,375 steps</text><line x1="353.3333333333333" y1="470.0" x2="353.3333333333333" y2="140.0" class="lnd"/><line x1="606.6666666666666" y1="470.0" x2="606.6666666666666" y2="140.0" class="lnd"/><path d="M100.0,128.0 L106.1,180.7 L112.2,228.9 L118.2,246.6 L124.3,251.5 L130.4,271.3 L136.5,274.5 L142.6,267.6 L148.6,280.3 L154.7,282.2 L160.8,271.8 L166.9,281.7 L173.0,285.1 L179.0,273.5 L185.1,281.3 L191.2,286.9 L197.3,274.9 L203.4,280.5 L209.4,288.2 L215.5,276.4 L221.6,279.7 L227.7,289.1 L233.8,278.1 L239.8,278.9 L245.9,289.8 L252.0,279.9 L258.1,278.3 L264.2,290.2 L270.2,281.9 L276.3,277.9 L282.4,290.2 L288.5,283.9 L294.6,277.7 L300.6,290.1 L306.7,285.9 L312.8,277.8 L318.9,289.6 L325.0,287.9 L331.0,278.1 L337.1,289.0 L343.2,289.7 L349.3,278.7 L355.4,330.3 L361.4,333.4 L367.5,321.7 L373.6,329.4 L379.7,334.9 L385.8,322.9 L391.8,328.6 L397.9,336.1 L404.0,324.3 L410.1,327.7 L416.2,337.1 L422.2,326.0 L428.3,326.9 L434.4,337.8 L440.5,327.8 L446.6,326.3 L452.6,338.1 L458.7,329.8 L464.8,325.9 L470.9,338.2 L477.0,331.8 L483.0,325.7 L489.1,338.0 L495.2,333.8 L501.3,325.7 L507.4,337.6 L513.4,335.8 L519.5,326.1 L525.6,337.0 L531.7,337.7 L537.8,326.7 L543.8,336.3 L549.9,339.4 L556.0,327.6 L562.1,335.4 L568.2,340.8 L574.2,328.8 L580.3,334.5 L586.4,342.1 L592.5,330.3 L598.6,333.7 L604.6,343.0 L610.7,373.9 L616.8,374.9 L622.9,385.7 L629.0,375.8 L635.0,374.3 L641.1,386.1 L647.2,377.7 L653.3,373.9 L659.4,386.2 L665.4,379.7 L671.5,373.6 L677.6,386.0 L683.7,381.8 L689.8,373.7 L695.8,385.6 L701.9,383.7 L708.0,374.0 L714.1,385.0 L720.2,385.6 L726.2,374.6 L732.3,384.3 L738.4,387.3 L744.5,375.6 L750.6,383.4 L756.6,388.8 L762.7,376.7 L768.8,382.5 L774.9,390.0 L781.0,378.2 L787.0,381.7 L793.1,391.0 L799.2,379.8 L805.3,380.9 L811.4,391.7 L817.4,381.7 L823.5,380.3 L829.6,392.1 L835.7,383.6 L841.8,379.8 L847.8,392.2 L853.9,385.6 L860.0,421.6" class="lnd"/><path d="M100.0,308.0 L124.3,284.0 L164.9,338.0 L229.7,362.0 L294.6,374.0 L353.3,380.0 L424.3,386.0 L505.3,392.0 L602.6,395.9 L626.9,350.0 L708.0,314.0 L789.1,302.0 L860.0,300.2" class="lnr"/><circle cx="602.6133333333333" cy="395.92999999999995" r="6" class="grn"/><text x="612.6133333333333" y="417.92999999999995" class="hand" text-anchor="start" >best: 1.12345 at step 6,200</text><text x="132.32" y="276.0" class="hand" text-anchor="start" >spike at the LR peak</text><text x="740.4266666666666" y="286.0" class="hand" text-anchor="middle" >epoch 3: memorising</text><text x="464.8" y="302.0" class="mut" text-anchor="middle" >training loss (dashed): drops at each epoch boundary</text><text x="464.8" y="170.0" class="numb" text-anchor="middle" >validation loss (red) · schematic: shape and key values from the course's full run</text><rect x="100" y="500" width="760" height="60" rx="6" class="note"/><text x="114" y="522" class="h2" text-anchor="start" >Rule</text><text x="114" y="542" class="handk" text-anchor="start" >Save checkpoints every N steps; pick the one with the lowest validation loss (early stopping); then score the TEST set once.</text></svg>

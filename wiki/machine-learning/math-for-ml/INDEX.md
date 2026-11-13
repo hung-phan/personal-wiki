@@ -121,6 +121,8 @@ Quick lookup so you know which note to open when a term comes up:
 | Implementing custom backprop | [calculus](calculus.md) | Chain rule, Jacobians |
 
 ## See Also
+
+- Up: [machine-learning](../INDEX.md) — all ML folders.
 - [statistics-and-probability](statistics-and-probability.md)
 - [linear-algebra](linear-algebra.md)
 - [calculus](calculus.md)

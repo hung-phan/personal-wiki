@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 490" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="490" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >FUNCTION APPROXIMATION</text><text x="30" y="62" class="h1" text-anchor="start" >Too many states for a table: features, linear Q, traces</text><line x1="30" y1="72" x2="855" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >1. RBF features (MountainCar)</text><rect x="40" y="124" width="120" height="60" rx="4" class="cell"/><text x="100" y="150" class="numb" text-anchor="middle" >state s</text><text x="100" y="168" class="mut" text-anchor="middle" >position, velocity</text><line x1="160" y1="154" x2="190" y2="154" class="ln" marker-end="url(#ar)"/><rect x="190" y="124" width="110" height="60" rx="4" class="grey"/><text x="245" y="150" class="numb" text-anchor="middle" >scale</text><text x="245" y="168" class="mut" text-anchor="middle" >StandardScaler</text><line x1="300" y1="154" x2="330" y2="154" class="ln" marker-end="url(#ar)"/><rect x="330" y="110" width="120" height="18" rx="3" class="yel"/><text x="390" y="123" class="num" text-anchor="middle" >500 RBFs, γ=5</text><rect x="330" y="132" width="120" height="18" rx="3" class="yel"/><text x="390" y="145" class="num" text-anchor="middle" >500 RBFs, γ=2</text><rect x="330" y="154" width="120" height="18" rx="3" class="yel"/><text x="390" y="167" class="num" text-anchor="middle" >500 RBFs, γ=1</text><rect x="330" y="176" width="120" height="18" rx="3" class="yel"/><text x="390" y="189" class="num" text-anchor="middle" >500 RBFs, γ=0.5</text><line x1="450" y1="154" x2="480" y2="154" class="ln" marker-end="url(#ar)"/><rect x="480" y="124" width="110" height="60" rx="4" class="blu"/><text x="535" y="150" class="numb" text-anchor="middle" >φ(s)</text><text x="535" y="168" class="mut" text-anchor="middle" >2,000 features</text><line x1="590" y1="154" x2="640" y2="121" class="ln" marker-end="url(#ar)"/><rect x="640" y="108" width="150" height="26" rx="3" class="pnk"/><text x="715" y="126" class="num" text-anchor="middle" >Q(s, left) = w·φ(s)</text><line x1="590" y1="154" x2="640" y2="155" class="ln" marker-end="url(#ar)"/><rect x="640" y="142" width="150" height="26" rx="3" class="pnk"/><text x="715" y="160" class="num" text-anchor="middle" >Q(s, none) = w·φ(s)</text><line x1="590" y1="154" x2="640" y2="189" class="ln" marker-end="url(#ar)"/><rect x="640" y="176" width="150" height="26" rx="3" class="pnk"/><text x="715" y="194" class="num" text-anchor="middle" >Q(s, right) = w·φ(s)</text><text x="810" y="140" class="mut" text-anchor="start" >one linear model</text><text x="810" y="156" class="mut" text-anchor="start" >per action</text><text x="40" y="214" class="mut" text-anchor="start" >each RBF: exp(−γ · ‖s − centre‖²) — 1 at its centre, fading with distance; small γ = wide bumps</text><text x="40" y="262" class="h2" text-anchor="start" >2. λ-return: blend every n-step return</text><rect x="60" y="300.0" width="54" height="120.00000000000001" rx="2" class="grn"/><text x="87.0" y="294.0" class="num" text-anchor="middle" >0.30</text><text x="87.0" y="438" class="mut" text-anchor="middle" >n=1</text><rect x="124" y="336.0" width="54" height="84.00000000000001" rx="2" class="grn"/><text x="151.0" y="330.0" class="num" text-anchor="middle" >0.21</text><text x="151.0" y="438" class="mut" text-anchor="middle" >n=2</text><rect x="188" y="361.2" width="54" height="58.8" rx="2" class="grn"/><text x="215.0" y="355.2" class="num" text-anchor="middle" >0.15</text><text x="215.0" y="438" class="mut" text-anchor="middle" >n=3</text><rect x="252" y="378.84000000000003" width="54" height="41.16" rx="2" class="grn"/><text x="279.0" y="372.84000000000003" class="num" text-anchor="middle" >0.10</text><text x="279.0" y="438" class="mut" text-anchor="middle" >n=4</text><rect x="316" y="391.188" width="54" height="28.811999999999998" rx="2" class="grn"/><text x="343.0" y="385.188" class="num" text-anchor="middle" >0.07</text><text x="343.0" y="438" class="mut" text-anchor="middle" >n=5</text><rect x="380" y="399.8316" width="54" height="20.168399999999995" rx="2" class="grn"/><text x="407.0" y="393.8316" class="num" text-anchor="middle" >0.05</text><text x="407.0" y="438" class="mut" text-anchor="middle" >n=6</text><rect x="444" y="405.88212" width="54" height="14.117879999999996" rx="2" class="grn"/><text x="471.0" y="399.88212" class="num" text-anchor="middle" >0.04</text><text x="471.0" y="438" class="mut" text-anchor="middle" >n=7</text><rect x="508" y="410.117484" width="54" height="9.882515999999997" rx="2" class="grn"/><text x="535.0" y="404.117484" class="num" text-anchor="middle" >0.02</text><text x="535.0" y="438" class="mut" text-anchor="middle" >n=8</text><text x="60" y="460" class="mut" text-anchor="start" >weights (1 − λ) λ^(n−1) for λ = 0.7; they sum to 1 (the tail goes to the full return)</text><rect x="600" y="252" width="330" height="210" rx="6" class="note"/><text x="614" y="274" class="h2" text-anchor="start" >TD(λ) without waiting</text><text x="614" y="294" class="handk" text-anchor="start" >δ = r + γ V(s') − V(s)</text><text x="614" y="312" class="handk" text-anchor="start" >trace:  e = γλ · e + ∇V(s)</text><text x="614" y="330" class="handk" text-anchor="start" >weights:  θ = θ + α · δ · e</text><text x="614" y="348" class="handk" text-anchor="start" ></text><text x="614" y="366" class="handk" text-anchor="start" >the trace remembers which features</text><text x="614" y="384" class="handk" text-anchor="start" >were active recently, so one TD error</text><text x="614" y="402" class="handk" text-anchor="start" >updates them all. λ = 0: TD(0);</text><text x="614" y="420" class="handk" text-anchor="start" >λ = 1: Monte Carlo.</text></svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 570" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="570" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >CHOOSING LLMs</text><text x="30" y="62" class="h1" text-anchor="start" >From "which is best?" to "which fits this job?"</text><line x1="30" y1="72" x2="735" y2="72" class="uline"/><rect x="30" y="96" width="170" height="78" rx="6" class="yel"/><text x="115" y="118" class="h2" text-anchor="middle" >1 understand</text><text x="115" y="140" class="ink" text-anchor="middle" >business problem,</text><text x="115" y="158" class="ink" text-anchor="middle" >success metric, data</text><line x1="201" y1="135" x2="215" y2="135" class="ln" marker-end="url(#ar)"/><rect x="216" y="96" width="170" height="78" rx="6" class="blu"/><text x="301" y="118" class="h2" text-anchor="middle" >2 prepare</text><text x="301" y="140" class="ink" text-anchor="middle" >basics to shortlist</text><text x="301" y="158" class="ink" text-anchor="middle" >via leaderboards</text><line x1="387" y1="135" x2="401" y2="135" class="ln" marker-end="url(#ar)"/><rect x="402" y="96" width="170" height="78" rx="6" class="grn"/><text x="487" y="118" class="h2" text-anchor="middle" >3 select</text><text x="487" y="140" class="ink" text-anchor="middle" >prototype candidates,</text><text x="487" y="158" class="ink" text-anchor="middle" >score on YOUR metric</text><line x1="573" y1="135" x2="587" y2="135" class="ln" marker-end="url(#ar)"/><rect x="588" y="96" width="170" height="78" rx="6" class="pur"/><text x="673" y="118" class="h2" text-anchor="middle" >4 customise</text><text x="673" y="140" class="ink" text-anchor="middle" >prompting, RAG,</text><text x="673" y="158" class="ink" text-anchor="middle" >tools, fine-tuning</text><line x1="759" y1="135" x2="773" y2="135" class="ln" marker-end="url(#ar)"/><rect x="774" y="96" width="170" height="78" rx="6" class="pnk"/><text x="859" y="118" class="h2" text-anchor="middle" >5 productionise</text><text x="859" y="140" class="ink" text-anchor="middle" >deploy, monitor,</text><text x="859" y="158" class="ink" text-anchor="middle" >watch for drift</text><rect x="30" y="192" width="440" height="214" rx="6" class="note"/><text x="44" y="214" class="h2" text-anchor="start" >Basics (mostly on the model card)</text><text x="44" y="234" class="handk" text-anchor="start" >open-weight or closed · chat / reasoning / hybrid</text><text x="44" y="252" class="handk" text-anchor="start" >parameters · training tokens · context window</text><text x="44" y="270" class="handk" text-anchor="start" >release date and knowledge cutoff</text><text x="44" y="288" class="handk" text-anchor="start" ></text><text x="44" y="306" class="handk" text-anchor="start" >Not on the card</text><text x="44" y="324" class="handk" text-anchor="start" >price per token (or GPU cost if self-hosted)</text><text x="44" y="342" class="handk" text-anchor="start" >speed (tokens/s) vs latency (time to first token)</text><text x="44" y="360" class="handk" text-anchor="start" >rate limits · licence terms · time to market</text><rect x="490" y="192" width="440" height="214" rx="6" class="note"/><text x="504" y="214" class="h2" text-anchor="start" >Benchmarks: useful, never final</text><text x="504" y="234" class="handk" text-anchor="start" >GPQA (448 PhD-level science Qs) · MMLU-Pro (10 options)</text><text x="504" y="252" class="handk" text-anchor="start" >AIME (contest maths) · LiveCodeBench (rotated)</text><text x="504" y="270" class="handk" text-anchor="start" >MuSR (murder mysteries) · HLE (~2,500 hardest Qs)</text><text x="504" y="288" class="handk" text-anchor="start" ></text><text x="504" y="306" class="handk" text-anchor="start" >contamination: the test leaked into training</text><text x="504" y="324" class="handk" text-anchor="start" >saturation · self-reported runs · narrow scope</text><text x="504" y="342" class="handk" text-anchor="start" >small sets: ±4.5 points at 448 questions</text><text x="504" y="360" class="handk" text-anchor="start" >arenas: blind pairwise votes, Elo ratings</text><text x="40" y="434" class="h2" text-anchor="start" >the bridge an engineer builds</text><rect x="40" y="448" width="380" height="100" rx="6" class="blu"/><text x="230" y="470" class="h2" text-anchor="middle" >model-centric</text><text x="230" y="492" class="ink" text-anchor="middle" >loss · cross-entropy · perplexity</text><text x="230" y="510" class="ink" text-anchor="middle" >precision · recall · F1 · AUC</text><text x="230" y="532" class="hand" text-anchor="middle" >fast, optimisable, not what you sell</text><rect x="540" y="448" width="380" height="100" rx="6" class="grn"/><text x="730" y="470" class="h2" text-anchor="middle" >business-centric</text><text x="730" y="492" class="ink" text-anchor="middle" >revenue · cost saved · time saved</text><text x="730" y="510" class="ink" text-anchor="middle" >satisfaction (thumbs up/down)</text><text x="730" y="532" class="hand" text-anchor="middle" >what matters, slow and noisy</text><line x1="422" y1="498" x2="538" y2="498" class="lnr" marker-end="url(#arr)"/><line x1="538" y1="510" x2="422" y2="510" class="lnr" marker-end="url(#arr)"/></svg>

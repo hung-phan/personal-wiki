@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="580" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >ESTIMATING VALUES</text><text x="30" y="62" class="h1" text-anchor="start" >Three ways to solve the Bellman equation, by what they need</text><line x1="30" y1="72" x2="915" y2="72" class="uline"/><rect x="40" y="100" width="280" height="56" rx="6" class="pnk"/><text x="180" y="122" class="h2" text-anchor="middle" >dynamic programming</text><text x="180" y="142" class="mut" text-anchor="middle" >knows the rules p(s', r | s, a)</text><circle cx="180" cy="186" r="12" class="blu"/><line x1="180" y1="198" x2="100" y2="238" class="ln" marker-end="url(#ar)"/><circle cx="100" cy="250" r="10" class="cell"/><line x1="180" y1="198" x2="180" y2="238" class="ln" marker-end="url(#ar)"/><circle cx="180" cy="250" r="10" class="cell"/><line x1="180" y1="198" x2="260" y2="238" class="ln" marker-end="url(#ar)"/><circle cx="260" cy="250" r="10" class="cell"/><text x="180" y="440" class="num" text-anchor="middle" >V(s) = Σ p · [r + γ V(s')]</text><text x="180" y="460" class="mut" text-anchor="middle" >all next states, one step deep</text><rect x="340" y="100" width="280" height="56" rx="6" class="yel"/><text x="480" y="122" class="h2" text-anchor="middle" >Monte Carlo</text><text x="480" y="142" class="mut" text-anchor="middle" >plays whole episodes</text><circle cx="480" cy="186" r="12" class="blu"/><line x1="480" y1="198" x2="480" y2="238" class="ln" marker-end="url(#ar)"/><circle cx="480" cy="250" r="10" class="cell"/><line x1="480" y1="262" x2="480" y2="298" class="ln" marker-end="url(#ar)"/><circle cx="480" cy="310" r="10" class="cell"/><line x1="480" y1="322" x2="480" y2="358" class="ln" marker-end="url(#ar)"/><circle cx="480" cy="370" r="10" class="cell"/><rect x="468" y="392" width="24" height="16" rx="2" class="grey"/><text x="506" y="404" class="mut" text-anchor="start" >end: G known</text><text x="480" y="440" class="num" text-anchor="middle" >new V(s) = V(s) + α [G − V(s)]</text><text x="480" y="460" class="mut" text-anchor="middle" >one path, all the way to the end</text><rect x="640" y="100" width="280" height="56" rx="6" class="grn"/><text x="780" y="122" class="h2" text-anchor="middle" >temporal difference</text><text x="780" y="142" class="mut" text-anchor="middle" >learns after every step</text><circle cx="780" cy="186" r="12" class="blu"/><line x1="780" y1="198" x2="780" y2="238" class="ln" marker-end="url(#ar)"/><circle cx="780" cy="250" r="10" class="cell"/><text x="800" y="254" class="hand" text-anchor="start" >V(s') — a guess</text><text x="780" y="440" class="num" text-anchor="middle" >new V(s) = V(s) + α [r + γ V(s') − V(s)]</text><text x="780" y="460" class="mut" text-anchor="middle" >one path, one step, then guess</text><rect x="40" y="484" width="880" height="76" rx="6" class="note"/><text x="54" y="506" class="h2" text-anchor="start" >Read across</text><text x="54" y="526" class="handk" text-anchor="start" >DP needs a model but no samples; MC needs no model but must wait for the episode to end (noisy, unbiased);</text><text x="54" y="544" class="handk" text-anchor="start" >TD needs neither: it bootstraps from its own estimate of the next state (less noisy, biased early). Q-learning is TD on Q.</text></svg>

@@ -7,6 +7,8 @@ This repo is personal knowledge wiki. Notes live under `wiki/<category>/<topic>.
 ```
 wiki/<category>/INDEX.md       # one-line router per note in the category
 wiki/<category>/<topic>.md     # the note (lowercase-hyphenated filename)
+wiki/<category>/<sub>/...      # categories may nest one level (e.g. machine-learning/deep-learning);
+                               # the parent INDEX.md routes to each subfolder's INDEX.md
 scripts/extract-manifest.py    # frontmatter search across all notes
 ```
 
@@ -108,7 +110,7 @@ VIRTUAL_ENV=/Users/phahng/Desktop/workarea/.venv uv pip install <package>
 ## Three jobs
 
 - **Recall** ("do I have notes on X?") — start with `python3 scripts/extract-manifest.py <keyword>`, fall back to `grep -ril <keyword> wiki/`. Read the candidate in full before quoting. Cite the path. If nothing matches, say so plainly.
-- **Capture** ("save this") — ask 2–4 scoping questions (topic in one sentence, where it goes, anchor sources, what's out of scope). Draft against the template above. Update the category's `INDEX.md`.
+- **Capture** ("save this") — ask 2–4 scoping questions (topic in one sentence, where it goes, anchor sources, what's out of scope). Draft against the template above. Update the category's `INDEX.md` (for nested folders, the subfolder's `INDEX.md`, plus the note count in the parent's).
 - **Refine** ("update / audit X") — read the file in full, edit in place, bump `updated:`. For multi-file topics, map every match (`grep -rln`), pick one canonical home, link the rest.
 
 ## Don't

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 570" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="570" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >FRONTIER APIs &amp; TOOLS</text><text x="30" y="62" class="h1" text-anchor="start" >Tool calling: the model only asks, your code does</text><line x1="30" y1="72" x2="765" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >how it feels</text><rect x="40" y="120" width="120" height="44" rx="6" class="pnk"/><text x="100" y="147" class="h2" text-anchor="middle" >LLM</text><line x1="160" y1="142" x2="240" y2="142" class="ln" marker-end="url(#ar)"/><rect x="240" y="120" width="140" height="44" rx="6" class="grn"/><text x="310" y="147" class="ink" text-anchor="middle" >price database</text><text x="210" y="186" class="hand" text-anchor="middle" >(it never touches anything)</text><text x="440" y="104" class="h2" text-anchor="start" >how it works</text><rect x="420" y="116" width="120" height="30" rx="4" class="yel"/><text x="480" y="136" class="numb" text-anchor="middle" >your code</text><line x1="480" y1="146" x2="480" y2="405" class="lnd"/><rect x="630" y="116" width="120" height="30" rx="4" class="pnk"/><text x="690" y="136" class="numb" text-anchor="middle" >LLM API</text><line x1="690" y1="146" x2="690" y2="405" class="lnd"/><rect x="820" y="116" width="120" height="30" rx="4" class="grn"/><text x="880" y="136" class="numb" text-anchor="middle" >tool / DB</text><line x1="880" y1="146" x2="880" y2="405" class="lnd"/><line x1="480" y1="176" x2="682" y2="176" class="ln" marker-end="url(#ar)"/><text x="585.0" y="170" class="num" text-anchor="middle" >1. messages + tool schemas (name, description, JSON params)</text><line x1="690" y1="216" x2="488" y2="216" class="lnr" marker-end="url(#arr)"/><text x="585.0" y="210" class="num" text-anchor="middle" >2. finish_reason = tool_calls: get_ticket_price("London")</text><line x1="480" y1="256" x2="872" y2="256" class="ln" marker-end="url(#ar)"/><text x="680.0" y="250" class="num" text-anchor="middle" >3. your code runs the function</text><line x1="880" y1="296" x2="488" y2="296" class="ln" marker-end="url(#ar)"/><text x="680.0" y="290" class="num" text-anchor="middle" >4. "$799"</text><line x1="480" y1="336" x2="682" y2="336" class="ln" marker-end="url(#ar)"/><text x="585.0" y="330" class="num" text-anchor="middle" >5. history + {role: tool, tool_call_id, content: "$799"}</text><line x1="690" y1="376" x2="488" y2="376" class="lnr" marker-end="url(#arr)"/><text x="585.0" y="370" class="num" text-anchor="middle" >6. finish_reason = stop: "A return ticket is $799."</text><path d="M440,336 C 410,330 410,222 440,216" class="lnr" marker-end="url(#arr)"/><text x="404" y="280" class="hand" text-anchor="end" >loop while</text><text x="404" y="296" class="hand" text-anchor="end" >tool_calls</text><rect x="40" y="220" width="290" height="190" rx="6" class="note"/><text x="54" y="242" class="h2" text-anchor="start" >Rules that bite</text><text x="54" y="262" class="handk" text-anchor="start" >• it may ask for SEVERAL tools at</text><text x="54" y="280" class="handk" text-anchor="start" >  once: run every call</text><text x="54" y="298" class="handk" text-anchor="start" >• it may ask again after results:</text><text x="54" y="316" class="handk" text-anchor="start" >  use while, not if; cap the loop</text><text x="54" y="334" class="handk" text-anchor="start" >• dispatch by a name-to-function dict,</text><text x="54" y="352" class="handk" text-anchor="start" >  never eval/globals()</text><text x="54" y="370" class="handk" text-anchor="start" >• tools are just described in the prompt</text><rect x="40" y="430" width="890" height="120" rx="6" class="note"/><text x="54" y="452" class="h2" text-anchor="start" >Same trick, bigger names</text><text x="54" y="472" class="hand" text-anchor="start" >Structured outputs, "agents", MCP servers and sub-agents are all this loop: the model emits a structured request,</text><text x="54" y="490" class="hand" text-anchor="start" >code executes it, the result goes back into the history. An agent = an LLM running tools in a loop toward a goal.</text><text x="54" y="508" class="hand" text-anchor="start" >Gradio note: its chat history drops tool messages, so keep the full message list yourself if you need it later.</text></svg>

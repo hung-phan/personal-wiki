@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 550" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="550" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >Q-LEARNING</text><text x="30" y="62" class="h1" text-anchor="start" >Values spread back from the reward, one step at a time</text><line x1="30" y1="72" x2="840" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >1. Bellman values, γ = 0.9</text><rect x="40" y="120" width="76" height="76" rx="0" class="cell"/><text x="78.0" y="150" class="numb" text-anchor="middle" >0.73</text><text x="78.0" y="176" class="hand" text-anchor="middle" >right</text><rect x="116" y="120" width="76" height="76" rx="0" class="cell"/><text x="154.0" y="150" class="numb" text-anchor="middle" >0.81</text><text x="154.0" y="176" class="hand" text-anchor="middle" >right</text><rect x="192" y="120" width="76" height="76" rx="0" class="cell"/><text x="230.0" y="150" class="numb" text-anchor="middle" >0.90</text><text x="230.0" y="176" class="hand" text-anchor="middle" >right</text><rect x="268" y="120" width="76" height="76" rx="0" class="cell"/><text x="306.0" y="150" class="numb" text-anchor="middle" >1.00</text><text x="306.0" y="176" class="hand" text-anchor="middle" >right</text><rect x="344" y="120" width="76" height="76" rx="0" class="grn"/><text x="382.0" y="164.0" class="h2" text-anchor="middle" >+1</text><rect x="40" y="196" width="76" height="76" rx="0" class="cell"/><text x="78.0" y="226" class="numb" text-anchor="middle" >0.66</text><text x="78.0" y="252" class="hand" text-anchor="middle" >up</text><rect x="116" y="196" width="76" height="76" rx="0" class="grey"/><rect x="192" y="196" width="76" height="76" rx="0" class="cell"/><text x="230.0" y="226" class="numb" text-anchor="middle" >0.81</text><text x="230.0" y="252" class="hand" text-anchor="middle" >up</text><rect x="268" y="196" width="76" height="76" rx="0" class="grey"/><rect x="344" y="196" width="76" height="76" rx="0" class="pnk"/><text x="382.0" y="240.0" class="h2" text-anchor="middle" >−1</text><rect x="40" y="272" width="76" height="76" rx="0" class="cell"/><text x="78.0" y="302" class="numb" text-anchor="middle" >0.59</text><text x="78.0" y="328" class="hand" text-anchor="middle" >up</text><text x="46" y="286" class="mut" text-anchor="start" >S</text><rect x="116" y="272" width="76" height="76" rx="0" class="cell"/><text x="154.0" y="302" class="numb" text-anchor="middle" >0.66</text><text x="154.0" y="328" class="hand" text-anchor="middle" >right</text><rect x="192" y="272" width="76" height="76" rx="0" class="cell"/><text x="230.0" y="302" class="numb" text-anchor="middle" >0.73</text><text x="230.0" y="328" class="hand" text-anchor="middle" >up</text><rect x="268" y="272" width="76" height="76" rx="0" class="cell"/><text x="306.0" y="302" class="numb" text-anchor="middle" >0.66</text><text x="306.0" y="328" class="hand" text-anchor="middle" >left</text><rect x="344" y="272" width="76" height="76" rx="0" class="cell"/><text x="382.0" y="302" class="numb" text-anchor="middle" >0.59</text><text x="382.0" y="328" class="hand" text-anchor="middle" >left</text><rect x="40" y="348" width="76" height="76" rx="0" class="cell"/><text x="78.0" y="378" class="numb" text-anchor="middle" >0.53</text><text x="78.0" y="404" class="hand" text-anchor="middle" >up</text><rect x="116" y="348" width="76" height="76" rx="0" class="cell"/><text x="154.0" y="378" class="numb" text-anchor="middle" >0.59</text><text x="154.0" y="404" class="hand" text-anchor="middle" >up</text><rect x="192" y="348" width="76" height="76" rx="0" class="grey"/><rect x="268" y="348" width="76" height="76" rx="0" class="cell"/><text x="306.0" y="378" class="numb" text-anchor="middle" >0.59</text><text x="306.0" y="404" class="hand" text-anchor="middle" >up</text><rect x="344" y="348" width="76" height="76" rx="0" class="cell"/><text x="382.0" y="378" class="numb" text-anchor="middle" >0.53</text><text x="382.0" y="404" class="hand" text-anchor="middle" >up</text><text x="40" y="440" class="mut" text-anchor="start" >each cell: best value, and the move that earns it</text><text x="40" y="458" class="mut" text-anchor="start" >1, 0.9, 0.81, 0.73…: one factor of γ per step from the goal</text><rect x="460" y="96" width="470" height="150" rx="6" class="note"/><text x="474" y="118" class="h2" text-anchor="start" >Bellman equation</text><text x="474" y="138" class="handk" text-anchor="start" >V(s) = max over actions a of [ R(s, a) + γ · V(s') ]</text><text x="474" y="156" class="handk" text-anchor="start" ></text><text x="474" y="174" class="handk" text-anchor="start" >γ (gamma) &lt; 1: a reward one step later is worth less,</text><text x="474" y="192" class="handk" text-anchor="start" >so short paths win. With random slips, replace V(s')</text><text x="474" y="210" class="handk" text-anchor="start" >by the expected value over where you might land.</text><rect x="460" y="260" width="470" height="150" rx="6" class="note"/><text x="474" y="282" class="h2" text-anchor="start" >Q-values: score the moves, not the cells</text><text x="474" y="302" class="handk" text-anchor="start" >Q(s, a) = R(s, a) + γ · max over a' of Q(s', a')</text><text x="474" y="320" class="handk" text-anchor="start" >V(s) = max over a of Q(s, a)</text><text x="474" y="338" class="handk" text-anchor="start" ></text><text x="474" y="356" class="handk" text-anchor="start" >the agent doesn't know R or s' in advance —</text><text x="474" y="374" class="handk" text-anchor="start" >it learns Q from experience:</text><rect x="460" y="420" width="470" height="70" rx="6" class="yel"/><text x="695" y="446" class="numb" text-anchor="middle" >TD = r + γ · max Q(s', a') − Q(s, a)</text><text x="695" y="470" class="numb" text-anchor="middle" >new Q(s, a) = Q(s, a) + α · TD</text><text x="695" y="512" class="mut" text-anchor="middle" >α (learning rate): how far to move toward each new sample;</text><text x="695" y="528" class="mut" text-anchor="middle" >TD shrinks to 0 when estimates agree with experience</text></svg>

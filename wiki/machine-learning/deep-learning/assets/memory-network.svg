@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 530" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="530" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >MEMORY NETWORKS</text><text x="30" y="62" class="h1" text-anchor="start" >Answer a question by attending over the sentences of a story</text><line x1="30" y1="72" x2="930" y2="72" class="uline"/><rect x="40" y="110" width="280" height="40" rx="4" class="cell"/><text x="52" y="135" class="num" text-anchor="start" >Mary moved to the bathroom.</text><line x1="320" y1="130" x2="360" y2="130" class="ln" marker-end="url(#ar)"/><rect x="360" y="110" width="140" height="40" rx="4" class="yel"/><text x="430" y="135" class="num" text-anchor="middle" >Σ word vectors</text><line x1="500" y1="130" x2="540" y2="130" class="ln" marker-end="url(#ar)"/><rect x="540" y="114" width="15.200000000000001" height="32" rx="2" class="pnk"/><text x="700" y="135" class="num" text-anchor="start" >weight 0.08</text><rect x="40" y="164" width="280" height="40" rx="4" class="cell"/><text x="52" y="189" class="num" text-anchor="start" >John went to the hallway.</text><line x1="320" y1="184" x2="360" y2="184" class="ln" marker-end="url(#ar)"/><rect x="360" y="164" width="140" height="40" rx="4" class="yel"/><text x="430" y="189" class="num" text-anchor="middle" >Σ word vectors</text><line x1="500" y1="184" x2="540" y2="184" class="ln" marker-end="url(#ar)"/><rect x="540" y="168" width="6.800000000000001" height="32" rx="2" class="pnk"/><text x="700" y="189" class="num" text-anchor="start" >weight 0.02</text><rect x="40" y="218" width="280" height="40" rx="4" class="cell"/><text x="52" y="243" class="num" text-anchor="start" >Mary travelled to the office.</text><line x1="320" y1="238" x2="360" y2="238" class="ln" marker-end="url(#ar)"/><rect x="360" y="218" width="140" height="40" rx="4" class="yel"/><text x="430" y="243" class="num" text-anchor="middle" >Σ word vectors</text><line x1="500" y1="238" x2="540" y2="238" class="ln" marker-end="url(#ar)"/><rect x="540" y="222" width="130.0" height="32" rx="2" class="pnk"/><text x="700" y="243" class="num" text-anchor="start" >weight 0.9</text><rect x="40" y="290" width="280" height="40" rx="4" class="blu"/><text x="52" y="315" class="numb" text-anchor="start" >Q: Where is Mary?</text><line x1="320" y1="310" x2="360" y2="310" class="ln" marker-end="url(#ar)"/><rect x="360" y="290" width="140" height="40" rx="4" class="blu"/><text x="430" y="315" class="num" text-anchor="middle" >question vector u</text><text x="540" y="300" class="mut" text-anchor="start" >weight = softmax over sentences of (sentence · u)</text><text x="540" y="318" class="mut" text-anchor="start" >answer = softmax over vocab ( Σ weight · sentence )</text><rect x="800" y="222" width="130" height="40" rx="6" class="grn"/><text x="865" y="247" class="numb" text-anchor="middle" >answer: office</text><line x1="760" y1="236" x2="800" y2="240" class="ln" marker-end="url(#ar)"/><rect x="40" y="356" width="430" height="150" rx="6" class="note"/><text x="54" y="378" class="h2" text-anchor="start" >Two supporting facts: two hops</text><text x="54" y="398" class="handk" text-anchor="start" >Q: Where is the football?</text><text x="54" y="416" class="handk" text-anchor="start" >hop 1 finds 'John picked up the football'</text><text x="54" y="434" class="handk" text-anchor="start" >hop 2 is queried by hop 1's output:</text><text x="54" y="452" class="handk" text-anchor="start" >finds 'John went to the garden'</text><text x="54" y="470" class="handk" text-anchor="start" >(separate embeddings per hop; ELU dense layer)</text><rect x="500" y="356" width="430" height="150" rx="6" class="note"/><text x="514" y="378" class="h2" text-anchor="start" >The catch: order</text><text x="514" y="398" class="handk" text-anchor="start" >summing word vectors loses word order;</text><text x="514" y="416" class="handk" text-anchor="start" >nothing says which sentence is LATEST.</text><text x="514" y="434" class="handk" text-anchor="start" >Add a learned vector per sentence slot,</text><text x="514" y="452" class="handk" text-anchor="start" >or (the course) the line number as a word.</text></svg>

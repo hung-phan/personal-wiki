@@ -9,6 +9,7 @@ CLAUDE.md                      # operating manual — auto-loaded by Claude Code
 scripts/extract-manifest.py    # frontmatter search across all notes
 wiki/<category>/INDEX.md       # one-line router per note in the category
 wiki/<category>/<topic>.md     # the note itself
+wiki/<category>/<sub>/         # optional nesting, e.g. machine-learning/{classical-ml,deep-learning,...}
 ```
 
 There are no plugins, no skills, no marketplace metadata — just markdown, one Python script, and the CLAUDE.md that tells the agent how to use them.

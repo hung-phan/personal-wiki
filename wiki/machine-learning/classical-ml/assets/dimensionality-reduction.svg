@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="520" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >DIMENSIONALITY REDUCTION</text><text x="30" y="62" class="h1" text-anchor="start" >Fewer, new features: most variance or best separation</text><line x1="30" y1="72" x2="825" y2="72" class="uline"/><rect x="40" y="100" width="420" height="300" rx="6" class="cell"/><text x="250" y="122" class="numb" text-anchor="middle" >same data, two different 1-D axes</text><circle cx="160.90797321124307" cy="231.59225211065427" r="3.5" class="pnk"/><circle cx="205.78475662634696" cy="233.741121389463" r="3.5" class="pnk"/><circle cx="292.7449033967383" cy="214.35903893263327" r="3.5" class="pnk"/><circle cx="84.4771171286572" cy="242.14888695547256" r="3.5" class="pnk"/><circle cx="168.1803648715226" cy="220.43591459768106" r="3.5" class="pnk"/><circle cx="418.51924407355733" cy="228.92948627080813" r="3.5" class="pnk"/><circle cx="364.3968934332922" cy="229.14871551317606" r="3.5" class="pnk"/><circle cx="297.28316778501505" cy="217.42219126484687" r="3.5" class="pnk"/><circle cx="295.85262381696407" cy="243.2496310571587" r="3.5" class="pnk"/><circle cx="257.88161153032246" cy="238.68506682325363" r="3.5" class="pnk"/><circle cx="308.27990162566147" cy="214.3051317761719" r="3.5" class="pnk"/><circle cx="337.7982837375179" cy="233.27958498552744" r="3.5" class="pnk"/><circle cx="182.4310042353422" cy="213.116423052911" r="3.5" class="pnk"/><circle cx="374.2792605728415" cy="229.0189671919568" r="3.5" class="pnk"/><circle cx="324.40013418237305" cy="243.63726080919733" r="3.5" class="pnk"/><circle cx="322.8040244278088" cy="245.15955203301948" r="3.5" class="pnk"/><circle cx="214.28755736025295" cy="240.83271575546823" r="3.5" class="pnk"/><circle cx="231.17115905725862" cy="245.68112198136276" r="3.5" class="pnk"/><circle cx="378.8146645149341" cy="215.5083551503116" r="3.5" class="pnk"/><circle cx="126.22941246822742" cy="219.81152988439294" r="3.5" class="pnk"/><circle cx="408.263247225389" cy="227.70182719858747" r="3.5" class="pnk"/><circle cx="293.06041889471334" cy="222.8369431433182" r="3.5" class="pnk"/><circle cx="252.46261450188024" cy="225.8911853184165" r="3.5" class="pnk"/><circle cx="199.30956618186121" cy="233.06266786659307" r="3.5" class="pnk"/><circle cx="278.6456096098676" cy="244.5512637505199" r="3.5" class="pnk"/><circle cx="311.87392645588864" cy="245.4420416432006" r="3.5" class="pnk"/><circle cx="371.1761925748969" cy="317.67562721527736" r="3.5" class="grn"/><circle cx="308.23300433525617" cy="287.8715863909585" r="3.5" class="grn"/><circle cx="372.6167612595312" cy="316.7267861031262" r="3.5" class="grn"/><circle cx="387.5966347341605" cy="302.48787012507563" r="3.5" class="grn"/><circle cx="322.69778685922773" cy="289.60049941232154" r="3.5" class="grn"/><circle cx="362.74669629294044" cy="302.64716468464627" r="3.5" class="grn"/><circle cx="176.88553707530977" cy="284.28458077722826" r="3.5" class="grn"/><circle cx="370.3404460637113" cy="317.6330165371769" r="3.5" class="grn"/><circle cx="110.09615165730764" cy="310.8214315652701" r="3.5" class="grn"/><circle cx="219.55702129760903" cy="287.4275534803011" r="3.5" class="grn"/><circle cx="179.92302391848114" cy="309.6765079419844" r="3.5" class="grn"/><circle cx="376.74078837358843" cy="283.5908422006636" r="3.5" class="grn"/><circle cx="288.9410597008149" cy="283.6178487658573" r="3.5" class="grn"/><circle cx="324.26976233249553" cy="293.91434925668426" r="3.5" class="grn"/><circle cx="379.50780446410175" cy="317.3028872463602" r="3.5" class="grn"/><circle cx="251.84292704033498" cy="317.94632203352796" r="3.5" class="grn"/><circle cx="185.2878181819553" cy="284.77094536939484" r="3.5" class="grn"/><circle cx="283.9193549908442" cy="283.12959943831146" r="3.5" class="grn"/><circle cx="147.1108511856626" cy="296.6857008822117" r="3.5" class="grn"/><circle cx="287.55882180889614" cy="287.62316367648833" r="3.5" class="grn"/><circle cx="94.42818040520945" cy="313.240045221398" r="3.5" class="grn"/><circle cx="186.70237677147117" cy="316.5117393507044" r="3.5" class="grn"/><circle cx="384.8642780853845" cy="295.60041261883856" r="3.5" class="grn"/><circle cx="236.53927516760763" cy="300.7226274453323" r="3.5" class="grn"/><circle cx="298.9221642518271" cy="303.44340858247097" r="3.5" class="grn"/><circle cx="270.14876108523276" cy="304.32454087602946" r="3.5" class="grn"/><path d="M60,265 L440,265" class="lnr" marker-end="url(#ar)"/><text x="300" y="386" class="hand" text-anchor="middle" >PCA: widest spread (left-right) — classes overlap</text><path d="M250,370 L250,150" class="ln" marker-end="url(#ar)"/><text x="258" y="160" class="numb" text-anchor="start" >LDA: separates classes</text><rect x="490" y="100" width="440" height="140" rx="6" class="note"/><text x="504" y="122" class="h2" text-anchor="start" >PCA (unsupervised)</text><text x="504" y="142" class="handk" text-anchor="start" >standardise -&gt; covariance -&gt; eigenvectors</text><text x="504" y="160" class="handk" text-anchor="start" >keep the top k by eigenvalue (variance)</text><text x="504" y="178" class="handk" text-anchor="start" >new features = principal components,</text><text x="504" y="196" class="handk" text-anchor="start" >not a subset of the old ones</text><rect x="490" y="256" width="440" height="144" rx="6" class="note"/><text x="504" y="278" class="h2" text-anchor="start" >LDA (supervised) and kernel PCA</text><text x="504" y="298" class="handk" text-anchor="start" >LDA: axes maximising between-class vs</text><text x="504" y="316" class="handk" text-anchor="start" >within-class scatter; at most (classes − 1)</text><text x="504" y="334" class="handk" text-anchor="start" >kernel PCA: PCA after an implicit non-linear</text><text x="504" y="352" class="handk" text-anchor="start" >mapping (kernel trick) for curved structure</text><rect x="40" y="420" width="890" height="80" rx="6" class="note"/><text x="54" y="442" class="h2" text-anchor="start" >Rule</text><text x="54" y="462" class="handk" text-anchor="start" >fit the reducer on training rows only (like the scaler), then transform test rows;</text><text x="54" y="480" class="handk" text-anchor="start" >choose k by explained variance (PCA) or by cross-validated accuracy of the downstream model</text></svg>

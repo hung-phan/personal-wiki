@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 526" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="526" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >CLUSTERING</text><text x="30" y="62" class="h1" text-anchor="start" >Group points with no labels: centroids or a tree of merges</text><line x1="30" y1="72" x2="900" y2="72" class="uline"/><text x="40" y="104" class="h2" text-anchor="start" >1. k-means: assign, move, repeat</text><circle cx="68.06185464674408" cy="217.37168684686162" r="4" class="pnk"/><circle cx="105.82647713859684" cy="187.75345128697109" r="4" class="pnk"/><circle cx="89.72610522551645" cy="197.47455323943691" r="4" class="pnk"/><circle cx="99.09557836336577" cy="214.43616755677567" r="4" class="pnk"/><circle cx="65.6315752064541" cy="176.41737382610032" r="4" class="pnk"/><circle cx="110.14590623519217" cy="196.63835339525266" r="4" class="pnk"/><circle cx="105.73680494747651" cy="175.10530266755552" r="4" class="pnk"/><circle cx="86.72323164328809" cy="211.07700161703912" r="4" class="pnk"/><circle cx="73.72573327622716" cy="222.26353477769612" r="4" class="pnk"/><rect x="83" y="193" width="14" height="14" rx="2" class="pnk"/><circle cx="224.085647456689" cy="126.52949915167767" r="4" class="grn"/><circle cx="171.52675165960764" cy="152.07062363967484" r="4" class="grn"/><circle cx="226.34894976671063" cy="144.06021188441062" r="4" class="grn"/><circle cx="182.99596382783682" cy="146.10582877913586" r="4" class="grn"/><circle cx="171.74244725449208" cy="136.08458331365176" r="4" class="grn"/><circle cx="196.27325561903433" cy="149.79061206909253" r="4" class="grn"/><circle cx="183.98506701545435" cy="136.5433270770492" r="4" class="grn"/><circle cx="183.12686224026132" cy="147.98017328688667" r="4" class="grn"/><circle cx="187.38689687542913" cy="126.07448526329544" r="4" class="grn"/><rect x="193" y="143" width="14" height="14" rx="2" class="grn"/><circle cx="180.25467853975437" cy="262.8227161326217" r="4" class="blu"/><circle cx="168.53766177594673" cy="244.29531329473588" r="4" class="blu"/><circle cx="189.5526047305639" cy="277.9973264397645" r="4" class="blu"/><circle cx="137.25339758834838" cy="251.63475926800646" r="4" class="blu"/><circle cx="173.2890644549961" cy="270.559588484764" r="4" class="blu"/><circle cx="186.18643520796758" cy="256.1053499980708" r="4" class="blu"/><circle cx="179.80214159645962" cy="268.51527832070354" r="4" class="blu"/><circle cx="148.20211065597505" cy="264.37903030717797" r="4" class="blu"/><circle cx="182.94874004991146" cy="277.3098709214156" r="4" class="blu"/><rect x="153" y="253" width="14" height="14" rx="2" class="blu"/><path d="M60,140 L90,193" class="lnd" marker-end="url(#ar)"/><text x="40" y="136" class="hand" text-anchor="start" >centroid moves to its points' mean</text><rect x="40" y="310" width="380" height="196" rx="6" class="note"/><text x="54" y="332" class="h2" text-anchor="start" >Choosing k</text><text x="54" y="352" class="handk" text-anchor="start" >WCSS = Σ distance(point, its centroid)²</text><text x="54" y="370" class="handk" text-anchor="start" >always falls as k grows (0 at k = n)</text><text x="54" y="388" class="handk" text-anchor="start" >elbow: where the drop flattens</text><text x="54" y="406" class="handk" text-anchor="start" >silhouette: peaks at a good k</text><text x="54" y="424" class="handk" text-anchor="start" ></text><text x="54" y="442" class="handk" text-anchor="start" >k-means++ seeding: next centroid drawn</text><text x="54" y="460" class="handk" text-anchor="start" >with probability proportional to distance²;</text><text x="54" y="478" class="handk" text-anchor="start" >still random — run several starts</text><text x="470" y="104" class="h2" text-anchor="start" >2. hierarchical: merge the closest, draw the tree</text><circle cx="490" cy="312" r="4" class="cell"/><circle cx="530" cy="312" r="4" class="cell"/><circle cx="570" cy="312" r="4" class="cell"/><circle cx="610" cy="312" r="4" class="cell"/><circle cx="680" cy="312" r="4" class="cell"/><circle cx="720" cy="312" r="4" class="cell"/><circle cx="790" cy="312" r="4" class="cell"/><circle cx="830" cy="312" r="4" class="cell"/><circle cx="870" cy="312" r="4" class="cell"/><path d="M490,300 L490,280 L530,280 L530,300" class="ln"/><path d="M570,300 L570,275 L610,275 L610,300" class="ln"/><path d="M510.0,280 L510.0,240 L590.0,240 L590.0,275" class="ln"/><path d="M680,300 L680,282 L720,282 L720,300" class="ln"/><path d="M790,300 L790,285 L830,285 L830,300" class="ln"/><path d="M810.0,285 L810.0,265 L870,265 L870,300" class="ln"/><path d="M700.0,282 L700.0,230 L840.0,230 L840.0,265" class="ln"/><path d="M550.0,240 L550.0,130 L770.0,130 L770.0,230" class="ln"/><path d="M475,190 L900,190" class="lnr"/><text x="905" y="194" class="hand" text-anchor="start" >cut</text><text x="470" y="340" class="mut" text-anchor="start" >cut across the longest vertical gap with no merge = number of clusters (here 2)</text><rect x="470" y="360" width="460" height="146" rx="6" class="note"/><text x="484" y="382" class="h2" text-anchor="start" >Distance between clusters (linkage)</text><text x="484" y="402" class="handk" text-anchor="start" >single: closest pair — follows chains and odd shapes</text><text x="484" y="420" class="handk" text-anchor="start" >complete: furthest pair — compact groups</text><text x="484" y="438" class="handk" text-anchor="start" >average: mean over all pairs</text><text x="484" y="456" class="handk" text-anchor="start" >Ward: the merge that adds least within-cluster variance</text><text x="484" y="474" class="handk" text-anchor="start" >(like k-means; the course's choice)</text></svg>

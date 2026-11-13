@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="560" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >HUGGING FACE</text><text x="30" y="62" class="h1" text-anchor="start" >Pipelines on top, tokenizer + model underneath</text><line x1="30" y1="72" x2="720" y2="72" class="uline"/><rect x="30" y="96" width="300" height="130" rx="6" class="note"/><text x="44" y="118" class="h2" text-anchor="start" >pipeline(task, model)</text><text x="44" y="138" class="handk" text-anchor="start" >one call: preprocess, run, decode</text><text x="44" y="156" class="handk" text-anchor="start" >sentiment, NER, QA, summarise,</text><text x="44" y="174" class="handk" text-anchor="start" >translate, zero-shot, generate,</text><text x="44" y="192" class="handk" text-anchor="start" >images (diffusers), speech</text><rect x="30" y="240" width="300" height="150" rx="6" class="note"/><text x="44" y="262" class="h2" text-anchor="start" >tokenizer + model</text><text x="44" y="282" class="handk" text-anchor="start" >tok.apply_chat_template(msgs)</text><text x="44" y="300" class="handk" text-anchor="start" >model = AutoModelForCausalLM</text><text x="44" y="318" class="handk" text-anchor="start" >  .from_pretrained(name,</text><text x="44" y="336" class="handk" text-anchor="start" >  quantization_config=...)</text><text x="44" y="354" class="handk" text-anchor="start" >model.generate(ids, max_new_tokens)</text><text x="44" y="372" class="handk" text-anchor="start" >needed for fine-tuning</text><text x="180" y="418" class="hand" text-anchor="middle" >same model, two levels of control</text><text x="400" y="104" class="h2" text-anchor="start" >inside SmolLM2-135M (printed shapes)</text><rect x="400" y="122" width="300" height="36" rx="4" class="cell"/><text x="410" y="138" class="numb" text-anchor="start" >token IDs</text><text x="410" y="152" class="mut" text-anchor="start" >e.g. [1, 57, 1325, ...]</text><line x1="550" y1="158" x2="550" y2="170" class="ln" marker-end="url(#ar)"/><rect x="400" y="170" width="300" height="36" rx="4" class="yel"/><text x="410" y="186" class="numb" text-anchor="start" >embedding 49152 to 576</text><text x="410" y="200" class="mut" text-anchor="start" >one vector per token</text><line x1="550" y1="206" x2="550" y2="218" class="ln" marker-end="url(#ar)"/><rect x="390" y="218" width="320" height="196" rx="8" class="note"/><text x="700" y="236" class="hand" text-anchor="end" >× 30 layers</text><rect x="400" y="244" width="300" height="28" rx="3" class="grey"/><text x="410" y="262" class="num" text-anchor="start" >RMSNorm</text><rect x="400" y="278" width="300" height="28" rx="3" class="blu"/><text x="410" y="296" class="num" text-anchor="start" >self-attention: q 576x576, k/v 576 to 192, o</text><rect x="400" y="312" width="300" height="28" rx="3" class="grey"/><text x="410" y="330" class="num" text-anchor="start" >+ residual, RMSNorm</text><rect x="400" y="346" width="300" height="28" rx="3" class="grn"/><text x="410" y="364" class="num" text-anchor="start" >MLP: gate &amp; up 576 to 1536, SiLU(gate)·up, down to 576</text><rect x="400" y="380" width="300" height="28" rx="3" class="grey"/><text x="410" y="398" class="num" text-anchor="start" >+ residual</text><line x1="550" y1="414" x2="550" y2="426" class="ln" marker-end="url(#ar)"/><rect x="400" y="424" width="300" height="36" rx="4" class="pnk"/><text x="410" y="440" class="numb" text-anchor="start" >RMSNorm, lm_head 576 to 49152</text><text x="410" y="454" class="mut" text-anchor="start" >a score for every vocabulary entry</text><line x1="550" y1="460" x2="550" y2="470" class="ln" marker-end="url(#ar)"/><rect x="400" y="470" width="300" height="36" rx="4" class="cell"/><text x="410" y="486" class="numb" text-anchor="start" >softmax: next-token probabilities</text><text x="410" y="500" class="mut" text-anchor="start" >pick one, append, repeat</text><line x1="550" y1="506" x2="550" y2="516" class="ln" marker-end="url(#ar)"/><rect x="730" y="96" width="200" height="200" rx="6" class="note"/><text x="744" y="118" class="h2" text-anchor="start" >Reading it</text><text x="744" y="138" class="handk" text-anchor="start" >attention: which earlier</text><text x="744" y="156" class="handk" text-anchor="start" >tokens matter here</text><text x="744" y="174" class="handk" text-anchor="start" >MLP: per-token feature</text><text x="744" y="192" class="handk" text-anchor="start" >transform (the bulk of</text><text x="744" y="210" class="handk" text-anchor="start" >the parameters)</text><text x="744" y="228" class="handk" text-anchor="start" >k/v narrower than q:</text><text x="744" y="246" class="handk" text-anchor="start" >grouped-query attention</text><rect x="730" y="310" width="200" height="160" rx="6" class="note"/><text x="744" y="332" class="h2" text-anchor="start" >Same shape, bigger</text><text x="744" y="352" class="handk" text-anchor="start" >Llama 3.2 3B: 28 layers,</text><text x="744" y="370" class="handk" text-anchor="start" >3072 wide, MLP 8192,</text><text x="744" y="388" class="handk" text-anchor="start" >vocab 128,256.</text><text x="744" y="406" class="handk" text-anchor="start" >A 'next-token classifier'</text><text x="744" y="424" class="handk" text-anchor="start" >over the vocabulary.</text></svg>

@@ -5,7 +5,6 @@ created: 2026-11-13
 updated: 2026-11-13
 tags: [deep-learning, boltzmann-machines, rbm, energy-based-models, recommender-systems, pytorch, keras, study-guide, deep-learning-a-z]
 ---
-
 # Boltzmann Machines and RBMs
 
 > **How to read this note.** Study guide for *Deep Learning A-Z*, Part 5: section 19 (intuition) and section 20 (building an RBM recommender in PyTorch). §1–3 go with the intuition lectures, §4 with the build. Everything runs on a seeded synthetic ratings matrix shaped like the course's MovieLens data. Historically important, rarely used today — learn the ideas (energy, sampling, contrastive learning), not the architecture as a tool.
@@ -179,7 +178,7 @@ print(f"test accuracy {((p_like > 0.5) == test)[m].mean():.3f}   always-'like' b
 | Ratings: 0 → −1 first, then 1–2 → 0, then 3+ → 1 | Order matters: recode "unrated" *before* turning low ratings into 0, or they collide. |
 | `sample_h` / `sample_v` return probabilities *and* a Bernoulli sample | Same as above. Use probabilities for scoring, samples inside the chain. |
 | CD-10 during training, 1 step at test | Any small $k$ works; CD-1 is standard. At test you only need one up-down pass. |
-| Loss = mean absolute difference on rated cells | Fine as a monitor (CD doesn't minimize it). With 0/1 targets, 1 − MAE is accuracy — compare it against "always like". |
+| Loss = mean absolute difference on rated cells | Fine as a monitor (CD doesn't minimize it). With 0/1 targets, 1 − MAE is accuracy — compare it against "always like". The course's *Evaluating the Boltzmann Machine* article reports a test distance of about 0.24 (≈ 75% correct) and an RMSE of about 0.46. On 0/1 targets RMSE is just √(error rate), so the two say the same thing, and random guessing scores 0.5 / 0.71. Neither number is compared with the always-like rate. |
 | Test input = training row, target = test row | Correct protocol — keep it. |
 
 ## Trade-offs
