@@ -1,4 +1,5 @@
 .agents/
 .claude/
+.claudian/
 .project-state/
 __pycache__/
