@@ -209,7 +209,7 @@ print(f"KL at mu=1, sigma=1: {kl.item():.3f}   dKL/dmu = {mu.grad.item():.3f} (p
 | Binary / binarised pixels | Bernoulli per pixel | sigmoid (or raw logits + a logits-aware loss) | negative binary cross-entropy |
 | Real-valued, roughly unimodal | Gaussian per dimension, fixed variance | identity | negative squared error, plus constants |
 
-Squared error **is** the Gaussian log likelihood up to constants, and cross-entropy **is** the Bernoulli log likelihood. Those are not two analogies, they're the same statement twice. If you've ever wondered why MSE and cross-entropy are the two losses you ever see, this is the answer.
+*Negative* squared error **is** the Gaussian log likelihood up to constants, and *negative* cross-entropy **is** the Bernoulli log likelihood. Those are not two analogies, they're the same statement twice. If you've ever wondered why MSE and cross-entropy are the two losses you ever see, this is the answer.
 
 Three practical points the course makes here, all worth keeping:
 

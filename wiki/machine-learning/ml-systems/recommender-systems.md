@@ -165,7 +165,7 @@ for name, up, n in items:
     s1, s2 = post.rvs(2, random_state=rng)                             # two independent Thompson draws
     print(f"{name:5s}{up/n:8.2f}{bayes:8.2f}{wilson:8.2f}{s1:10.2f}{s2:10.2f}")
 print("raw rating ties A (5/5) with a perfect score; smoothing and the lower bound both rank B and C above it.")
-print("the two sample columns differ run to run - that randomness is what makes an uncertain item resurface.")
+print("the two sample columns differ from each other - a fresh draw every page view is what resurfaces an uncertain item.")
 # Expected output:
 # item      raw   bayes  wilson  sample 1  sample 2
 # A        1.00    0.68    0.61      1.00      0.78
@@ -173,7 +173,7 @@ print("the two sample columns differ run to run - that randomness is what makes 
 # C        0.75    0.74    0.71      0.75      0.76
 # D        0.00    0.57    0.03      0.32      0.32
 # raw rating ties A (5/5) with a perfect score; smoothing and the lower bound both rank B and C above it.
-# the two sample columns differ run to run - that randomness is what makes an uncertain item resurface.
+# the two sample columns differ from each other - a fresh draw every page view is what resurfaces an uncertain item.
 ```
 
 Item A is 5 up out of 5 and the raw average gives it a perfect 1.00 — top of the list on five votes. Both corrections demote it: smoothing pulls it to roughly 0.68 and the lower bound to roughly 0.61, below B (90/100 → about 0.85 smoothed, 0.84 bounded) and below C (300/400 → about 0.74 smoothed, 0.71 bounded). Note that B stays ahead of C even though C has four times the evidence: a lower bound rewards evidence, but not enough to overturn a genuinely better rate.

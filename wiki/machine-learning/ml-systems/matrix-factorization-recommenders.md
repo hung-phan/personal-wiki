@@ -105,9 +105,9 @@ $$\left(\sum_{i \in \Omega_j} w_i w_i^T + \lambda I\right) u_j = \sum_{i \in \Om
 
 The biases come out as plain averages (the derivative of $b_i$ with respect to itself is 1, so every other term drops; $b_i$ is still *inside* the sum, so pulling it out leaves $\sum_j 1 = |\psi_i|$ as the denominator):
 
-$$b_i = \frac{\sum_{j \in \psi_i}\left(r_{ij} - w_i \cdot u_j - c_j - \mu\right)}{|\psi_i|\,(1 + \lambda)}, \qquad c_j = \frac{\sum_{i \in \Omega_j}\left(r_{ij} - w_i \cdot u_j - b_i - \mu\right)}{|\Omega_j|\,(1 + \lambda)}$$
+$$b_i = \frac{\sum_{j \in \psi_i}\left(r_{ij} - w_i \cdot u_j - c_j - \mu\right)}{|\psi_i| + \lambda}, \qquad c_j = \frac{\sum_{i \in \Omega_j}\left(r_{ij} - w_i \cdot u_j - b_i - \mu\right)}{|\Omega_j| + \lambda}$$
 
-Since $1 + \lambda > 1$, regularization simply **shrinks** the biases toward zero. Read those two formulas in words and you get the definition quoted in §2: a bias is the mean residual of the model without it.
+Since the denominator is $|\psi_i| + \lambda$ rather than $|\psi_i|$, regularization simply **shrinks** the biases toward zero — and the shrinkage fades as a user rates more items, because $\lambda$ stays fixed while $|\psi_i|$ grows. Read those two formulas in words and you get the definition quoted in §2: a bias is the mean residual of the model without it. (Watch the denominator: $\lambda$ is *added* to the count, not multiplied through it. The snippet below divides by `len(j) + reg`, which is this formula; dividing by $|\psi_i|(1+\lambda)$ instead over-shrinks every bias by a factor that grows with the number of ratings.)
 
 **Solve, never invert.** `np.linalg.solve(A, b)` is both faster and more numerically accurate than forming `np.linalg.inv(A) @ b`. The matrix is only $K \times K$, so each solve is trivially cheap — the cost is that you do $N + M$ of them per sweep.
 

@@ -134,6 +134,7 @@ The question this snippet answers: **does the whole thing actually work, and how
 ```python
 import numpy as np, torch, torch.nn as nn, gymnasium as gym
 torch.manual_seed(0); torch.set_num_threads(1)
+rng = np.random.default_rng(0)                                         # seed the noise and the replay sampler too
 env = gym.make("Pendulum-v1"); env.action_space.seed(0)
 S, A, A_MAX = 3, 1, 2.0
 mlp = lambda i, o, tail: nn.Sequential(nn.Linear(i, 64), nn.ReLU(), nn.Linear(64, 64), nn.ReLU(), nn.Linear(64, o), tail)
@@ -144,7 +145,7 @@ oa, oc = torch.optim.Adam(actor.parameters(), 1e-3), torch.optim.Adam(critic.par
 buf, GAMMA, TAU, N = [], 0.99, 0.005, 100_000                          # TAU here is the standard "how fast targets move"
 def act(s, noise):
     with torch.no_grad(): a = A_MAX * actor(torch.tensor(s)).numpy()
-    return np.clip(a + noise * np.random.randn(A), -A_MAX, A_MAX)      # Gaussian exploration noise
+    return np.clip(a + noise * rng.standard_normal(A), -A_MAX, A_MAX)  # Gaussian exploration noise
 returns = []
 for ep in range(60):
     s, _ = env.reset(seed=ep); total, done = 0.0, False
@@ -153,7 +154,7 @@ for ep in range(60):
         s2, r, term, trunc, _ = env.step(a); done = term or trunc
         buf.append((s, a, r, s2, float(term))); buf[:] = buf[-N:]; total += r; s = s2
         if len(buf) < 1000: continue
-        idx = np.random.randint(len(buf), size=64)
+        idx = rng.integers(len(buf), size=64)
         bs, ba, br, bs2, bd = [torch.tensor(np.array(x), dtype=torch.float32) for x in zip(*[buf[i] for i in idx])]
         with torch.no_grad():                                           # critic target uses the TARGET actor and critic
             y = br[:, None] + GAMMA * (1 - bd[:, None]) * ct(torch.cat([bs2, A_MAX * at(bs2)], 1))
@@ -167,8 +168,8 @@ print("mean return, episodes  1-10 (random warm-up):", round(np.mean(returns[:10
 print("mean return, episodes 51-60 (trained):       ", round(np.mean(returns[-10:])))
 print("a Pendulum return near -150 is good; -1200 is a pendulum that never gets up")
 # Expected output:
-# mean return, episodes  1-10 (random warm-up): -1403
-# mean return, episodes 51-60 (trained):        -158
+# mean return, episodes  1-10 (random warm-up): -1402
+# mean return, episodes 51-60 (trained):        -154
 # a Pendulum return near -150 is good; -1200 is a pendulum that never gets up
 ```
 

@@ -92,11 +92,11 @@ for it in range(2000):
 # Expected output:
 # update 500: mean return of last 20 episodes   35.4
 # update 1000: mean return of last 20 episodes   81.3
-# update 1500: mean return of last 20 episodes  132.2
-# update 2000: mean return of last 20 episodes  154.9
+# update 1500: mean return of last 20 episodes  145.3
+# update 2000: mean return of last 20 episodes  200.5
 ```
 
-Returns climb from ~35 to ~155 in 2,000 small updates, about 10 seconds of CPU. That is one seed: over seeds 0–4 the mean return at update 2,000 ranged from 124 to 210 (torch 2.15 CPU, gymnasium 1.4), and the curve is not monotone (seeds 1 and 4 dipped between updates 1,500 and 2,000). The course uses one-step advantages instead (§4). Three Gymnasium 1.x details matter: vector environments **reset finished episodes automatically**, and the default mode does it on the *next* call — mixing a bogus transition into training. `AutoresetMode.SAME_STEP` avoids that, but it means `s` after a finished step is already the *new* episode's first observation. So a **terminated** step (the pole fell) gets zero future value, while a **truncated** step (CartPole's 500-step time limit) is bootstrapped from $V$ of `info["final_obs"]`, the state the episode was cut at — the same terminated-vs-truncated rule as [deep-q-learning](deep-q-learning.md).
+Returns climb from ~35 to ~200 in 2,000 small updates, about 10 seconds of CPU. That is one seed: over seeds 0–4 the mean return at update 2,000 came out 200, 184, 178, 145 and 143 (torch 2.15 CPU, gymnasium 1.4), so treat ~150–200 as the band and any single number as one draw from it. The curve is also not monotone — seed 3 ends *below* its own update-1,500 score, and seed 4 drops from 103 at update 1,000 to 90 at 1,500 before recovering. The course uses one-step advantages instead (§4). Three Gymnasium 1.x details matter: vector environments **reset finished episodes automatically**, and the default mode does it on the *next* call — mixing a bogus transition into training. `AutoresetMode.SAME_STEP` avoids that, but it means `s` after a finished step is already the *new* episode's first observation. So a **terminated** step (the pole fell) gets zero future value, while a **truncated** step (CartPole's 500-step time limit) is bootstrapped from $V$ of `info["final_obs"]`, the state the episode was cut at — the same terminated-vs-truncated rule as [deep-q-learning](deep-q-learning.md).
 
 ## 4. The course's Kung Fu Master agent
 
