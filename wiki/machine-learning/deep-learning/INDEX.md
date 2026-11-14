@@ -21,3 +21,18 @@ Study guides for deep-learning courses: own explanations, original diagrams (`as
 ## Machine Learning A-Z (Udemy)
 
 - Part 8 → "Also in Machine Learning A-Z" sections of [artificial-neural-networks](artificial-neural-networks.md) (real churn results, R h2o) and [convolutional-neural-networks](convolutional-neural-networks.md) (training log, loss-comparison table). Other parts → [classical-ml](../classical-ml/INDEX.md).
+
+## Deep Learning: GANs and Variational Autoencoders (Udemy)
+
+- [variational-autoencoders](variational-autoencoders.md) — the bottleneck holds a distribution, not a code: latent-variable models, the ELBO and its two terms, the closed-form Gaussian KL, the reparameterisation trick, Bernoulli vs Gaussian decoders, beta = 0 vs 1 measured by how close generated samples land to real digits, and the course's softplus-sigma and dead TF1 `contrib` APIs.
+- [generative-adversarial-networks](generative-adversarial-networks.md) — one discriminator, two losses: the minimax game as actually implemented (non-saturating flipped-label generator loss), Keras's frozen-discriminator compile-order trick, DCGAN's transposed convolutions and batch norm, and a runnable 1-D mode collapse (52/42% healthy vs 100/0% collapsed).
+
+## Deep Learning: Advanced Computer Vision (Udemy)
+
+- [transfer-learning-and-cnn-architectures](transfer-learning-and-cnn-architectures.md) — borrow the body, train the head: freeze vs fine-tune and when to cache features, VGG and `preprocess_input`, ResNet's identity and convolutional blocks, 1x1 convolutions and Inception bottlenecks, global pooling, and class activation maps (with proof that CAM needs average, not max, pooling).
+- [object-detection](object-detection.md) — a fixed tensor cannot hold a variable number of objects: box offsets, anchor boxes, multi-scale feature maps (SSD300's 8,732 predictions), IoU and non-max suppression checked against torchvision, one-stage vs two-stage, mAP, and the localisation project. Flags that the course's "SSD / RetinaNet" section trains neither.
+- [neural-style-transfer](neural-style-transfer.md) — freeze the network, make the image the variable: why pixel MSE has the trivial copy solution, content loss on one activation, the Gram matrix as the part of a feature map that survives shuffling the pixels (runnable proof), L-BFGS on the image, and what breaks under TF2 eager.
+
+## Practical Deep Learning with PyTorch (Udemy)
+
+- [pytorch-cheatsheet](pytorch-cheatsheet.md) — task-indexed PyTorch API reference: tensors and the numpy bridge, autograd and why gradients accumulate, the canonical training loop, conv/pool output arithmetic checked against the library, recurrent layer shapes and the `batch_first` asymmetry, plus a 22-row map from the course's dead API (`Variable`, `volatile`, `loss.data[0]`, `.cuda()`) to its modern equivalent.

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 744" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="744" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >DDPG</text><text x="30" y="62" class="h1" text-anchor="start" >Two networks glued into one differentiable chain</text><line x1="30" y1="72" x2="750" y2="72" class="uline"/><text x="30" y="104" class="h2" text-anchor="start" >1. The composition</text><rect x="40" y="140" width="60" height="52" rx="6" class="blu"/><text x="70.0" y="170.0" class="numb" text-anchor="middle" >s</text><rect x="140" y="140" width="140" height="52" rx="6" class="grn"/><text x="210.0" y="170.0" class="numb" text-anchor="middle" >actor mu(s)</text><line x1="100" y1="166.0" x2="140" y2="166.0" class="ln" marker-end="url(#ar)"/><rect x="320" y="140" width="110" height="52" rx="6" class="cell"/><text x="375.0" y="170.0" class="numb" text-anchor="middle" >a = mu(s)</text><line x1="280" y1="166.0" x2="320" y2="166.0" class="ln" marker-end="url(#ar)"/><rect x="470" y="140" width="150" height="52" rx="6" class="pnk"/><text x="545.0" y="170.0" class="numb" text-anchor="middle" >critic Q(s,a)</text><line x1="430" y1="166.0" x2="470" y2="166.0" class="ln" marker-end="url(#ar)"/><rect x="660" y="140" width="160" height="52" rx="6" class="yel"/><text x="740.0" y="170.0" class="numb" text-anchor="middle" >scalar Q(s,mu(s))</text><line x1="620" y1="166.0" x2="660" y2="166.0" class="ln" marker-end="url(#ar)"/><text x="614" y="158" class="hand" text-anchor="end" >*</text><path d="M70,192 L70,230 L545,230 L545,192" class="ln" marker-end="url(#ar)"/><text x="300" y="224" class="mut" text-anchor="start" >the critic sees s and a</text><rect x="40" y="250" width="450" height="44" rx="6" class="pnk"/><text x="52" y="268" class="num" text-anchor="start" >critic update: minimise (Q(s,a) - y)^2</text><text x="52" y="284" class="mut" text-anchor="start" >target y comes from the target nets (frozen)</text><rect x="510" y="250" width="420" height="44" rx="6" class="grn"/><text x="522" y="268" class="num" text-anchor="start" >actor update: maximise Q(s, mu(s))</text><text x="522" y="284" class="mut" text-anchor="start" >critic weights frozen (*), gradient flows through it</text><text x="30" y="336" class="h2" text-anchor="start" >2. Same shape as a GAN</text><rect x="40" y="352" width="60" height="46" rx="6" class="blu"/><text x="70.0" y="379.0" class="numb" text-anchor="middle" >z</text><rect x="140" y="352" width="130" height="46" rx="6" class="grn"/><text x="205.0" y="379.0" class="numb" text-anchor="middle" >generator G</text><line x1="100" y1="375.0" x2="140" y2="375.0" class="ln" marker-end="url(#ar)"/><rect x="310" y="352" width="120" height="46" rx="6" class="cell"/><text x="370.0" y="379.0" class="numb" text-anchor="middle" >fake sample</text><line x1="270" y1="375.0" x2="310" y2="375.0" class="ln" marker-end="url(#ar)"/><rect x="470" y="352" width="150" height="46" rx="6" class="pnk"/><text x="545.0" y="379.0" class="numb" text-anchor="middle" >discriminator D</text><line x1="430" y1="375.0" x2="470" y2="375.0" class="ln" marker-end="url(#ar)"/><rect x="660" y="352" width="160" height="46" rx="6" class="yel"/><text x="740.0" y="379.0" class="numb" text-anchor="middle" >real / fake score</text><line x1="620" y1="375.0" x2="660" y2="375.0" class="ln" marker-end="url(#ar)"/><text x="614" y="370" class="hand" text-anchor="end" >*</text><text x="40" y="420" class="num" text-anchor="start" >train G by maximising D(G(z)) with D frozen  -&gt;  train mu by maximising Q(s, mu(s)) with Q frozen</text><text x="30" y="462" class="h2" text-anchor="start" >3. Soft vs hard target update</text><path d="M70,600 L70,486" class="ln"/><path d="M70,600 L480,600" class="ln"/><text x="275" y="620" class="mut" text-anchor="middle" >training steps</text><text x="70" y="478" class="mut" text-anchor="start" >target weight</text><path d="M70,580 L480,496" class="lnd"/><path d="M70,580 L152,580 L152,563 L234,563 L234,546 L316,546 L316,530 L398,530 L398,513 L480,513" class="ln"/><path d="M70,580 L80,579 L90,579 L101,578 L111,577 L121,575 L132,574 L142,573 L152,571 L162,570 L172,568 L183,567 L193,565 L203,564 L214,562 L224,560 L234,558 L244,557 L254,555 L265,553 L275,551 L285,549 L296,547 L306,545 L316,543 L326,541 L336,539 L347,537 L357,535 L367,533 L378,531 L388,529 L398,527 L408,525 L418,523 L429,521 L439,519 L449,517 L460,515 L470,513 L480,511" class="lnr"/><text x="492" y="500" class="mut" text-anchor="start" >online weights</text><text x="492" y="522" class="num" text-anchor="start" >DQN: hard copy every N steps</text><text x="492" y="544" class="hand" text-anchor="start" >DDPG: soft, every step</text><rect x="690" y="486" width="240" height="76" rx="6" class="yel"/><text x="810" y="508" class="num" text-anchor="middle" >theta_targ  &lt;-</text><text x="810" y="526" class="num" text-anchor="middle" >tau*theta + (1-tau)*theta_targ</text><text x="810" y="548" class="mut" text-anchor="middle" >tau = 0.005: a slow follow</text><rect x="30" y="640" width="900" height="86" rx="6" class="note"/><text x="44" y="662" class="h2" text-anchor="start" >The one idea</text><text x="44" y="682" class="handk" text-anchor="start" >DDPG is two networks glued into one differentiable chain: a = mu(s) feeds straight into Q(s, a).</text><text x="44" y="700" class="handk" text-anchor="start" >Each update freezes the other end - the critic step freezes the targets, the actor step freezes the</text><text x="44" y="718" class="handk" text-anchor="start" >critic (*) - which is exactly how a GAN trains G through a frozen D.</text></svg>

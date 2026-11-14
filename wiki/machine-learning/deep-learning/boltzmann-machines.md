@@ -1,9 +1,9 @@
 ---
-name: boltzmann-machines
-description: Boltzmann machines and restricted Boltzmann machines (RBM) explained with runnable PyTorch and Keras (keras.ops) code — energy-based models, Boltzmann distribution, visible and hidden units, why "restricted" (bipartite graph), Gibbs sampling, contrastive divergence CD-1 / CD-k, binary like/dislike movie recommender with -1 for unrated and an always-like baseline, deep belief networks (greedy layer-wise) vs deep Boltzmann machines. Study guide for Deep Learning A-Z Part 5 (sections 19–20).
+name: "boltzmann-machines"
+description: "Boltzmann machines and restricted Boltzmann machines (RBM) explained with runnable PyTorch and Keras (keras.ops) code — energy-based models, Boltzmann distribution, visible and hidden units, why \"restricted\" (bipartite graph), Gibbs sampling, contrastive divergence CD-1 / CD-k, binary like/dislike movie recommender with -1 for unrated and an always-like baseline, deep belief networks (greedy layer-wise) vs deep Boltzmann machines. Study guide for Deep Learning A-Z Part 5 (sections 19–20). Also covers the categorical RBM of Recommender Systems and Deep Learning in Python: 1-to-5 star ratings as one-hot softmax visible units, masking missing ratings so their gradient cancels, and training by handing the free-energy difference to Adam."
 created: 2026-11-13
 updated: 2026-11-13
-tags: [deep-learning, boltzmann-machines, rbm, energy-based-models, recommender-systems, pytorch, keras, study-guide, deep-learning-a-z]
+tags: [recommender-systems-course, deep-learning, boltzmann-machines, rbm, energy-based-models, recommender-systems, pytorch, keras, study-guide, deep-learning-a-z]
 ---
 # Boltzmann Machines and RBMs
 
@@ -180,6 +180,64 @@ print(f"test accuracy {((p_like > 0.5) == test)[m].mean():.3f}   always-'like' b
 | CD-10 during training, 1 step at test | Any small $k$ works; CD-1 is standard. At test you only need one up-down pass. |
 | Loss = mean absolute difference on rated cells | Fine as a monitor (CD doesn't minimize it). With 0/1 targets, 1 − MAE is accuracy — compare it against "always like". The course's *Evaluating the Boltzmann Machine* article reports a test distance of about 0.24 (≈ 75% correct) and an RMSE of about 0.46. On 0/1 targets RMSE is just √(error rate), so the two say the same thing, and random guessing scores 0.5 / 0.71. Neither number is compared with the always-like rate. |
 | Test input = training row, target = test row | Correct protocol — keep it. |
+
+## 5. Star ratings as softmax units (*Recommender Systems and Deep Learning in Python*)
+
+Section 6 of *Recommender Systems and Deep Learning in Python* builds the same RBM recommender on the same kind of data, but **keeps the stars** instead of collapsing them to like/dislike — and it supplies the piece §3 takes as given: where the contrastive-divergence update rule comes from. That course writes the hidden bias $c$ where §2 writes $a$; the energy function and both conditionals are otherwise identical, so the two sections compose.
+
+### One categorical unit per movie, K levels per unit
+
+The binary trick in §4 — liked if 3+ stars, disliked otherwise — throws away rating strength, and you cannot simply feed 1–5 into a sigmoid, whose output is confined to $[0, 1]$. Rescaling stars onto $[0, 1]$ the way you would MNIST pixels is one option. The course follows the Salakhutdinov–Mnih–Hinton paper instead: **every visible unit becomes a K-way categorical distribution** over rating levels, one-hot encoded. MovieLens 20M rates in half-stars from 0.5 to 5.0, so $K = 10$: a 0.5 is `1,0,0,0,0,0,0,0,0,0`, a 5.0 is `0,...,0,1`.
+
+| Tensor | Shape |
+|---|---|
+| $v$ (one user's ratings) | $D \times K$ |
+| $W$ | $D \times K \times M$ |
+| $b$ (visible bias) | $D \times K$ |
+| $c$ (hidden bias) | $M$ |
+| $h$ | $M$ |
+
+Here $D$ = movies, $M$ = hidden units, $K$ = rating classes — a deliberate local override of that course's usual "N users, M movies, K latent dimensions" convention, and worth re-reading the shapes for if you move between its sections.
+
+Hidden units stay Bernoulli, so **visible → hidden keeps the sigmoid**; **hidden → visible becomes a softmax over each movie's K levels**, since exactly one level can be set. The contraction $\sum_{d,k} W[d,k,m]\,v[d,k]$ runs over two axes at once — a "double dot product" with no standard symbol, which is why the code uses `tensordot(V, W, axes=[[1,2],[0,1]])` rather than `matmul`, which insists on 2-D arguments and contracts one axis. Because the energy is still a **scalar**, every step of the free-energy derivation below carries over verbatim with dot products reread as double dots.
+
+**Predicting a star rating.** Argmax over the K softmax outputs is one option; the paper (and the course's code) uses the **probability-weighted average** instead. With probabilities 0.05, 0.10, 0.20, 0.50, 0.15 over one-to-five stars, the weighted average is 3.6 while argmax says 4 — more mass sits below 4 than above it, so the average pulls under. This is the K-class version of §4's "score with probabilities, not one random 0/1 draw". The course sets trying both rules as an exercise and reports no number for either.
+
+### Masking, derived rather than asserted
+
+§3 says unrated movies are "clamped out at every step". This course shows *why* that is the correct thing and not a patch. A missing rating is **already an all-zero K-vector** — no level is set. If you also force the reconstruction $v'$ to all zeros at that movie, then that movie contributes identically to $F(v)$ and $F(v')$, the difference cancels, and **its gradient is exactly zero**: no update, nothing learned from absence.
+
+The consequence is the part people get wrong: the mask has to hit the **reconstruction**, not just the input. Mask only the input and the sampler is free to invent a rating for an unrated movie, which the negative phase then happily learns from. In the course's code the mask is the $N \times D$ "did this user rate it" matrix **repeated K times** — present ratings keep all K entries, because you do not know in advance which one is set.
+
+### Free energy: where CD's update rule comes from
+
+§3 presents $\Delta W \propto h^{(0)} v^{(0)\top} - h^{(k)} v^{(k)\top}$ and the phrase "statistics of the data minus statistics of the model" as a given. The free energy is the missing middle. Define
+
+$$F(v) = -\log \sum_h e^{-E(v,h)} \qquad\Longrightarrow\qquad P(v) = \frac{e^{-F(v)}}{Z}, \quad Z = \sum_{v'} e^{-F(v')}$$
+
+so $Z$ is now a sum over visible states only. Differentiating the negative log-likelihood splits in two:
+
+$$\frac{\partial}{\partial \theta}\big[-\log P(v)\big] = \underbrace{\frac{\partial F(v)}{\partial \theta}}_{\text{positive phase}} - \underbrace{\sum_{v'} P(v')\,\frac{\partial F(v')}{\partial \theta}}_{\text{negative phase}}$$
+
+The positive phase depends only on the data: push the energy of *what you saw* down. The negative phase sums over every possible $v'$ weighted by the model's current belief: push *what the model dreams* up, hardest on states it currently loves but has never observed. The negative phase is an expectation, so approximate it by a sample — draw that sample from a Gibbs chain started at the data, stop after one round trip, and you have CD-1. §3's update is the sampled form of exactly this expression.
+
+$F(v)$ still looks like a sum over $2^M$ hidden states, but it factorises (the sum-product rule) into a closed form that is **linear in M**:
+
+$$F(v) = -b^\top v - \sum_{j=1}^{M} \log\big(1 + e^{\,W[:,j] \cdot v + c_j}\big)$$
+
+**The practical payoff: you never code a gradient.** Define `loss = F(v) - F(v')` and hand it to Adam; autodiff reproduces contrastive divergence. The course is explicit that this is "not a real loss" — just an object whose gradient approximates the true one. §4's hand-written update line is correct, but it reads as though the manual rule were the only way; it is not, and the autodiff version is what you would write today.
+
+One caveat the course never states: `F(v) - F(v')` is right **only if $v'$ is detached**. The TF1 code gets away with it because `Categorical.sample()` and `tf.one_hot` happen to break the graph. Port it with a reparameterised or Gumbel-softmax sampler and you will silently differentiate through the sampling path and get a wrong gradient. Add `.detach()` / `stop_gradient` on purpose rather than by luck.
+
+One aside that connects this note to its neighbour: if you feed the hidden **probabilities** back through instead of a sample, an RBM's round trip is computationally identical to a tied-weight autoencoder with sigmoids at both ends — which is why reconstruction cross-entropy falls during training even though CD never optimises it. Same forward computation, different objective; see [autoencoders](autoencoders.md).
+
+### Against matrix factorization — and the missing numbers
+
+The course places RBM collaborative filtering in the matrix-factorization *lineage* rather than measuring it against one: the section opens by noting that the RBM-CF paper's authors also wrote the probabilistic and Bayesian matrix-factorization papers used earlier in the course, declares the section optional and "very advanced", and notes that Keras cannot express the model, so the code is raw TensorFlow 1. The following section then returns to matrix factorization at scale with Spark ALS. See [matrix-factorization-recommenders](../ml-systems/matrix-factorization-recommenders.md) for that side of the comparison.
+
+**No quantitative comparison can be drawn from this course, because it reports no numbers at all.** Section 6 ends on "our results are not bad" and never reads out an MSE, an epoch count, a batch size, the hidden-unit count $M$, the learning rate, or even the dimensions of the shrunken MovieLens subset it trains on. Train and test MSE curves are plotted; the axes are never quoted. Nor is there a baseline — no global, per-user or per-movie mean to beat — which makes the first entry under Common Pitfalls below the thing to fix before trusting any of it. Take the derivation and the representation from this section; take evidence from somewhere else.
+
+Two smaller differences from §4 worth noting if you read both: this course uses **CD-1 throughout** where *Deep Learning A-Z* used CD-10 at train time and one step at test, and it trains with Adam rather than plain SGD at a fixed learning rate. Neither is a contradiction; both are tuning choices with no reported result behind them here.
 
 ## Trade-offs
 

@@ -204,3 +204,142 @@ if want("bandit"):
                   "UCB is deterministic and must update every round; Thompson is random, handles delayed or batched feedback,",
                   "and usually earns more. A/B testing explores all the way, then exploits."], "handk"))
     svg("multi-armed-bandits.svg", 960, 560, "".join(b))
+
+# ---------------- Evolution strategies: one generation + why it parallelises ----------------
+if want("es"):
+    import math
+    b = [header("EVOLUTION STRATEGIES", "A reward-weighted average of random parameter nudges", 960)]
+
+    # --- panel 1: parameter space ---
+    b.append(T(30, 104, "1. One generation in parameter space", "h2"))
+    b.append(T(30, 128, "dashed arcs: contours of expected return F(theta)", "mut"))
+    ox, oy = 400, 170                                   # the peak sits up-right, off the cloud
+    for r in (55, 110, 165, 220):
+        b.append(P(f"M{ox - r},{oy} A{r},{r} 0 0,0 {ox},{oy + r}", "lnd"))
+    b.append(T(412, 152, "higher ->", "hand"))
+
+    tx, ty = 283, 287                                   # theta_t: sits on the r=165 contour
+    rs, rl, rv = 52, 80, 88                             # dot ring / A_i label ring / vector-label ring
+    b.append(P(f"M{tx - rs},{ty} a{rs},{rs} 0 1,0 {2 * rs},0 a{rs},{rs} 0 1,0 {-2 * rs},0", "lnd"))
+    LAB = {292.5: "+1.1", 345: "+1.4", 15: "+0.9", 112.5: "-1.2", 157.5: "-0.8", 202.5: "-1.0"}
+    A_AT = {292.5: 292.5, 345: 337.5, 15: 22.5}         # label angle -> dot angle (nudged off the big arrow)
+    for k in range(8):
+        a = 22.5 + 45 * k
+        dx, dy = tx + rs * math.cos(math.radians(a)), ty + rs * math.sin(math.radians(a))
+        b.append(P(f"M{tx},{ty} L{dx:.0f},{dy:.0f}", "lnd"))
+        b.append(C(f"{dx:.0f}", f"{dy:.0f}", 4, "blu"))
+    for la, txt in LAB.items():
+        lx = tx + rl * math.cos(math.radians(la)); ly = ty + rl * math.sin(math.radians(la))
+        b.append(R(lx - 15, ly - 11, 30, 14, "bg"))     # mask the contour behind the number
+        b.append(T(f"{lx:.0f}", f"{ly:.0f}", txt, "numb", "middle"))
+    for a, txt in ((67.5, "sigma*eps_i"), (247.5, "sigma*eps_i")):
+        lx = tx + rv * math.cos(math.radians(a)); ly = ty + rv * math.sin(math.radians(a))
+        b.append(R(lx - 36, ly - 11, 72, 14, "bg"))
+        b.append(T(f"{lx:.0f}", f"{ly:.0f}", txt, "mut", "middle"))
+    b.append(C(tx, ty, 7, "grn"))
+    b.append(P(f"M{tx - rs - 8},{ty} L184,{ty}", "lnd"))
+    b.append(R(130, 276, 56, 16, "bg")); b.append(T(182, 291, "theta_t", "handk", "end"))
+    b.append(P(f"M{tx + 8},{ty} L{tx + rs - 2},{ty}", "lnr"))
+    b.append(R(336, 278, 44, 16, "bg")); b.append(T(340, 291, "sigma", "hand"))
+    b.append(A(tx, ty, 389, 181, "hi", "arr"))
+    b.append(T(396, 174, "update step", "hand"))
+    b.append(T(30, 412, "numbers: standardised return A_i = (F_i - mean F) / std F", "mut"))
+    b.append(T(30, 430, "each thin vector is one offspring at theta_t + sigma * eps_i", "mut"))
+    b.append(R(30, 448, 490, 58, "yel", 6))
+    b.append(T(275, 472, "theta_(t+1) = theta_t + (eta / (N sigma)) * sum_i A_i eps_i", "numb", "middle"))
+    b.append(T(275, 492, "positive A_i pulls toward that offspring, negative pushes away", "mut", "middle"))
+
+    # --- panel 2: the map-reduce shape ---
+    b.append(T(545, 104, "2. Why it parallelises", "h2"))
+    b.append(R(560, 118, 330, 40, "pur", 6))
+    b.append(T(725, 143, "theta_t (identical on every worker)", "num", "middle"))
+    b.append(T(725, 176, "broadcast seed_i", "mut", "middle"))
+    b.append(P("M560,158 L560,380", "ln"))
+    for k in range(4):
+        y = 196 + 54 * k
+        b.append(R(600, y, 270, 44, "blu", 6))
+        b.append(T(608, y + 26, f"W{k + 1}", "numb"))
+        b.append(T(636, y + 18, "eps_i = randn(seed_i)", "num"))
+        b.append(T(636, y + 36, "run 1 episode -> F_i", "num"))
+        b.append(A(560, y + 22, 600, y + 22))
+        b.append(A(870, y + 22, 890, y + 22))
+    b.append(P("M890,218 L890,447 L874,447", "ln", "ar"))
+    b.append(T(735, 420, "2 numbers per offspring", "mut", "middle"))
+    b.append(R(600, 430, 270, 34, "grn", 6))
+    b.append(T(735, 451, "reduce: (seed_i, F_i)", "num", "middle"))
+    b.append(A(735, 464, 735, 476))
+    b.append(R(600, 476, 270, 34, "yel", 6))
+    b.append(T(735, 497, "theta_(t+1)", "numb", "middle"))
+
+    b.append(note(30, 530, 900, 86, "The one idea", [
+        "The step is a reward-weighted average of parameter-space nudges: good A_i pulls you in, bad A_i pushes away.",
+        "Each worker gets a seed and sends back one scalar, so a whole generation costs two numbers per offspring -",
+        "no gradients, no weight vectors and no episodes ever cross the network."], "handk"))
+    svg("evolution-strategies.svg", 960, 632, "".join(b))
+
+# ---------------- DDPG: the actor-critic composition, the GAN analogy, soft updates ----------------
+if want("ddpg"):
+    import math
+    b = [header("DDPG", "Two networks glued into one differentiable chain", 960)]
+
+    def chain(y, h, items):
+        for i, (x0, w, label, cls) in enumerate(items):
+            b.append(R(x0, y, w, h, cls, 6))
+            b.append(T(x0 + w / 2, y + h / 2 + 4, label, "numb", "middle"))
+            if i:
+                px, pw = items[i - 1][0], items[i - 1][1]
+                b.append(A(px + pw, y + h / 2, x0, y + h / 2))
+
+    # --- panel 1: the composition ---
+    b.append(T(30, 104, "1. The composition", "h2"))
+    chain(140, 52, [(40, 60, "s", "blu"), (140, 140, "actor mu(s)", "grn"), (320, 110, "a = mu(s)", "cell"),
+                    (470, 150, "critic Q(s,a)", "pnk"), (660, 160, "scalar Q(s,mu(s))", "yel")])
+    b.append(T(614, 158, "*", "hand", "end"))
+    b.append(P("M70,192 L70,230 L545,230 L545,192", "ln", "ar"))
+    b.append(T(300, 224, "the critic sees s and a", "mut"))
+    b.append(R(40, 250, 450, 44, "pnk", 6))
+    b.append(T(52, 268, "critic update: minimise (Q(s,a) - y)^2", "num"))
+    b.append(T(52, 284, "target y comes from the target nets (frozen)", "mut"))
+    b.append(R(510, 250, 420, 44, "grn", 6))
+    b.append(T(522, 268, "actor update: maximise Q(s, mu(s))", "num"))
+    b.append(T(522, 284, "critic weights frozen (*), gradient flows through it", "mut"))
+
+    # --- panel 2: the GAN analogy ---
+    b.append(T(30, 336, "2. Same shape as a GAN", "h2"))
+    chain(352, 46, [(40, 60, "z", "blu"), (140, 130, "generator G", "grn"), (310, 120, "fake sample", "cell"),
+                    (470, 150, "discriminator D", "pnk"), (660, 160, "real / fake score", "yel")])
+    b.append(T(614, 370, "*", "hand", "end"))
+    b.append(T(40, 420, "train G by maximising D(G(z)) with D frozen  ->  train mu by maximising Q(s, mu(s)) with Q frozen", "num"))
+
+    # --- panel 3: soft vs hard target update ---
+    b.append(T(30, 462, "3. Soft vs hard target update", "h2"))
+    b.append(P("M70,600 L70,486", "ln")); b.append(P("M70,600 L480,600", "ln"))
+    b.append(T(275, 620, "training steps", "mut", "middle"))
+    b.append(T(70, 478, "target weight", "mut"))
+    x0, x1, ytop, ybot, nstep = 70, 480, 496, 580, 5
+    b.append(P(f"M{x0},{ybot} L{x1},{ytop}", "lnd"))          # online weights, climbing
+    def online(u): return ybot - (ybot - ytop) * u
+    stair = [f"M{x0},{ybot}"]
+    for k in range(nstep):                                     # hold, then jump: DQN's hard copy
+        xa = x0 + (x1 - x0) * k / nstep; xb = x0 + (x1 - x0) * (k + 1) / nstep
+        stair.append(f"L{xb:.0f},{online(k / nstep):.0f}")
+        if k < nstep - 1: stair.append(f"L{xb:.0f},{online((k + 1) / nstep):.0f}")
+    b.append(P(" ".join(stair), "ln"))
+    pts = []
+    for i in range(41):                                        # DDPG: exponential lag below online
+        u = i / 40
+        pts.append(f"{x0 + (x1 - x0) * u:.0f},{online(u) + 15 * (1 - math.exp(-4 * u)):.0f}")
+    b.append(P("M" + " L".join(pts), "lnr"))
+    b.append(T(492, 500, "online weights", "mut"))
+    b.append(T(492, 522, "DQN: hard copy every N steps", "num"))
+    b.append(T(492, 544, "DDPG: soft, every step", "hand"))
+    b.append(R(690, 486, 240, 76, "yel", 6))
+    b.append(T(810, 508, "theta_targ  <-", "num", "middle"))
+    b.append(T(810, 526, "tau*theta + (1-tau)*theta_targ", "num", "middle"))
+    b.append(T(810, 548, "tau = 0.005: a slow follow", "mut", "middle"))
+
+    b.append(note(30, 640, 900, 86, "The one idea", [
+        "DDPG is two networks glued into one differentiable chain: a = mu(s) feeds straight into Q(s, a).",
+        "Each update freezes the other end - the critic step freezes the targets, the actor step freezes the",
+        "critic (*) - which is exactly how a GAN trains G through a frozen D."], "handk"))
+    svg("ddpg.svg", 960, 744, "".join(b))

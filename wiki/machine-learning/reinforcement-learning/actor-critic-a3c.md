@@ -1,9 +1,9 @@
 ---
-name: actor-critic-a3c
-description: Actor-critic reinforcement learning and A3C explained with runnable PyTorch code — policy (actor) and value (critic) heads on one shared network, the advantage A = r + gamma·V(s') − V(s), policy-gradient loss −log π(a|s)·A, critic loss, entropy bonus, n-step returns, asynchronous (A3C) vs synchronous batched (A2C) workers, Gymnasium vector environments and autoreset; the course's Kung Fu Master agent (4 stacked 42x42 grayscale frames, 3 conv layers, actor 14 actions, critic 1 value, 10 environments, Adam 1e-4, entropy 0.001, reward scaling 0.01); an A2C that learns CartPole in seconds; PPO's clipped objective and SAC's entropy-regularised value with worked numbers, and the AWS DeepRacer workshop; the asynchronous TF1 A3C for Breakout from Deep RL in Python (threads per CPU, 5-step rollouts, entropy 0.01, RMSProp, gradient clipping at norm 5). Study guide for AI A-Z Parts 7–8 (sections 14–17) and Deep Reinforcement Learning in Python section 7.
+name: "actor-critic-a3c"
+description: "Actor-critic reinforcement learning and A3C explained with runnable PyTorch code — policy (actor) and value (critic) heads on one shared network, the advantage A = r + gamma·V(s') − V(s), policy-gradient loss −log π(a|s)·A, critic loss, entropy bonus, n-step returns, asynchronous (A3C) vs synchronous batched (A2C) workers, Gymnasium vector environments and autoreset; the course's Kung Fu Master agent (4 stacked 42x42 grayscale frames, 3 conv layers, actor 14 actions, critic 1 value, 10 environments, Adam 1e-4, entropy 0.001, reward scaling 0.01); an A2C that learns CartPole in seconds; PPO's clipped objective and SAC's entropy-regularised value with worked numbers, and the AWS DeepRacer workshop; the asynchronous TF1 A3C for Breakout from Deep RL in Python (threads per CPU, 5-step rollouts, entropy 0.01, RMSProp, gradient clipping at norm 5). Study guide for AI A-Z Parts 7–8 (sections 14–17) and Deep Reinforcement Learning in Python section 7. Also covers the professional A2C of Cutting-Edge AI: Deep Reinforcement Learning in Python (synchronous workers needing no network copies, the Atari wrapper stack, n_steps 5, entropy 0.01, gradient clipping at global norm 0.5, and a Breakout agent scoring about 850)."
 created: 2026-11-13
 updated: 2026-11-13
-tags: [reinforcement-learning, actor-critic, deep-rl-python, a3c, a2c, policy-gradient, ppo, sac, gymnasium, pytorch, study-guide, ai-a-z]
+tags: [cutting-edge-ai, reinforcement-learning, actor-critic, deep-rl-python, a3c, a2c, policy-gradient, ppo, sac, gymnasium, pytorch, study-guide, ai-a-z]
 ---
 # Actor-Critic, A3C, PPO and SAC
 
@@ -164,6 +164,54 @@ Section 7 of *Advanced AI: Deep Reinforcement Learning in Python* implements gen
 | γ / budget | 0.99 / 5 million global steps, threads stopped by a TF `Coordinator` |
 
 Compared with the AI A-Z version (§4): separate value and policy losses instead of one combined loss, n-step instead of one-step advantages, and true asynchrony. The transcript reports no scores — only that it learns in far less wall-clock time than DQN. Python threads share one interpreter lock, so the speed comes from TensorFlow releasing it during graph execution; with PyTorch today, batched A2C over vector environments (§3) is simpler and as good.
+
+## 7. Dissecting a professional A2C (*Cutting-Edge AI: Deep Reinforcement Learning in Python*)
+
+Section 3 of *Cutting-Edge AI: Deep Reinforcement Learning in Python* takes the opposite route to §4 and §6: rather than writing an agent, it reads OpenAI Baselines' A2C line by line on Atari Breakout. What that buys is the list of details a from-scratch A2C quietly omits — and an honest look at how much of "the algorithm" is actually wrapper code.
+
+**Synchrony removes the weight copies entirely.** §2 says A2C steps its environments together; this course makes the structural consequence explicit. In A3C (§6) each worker holds its *own* copy of the networks, computes gradients against those weights, ships the **gradients** to a master and gets fresh weights back — so every update is computed by parameters that have already moved on. A2C's workers are not learners at all: they are bare environments in child processes, and the single network in the parent process is the only weight set in existence. There is nothing to copy and nothing to go stale. The only variability left is that the environments are in different states — the ball falling left in one, right in another — so a batch is one policy evaluated across many partial episodes of the same game.
+
+**"Synchronous" was a design choice, and an ambiguous one.** The course flags that the word could have meant at least two other things. Each worker could play a *whole episode* before the update, which would hand you exact Monte-Carlo returns instead of bootstrapped 5-step estimates — and would need different hyperparameters. Or each worker could take its own 5 steps at its own pace and then sync, which is numerically identical to what Baselines does. What Baselines actually does is lockstep every *individual* step: the parent sends one action per environment down a `multiprocessing` pipe, then blocks on all the replies (processes, not threads, because of the GIL). Worth knowing because "A2C" names the result, not the mechanism, and the per-step lockstep is the least parallel of the three readings. The encapsulation is good enough that the training loop reads as if there were one environment with vector-valued observations and actions.
+
+**There is no A2C paper.** Only an OpenAI blog post amounting to "we made A3C synchronous" — and none of the implementation detail below appears in it. The method is citable through that post and as a baseline in Wu et al.'s ACKTR paper (NeurIPS 2017), but there is no primary source to check the recipe against. That absence is the course's argument for reading the code.
+
+### The Atari recipe, as the course states it
+
+| Piece | Stated setting |
+|---|---|
+| Game | Breakout, `BreakoutNoFrameskip-v4` (you do the frame-skipping yourself) |
+| Rollout | `n_steps = 5` per environment per update; returns bootstrapped from $V$ of the final state unless it is terminal |
+| Loss | `policy_loss + 0.5 * value_loss - 0.01 * entropy`, with `value_loss = mean((V - R)^2) / 2` |
+| Gradients | clipped to **global norm 0.5**, applied with **RMSProp** (decay and epsilon not read out) |
+| Observation | grayscale, resized to **84×84**, **4 frames stacked** (stacking is for memory: consecutive states share 3 of 4 frames) |
+| Action repeat | each action held for **4 frames**, observation = element-wise **max over the last 2** |
+| Episode starts | up to **30 random no-ops** on reset; FIRE pressed on reset; each **life lost** ends an episode |
+| Reward | clipped to its sign: **−1 / 0 / +1** |
+| Network | **3 conv layers → flatten → 1 dense layer → two linear heads** (policy logits and a scalar value, both with no activation), **orthogonal initialisation**, `uint8` input **divided by 255** |
+| Parallel environments | **stated inconsistently — 16 in one lecture, 8 in another** |
+| Learning rate, γ, total timesteps | **never stated** |
+
+The three loss weights are the ones to remember: policy 1, value 0.5, entropy 0.01. The course points out a fourth that is easy to miss — the value loss already carries a factor of ½ *inside* it, so the effective weight on the squared error is 0.25, not 0.5. He calls it a hidden hyperparameter, and it is the kind of thing that makes a reimplementation train differently for no visible reason.
+
+Two honesty notes on the loss. The course narrates the entropy term as *added*; as §1 says, it is added to the objective and therefore **subtracted** from a minimised loss — his own bonus exercise ("check the signs") is the tell. And the policy loss is built from `sparse_softmax_cross_entropy_with_logits`, which looks like a classification call but with integer labels computes exactly $-\log \pi(a \mid s)$, because the actions *are* integers from 0.
+
+**Nothing else is normalised.** Pixels are divided by 255 and rewards are reduced to their sign. There is no running mean/std on observations, no reward scaling, no learning-rate schedule discussed, no replay buffer and no target network. If you have met `VecNormalize` or a `RunningMeanStd` in reinforcement-learning code, it belongs to the continuous-control settings, not here.
+
+### Results
+
+Training takes **"a bit less than a day" on the instructor's laptop GPU** (model not stated). The trained agent then plays faster than real time and gets about as far as Breakout allows: across its five lives it **clears every block twice** — the screen refills once after the first clear — for a score of roughly **850**.
+
+The scores printed *during* training are far lower, for three compounding reasons. Rewards are clipped to ±1, so a brick worth 7 counts as 1. Four frames collapse into one step, so several real rewards inside those frames collapse into a single +1. And each **life** is an episode, so a printed "episode" reward is a fifth of a game. The course names the first two and builds its own `Monitor` wrapper to recover the true per-game score, but never connects it to the third. No loss values, learning curves or total-timestep counts are given anywhere, so the ~850 is not reproducible from the lectures alone — you do not even know the batch size.
+
+For the arithmetic itself, §3's snippet is this algorithm: `N` environments stepped together, 5-step rollouts, `returns - values` for the advantage, and `actor + 0.5 * critic - beta * entropy` summed into one scalar. The structural differences are the conv trunk, the extra ½ inside the value loss, and RMSProp in place of Adam.
+
+### Reading this code in 2026
+
+- **It is TensorFlow 1 throughout** — `tf.placeholder`, `tf.Session`, `variable_scope(reuse=...)`, `tf.gradients` plus a manual `apply_gradients`. None of it runs on TF2 without `tf.compat.v1` and `disable_eager_execution()`. In particular, the implementation builds **two network instances** — a step-model with `nsteps=1` for acting and a train-model with `nsteps=5` for learning, sharing one weight set via `reuse=True`. That split is an artifact of placeholders having a **fixed batch dimension**, not anything A2C requires: in TF2 or PyTorch you call one module with whichever batch size you have, exactly as §3 does.
+- **OpenAI Baselines is archived.** Stable-Baselines3 and CleanRL are the live equivalents, and SB3's `AtariWrapper` bundles no-op reset, max-and-skip, episodic life, fire reset, frame warping and reward clipping — an entire lecture's worth of wrapper code is now one constructor argument. The pedagogy survives; the code should not be copied.
+- **`ALE/Breakout-v5` now defaults to sticky actions ON** (`repeat_action_probability = 0.25`) with `frameskip = 4` — the opposite of the deterministic `-v4` behaviour this code assumes and re-implements by hand. Set it deliberately or you have silently changed the problem. Atari ROMs are also no longer bundled; you need `ale-py` with ROMs installed.
+- **Gymnasium's `step()` returns five values** (`obs, reward, terminated, truncated, info`), and every wrapper here assumes a single `done`. This is not cosmetic: the n-step return multiplies future value by `(1 - done)`, and with the split you must **bootstrap on truncation but not on termination**. Collapsing the two tells the critic that a state cut off by a time limit is worth nothing — a real correctness bug if the code is ported naively. Same rule as §3's `info["final_obs"]` handling.
+- **A2C is no longer the choice.** PPO (§5) superseded it almost immediately with the same skeleton plus a clipped surrogate, and IMPALA/R2D2 superseded both for Atari throughput. A day of laptop GPU for one Breakout agent is weak by current standards. The reason to read this section is the hidden details, not the algorithm.
 
 ## Trade-offs
 

@@ -606,3 +606,586 @@ if want("memnet"):
     b.append(note(40, 356, 430, 150, "Two supporting facts: two hops", ["Q: Where is the football?", "hop 1 finds 'John picked up the football'", "hop 2 is queried by hop 1's output:", "finds 'John went to the garden'", "(separate embeddings per hop; ELU dense layer)"], "handk"))
     b.append(note(500, 356, 430, 150, "The catch: order", ["summing word vectors loses word order;", "nothing says which sentence is LATEST.", "Add a learned vector per sentence slot,", "or (the course) the line number as a word."], "handk"))
     svg("memory-network.svg", 960, 530, "".join(b))
+
+# ---------------- Neural style transfer ----------------
+if want("style"):
+    b = [header("NEURAL STYLE TRANSFER", "Freeze the network, make the image the variable", 960)]
+    thumbs = [("content image x", "the photo", 110, "cell"), ("style image s", "the painting", 196, "yel"),
+              ("generated x'", "THE VARIABLE", 282, "pnk")]
+    for t1, t2, y, c in thumbs:
+        b.append(R(30, y, 150, 62, c, 6)); b.append(T(105, y + 26, t1, "numb", "middle")); b.append(T(105, y + 46, t2, "mut", "middle"))
+        b.append(A(180, y + 31, 236, 240))
+    b.append(R(236, 150, 150, 200, "blu", 8))
+    b.append(T(311, 174, "VGG16", "h2", "middle")); b.append(T(311, 194, "weights FROZEN", "mut", "middle"))
+    b.append(T(311, 212, "avg pooling", "mut", "middle"))
+    for k in range(5):
+        b.append(R(252, 230 + k * 23, 118, 18, "cell", 2)); b.append(T(311, 243 + k * 23, f"block{k + 1}", "num", "middle"))
+    b.append(A(386, 250, 440, 190)); b.append(T(410, 178, "one tap", "mut", "middle"))
+    b.append(R(440, 160, 150, 56, "grn", 6)); b.append(T(515, 182, "MSE on activations", "num", "middle")); b.append(T(515, 202, "J_content", "numb", "middle"))
+    b.append(T(600, 182, "deeper tap ->", "mut")); b.append(T(600, 198, "blurrier, more abstract", "mut"))
+    for k in range(5):
+        y = 236 + k * 23
+        b.append(A(386, y + 9, 440, y + 9))
+        b.append(R(440, y, 74, 18, "yel", 2)); b.append(T(477, y + 13, "Gram CxC", "num", "middle"))
+        b.append(R(520, y, 50, 18, "cell", 2)); b.append(T(545, y + 13, "MSE", "num", "middle"))
+        b.append(A(570, y + 9, 596, 300))
+    b.append(T(600, 352, "spatial axis cancels: H x W x C -> C x C", "mut"))
+    b.append(R(596, 282, 150, 40, "grn", 6)); b.append(T(671, 300, "sum w_L * J_style_L", "num", "middle")); b.append(T(671, 316, "J_style", "numb", "middle"))
+    b.append(A(590, 190, 790, 215)); b.append(A(746, 300, 790, 250))
+    b.append(R(790, 205, 140, 50, "pnk", 6)); b.append(T(860, 226, "J = J_content", "numb", "middle")); b.append(T(860, 244, "+ J_style", "numb", "middle"))
+    b.append(P("M860,205 L860,104 L16,104 L16,313 L28,313", "lnr", "ar"))
+    b.append(T(470, 96, "dJ/dx' : L-BFGS updates PIXELS, not weights", "hand", "middle"))
+    b.append(note(30, 390, 900, 76, "The one idea",
+                  ["The gradient arrow comes back to the image and never touches the network. Ordinary training is argmin over W with the data fixed;",
+                   "here it is argmin over x' with the weights fixed. No dataset, no training run, no checkpoint - just one image walked downhill."], "handk"))
+    svg("style-transfer-architecture.svg", 960, 480, "".join(b))
+
+# ---------------- PyTorch training step ----------------
+if want("ptstep"):
+    b = [header("ONE PYTORCH TRAINING STEP", "Gradients are additive state living on the parameters", 960)]
+    steps = ["opt.zero_grad()", "out = model(xb)", "loss = lossf(out, yb)", "loss.backward()", "opt.step()"]
+    grads = ["None", "None", "None", "filled: ADDS to", "unchanged:"]
+    grads2 = ["", "", "", "whatever was there", "step only reads it"]
+    for k, (s, g, g2) in enumerate(zip(steps, grads, grads2)):
+        x = 30 + k * 186
+        b.append(R(x, 150, 170, 54, "blu", 6)); b.append(T(x + 85, 172, f"{k + 1}", "mut", "middle")); b.append(T(x + 85, 192, s, "numb", "middle"))
+        if k < 4: b.append(A(x + 170, 177, x + 186, 177))
+        b.append(R(x, 250, 170, 50, "yel" if k == 3 else "cell", 4))
+        b.append(T(x + 85, 270, g, "num", "middle"))
+        if g2: b.append(T(x + 85, 288, g2, "mut", "middle"))
+    b.append(T(30, 240, "p.grad for each parameter p:", "mut"))
+    b.append(P("M216,144 L216,128 L588,128 L588,144", "ln"))
+    b.append(T(402, 120, "graph is built here; torch.no_grad() suppresses it", "hand", "middle"))
+    b.append(T(675, 140, "graph is freed after backward", "mut", "middle"))
+    b.append(T(675, 126, "(retain_graph=True keeps it)", "mut", "middle"))
+    b.append(R(30, 322, 900, 44, "grey", 6))
+    b.append(T(480, 342, "evaluation: model.eval() + torch.no_grad(), and steps 1, 4 and 5 are skipped entirely", "numb", "middle"))
+    b.append(T(480, 358, "model.eval() only changes dropout and batch norm; no_grad() is what stops the graph being built", "mut", "middle"))
+    b.append(note(30, 382, 900, 76, "Why zero_grad() is not politeness",
+                  ["backward() ADDS this batch's gradient to whatever p.grad already holds. Skip step 1 and you train on the sum of every batch so far.",
+                   "Since PyTorch 2.x, zero_grad() sets p.grad to None rather than to a zero tensor - cheaper, but code that reads p.grad must handle None."], "handk"))
+    svg("pytorch-training-step.svg", 960, 472, "".join(b))
+# ---------------- VAE forward pass ----------------
+if want("vae"):
+    b = [header("VARIATIONAL AUTOENCODERS", "The bottleneck holds parameters, not a code", 960)]
+    DIG = ["..####..", ".##..##.", "......##", "...###..", "......##", ".##..##.", "..####..", "........"]
+
+    def dtile(x, y, s, noise=0):
+        o = []
+        for i, row in enumerate(DIG):
+            for j, ch in enumerate(row):
+                on = ch == "#"
+                if noise and (i * 7 + j * 5) % noise == 0:
+                    on = not on
+                o.append(R(x + j * s, y + i * s, s, s, "grey" if on else "cell"))
+        return "".join(o)
+
+    # --- Panel A: posterior predictive ---
+    b.append(T(30, 108, "A. posterior predictive (reconstruction)", "h2"))
+    b.append(dtile(30, 164, 8))
+    b.append(T(62, 246, "x (D pixels)", "mut", "middle"))
+    b.append(A(94, 196, 114, 196))
+    b.append(P("M118,162 L188,180 L188,212 L118,230 Z", "cell"))
+    b.append(T(153, 200, "encoder", "num", "middle"))
+    b.append(T(153, 246, "encoder (ReLU)", "mut", "middle"))
+    b.append(A(190, 196, 212, 196))
+    # split head: one dense layer of width 2M, cut in half
+    b.append(R(216, 160, 148, 36, "blu"))
+    b.append(T(290, 176, "mu (M)", "numb", "middle"))
+    b.append(T(290, 190, "no activation", "mut", "middle"))
+    b.append(R(216, 196, 148, 36, "yel"))
+    b.append(T(290, 212, "sigma (M)", "numb", "middle"))
+    b.append(T(290, 226, "softplus(.) + 1e-6 > 0", "mut", "middle"))
+    b.append(P("M216,152 L216,144 L364,144 L364,152", "ln"))
+    b.append(T(290, 138, "width 2M, then split", "mut", "middle"))
+    b.append(A(364, 178, 402, 190))
+    b.append(A(364, 214, 402, 202))
+    b.append(C(428, 196, 24, "pnk"))
+    b.append(T(428, 201, "z", "numb", "middle"))
+    b.append(T(428, 246, "z ~ q(z|x)", "mut", "middle"))
+    b.append(T(428, 272, "z = mu + sigma * eps,  eps ~ N(0, I)", "hand", "middle"))
+    b.append(A(452, 196, 478, 196))
+    b.append(P("M482,180 L552,162 L552,230 L482,212 Z", "cell"))
+    b.append(T(519, 200, "decoder", "num", "middle"))
+    b.append(T(517, 246, "decoder (ReLU)", "mut", "middle"))
+    b.append(A(554, 196, 578, 196))
+    b.append(R(580, 168, 78, 56, "cell", 4))
+    b.append(T(619, 200, "logits (D)", "numb", "middle"))
+    b.append(A(658, 196, 682, 196))
+    b.append(R(684, 164, 136, 64, "grn", 6))
+    b.append(T(752, 188, "Bernoulli(p)", "numb", "middle"))
+    b.append(T(752, 206, "p = sigmoid(logits)", "mut", "middle"))
+    b.append(A(820, 186, 844, 178))
+    b.append(A(820, 208, 844, 258))
+    b.append(dtile(848, 150, 7))
+    b.append(T(876, 220, "mean image = p", "mut", "middle"))
+    b.append(dtile(848, 232, 7, noise=5))
+    b.append(T(876, 302, "sample ~ Bern(p)", "mut", "middle"))
+
+    # --- Panel B: prior predictive ---
+    b.append(T(30, 338, "B. prior predictive (generation)", "h2"))
+    b.append(R(30, 372, 120, 56, "note", 6))
+    b.append(T(90, 396, "z ~ N(0, I)", "numb", "middle"))
+    b.append(T(90, 414, "no encoder, no x", "mut", "middle"))
+    b.append(A(150, 400, 178, 400))
+    b.append(P("M182,384 L252,366 L252,434 L182,416 Z", "grey"))
+    b.append(T(219, 404, "decoder", "num", "middle"))
+    b.append(T(217, 450, "SAME weights, reused", "mut", "middle"))
+    b.append(A(254, 400, 280, 400))
+    b.append(R(284, 372, 136, 56, "grn", 6))
+    b.append(T(352, 394, "Bernoulli(p)", "numb", "middle"))
+    b.append(T(352, 412, "p = sigmoid(logits)", "mut", "middle"))
+    b.append(A(420, 400, 450, 400))
+    b.append(dtile(456, 372, 7))
+    b.append(T(528, 394, "a digit, but you don't", "handk"))
+    b.append(T(528, 414, "get to choose which", "handk"))
+    b.append(note(30, 490, 900, 76, "The one idea",
+                  ["The bottleneck holds no code: it holds the PARAMETERS (mu, sigma) of a distribution, and z is one draw from it.",
+                   "Generation is the same decoder with the encoder deleted and the prior N(0, I) plugged in where q(z|x) sat."], "handk"))
+    svg("vae-forward-pass.svg", 960, 590, "".join(b))
+
+# ---------------- ELBO and the KL gap ----------------
+if want("elbo"):
+    b = [header("THE ELBO", "A computable bound, and the gap you never see", 960)]
+    base, top, bar_t = 410, 140, 250
+    b.append(A(120, base, 120, 120, "ln", "ar"))
+    b.append(T(130, 104, "log-likelihood scale (higher = better fit)", "mut"))
+    b.append(P(f"M120,{base} L860,{base}", "ln"))
+    # the ceiling: log p(x), fixed
+    b.append(P(f"M120,{top} L700,{top}", "lnd"))
+    b.append(T(130, 132, "log p(x)   (fixed: does not depend on q)", "numb"))
+    # the gap
+    b.append(R(210, top + 2, 300, bar_t - top - 2, "note", 4))
+    b.append(T(360, 176, "the gap must shrink", "hand", "middle"))
+    b.append(A(250, 186, 250, 242, "lnr", "arr"))
+    b.append(P("M520,142 L534,142 L534,248 L520,248", "ln"))
+    b.append(T(546, 182, "KL(q(z|x) || p(z|x)) >= 0", "numb"))
+    b.append(T(546, 200, "(not computable: needs p(z|x))", "mut"))
+    b.append(T(546, 224, "-> q approximates the true posterior", "hand"))
+    # the bar: the ELBO
+    b.append(R(210, bar_t, 300, base - bar_t, "pur", 4))
+    b.append(T(360, 290, "ELBO = E_q[log p(x|z)]", "numb", "middle"))
+    b.append(T(360, 308, "- KL(q(z|x) || p(z))", "numb", "middle"))
+    b.append(T(360, 334, "computable - this is the loss we code", "mut", "middle"))
+    b.append(A(250, 394, 250, 352, "lnr", "arr"))
+    b.append(T(360, 372, "training raises the ELBO", "hand", "middle"))
+    b.append(T(120, base + 50,"log p(x) = ELBO + KL   ==>   log p(x) >= ELBO, hence 'evidence lower bound'", "numb"))
+    b.append(note(30, 486, 900, 76, "The one idea",
+                  ["log p(x) does not move when q moves, so every nat the ELBO gains is a nat the KL gap loses.",
+                   "Maximising a bound you can compute is the same act as fitting the posterior you cannot compute."], "handk"))
+    svg("elbo-gap.svg", 960, 586, "".join(b))
+
+# ---------------- GAN: one discriminator, two losses ----------------
+if want("gan"):
+    b = [header("GENERATIVE ADVERSARIAL NETWORKS", "One discriminator, two losses", 960)]
+    b.append(P("M510,96 L510,600", "lnd"))
+
+    # --- LEFT: what is really happening ---
+    b.append(T(30, 108, "What is really happening", "h2"))
+    b.append(R(40, 132, 150, 44, "blu", 6))
+    b.append(T(115, 154, "z ~ p(z)", "numb", "middle"))
+    b.append(T(115, 170, "dim 100", "mut", "middle"))
+    b.append(A(115, 176, 115, 194))
+    b.append(R(40, 196, 150, 44, "cell", 6))
+    b.append(T(115, 223, "Generator G", "h2", "middle"))
+    b.append(A(115, 240, 115, 258))
+    b.append(R(40, 260, 150, 44, "pnk", 6))
+    b.append(T(115, 287, "x_hat = G(z)", "numb", "middle"))
+    b.append(R(230, 260, 150, 44, "grn", 6))
+    b.append(T(305, 281, "real x", "numb", "middle"))
+    b.append(T(305, 297, "training batch", "mut", "middle"))
+    b.append(A(115, 304, 160, 340))
+    b.append(A(305, 304, 275, 340))
+    b.append(R(120, 344, 200, 56, "yel", 6))
+    b.append(T(220, 370, "Discriminator D", "h2", "middle"))
+    b.append(T(220, 390, "same weights, called twice", "mut", "middle"))
+    b.append(A(220, 400, 220, 418))
+    b.append(C(220, 436, 16, "cell"))
+    b.append(T(220, 441, "D", "numb", "middle"))
+    b.append(T(244, 432, "D(.) = P(real)", "num"))
+    b.append(T(244, 448, "one output node", "mut"))
+    b.append(A(204, 450, 140, 474))
+    b.append(A(236, 450, 340, 474))
+    costs = [("J_D = -[log D(x) + log(1 - D(G(z)))]", "updates theta_D only", 478),
+             ("J_G = -log D(G(z))", "updates theta_G only; gradient flows BACK through D", 544)]
+    for eq, who, y in costs:
+        b.append(R(40, y, 440, 48, "grey", 6))
+        b.append(T(260, y + 22, eq, "numb", "middle"))
+        b.append(T(260, y + 40, who, "mut", "middle"))
+    # gradient path: out of J_G, up the left margin, into D, then on into G
+    # (paper_svg has no dashed-red class; inline dasharray keeps the class's dark-mode colour)
+    dash = ' style="stroke-dasharray:6 4"'
+    b.append(f'<path d="M40,568 L34,568 L34,372 L112,372" class="lnr" marker-end="url(#arr)"{dash}/>')
+    b.append(f'<path d="M34,372 L34,218 L36,218" class="lnr" marker-end="url(#arr)"{dash}/>')
+    b.append(T(236, 160, "dashed red = gradient", "hand"))
+    b.append(T(236, 180, "path: D is traversed", "hand"))
+    b.append(T(236, 200, "but NOT updated", "hand"))
+
+    # --- RIGHT: how Keras codes it ---
+    b.append(T(530, 108, "How Keras codes it", "h2"))
+    b.append(R(545, 130, 235, 272, "note", 8))
+    b.append(T(662, 154, "combined_model", "h2", "middle"))
+    stack = [("Input z", "", "cell", 172), ("generator", "trainable", "blu", 228),
+             ("discriminator", "trainable = False", "grey", 284), ("output", "target = 1 (all real)", "grn", 340)]
+    for name, sub, cls, y in stack:
+        b.append(R(565, y, 195, 38, cls, 6))
+        b.append(T(662, y + 18 if sub else y + 24, name, "numb", "middle"))
+        if sub:
+            b.append(T(662, y + 34, sub, "mut", "middle"))
+        if y < 340:
+            b.append(A(662, y + 38, 662, y + 54))
+    b.append(P("M760,303 L796,303", "lnd", "ar"))
+    b.append(T(864, 268, "the SAME object", "mut", "middle"))
+    b.append(R(800, 284, 128, 38, "yel", 6))
+    b.append(T(864, 302, "discriminator", "numb", "middle"))
+    b.append(T(864, 318, "trainable = True", "mut", "middle"))
+    for i, l in enumerate(["compiled EARLIER, so", "its own optimizer", "still updates it"]):
+        b.append(T(864, 340 + i * 16, l, "mut", "middle"))
+    b.append(R(530, 424, 400, 56, "grey", 6))
+    b.append(T(730, 446, "compile D first, THEN set trainable = False,", "numb", "middle"))
+    b.append(T(730, 464, "THEN build combined. Wrong order = broken GAN.", "numb", "middle"))
+    b.append(note(30, 616, 900, 76, "The one idea",
+                  ["There is only ONE discriminator. The two losses differ only in which parameters the optimizer may touch:",
+                   "J_G backpropagates THROUGH D to reach G, so D stays in the graph while its own weights stay frozen."], "handk"))
+    svg("gan-two-losses.svg", 960, 716, "".join(b))
+
+# ---------------- GAN: stride 2 vs stride 1/2 ----------------
+if want("gantconv"):
+    b = [header("UPSAMPLING IN THE GENERATOR", "Stride 2 shrinks, stride 1/2 grows", 960)]
+    b.append(P("M330,96 L330,400", "lnd"))
+    b.append(P("M640,96 L640,400", "lnd"))
+
+    def grid(x, y, n, s, cls="cell"):
+        return "".join(R(x + j * s, y + i * s, s, s, cls) for i in range(n) for j in range(n))
+
+    titles = [(30, "1. stride 2 (discriminator)", "ordinary strided convolution"),
+              (340, "2. stride 1/2 (generator)", "fractionally strided convolution"),
+              (650, "3. where the info lives", "depth-to-space tradeoff")]
+    for x, t1, t2 in titles:
+        b.append(T(x, 110, t1, "h2"))
+        b.append(T(x, 128, t2, "mut"))
+
+    # panel 1: 8x8 -> 4x4
+    b.append(grid(40, 156, 8, 20, "grey"))
+    b.append(R(40, 156, 100, 100, "hi"))
+    b.append(T(120, 148, "input 8 x 8", "mut", "middle"))
+    b.append(A(204, 236, 226, 236))
+    b.append(grid(230, 196, 4, 20, "grey"))
+    b.append(T(270, 188, "out 4 x 4", "mut", "middle"))
+    b.append(T(120, 336, "5x5 kernel, hops 2 cells", "mut", "middle"))
+    b.append(T(30, 358, "halves the spatial size", "numb"))
+
+    # panel 2: 4x4 with inserted gaps (7x7 lattice) -> 8x8
+    for i in range(7):
+        for j in range(7):
+            real = i % 2 == 0 and j % 2 == 0
+            b.append(R(350 + j * 20, 156 + i * 20, 20, 20, "grey" if real else "note"))
+    b.append(R(350, 156, 100, 100, "hi"))
+    b.append(T(420, 148, "4 x 4 + inserted gaps", "mut", "middle"))
+    b.append(A(494, 226, 516, 226))
+    b.append(grid(520, 174, 8, 13, "grey"))
+    b.append(T(572, 166, "out 8 x 8", "mut", "middle"))
+    b.append(T(420, 316, "hollow = inserted gaps", "mut", "middle"))
+    b.append(T(340, 358, "doubles the spatial size - still an", "numb"))
+    b.append(T(340, 374, "ordinary convolution, NOT a deconv", "numb"))
+
+    # panel 3: tall-thin -> wide-flat
+    b.append(R(667, 170, 46, 150, "blu", 4))
+    b.append(T(690, 148, "4 x 4 x 1024", "numb", "middle"))
+    b.append(T(690, 336, "fat in channels", "mut", "middle"))
+    b.append(A(720, 245, 794, 245))
+    b.append(T(757, 235, "trade", "mut", "middle"))
+    b.append(R(800, 218, 124, 52, "grn", 4))
+    b.append(T(862, 248, "64 x 64 x 3", "numb", "middle"))
+    b.append(T(862, 288, "wide in space", "mut", "middle"))
+    b.append(T(650, 358, "each layer trades depth for extent;", "numb"))
+    b.append(T(650, 374, "nothing is created from nothing", "numb"))
+    b.append(note(30, 415, 900, 76, "The one idea",
+                  ["Upsampling is not magic: a 'transposed' convolution is an ORDINARY convolution run over an input with",
+                   "zeros inserted between its pixels - the generator unpacks information already packed into channels."], "handk"))
+    svg("gan-transposed-conv.svg", 960, 515, "".join(b))
+# ---------------- Transfer learning: surgery, modes, pipelines ----------------
+if want("transfer"):
+    b = [header("TRANSFER LEARNING", "Body plus head: what you chop, freeze and precompute", 960)]
+
+    # ---- PANEL A: surgery -------------------------------------------------
+    b.append(T(30, 104, "A. surgery", "h2"))
+    b.append(R(45, 120, 120, 24, "cell", 4) + T(105, 136, "input image", "num", "middle"))
+    b.append(A(105, 144, 105, 160))
+    for k in range(5):
+        y = 160 + k * 26
+        b.append(R(45, y, 120, 22, "grey", 2) + T(105, y + 15, f"conv/pool {k + 1}", "num", "middle"))
+        if k < 4:
+            b.append(P(f"M105,{y + 22} L105,{y + 26}", "ln"))
+    for i, s in enumerate(["pretrained on", "ImageNet;", "weights kept"]):
+        b.append(T(175, 208 + i * 16, s, "mut"))
+    # body output bypasses the discarded head, down the right margin
+    b.append(P("M105,286 L105,296 L285,296 L285,436 L167,436", "ln", "ar"))
+    b.append(T(175, 290, "features z", "mut"))
+    b.append(P("M35,312 L275,312", "lnd"))
+    b.append(T(35, 330, "chop here: include_top=False", "hand"))
+    for i, s in enumerate(["Dense 4096", "Dense 4096", "Dense 1000"]):
+        b.append(R(45, 344 + i * 22, 120, 18, "grey", 2) + T(105, 357 + i * 22, s, "num", "middle"))
+    b.append(P("M45,344 L165,406", "lnr") + P("M165,344 L45,406", "lnr"))
+    for i, s in enumerate(["ImageNet head:", "1000 classes -", "useless to you"]):
+        b.append(T(175, 360 + i * 16, s, "mut"))
+    b.append(R(45, 414, 120, 44, "grn", 4))
+    b.append(T(105, 434, "your head", "num", "middle") + T(105, 450, "Dense(K, softmax)", "num", "middle"))
+    b.append(T(30, 480, "a network = feature transformer", "mut") + T(30, 496, "+ a linear model", "mut"))
+
+    # ---- PANEL B: two modes -----------------------------------------------
+    b.append(T(300, 104, "B. two modes", "h2"))
+    modes = [(140, "1. feature extractor (body FROZEN)", "yel", "FROZEN",
+              "gradients stop here", "seconds to train; safe on small data"),
+             (300, "2. fine-tune (body TRAINABLE)", "grn", "TRAINABLE",
+              "gradients reach the body", "better ceiling; low LR, top blocks only")]
+    for base, title, strip, stripw, glab, cap in modes:
+        b.append(T(300, base, title, "numb"))
+        for j in range(3):
+            b.append(R(305 + j * 36, base + 12, 32, 34, "grey", 2)
+                     + T(321 + j * 36, base + 33, f"b{j + 1}", "num", "middle"))
+        b.append(A(411, base + 29, 423, base + 29))
+        b.append(R(425, base + 12, 56, 34, "grn", 4) + T(453, base + 33, "head", "num", "middle"))
+        b.append(A(483, base + 29, 495, base + 29))
+        b.append(R(497, base + 12, 56, 34, "pnk", 4) + T(525, base + 33, "loss", "num", "middle"))
+        b.append(R(305, base + 50, 104, 16, strip, 2) + T(357, base + 62, stripw, "num", "middle"))
+        if strip == "yel":
+            b.append(P(f"M525,{base + 46} L525,{base + 78} L459,{base + 78}", "lnr", "arr"))
+            b.append(P(f"M451,{base + 68} L451,{base + 88}", "lnr"))
+        else:
+            b.append(P(f"M525,{base + 46} L525,{base + 78} L309,{base + 78} L309,{base + 68}", "lnr", "arr"))
+        b.append(T(305, base + 100, glab, "hand"))
+        b.append(T(300, base + 120, cap, "mut"))
+
+    # ---- PANEL C: two pipelines -------------------------------------------
+    b.append(T(600, 104, "C. two pipelines", "h2"))
+    b.append(R(600, 130, 330, 185, "cell", 6) + T(614, 152, "augment in the loop", "h2"))
+    loop = ["images (batch)", "random flip / zoom", "frozen body -> z", "head -> loss"]
+    for k, s in enumerate(loop):
+        y = 166 + k * 26
+        b.append(R(660, y, 190, 22, "blu", 3) + T(755, y + 15, s, "num", "middle"))
+        if k < 3:
+            b.append(A(755, y + 22, 755, y + 26))
+    b.append(P("M655,255 L625,255 L625,177 L655,177", "lnr", "arr"))
+    b.append(T(614, 286, "the cycle runs every batch, every epoch", "mut"))
+    b.append(T(614, 302, "slow: body re-run each epoch; augmentation works", "mut"))
+
+    b.append(R(600, 335, 330, 200, "cell", 6) + T(614, 357, "precompute Z", "h2"))
+    b.append(T(614, 375, "once, up front:", "mut"))
+    b.append(R(614, 382, 96, 24, "grey", 3) + T(662, 398, "all images", "num", "middle"))
+    b.append(A(712, 394, 726, 394))
+    b.append(R(728, 382, 96, 24, "grey", 3) + T(776, 398, "frozen body", "num", "middle"))
+    b.append(A(826, 394, 840, 394))
+    b.append(R(846, 382, 60, 78, "blu", 3))
+    for i in range(1, 4):
+        b.append(P(f"M846,{382 + i * 19} L906,{382 + i * 19}", "lnd"))
+    b.append(T(876, 474, "Z: N x D", "num", "middle"))
+    b.append(T(614, 420, "body never touched again", "mut") + T(614, 436, "(fast), one pass only", "mut"))
+    b.append(R(614, 470, 96, 24, "grn", 3) + T(662, 486, "Z (fixed)", "num", "middle"))
+    b.append(A(712, 482, 726, 482))
+    b.append(R(728, 470, 96, 24, "grn", 3) + T(776, 486, "logistic reg", "num", "middle"))
+    b.append(P("M824,494 L832,494 L832,510 L618,510 L618,496", "lnr", "arr"))
+    b.append(T(614, 526, "cycle touches only Z: no images to augment", "mut"))
+
+    b.append(note(30, 552, 900, 76, "The one idea",
+                  ["Freezing is a choice about GRADIENTS; precomputing Z is a choice about COMPUTE - two independent knobs.",
+                   "Augmentation is what forces the body to stay inside the loop, which is why the fast path has to give it up."], "handk"))
+    svg("transfer-learning.svg", 960, 645, "".join(b))
+
+# ---------------- ResNet: identity block vs convolutional block ----------------
+
+if want("resnet"):
+    b = [header("RESNET BLOCKS", "Same main branch, two kinds of shortcut", 960)]
+    rows_tail = ["BN", "ReLU", "Conv 3x3, f2", "BN", "ReLU", "Conv 1x1, f3", "BN"]
+
+    def main_branch(cx, first):
+        out = [C(cx, 120, 11, "pnk"), T(cx, 125, "x", "numb", "middle"), A(cx, 131, cx, 140)]
+        for k, s in enumerate([first] + rows_tail):
+            y = 142 + k * 24
+            out.append(R(cx - 60, y, 120, 18, "cell", 2))
+            out.append(T(cx, y + 13, s, "num", "middle"))
+            if k < 7:
+                out.append(P(f"M{cx},{y + 18} L{cx},{y + 24}", "ln"))
+        out += [A(cx, 328, cx, 338), C(cx, 352, 13, "pnk"), T(cx, 357, "+", "numb", "middle"),
+                A(cx, 365, cx, 375), R(cx - 60, 375, 120, 18, "grn", 2), T(cx, 388, "ReLU", "num", "middle"),
+                A(cx, 393, cx, 403), C(cx, 414, 11, "grn"), T(cx, 419, "out", "num", "middle")]
+        return "".join(out)
+
+    # ---- PANEL A: identity block ----
+    b.append(T(30, 104, "A. identity block", "h2"))
+    b.append(main_branch(220, "Conv 1x1, f1"))
+    b.append(P("M231,120 L300,120 L300,352 L235,352", "ln", "ar"))
+    b.append(T(312, 228, "shortcut: a plain wire,", "mut") + T(312, 244, "0 parameters, 0 cost", "mut"))
+    for i, s in enumerate(["no ReLU before the", "add - activation", "comes AFTER it"]):
+        b.append(T(312, 300 + i * 18, s, "hand"))
+    b.append(T(30, 344, "out = f(x) + x", "numb"))
+    for i, s in enumerate(["f learns only the", "RESIDUAL; f(x)=0", "recovers identity"]):
+        b.append(T(30, 362 + i * 16, s, "mut"))
+    b.append(A(150, 352, 205, 352, "lnd", "ar"))
+
+    b.append(P("M478,96 L478,440", "lnd"))
+
+    # ---- PANEL B: convolutional block ----
+    b.append(T(500, 104, "B. convolutional block", "h2"))
+    b.append(main_branch(690, "Conv 1x1, str s"))
+    b.append(P("M701,120 L855,120 L855,196", "ln", "ar"))
+    b.append(R(800, 196, 110, 22, "yel", 2) + T(855, 211, "Conv 1x1, str s", "num", "middle"))
+    b.append(A(855, 218, 855, 248))
+    b.append(R(800, 248, 110, 22, "yel", 2) + T(855, 263, "BN", "num", "middle"))
+    b.append(P("M855,270 L855,282 L775,282 L775,352 L705,352", "ln", "ar"))
+    b.append(T(800, 302, "shortcut has a conv:", "mut") + T(800, 318, "it ADDS parameters", "mut"))
+    for i, s in enumerate(["used when the shape", "changes (stride or", "channel count), so x", "CAN be added at all"]):
+        b.append(T(500, 344 + i * 16, s, "mut"))
+    b.append(A(620, 352, 675, 352, "lnd", "ar"))
+
+    # ---- bottom strip: how the 50 layers stack ----
+    b.append(T(30, 440, "C. how they stack", "h2"))
+    stack = ["conv 7x7", "BN", "maxpool", "C I I", "C I I I", "C I I I I I", "C I I", "avg pool", "Dense 1000"]
+    for k, s in enumerate(stack):
+        x = 30 + k * 100
+        b.append(R(x, 466, 88, 26, "grn" if 3 <= k <= 6 else "cell", 3) + T(x + 44, 483, s, "num", "middle"))
+        if k < 8:
+            b.append(A(x + 88, 479, x + 100, 479))
+        if 3 <= k <= 6:
+            b.append(T(x + 44, 460, f"stage{k - 1}", "mut", "middle"))
+    b.append(T(30, 512, "C = convolutional block (shortcut has a conv) ; I = identity block (plain wire)", "mut"))
+    b.append(T(30, 530, "16 blocks x 3 convs + the first conv + the final dense = 50 -> ResNet50", "numb"))
+
+    b.append(note(30, 552, 900, 76, "The one idea",
+                  ["The two block types have the SAME main branch; the only difference is what the shortcut carries - a bare",
+                   "wire, or one conv + BN to match a changed shape. In both, the last BN has no ReLU: it comes after the add."], "handk"))
+    svg("resnet-blocks.svg", 960, 645, "".join(b))
+
+# ---------------- SSD: fixed tensor in, variable boxes out ----------------
+
+if want("ssd"):
+    b = [header("SSD: SINGLE SHOT DETECTOR", "A fixed grid of guesses, then a cleanup", 960)]
+
+    def anchor_cell(x, y, s, shapes):
+        out = [R(x, y, s, s, "cell", 2)]
+        for w, h, cls in shapes:
+            out.append(R(x + (s - w) / 2, y + (s - h) / 2, w, h, cls, 2))
+        return "".join(out)
+
+    cs = [70, 175, 280, 385, 490, 595]
+    ks = [4, 6, 6, 6, 4, 4]
+    ws = [68, 58, 48, 40, 32, 24]
+    hs = [84, 70, 58, 46, 36, 24]
+    sizes = ["38x38", "19x19", "10x10", "5x5", "3x3", "1x1"]
+    rfs = ["sees ~7px", "~15px", "~30px", "~60px", "~100px", "~300px"]
+
+    # (1) backbone + (2) heads, all feeding one bus up top
+    b.append(P("M70,100 L760,100", "ln"))
+    b.append(T(430, 92, "concatenate every head", "mut"))
+    for k in range(6):
+        cx, w, h = cs[k], ws[k], hs[k]
+        b.append(R(cx - 43, 116, 86, 50, "blu", 3))
+        b.append(T(cx, 132, f"k={ks[k]} anchors", "num", "middle"))
+        b.append(T(cx, 147, "3x3 conv ->", "num", "middle"))
+        b.append(T(cx, 162, "k*(4+21)", "num", "middle"))
+        b.append(A(cx, 116, cx, 102))
+        b.append(A(cx, 240 - h / 2, cx, 170, "lnd", "ar"))
+        b.append(R(cx - w / 2, 240 - h / 2, w, h, "grn", 2))
+        b.append(T(cx, 300, sizes[k], "numb", "middle") + T(cx, 316, rfs[k], "mut", "middle"))
+        if k < 5:
+            b.append(A(cx + w / 2 + 4, 240, cs[k + 1] - ws[k + 1] / 2 - 4, 240))
+    b.append(T(125, 186, "conv + pool", "mut", "middle"))
+
+    # (3) one fixed-size tensor
+    for i, s in enumerate(["8732 rows", "one per anchor"]):
+        b.append(T(655, 150 + i * 16, s, "numb" if i == 0 else "mut"))
+    for i, s in enumerate(["each row:", "4 box offsets", "+ 21 class scores"]):
+        b.append(T(655, 192 + i * 16, s, "mut"))
+    b.append(T(655, 252, "fixed size,", "hand") + T(655, 270, "always", "hand"))
+    b.append(P("M760,100 L820,100 L820,130", "ln", "ar"))
+    b.append(R(770, 130, 100, 210, "pur", 4))
+    counts = ["38x38x4=5776", "19x19x6=2166", "10x10x6= 600", "5x5x6  = 150", "3x3x4  =  36", "1x1x4  =   4"]
+    for i, s in enumerate(counts):
+        y = 130 + i * 35
+        if i:
+            b.append(P(f"M770,{y} L870,{y}", "lnd"))
+        b.append(T(820, y + 22, s, "num", "middle"))
+
+    # (4) the only variable-length part
+    b.append(A(820, 340, 820, 404))
+    b.append(T(810, 370, "variable length starts HERE, outside the net", "hand", "end"))
+    b.append(R(745, 404, 150, 30, "grey", 4) + T(820, 424, "score > threshold", "num", "middle"))
+    b.append(A(820, 434, 820, 452))
+    b.append(R(745, 452, 150, 46, "grey", 4))
+    b.append(T(820, 472, "per-class NMS:", "num", "middle") + T(820, 490, "IoU > 0.5 dropped", "num", "middle"))
+    b.append(A(820, 498, 820, 516))
+    b.append(R(720, 516, 200, 120, "blu", 4) + T(820, 534, "3 boxes survive", "num", "middle"))
+    b.append(R(734, 546, 86, 40, "cell", 2) + T(777, 570, "dog 0.91", "num", "middle"))
+    b.append(R(828, 542, 78, 32, "cell", 2) + T(867, 562, "car 0.88", "num", "middle"))
+    b.append(R(760, 592, 110, 34, "cell", 2) + T(815, 613, "person 0.76", "num", "middle"))
+
+    # the anchors inside one cell
+    b.append(anchor_cell(40, 410, 96, [(88, 88, "pur"), (88, 40, "blu"), (40, 88, "grn"), (58, 58, "yel")]))
+    b.append(T(88, 522, "k=4 (38x38 head)", "num", "middle"))
+    b.append(anchor_cell(180, 410, 96, [(88, 88, "pur"), (88, 44, "blu"), (44, 88, "grn"),
+                                        (88, 26, "pnk"), (26, 88, "grey"), (56, 56, "yel")]))
+    b.append(T(228, 522, "k=6 (10x10 head)", "num", "middle"))
+    b.append(P("M88,410 L88,356 L70,356 L70,332", "lnd", "ar"))
+    b.append(P("M228,410 L228,356 L280,356 L280,332", "lnd", "ar"))
+    b.append(T(300, 404, "the k default boxes inside ONE cell", "h2"))
+    for i, s in enumerate(["4 shapes: small square, big square, tall, wide",
+                           "6 adds two more aspect ratios (1:3, 3:1)",
+                           "anchor shapes are FIXED; the head predicts",
+                           "only an offset (dx, dy, dw, dh) per anchor"]):
+        b.append(T(300, 428 + i * 16, s, "mut"))
+    b.append(T(300, 504, "early/large maps carry SMALL objects,", "hand"))
+    b.append(T(300, 522, "late/small maps carry the BIG ones", "hand"))
+
+    b.append(note(30, 656, 900, 76, "The one idea",
+                  ["The network always emits the same fixed-size tensor, 8732 x (4 offsets + 21 scores). The variable number",
+                   "of objects is produced after it, by thresholding and NMS - and the map that fires tells you the object's size."], "handk"))
+    svg("ssd-pipeline.svg", 960, 750, "".join(b))
+
+# ---------------- Sliding window = one convolution ----------------
+
+if want("slidewin"):
+    b = [header("SLIDING WINDOW AS CONVOLUTION", "Drop the dense layer and the window slides itself", 960)]
+
+    # the two inputs, same weights
+    b.append(T(40, 100, "A. one window", "h2"))
+    b.append(R(40, 112, 100, 100, "cell", 2) + T(90, 166, "one 32x32 crop", "num", "middle"))
+    b.append(T(40, 258, "1 crop -> 1 forward pass", "mut"))
+    b.append(T(560, 100, "B. the whole image", "h2"))
+    b.append(R(758, 112, 134, 134, "grey", 2))
+    for dx, dy, cls in [(0, 0, "blu"), (32, 0, "grn"), (0, 32, "yel"), (32, 32, "pur")]:
+        b.append(R(760 + dx, 114 + dy, 94, 94, cls, 2))
+    b.append(T(930, 258, "4 window positions, stride 4 px (drawn exaggerated)", "mut", "end"))
+    for i, s in enumerate(["4 crops of the same image, one forward pass each",
+                           "vs ONE pass over the whole image"]):
+        b.append(T(200, 140 + i * 20, s, "mut"))
+    b.append(T(200, 188, "same weights, same parameter count", "hand"))
+    b.append(T(200, 208, "the Dense layer becomes a 5x5 conv", "hand"))
+    b.append(T(200, 232, "colours below match the window positions above", "mut"))
+
+    ops = ["input", "conv 5x5", "pool /2", "conv 5x5", "pool /2", "conv 5x5", "conv 1x1", "conv 1x1"]
+    left = ["32x32x3", "28x28x32", "14x14x32", "10x10x64", "5x5x64", "1x1x128", "1x1x128", "1x1x3"]
+    right = ["36x36x3", "32x32x32", "16x16x32", "12x12x64", "6x6x64", "2x2x128", "2x2x128", "2x2x3"]
+    for x0, shapes in [(40, left), (560, right)]:
+        for k, (op, sh) in enumerate(zip(ops, shapes)):
+            y = 270 + k * 34
+            cls = "yel" if k == 5 else ("grn" if k == 7 else "cell")
+            b.append(R(x0, y, 230, 26, cls, 3))
+            b.append(T(x0 + 10, y + 17, op, "num") + T(x0 + 220, y + 17, sh, "numb", "end"))
+            if k < 7:
+                b.append(A(x0 + 115, y + 26, x0 + 115, y + 34))
+    b.append(T(280, 457, "was Dense 128", "hand"))
+    b.append(T(280, 525, "one softmax", "hand"))
+    b.append(T(800, 450, "same kernel,", "mut") + T(800, 466, "2x2 output", "mut"))
+    for dx, dy, cls in [(0, 0, "blu"), (26, 0, "grn"), (0, 26, "yel"), (26, 26, "pur")]:
+        b.append(R(810 + dx, 500 + dy, 24, 24, cls, 2))
+    b.append(A(792, 521, 806, 521))
+    b.append(T(835, 566, "4 softmaxes, one per window", "hand", "middle"))
+
+    b.append(R(30, 590, 900, 54, "grey", 6))
+    b.append(T(480, 614, "same weights, same parameter count; one pass instead of 4 crops", "numb", "middle"))
+    b.append(T(480, 632, "two 2x pools -> window stride = 4 input pixels, not 1", "mut", "middle"))
+
+    b.append(note(30, 664, 900, 76, "The one idea",
+                  ["A dense layer rewritten as a convolution turns a per-window classifier into a per-position one, for free.",
+                   "The catch: pooling fixes the stride (4 px here), so the positions and shapes in between need anchors."], "handk"))
+    svg("sliding-window-as-convolution.svg", 960, 756, "".join(b))

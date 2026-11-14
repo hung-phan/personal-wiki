@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 716" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="716" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >GENERATIVE ADVERSARIAL NETWORKS</text><text x="30" y="62" class="h1" text-anchor="start" >One discriminator, two losses</text><line x1="30" y1="72" x2="465" y2="72" class="uline"/><path d="M510,96 L510,600" class="lnd"/><text x="30" y="108" class="h2" text-anchor="start" >What is really happening</text><rect x="40" y="132" width="150" height="44" rx="6" class="blu"/><text x="115" y="154" class="numb" text-anchor="middle" >z ~ p(z)</text><text x="115" y="170" class="mut" text-anchor="middle" >dim 100</text><line x1="115" y1="176" x2="115" y2="194" class="ln" marker-end="url(#ar)"/><rect x="40" y="196" width="150" height="44" rx="6" class="cell"/><text x="115" y="223" class="h2" text-anchor="middle" >Generator G</text><line x1="115" y1="240" x2="115" y2="258" class="ln" marker-end="url(#ar)"/><rect x="40" y="260" width="150" height="44" rx="6" class="pnk"/><text x="115" y="287" class="numb" text-anchor="middle" >x_hat = G(z)</text><rect x="230" y="260" width="150" height="44" rx="6" class="grn"/><text x="305" y="281" class="numb" text-anchor="middle" >real x</text><text x="305" y="297" class="mut" text-anchor="middle" >training batch</text><line x1="115" y1="304" x2="160" y2="340" class="ln" marker-end="url(#ar)"/><line x1="305" y1="304" x2="275" y2="340" class="ln" marker-end="url(#ar)"/><rect x="120" y="344" width="200" height="56" rx="6" class="yel"/><text x="220" y="370" class="h2" text-anchor="middle" >Discriminator D</text><text x="220" y="390" class="mut" text-anchor="middle" >same weights, called twice</text><line x1="220" y1="400" x2="220" y2="418" class="ln" marker-end="url(#ar)"/><circle cx="220" cy="436" r="16" class="cell"/><text x="220" y="441" class="numb" text-anchor="middle" >D</text><text x="244" y="432" class="num" text-anchor="start" >D(.) = P(real)</text><text x="244" y="448" class="mut" text-anchor="start" >one output node</text><line x1="204" y1="450" x2="140" y2="474" class="ln" marker-end="url(#ar)"/><line x1="236" y1="450" x2="340" y2="474" class="ln" marker-end="url(#ar)"/><rect x="40" y="478" width="440" height="48" rx="6" class="grey"/><text x="260" y="500" class="numb" text-anchor="middle" >J_D = -[log D(x) + log(1 - D(G(z)))]</text><text x="260" y="518" class="mut" text-anchor="middle" >updates theta_D only</text><rect x="40" y="544" width="440" height="48" rx="6" class="grey"/><text x="260" y="566" class="numb" text-anchor="middle" >J_G = -log D(G(z))</text><text x="260" y="584" class="mut" text-anchor="middle" >updates theta_G only; gradient flows BACK through D</text><path d="M40,568 L34,568 L34,372 L112,372" class="lnr" marker-end="url(#arr)" style="stroke-dasharray:6 4"/><path d="M34,372 L34,218 L36,218" class="lnr" marker-end="url(#arr)" style="stroke-dasharray:6 4"/><text x="236" y="160" class="hand" text-anchor="start" >dashed red = gradient</text><text x="236" y="180" class="hand" text-anchor="start" >path: D is traversed</text><text x="236" y="200" class="hand" text-anchor="start" >but NOT updated</text><text x="530" y="108" class="h2" text-anchor="start" >How Keras codes it</text><rect x="545" y="130" width="235" height="272" rx="8" class="note"/><text x="662" y="154" class="h2" text-anchor="middle" >combined_model</text><rect x="565" y="172" width="195" height="38" rx="6" class="cell"/><text x="662" y="196" class="numb" text-anchor="middle" >Input z</text><line x1="662" y1="210" x2="662" y2="226" class="ln" marker-end="url(#ar)"/><rect x="565" y="228" width="195" height="38" rx="6" class="blu"/><text x="662" y="246" class="numb" text-anchor="middle" >generator</text><text x="662" y="262" class="mut" text-anchor="middle" >trainable</text><line x1="662" y1="266" x2="662" y2="282" class="ln" marker-end="url(#ar)"/><rect x="565" y="284" width="195" height="38" rx="6" class="grey"/><text x="662" y="302" class="numb" text-anchor="middle" >discriminator</text><text x="662" y="318" class="mut" text-anchor="middle" >trainable = False</text><line x1="662" y1="322" x2="662" y2="338" class="ln" marker-end="url(#ar)"/><rect x="565" y="340" width="195" height="38" rx="6" class="grn"/><text x="662" y="358" class="numb" text-anchor="middle" >output</text><text x="662" y="374" class="mut" text-anchor="middle" >target = 1 (all real)</text><path d="M760,303 L796,303" class="lnd" marker-end="url(#ar)"/><text x="864" y="268" class="mut" text-anchor="middle" >the SAME object</text><rect x="800" y="284" width="128" height="38" rx="6" class="yel"/><text x="864" y="302" class="numb" text-anchor="middle" >discriminator</text><text x="864" y="318" class="mut" text-anchor="middle" >trainable = True</text><text x="864" y="340" class="mut" text-anchor="middle" >compiled EARLIER, so</text><text x="864" y="356" class="mut" text-anchor="middle" >its own optimizer</text><text x="864" y="372" class="mut" text-anchor="middle" >still updates it</text><rect x="530" y="424" width="400" height="56" rx="6" class="grey"/><text x="730" y="446" class="numb" text-anchor="middle" >compile D first, THEN set trainable = False,</text><text x="730" y="464" class="numb" text-anchor="middle" >THEN build combined. Wrong order = broken GAN.</text><rect x="30" y="616" width="900" height="76" rx="6" class="note"/><text x="44" y="638" class="h2" text-anchor="start" >The one idea</text><text x="44" y="658" class="handk" text-anchor="start" >There is only ONE discriminator. The two losses differ only in which parameters the optimizer may touch:</text><text x="44" y="676" class="handk" text-anchor="start" >J_G backpropagates THROUGH D to reach G, so D stays in the graph while its own weights stay frozen.</text></svg>

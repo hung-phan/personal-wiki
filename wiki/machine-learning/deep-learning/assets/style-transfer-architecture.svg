@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="480" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >NEURAL STYLE TRANSFER</text><text x="30" y="62" class="h1" text-anchor="start" >Freeze the network, make the image the variable</text><line x1="30" y1="72" x2="735" y2="72" class="uline"/><rect x="30" y="110" width="150" height="62" rx="6" class="cell"/><text x="105" y="136" class="numb" text-anchor="middle" >content image x</text><text x="105" y="156" class="mut" text-anchor="middle" >the photo</text><line x1="180" y1="141" x2="236" y2="240" class="ln" marker-end="url(#ar)"/><rect x="30" y="196" width="150" height="62" rx="6" class="yel"/><text x="105" y="222" class="numb" text-anchor="middle" >style image s</text><text x="105" y="242" class="mut" text-anchor="middle" >the painting</text><line x1="180" y1="227" x2="236" y2="240" class="ln" marker-end="url(#ar)"/><rect x="30" y="282" width="150" height="62" rx="6" class="pnk"/><text x="105" y="308" class="numb" text-anchor="middle" >generated x'</text><text x="105" y="328" class="mut" text-anchor="middle" >THE VARIABLE</text><line x1="180" y1="313" x2="236" y2="240" class="ln" marker-end="url(#ar)"/><rect x="236" y="150" width="150" height="200" rx="8" class="blu"/><text x="311" y="174" class="h2" text-anchor="middle" >VGG16</text><text x="311" y="194" class="mut" text-anchor="middle" >weights FROZEN</text><text x="311" y="212" class="mut" text-anchor="middle" >avg pooling</text><rect x="252" y="230" width="118" height="18" rx="2" class="cell"/><text x="311" y="243" class="num" text-anchor="middle" >block1</text><rect x="252" y="253" width="118" height="18" rx="2" class="cell"/><text x="311" y="266" class="num" text-anchor="middle" >block2</text><rect x="252" y="276" width="118" height="18" rx="2" class="cell"/><text x="311" y="289" class="num" text-anchor="middle" >block3</text><rect x="252" y="299" width="118" height="18" rx="2" class="cell"/><text x="311" y="312" class="num" text-anchor="middle" >block4</text><rect x="252" y="322" width="118" height="18" rx="2" class="cell"/><text x="311" y="335" class="num" text-anchor="middle" >block5</text><line x1="386" y1="250" x2="440" y2="190" class="ln" marker-end="url(#ar)"/><text x="410" y="178" class="mut" text-anchor="middle" >one tap</text><rect x="440" y="160" width="150" height="56" rx="6" class="grn"/><text x="515" y="182" class="num" text-anchor="middle" >MSE on activations</text><text x="515" y="202" class="numb" text-anchor="middle" >J_content</text><text x="600" y="182" class="mut" text-anchor="start" >deeper tap -&gt;</text><text x="600" y="198" class="mut" text-anchor="start" >blurrier, more abstract</text><line x1="386" y1="245" x2="440" y2="245" class="ln" marker-end="url(#ar)"/><rect x="440" y="236" width="74" height="18" rx="2" class="yel"/><text x="477" y="249" class="num" text-anchor="middle" >Gram CxC</text><rect x="520" y="236" width="50" height="18" rx="2" class="cell"/><text x="545" y="249" class="num" text-anchor="middle" >MSE</text><line x1="570" y1="245" x2="596" y2="300" class="ln" marker-end="url(#ar)"/><line x1="386" y1="268" x2="440" y2="268" class="ln" marker-end="url(#ar)"/><rect x="440" y="259" width="74" height="18" rx="2" class="yel"/><text x="477" y="272" class="num" text-anchor="middle" >Gram CxC</text><rect x="520" y="259" width="50" height="18" rx="2" class="cell"/><text x="545" y="272" class="num" text-anchor="middle" >MSE</text><line x1="570" y1="268" x2="596" y2="300" class="ln" marker-end="url(#ar)"/><line x1="386" y1="291" x2="440" y2="291" class="ln" marker-end="url(#ar)"/><rect x="440" y="282" width="74" height="18" rx="2" class="yel"/><text x="477" y="295" class="num" text-anchor="middle" >Gram CxC</text><rect x="520" y="282" width="50" height="18" rx="2" class="cell"/><text x="545" y="295" class="num" text-anchor="middle" >MSE</text><line x1="570" y1="291" x2="596" y2="300" class="ln" marker-end="url(#ar)"/><line x1="386" y1="314" x2="440" y2="314" class="ln" marker-end="url(#ar)"/><rect x="440" y="305" width="74" height="18" rx="2" class="yel"/><text x="477" y="318" class="num" text-anchor="middle" >Gram CxC</text><rect x="520" y="305" width="50" height="18" rx="2" class="cell"/><text x="545" y="318" class="num" text-anchor="middle" >MSE</text><line x1="570" y1="314" x2="596" y2="300" class="ln" marker-end="url(#ar)"/><line x1="386" y1="337" x2="440" y2="337" class="ln" marker-end="url(#ar)"/><rect x="440" y="328" width="74" height="18" rx="2" class="yel"/><text x="477" y="341" class="num" text-anchor="middle" >Gram CxC</text><rect x="520" y="328" width="50" height="18" rx="2" class="cell"/><text x="545" y="341" class="num" text-anchor="middle" >MSE</text><line x1="570" y1="337" x2="596" y2="300" class="ln" marker-end="url(#ar)"/><text x="600" y="352" class="mut" text-anchor="start" >spatial axis cancels: H x W x C -&gt; C x C</text><rect x="596" y="282" width="150" height="40" rx="6" class="grn"/><text x="671" y="300" class="num" text-anchor="middle" >sum w_L * J_style_L</text><text x="671" y="316" class="numb" text-anchor="middle" >J_style</text><line x1="590" y1="190" x2="790" y2="215" class="ln" marker-end="url(#ar)"/><line x1="746" y1="300" x2="790" y2="250" class="ln" marker-end="url(#ar)"/><rect x="790" y="205" width="140" height="50" rx="6" class="pnk"/><text x="860" y="226" class="numb" text-anchor="middle" >J = J_content</text><text x="860" y="244" class="numb" text-anchor="middle" >+ J_style</text><path d="M860,205 L860,104 L16,104 L16,313 L28,313" class="lnr" marker-end="url(#ar)"/><text x="470" y="96" class="hand" text-anchor="middle" >dJ/dx' : L-BFGS updates PIXELS, not weights</text><rect x="30" y="390" width="900" height="76" rx="6" class="note"/><text x="44" y="412" class="h2" text-anchor="start" >The one idea</text><text x="44" y="432" class="handk" text-anchor="start" >The gradient arrow comes back to the image and never touches the network. Ordinary training is argmin over W with the data fixed;</text><text x="44" y="450" class="handk" text-anchor="start" >here it is argmin over x' with the weights fixed. No dataset, no training run, no checkpoint - just one image walked downhill.</text></svg>

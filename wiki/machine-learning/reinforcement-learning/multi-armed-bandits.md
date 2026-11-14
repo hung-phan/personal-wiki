@@ -1,9 +1,9 @@
 ---
 name: multi-armed-bandits
-description: Multi-armed bandits for ad and A/B-test optimisation with runnable numpy code — explore vs exploit and regret, why A/B testing is pure exploration, Upper Confidence Bound (mean + sqrt(3/2 · ln n / N), the course's constant vs UCB1's 2), Thompson sampling with Beta(clicks + 1, misses + 1) posteriors and how they narrow with data, random vs UCB vs Thompson on 10 ads over 10,000 and 500 rounds averaged over 20 seeds, deterministic vs probabilistic and delayed feedback, the course's Ads_CTR_Optimisation results in Python and R (random ≈ 1,200 clicks, UCB 2,178, Thompson ≈ 2,600; ad 5 best; UCB wrong at 500 rounds), the 1e400 trick, and why real logs don't look like the course's dataset. Study guide for Machine Learning A-Z, Part 6 (sections 31–33).
+description: Multi-armed bandits for ad and A/B-test optimisation with runnable numpy code — explore vs exploit and regret, why A/B testing is pure exploration, Upper Confidence Bound (mean + sqrt(3/2 · ln n / N), the course's constant vs UCB1's 2), Thompson sampling with Beta(clicks + 1, misses + 1) posteriors and how they narrow with data, random vs UCB vs Thompson on 10 ads over 10,000 and 500 rounds averaged over 20 seeds, deterministic vs probabilistic and delayed feedback, the course's Ads_CTR_Optimisation results in Python and R (random ≈ 1,200 clicks, UCB 2,178, Thompson ≈ 2,600; ad 5 best; UCB wrong at 500 rounds), the 1e400 trick, and why real logs don't look like the course's dataset. Study guide for Machine Learning A-Z, Part 6 (sections 31–33). Also covers ranking a whole list by sampled posterior scores from Recommender Systems and Deep Learning in Python, the frequentist confidence-interval baseline, the Beta-Bernoulli and Gaussian conjugate updates, and why a smoothed average rating IS a posterior mean.
 created: 2026-11-13
 updated: 2026-11-13
-tags: [reinforcement-learning, multi-armed-bandit, ucb, thompson-sampling, ab-testing, explore-exploit, bayesian, numpy, study-guide, ml-a-z]
+tags: [recommender-systems-course, reinforcement-learning, multi-armed-bandit, ucb, thompson-sampling, ab-testing, explore-exploit, bayesian, numpy, study-guide, ml-a-z]
 ---
 # Multi-Armed Bandits: UCB and Thompson Sampling
 
@@ -97,6 +97,56 @@ Over 10,000 rounds both methods find the best ad every time; Thompson collects ~
 **Why Thompson is usually preferred** (the course's comparison): UCB is deterministic and must be updated after every round; Thompson is random, so it tolerates **delayed or batched feedback** (a website collecting clicks in batches) and has better empirical results.
 
 **The dataset caveat.** The course's file records every user's reaction to *every* ad — real logs only tell you about the ad you actually showed, which is why a bandit is needed at all. The simulation stands in for that: the algorithm reads only the cell of the ad it chose.
+
+## 5. Ranking a whole list by sampled scores (*Recommender Systems and Deep Learning in Python*)
+
+§3 asks *which single ad do I show next?* Sections 8–9 of *Recommender Systems and Deep Learning in Python* ask the ranking version: you have a page of items — the course's toy example is three movies — and you need an **order**. The answer is the same draw put to different use: sample one plausible score per item from its posterior, then **sort by the samples**. `argsort` where §3 had `argmax`, so one round of draws produces a whole page rather than one impression.
+
+Why that is enough is best seen in two pictures the course draws. With three well-separated posteriors, the samples almost always come out in the same order as the posteriors themselves, so you simply render the right ranking. With one skinny, well-sampled posterior centred near 0.5 and one fat, barely-sampled posterior, the skinny one's draws land in a narrow band around 0.45–0.55, while the fat one has mass both above and below that band — so across hundreds of page views the uncertain item **sometimes surfaces above the known one**, collects data, and narrows, which returns you to the first picture.
+
+So the ranking is random, but **"intelligently random"** in the course's phrase: the randomness is shaped by the posterior, which already encodes how much evidence you have. No $\varepsilon$, no confidence bonus, no schedule, and — the part worth internalising — no confidence interval is ever computed, yet you get the behaviour one would have bought you. The draw itself is the Thompson draw from §3; don't re-derive it.
+
+### The frequentist baseline it is pitched against
+
+The course first builds the textbook interval, as the thing to improve on. The MLE of a rate, $\hat\mu = \frac{1}{n}\sum_i x_i$, is a sum of random variables and therefore random itself; the central limit theorem gives $\hat\mu \sim \text{Normal}(\mu, \sigma^2/n)$. You cannot integrate that by hand, so you rescale to the standard normal and invert its CDF (`scipy.stats.norm.ppf`); a two-sided 95% interval leaves 2.5% in each tail, at $z = \pm 1.96$:
+
+$$\hat\mu \pm 1.96\,\frac{\hat\sigma}{\sqrt{n}} \qquad\qquad \hat p \pm 1.96\sqrt{\frac{\hat p\,(1 - \hat p)}{n}}$$
+
+The variance of the estimate is quadratic in $\sigma$ but only linear in $n$ — the instructor's point being that a small rise in the data's spread costs you many more samples than you expect. The interval shrinks only as $1/\sqrt{n}$, and, more to the point for a ranker, it hands you a pair of numbers you still have to turn into an ordering by hand.
+
+### The two conjugate updates, in the form the course gives them
+
+**Beta–Bernoulli.** Likelihood $x \sim \text{Bernoulli}(\pi)$, prior $\pi \sim \text{Beta}(\alpha, \beta)$. The denominator of Bayes' rule is a constant once $\pi$ is integrated out, so `posterior ∝ likelihood × prior`; the powers of $\pi$ and $(1-\pi)$ combine by ordinary algebra and the result is another Beta:
+
+$$\alpha' = \alpha + \sum_i x_i, \qquad \beta' = \beta + n - \sum_i x_i$$
+
+$\alpha$ counts successes, $\beta$ counts failures. $\text{Beta}(1,1)$ *is* the uniform distribution, which is where §3's $\text{Beta}(\text{clicks}+1, \text{misses}+1)$ comes from — the `+1, +1` is a flat prior, not a smoothing fudge.
+
+**Gaussian with known precision.** The course works in **precision** $\tau = 1/\sigma^2$ because the algebra is easier. With $x \sim \text{Normal}(\mu, \tau)$, $\tau$ known, and prior $\mu \sim \text{Normal}(m, \lambda)$:
+
+$$\lambda' = \lambda + n\tau, \qquad m' = \frac{\lambda m + \tau \sum_i x_i}{\lambda + n\tau}$$
+
+Read the limits and the names explain themselves: precision grows **linearly in n**, so the variance goes to zero; at $n = 0$ the update collapses to $m' = m$ (no data, trust the prior); with plenty of data the sample mean takes over. The two terms in the numerator are weighted by $\lambda$ and $\tau$ — a confident prior pulls harder, precise observations pull harder. This is also the worked answer to the "unbounded rewards with Beta posteriors" pitfall below: for a star rating or a dwell time, this is the posterior you sample from.
+
+**Online updating.** Both updates are plain addition, so you never wait for a batch: start from the prior, observe one $x$, add it in, and **the posterior you just computed is the prior for the next observation**. §4's loop already does this with counts; the point is that it is not an approximation or a streaming trick — the sequentially-updated posterior equals the one you would have computed from the whole batch at once.
+
+### The payoff: smoothing *is* Bayes
+
+Divide the numerator and denominator of $m'$ by $\tau$:
+
+$$m' = \frac{(\lambda/\tau)\,m + \sum_i x_i}{(\lambda/\tau) + n}$$
+
+That is the **smoothed average rating** — the familiar trick of pulling a sparsely-rated item's mean toward a global prior with a damping constant, so three five-star reviews don't outrank three hundred four-star ones. The same holds for the Beta: its posterior mean is $(\alpha + \sum_i x_i)/(\alpha + \beta + n)$, which is add-one smoothing with $\alpha$ and $\beta$ acting as pseudo-counts.
+
+So the smoothing trick is not a hack with a hand-tuned fudge factor. It is **exactly** the posterior mean, and the "fudge factor" $\lambda/\tau$ is a real quantity: how confident you were before seeing data, divided by how precise each observation is. [recommender-systems](../ml-systems/recommender-systems.md) demonstrates this numerically on ratings data — the identity is worth seeing in numbers once, and there is no reason to repeat it here.
+
+### What to distrust
+
+- **Two slips in the lectures.** At the exact moment the Beta–Bernoulli punchline lands, the course says the posterior "is a **Bernoulli** distribution with a new alpha and beta" (and, a line earlier, that both are Bernoulli distributions). It is a **Beta**. The algebra on either side is correct; this is a misspeak, but it is the one sentence a reader would copy. Separately, the confidence-interval lecture reads out $z_{\text{right}} = 0.196$ where **1.96** is meant — the same breath gives $-1.96$ correctly for the left tail.
+- **That interval is the Wald interval.** $\hat p \pm 1.96\sqrt{\hat p (1-\hat p)/n}$ is badly calibrated exactly where a ranker lives: small $n$, or rates near 0 or 1 (where it can even run outside $[0,1]$). The course flags only the t-distribution refinement for the Gaussian case, not this. Wilson or Agresti–Coull is the standard fix; the Beta posterior's credible interval does the same job without the approximation.
+- **Stationarity and position bias are untouched.** "Precision → ∞, variance → 0" holds only if the click rate is constant. A posterior that never forgets becomes overconfident on a drifting rate and stops exploring — see the drift pitfall below, which these lectures do not address. Nor does anything here model **position bias**: an item ranked first is clicked more *because* it is first, so the feedback you fold into the posterior is contaminated by the ranking that produced it. Ranking a full list by independent per-item draws is done in practice, but the guarantees the course discusses are the single-arm ones.
+- **No result numbers.** The course's code simulates three items with true rates 0.2, 0.5 and 0.75 and plots the posteriors out to 2,000 trials. It reports **no reward total, regret, or win rate** — only that the best item's posterior sharpens and marches toward the truth while the other two stay fat, because once they stop being sampled their credible intervals stop shrinking. §4's totals are the numbers to compare methods on; these plots are a picture of the mechanism.
+- **Coverage gaps.** The preceding "Basics Review" section is lifted wholesale from another of the instructor's courses (the narration opens with the wrong course title) and is mostly a Keras refresher unrelated to ranking; only its confidence-interval and Gaussian-conjugate-prior lectures are prerequisites for any of the above. One lecture in the ranking section ships without captions, so it is not covered here at all.
 
 ## Trade-offs
 

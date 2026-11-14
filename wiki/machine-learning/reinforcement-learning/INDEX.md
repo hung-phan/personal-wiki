@@ -18,3 +18,10 @@ Study guides for learning from rewards: own explanations, original diagrams (`as
 ## Machine Learning A-Z (Udemy)
 
 - [multi-armed-bandits](multi-armed-bandits.md) — Part 6: explore vs exploit, UCB, Thompson sampling with Beta posteriors, random vs UCB vs Thompson on 10 ads, delayed feedback.
+
+## Cutting-Edge AI: Deep Reinforcement Learning in Python (Udemy)
+
+- [ddpg-continuous-control](ddpg-continuous-control.md) — DQN plus a network that outputs the argmax: why per-action heads and binning fail on continuous actions, the deterministic policy gradient, the GAN-shaped frozen-critic update, target networks and soft updates, and a DDPG that lifts Pendulum from -1401 to -156 in about 11 seconds. Flags the course's tau = 0.999 retention-vs-literature inversion.
+- [evolution-strategies](evolution-strategies.md) — perturb the parameters, not the actions: a derivative-free gradient estimate on the Gaussian-smoothed objective, reward standardisation, the shared-seed trick that makes it scale across cores, sigma and parameter-count scaling, ES solving CartPole with no backprop, and the mirrored-sampling and rank-shaping the course omits.
+- Section 3 (professional A2C on Atari) → [actor-critic-a3c](actor-critic-a3c.md) §7.
+- Section 9 of *Recommender Systems and Deep Learning in Python* (ranking by sampled posterior scores, conjugate updates, smoothing as a posterior mean) → [multi-armed-bandits](multi-armed-bandits.md) §5.

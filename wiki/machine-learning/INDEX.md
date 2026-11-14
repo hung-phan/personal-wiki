@@ -6,10 +6,10 @@ Everything about machine learning, from the maths up to LLM systems. Each subfol
 |--------|---------------|-------|
 | [math-for-ml](math-for-ml/INDEX.md) | Foundations: statistics and probability, linear algebra, calculus, Markov chains, the transformer forward pass. | 5 |
 | [classical-ml](classical-ml/INDEX.md) | Machine Learning A-Z: preprocessing, regression, classification, clustering, association rules, bag-of-words NLP, dimensionality reduction, model selection and XGBoost, ML on AWS. | 11 |
-| [deep-learning](deep-learning/INDEX.md) | Deep Learning A-Z and Advanced NLP & RNNs: ANNs, CNNs, RNNs/LSTMs, SOMs, Boltzmann machines, autoencoders, text classification, seq2seq, attention, memory networks. | 10 |
-| [reinforcement-learning](reinforcement-learning/INDEX.md) | AI A-Z, Deep RL in Python and ML A-Z Part 6: bandits, MC and TD, Q-learning, function approximation and TD(λ), policy gradients, DQN, actor-critic/A3C, PPO, SAC. | 7 |
+| [deep-learning](deep-learning/INDEX.md) | Deep Learning A-Z, Advanced NLP & RNNs, GANs & VAEs, Advanced Computer Vision and PyTorch: ANNs, CNNs, RNNs/LSTMs, SOMs, Boltzmann machines, autoencoders, text classification, seq2seq, attention, memory networks, VAEs and GANs, transfer learning and CNN architectures, object detection, style transfer, and a PyTorch cheatsheet. | 14 |
+| [reinforcement-learning](reinforcement-learning/INDEX.md) | AI A-Z, Deep RL in Python, Cutting-Edge AI and ML A-Z Part 6: bandits, MC and TD, Q-learning, function approximation and TD(λ), policy gradients, DQN, actor-critic/A3C/A2C, PPO, SAC, DDPG and evolution strategies. | 9 |
 | [llm-engineering](llm-engineering/INDEX.md) | LLM Engineering and AI A-Z generative parts: APIs and tools, open models, choosing models, RAG, fine-tuning and QLoRA, agents, prompting, responsible AI. | 10 |
-| [ml-systems](ml-systems/INDEX.md) | Applied systems: embedding training and behavioural embeddings. | 2 |
+| [ml-systems](ml-systems/INDEX.md) | Applied systems: embedding training, behavioural embeddings, and recommenders from ranking formulas to matrix factorization at cluster scale. | 4 |
 
 ## Suggested reading order
 

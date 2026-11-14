@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 756" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="756" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >SLIDING WINDOW AS CONVOLUTION</text><text x="30" y="62" class="h1" text-anchor="start" >Drop the dense layer and the window slides itself</text><line x1="30" y1="72" x2="765" y2="72" class="uline"/><text x="40" y="100" class="h2" text-anchor="start" >A. one window</text><rect x="40" y="112" width="100" height="100" rx="2" class="cell"/><text x="90" y="166" class="num" text-anchor="middle" >one 32x32 crop</text><text x="40" y="258" class="mut" text-anchor="start" >1 crop -&gt; 1 forward pass</text><text x="560" y="100" class="h2" text-anchor="start" >B. the whole image</text><rect x="758" y="112" width="134" height="134" rx="2" class="grey"/><rect x="760" y="114" width="94" height="94" rx="2" class="blu"/><rect x="792" y="114" width="94" height="94" rx="2" class="grn"/><rect x="760" y="146" width="94" height="94" rx="2" class="yel"/><rect x="792" y="146" width="94" height="94" rx="2" class="pur"/><text x="930" y="258" class="mut" text-anchor="end" >4 window positions, stride 4 px (drawn exaggerated)</text><text x="200" y="140" class="mut" text-anchor="start" >4 crops of the same image, one forward pass each</text><text x="200" y="160" class="mut" text-anchor="start" >vs ONE pass over the whole image</text><text x="200" y="188" class="hand" text-anchor="start" >same weights, same parameter count</text><text x="200" y="208" class="hand" text-anchor="start" >the Dense layer becomes a 5x5 conv</text><text x="200" y="232" class="mut" text-anchor="start" >colours below match the window positions above</text><rect x="40" y="270" width="230" height="26" rx="3" class="cell"/><text x="50" y="287" class="num" text-anchor="start" >input</text><text x="260" y="287" class="numb" text-anchor="end" >32x32x3</text><line x1="155" y1="296" x2="155" y2="304" class="ln" marker-end="url(#ar)"/><rect x="40" y="304" width="230" height="26" rx="3" class="cell"/><text x="50" y="321" class="num" text-anchor="start" >conv 5x5</text><text x="260" y="321" class="numb" text-anchor="end" >28x28x32</text><line x1="155" y1="330" x2="155" y2="338" class="ln" marker-end="url(#ar)"/><rect x="40" y="338" width="230" height="26" rx="3" class="cell"/><text x="50" y="355" class="num" text-anchor="start" >pool /2</text><text x="260" y="355" class="numb" text-anchor="end" >14x14x32</text><line x1="155" y1="364" x2="155" y2="372" class="ln" marker-end="url(#ar)"/><rect x="40" y="372" width="230" height="26" rx="3" class="cell"/><text x="50" y="389" class="num" text-anchor="start" >conv 5x5</text><text x="260" y="389" class="numb" text-anchor="end" >10x10x64</text><line x1="155" y1="398" x2="155" y2="406" class="ln" marker-end="url(#ar)"/><rect x="40" y="406" width="230" height="26" rx="3" class="cell"/><text x="50" y="423" class="num" text-anchor="start" >pool /2</text><text x="260" y="423" class="numb" text-anchor="end" >5x5x64</text><line x1="155" y1="432" x2="155" y2="440" class="ln" marker-end="url(#ar)"/><rect x="40" y="440" width="230" height="26" rx="3" class="yel"/><text x="50" y="457" class="num" text-anchor="start" >conv 5x5</text><text x="260" y="457" class="numb" text-anchor="end" >1x1x128</text><line x1="155" y1="466" x2="155" y2="474" class="ln" marker-end="url(#ar)"/><rect x="40" y="474" width="230" height="26" rx="3" class="cell"/><text x="50" y="491" class="num" text-anchor="start" >conv 1x1</text><text x="260" y="491" class="numb" text-anchor="end" >1x1x128</text><line x1="155" y1="500" x2="155" y2="508" class="ln" marker-end="url(#ar)"/><rect x="40" y="508" width="230" height="26" rx="3" class="grn"/><text x="50" y="525" class="num" text-anchor="start" >conv 1x1</text><text x="260" y="525" class="numb" text-anchor="end" >1x1x3</text><rect x="560" y="270" width="230" height="26" rx="3" class="cell"/><text x="570" y="287" class="num" text-anchor="start" >input</text><text x="780" y="287" class="numb" text-anchor="end" >36x36x3</text><line x1="675" y1="296" x2="675" y2="304" class="ln" marker-end="url(#ar)"/><rect x="560" y="304" width="230" height="26" rx="3" class="cell"/><text x="570" y="321" class="num" text-anchor="start" >conv 5x5</text><text x="780" y="321" class="numb" text-anchor="end" >32x32x32</text><line x1="675" y1="330" x2="675" y2="338" class="ln" marker-end="url(#ar)"/><rect x="560" y="338" width="230" height="26" rx="3" class="cell"/><text x="570" y="355" class="num" text-anchor="start" >pool /2</text><text x="780" y="355" class="numb" text-anchor="end" >16x16x32</text><line x1="675" y1="364" x2="675" y2="372" class="ln" marker-end="url(#ar)"/><rect x="560" y="372" width="230" height="26" rx="3" class="cell"/><text x="570" y="389" class="num" text-anchor="start" >conv 5x5</text><text x="780" y="389" class="numb" text-anchor="end" >12x12x64</text><line x1="675" y1="398" x2="675" y2="406" class="ln" marker-end="url(#ar)"/><rect x="560" y="406" width="230" height="26" rx="3" class="cell"/><text x="570" y="423" class="num" text-anchor="start" >pool /2</text><text x="780" y="423" class="numb" text-anchor="end" >6x6x64</text><line x1="675" y1="432" x2="675" y2="440" class="ln" marker-end="url(#ar)"/><rect x="560" y="440" width="230" height="26" rx="3" class="yel"/><text x="570" y="457" class="num" text-anchor="start" >conv 5x5</text><text x="780" y="457" class="numb" text-anchor="end" >2x2x128</text><line x1="675" y1="466" x2="675" y2="474" class="ln" marker-end="url(#ar)"/><rect x="560" y="474" width="230" height="26" rx="3" class="cell"/><text x="570" y="491" class="num" text-anchor="start" >conv 1x1</text><text x="780" y="491" class="numb" text-anchor="end" >2x2x128</text><line x1="675" y1="500" x2="675" y2="508" class="ln" marker-end="url(#ar)"/><rect x="560" y="508" width="230" height="26" rx="3" class="grn"/><text x="570" y="525" class="num" text-anchor="start" >conv 1x1</text><text x="780" y="525" class="numb" text-anchor="end" >2x2x3</text><text x="280" y="457" class="hand" text-anchor="start" >was Dense 128</text><text x="280" y="525" class="hand" text-anchor="start" >one softmax</text><text x="800" y="450" class="mut" text-anchor="start" >same kernel,</text><text x="800" y="466" class="mut" text-anchor="start" >2x2 output</text><rect x="810" y="500" width="24" height="24" rx="2" class="blu"/><rect x="836" y="500" width="24" height="24" rx="2" class="grn"/><rect x="810" y="526" width="24" height="24" rx="2" class="yel"/><rect x="836" y="526" width="24" height="24" rx="2" class="pur"/><line x1="792" y1="521" x2="806" y2="521" class="ln" marker-end="url(#ar)"/><text x="835" y="566" class="hand" text-anchor="middle" >4 softmaxes, one per window</text><rect x="30" y="590" width="900" height="54" rx="6" class="grey"/><text x="480" y="614" class="numb" text-anchor="middle" >same weights, same parameter count; one pass instead of 4 crops</text><text x="480" y="632" class="mut" text-anchor="middle" >two 2x pools -&gt; window stride = 4 input pixels, not 1</text><rect x="30" y="664" width="900" height="76" rx="6" class="note"/><text x="44" y="686" class="h2" text-anchor="start" >The one idea</text><text x="44" y="706" class="handk" text-anchor="start" >A dense layer rewritten as a convolution turns a per-window classifier into a per-position one, for free.</text><text x="44" y="724" class="handk" text-anchor="start" >The catch: pooling fixes the stride (4 px here), so the positions and shapes in between need anchors.</text></svg>
