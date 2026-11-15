@@ -1319,3 +1319,55 @@ if want("gradanat"):
                   ["Read it as error x responsiveness x signal and you can name what will fail before you train.",
                    "Scaling, initialisation, ReLU and cross-entropy are all ways of keeping one of these off zero."], "handk"))
     svg("nn-gradient-anatomy.svg", 960, 584, "".join(b))
+
+# ---------------- Why there is an activation at all ----------------
+if want("whyact"):
+    b = [header("WHY AN ACTIVATION", "Without one, depth is an illusion", 960)]
+    # A: collapse
+    b.append(T(30, 116, "no activation", "h2"))
+    for k, (x, lab, c) in enumerate([(36, "W1", "blu"), (146, "W2", "blu")]):
+        b.append(R(x, 136, 90, 48, c, 6)); b.append(T(x + 45, 166, lab, "numb", "middle"))
+    b.append(A(126, 160, 146, 160))
+    b.append(T(36, 212, "two matrices, 112 numbers", "mut"))
+    b.append(A(130, 232, 130, 258, "lnr", "arr"))
+    b.append(T(146, 250, "is algebraically", "hand"))
+    b.append(R(36, 268, 200, 48, "grey", 6))
+    b.append(T(136, 298, "W2 . W1", "numb", "middle"))
+    b.append(T(36, 344, "ONE matrix, 12 numbers.", "num"))
+    b.append(T(36, 362, "you paid for depth and", "num"))
+    b.append(T(36, 380, "got a one-layer model.", "num"))
+    # B: no collapse
+    b.append(P("M290,100 L290,398", "lnd"))
+    b.append(T(312, 116, "with an activation", "h2"))
+    for k, (x, lab, c) in enumerate([(318, "W1", "blu"), (428, "g", "yel"), (538, "W2", "blu")]):
+        w = 70 if lab == "g" else 90
+        b.append(R(x, 136, w, 48, c, 6)); b.append(T(x + w / 2, 166, lab, "numb", "middle"))
+    b.append(A(408, 160, 428, 160)); b.append(A(498, 160, 538, 160))
+    b.append(T(318, 212, "g is not linear, so the product", "mut"))
+    b.append(T(318, 228, "cannot be folded up", "mut"))
+    b.append(R(318, 252, 310, 64, "note", 6))
+    b.append(T(332, 278, "depth now buys real", "handk"))
+    b.append(T(332, 298, "extra expressiveness", "handk"))
+    b.append(T(318, 344, "ANY nonlinearity does this -", "num"))
+    b.append(T(318, 362, "sigmoid, tanh, ReLU, GELU.", "num"))
+    b.append(T(318, 380, "It does not pick between them.", "num"))
+    # C: XOR
+    b.append(P("M660,100 L660,398", "lnd"))
+    b.append(T(682, 116, "the smallest proof: XOR", "h2"))
+    ox, oy, sp = 710, 300, 90
+    b.append(P("M%d,%d L%d,%d" % (ox - 14, oy + 14, ox - 14, oy - sp - 20), "ln"))
+    b.append(P("M%d,%d L%d,%d" % (ox - 14, oy + 14, ox + sp + 20, oy + 14), "ln"))
+    pts = [(0, 0, "grn", "0"), (0, 1, "pnk", "1"), (1, 0, "pnk", "1"), (1, 1, "grn", "0")]
+    for (a, c_, col, lab) in pts:
+        b.append(C(ox + a * sp, oy - c_ * sp, 13, col))
+        b.append(T(ox + a * sp, oy - c_ * sp + 4, lab, "num", "middle"))
+    b.append(P("M%d,%d L%d,%d" % (ox + sp / 2, oy + 22, ox + sp / 2, oy - sp - 24), "lnr"))
+    b.append(T(682, 166, "try any line: each side is", "hand"))
+    b.append(T(682, 184, "still left with a 0 AND a 1", "hand"))
+    b.append(T(682, 344, "linear stack:  MSE 0.250", "num"))
+    b.append(T(682, 362, "with ReLU:     MSE 0.000", "num"))
+    b.append(T(682, 380, "with sigmoid:  MSE 0.000", "num"))
+    b.append(note(30, 410, 900, 80, "The one idea",
+                  ["Breaking linearity is what makes depth mean anything - and it is the job of ANY activation.",
+                   "Which activation to use is a separate question, decided by gradient flow, not expressiveness."], "handk"))
+    svg("nn-why-activation.svg", 960, 506, "".join(b))

@@ -1,6 +1,6 @@
 ---
 name: neural-networks-from-scratch
-description: "The one law behind neural network training — a weight's gradient is error x responsiveness x signal, three local numbers multiplied — and the modern defaults derived as consequences of keeping those three off zero. Covers why backprop's transpose is forced by the shapes rather than a trick, backprop as one local rule applied repeatedly (delta at the output, push through W.T, scale by the local derivative), why input and target scaling were ever needed and why cross-entropy retired the ritual, where the N(0, 1/sqrt(fan_in)) / Xavier / He init formulas come from, sigmoid vs ReLU measured as 491,943x vs 5.8x gradient attenuation across 8 layers, squared error vs cross-entropy measured on a confidently-wrong output (0.002 vs 1.0), dead units and vanishing gradients as the same law failing, why hand-derived gradients fail silently when they are merely misscaled (cosine 0.9996, magnitude 5.17x, still trains), how to read every term back off nn.Linear / autograd / CrossEntropyLoss, and back-querying an invertible net through the logit. Derivation follows Tariq Rashid's Make Your Own Neural Network."
+description: "The one law behind neural network training — a weight's gradient is error x responsiveness x signal, three local numbers multiplied — and the modern defaults derived as consequences of keeping those three off zero. Covers why depth without an activation collapses to a single matrix (so breaking linearity is any activation's job, not ReLU's), why backprop's transpose is forced by the shapes rather than a trick, backprop as one local rule applied repeatedly (delta at the output, push through W.T, scale by the local derivative), why input and target scaling were ever needed and why cross-entropy retired the ritual, where the N(0, 1/sqrt(fan_in)) / Xavier / He init formulas come from, sigmoid vs ReLU measured as 491,943x vs 5.8x gradient attenuation across 8 layers, squared error vs cross-entropy measured on a confidently-wrong output (0.002 vs 1.0), dead units and vanishing gradients as the same law failing, why hand-derived gradients fail silently when they are merely misscaled (cosine 0.9996, magnitude 5.17x, still trains), how to read every term back off nn.Linear / autograd / CrossEntropyLoss, and back-querying an invertible net through the logit. Derivation follows Tariq Rashid's Make Your Own Neural Network."
 created: 2026-11-14
 updated: 2026-11-14
 tags: [deep-learning, neural-networks, backpropagation, gradient-descent, chain-rule, vanishing-gradients, initialization, numpy, pytorch, from-scratch]
@@ -42,15 +42,15 @@ The whole note in one picture — the law of §1, and the three failures it pred
 
 ![One weight's gradient as three multiplied factors - error, responsiveness, signal - then four rows showing that a zero in any one factor freezes the weight](assets/nn-gradient-anatomy.svg)
 
-Two more sit with the sections they explain: the forward pass as a matrix multiply in §2, and the two-pass structure of backpropagation in §3.
+Three more sit with the sections they explain: the forward pass as a matrix multiply and why depth needs an activation at all in §2, and the two-pass structure of backpropagation in §3.
 
 ## 1. The law: a gradient is three numbers multiplied
 
-Take one weight $w_{j,k}$ feeding output node $k$, with a sigmoid activation and squared error. The gradient is
+Take one weight $w_{j,k}$ feeding node $k$, whose activation is some function $g$. The gradient is
 
-$$\frac{\partial E}{\partial w_{j,k}} = \underbrace{-(t_k - o_k)}_{\text{error}} \cdot \underbrace{\sigma(\text{net}_k)\big(1 - \sigma(\text{net}_k)\big)}_{\text{responsiveness}} \cdot \underbrace{o_j}_{\text{signal}}$$
+$$\frac{\partial E}{\partial w_{j,k}} = \underbrace{\frac{\partial E}{\partial o_k}}_{\text{error}} \cdot \underbrace{g'(\text{net}_k)}_{\text{responsiveness}} \cdot \underbrace{o_j}_{\text{signal}}$$
 
-Read it left to right as a sentence: *how wrong this output is*, times *how much this node can currently change its output*, times *how strong the signal on this particular link was*. §3 derives it; first, confirm it and confirm the consequence:
+The shape holds for **any** activation and any loss — only the first two factors change. For the sigmoid-with-squared-error case the book derives, they come out as $-(t_k - o_k)$ and $\sigma(\text{net}_k)\big(1-\sigma(\text{net}_k)\big)$, and that instance is what the rest of this note measures against. Read it left to right as a sentence: *how wrong this output is*, times *how much this node can currently change its output*, times *how strong the signal on this particular link was*. §3 derives it; first, confirm it and confirm the consequence:
 
 ```python
 import torch
@@ -94,7 +94,7 @@ The hand-built product matches autograd exactly, and each factor is an independe
 
 Two notes on scope. First, the "responsiveness" factor is the only one that depends on your choice of activation, which is why activation choice dominates trainability (§6). Second, in a deep network this product has *one responsiveness factor per layer* — they multiply — which is the whole story of depth (§8).
 
-## 2. Why backprop's transpose is forced, not a trick
+## 2. A layer is a matrix multiply — hence the activation, hence the transpose
 
 A node sums its moderated inputs and squashes: $\text{net}_j = \sum_i w_{j,i} i_i$, then $o_j = \sigma(\text{net}_j)$. Write that for every node and the pattern *is* a matrix product:
 
@@ -129,6 +129,49 @@ Now the point. Going **forward**, you contract over *this* layer to produce the 
 $$\text{forward: } W \cdot I \qquad\qquad \text{backward: } W^\top \cdot e$$
 
 $W^\top$ is not a trick someone discovered; it is the only shape that type-checks. Any correct derivation produces it, which is why every framework's backward pass for a linear layer is a `matmul` with the operand transposed.
+
+**Why there is an activation at all.** $W \cdot I$ is a *linear* map, and the composition of linear maps is linear — stack two weight matrices with nothing between them and the pair is algebraically a single matrix, $W_2 W_1$. All the extra parameters buy you nothing: you have paid for depth and received a one-layer model. The activation's first job, before any question of which one, is to **break that collapse** so depth actually adds expressiveness.
+
+![Two stacked weight matrices with nothing between them folding into a single matrix; the same pair with an activation between them refusing to fold; and the XOR points with a line failing to separate them](assets/nn-why-activation.svg)
+
+```python
+import torch, torch.nn as nn
+torch.manual_seed(0)
+# 1. Stack two linear layers with nothing between them and you have ONE linear layer.
+A, B = nn.Linear(4, 16, bias=False), nn.Linear(16, 3, bias=False)
+x = torch.randn(5, 4)
+collapsed = B.weight @ A.weight                              # a single 3x4 matrix
+print("depth 2 without an activation == depth 1:", torch.allclose(B(A(x)), x @ collapsed.T, atol=1e-6))
+print(f"  two layers of 4->16->3 carry {A.weight.numel() + B.weight.numel()} numbers "
+      f"but can only express the {collapsed.numel()} of a 4->3 map")
+# 2. So depth without a nonlinearity buys nothing. XOR is the smallest proof.
+X = torch.tensor([[0., 0.], [0., 1.], [1., 0.], [1., 1.]])
+y = torch.tensor([[0.], [1.], [1.], [0.]])                   # XOR: not linearly separable
+def fit(net, steps=4000):
+    opt = torch.optim.Adam(net.parameters(), 0.05)
+    for _ in range(steps):
+        opt.zero_grad(); nn.functional.mse_loss(net(X), y).backward(); opt.step()
+    return nn.functional.mse_loss(net(X), y).item()
+for name, net in [("linear only  (8 hidden)", nn.Sequential(nn.Linear(2, 8), nn.Linear(8, 1))),
+                  ("ReLU         (8 hidden)", nn.Sequential(nn.Linear(2, 8), nn.ReLU(), nn.Linear(8, 1))),
+                  ("sigmoid      (8 hidden)", nn.Sequential(nn.Linear(2, 8), nn.Sigmoid(), nn.Linear(8, 1)))]:
+    torch.manual_seed(0)
+    for m in net:
+        if isinstance(m, nn.Linear): nn.init.normal_(m.weight, 0, 0.5); nn.init.zeros_(m.bias)
+    print(f"{name}: final MSE on XOR {fit(net):.6f}")
+print("the linear stack cannot get below the variance of y (0.25) - no straight line separates XOR.")
+print("BOTH nonlinearities solve it. breaking linearity is the job of any activation, not of ReLU.")
+# Expected output:
+# depth 2 without an activation == depth 1: True
+#   two layers of 4->16->3 carry 112 numbers but can only express the 12 of a 4->3 map
+# linear only  (8 hidden): final MSE on XOR 0.250000
+# ReLU         (8 hidden): final MSE on XOR 0.000000
+# sigmoid      (8 hidden): final MSE on XOR 0.000000
+# the linear stack cannot get below the variance of y (0.25) - no straight line separates XOR.
+# BOTH nonlinearities solve it. breaking linearity is the job of any activation, not of ReLU.
+```
+
+The linear stack cannot beat 0.25 on XOR — that is just the variance of the labels, i.e. predicting the mean — because no single hyperplane separates those four points. Both nonlinearities solve it exactly. That is the part worth holding onto: **breaking linearity is the job of *any* activation, and it does not distinguish between them.** Which one to pick is a different question with a different answer (§6), and keeping the two apart is what makes it possible to explain why GELU and SiLU displaced ReLU inside transformers despite all three breaking linearity identically.
 
 **Reading this off PyTorch.** `nn.Linear(in_features, out_features)` is declared in the opposite order to its own weight's shape `(out_features, in_features)`, because it applies the weight to *row*-vector batches as $I W^\top$: a batch goes in `(N, in)` and comes out `(N, out)`. The column-vector convention above and PyTorch's row-batch convention are transposes of each other, and mixing them is the most common shape error in hand-ported code.
 
@@ -236,7 +279,9 @@ Using the wrong node count — easy to do, and a mistake in Rashid's own code, w
 
 ## 6. Consequence: why ReLU beat sigmoid
 
-Factor two is the only one set by your activation choice, and in a deep network **one factor per layer multiplies**. So the ceiling on a sigmoid network's depth is arithmetic: $\sigma' \le 0.25$ everywhere, with equality only at $\text{net}=0$, so each layer backward multiplies the gradient by at most a quarter. Ten layers is a factor of $4^{10} \approx 10^6$ in the best case.
+§2 settled that you need *a* nonlinearity. This is the separate question of *which*, and it is not answered by expressiveness — sigmoid, tanh, ReLU and GELU all break linearity, and the universal approximation theorem holds for any of them. It is answered by **factor two**, the only factor your activation choice controls, because in a deep network one such factor per layer **multiplies**.
+
+So the ceiling on a sigmoid network's depth is arithmetic: $\sigma' \le 0.25$ everywhere, with equality only at $\text{net}=0$, so each layer backward multiplies the gradient by at most a quarter. Ten layers is a factor of $4^{10} \approx 10^6$ in the best case.
 
 ReLU's derivative is exactly **1** wherever the unit is active. The product stops shrinking:
 
@@ -514,6 +559,7 @@ The result is **not** the class mean — compare the rows. It maps what the *wei
 
 ## Common Pitfalls
 
+- **Thinking ReLU's job is to break linearity** because that is *any* activation's job and does not distinguish them — sigmoid breaks linearity just as well and solves XOR just as exactly (§2). ReLU won on gradient flow (§6), which is why the question "which nonlinearity" stayed open long enough for GELU and SiLU to win it again.
 - **Treating a flat loss curve as "converged"** because the far more common cause is a dead factor — check whether activations have piled up in a flat region before you touch the learning rate.
 - **Taking "split the error in proportion to the weights" as the derivation** because it is a mnemonic for the *shape* $W^\top$ and disagrees with it arithmetically; its implied per-node denominators are absent from every implementation, and a learning rate cannot absorb a non-constant (§3).
 - **Backpropagating the raw error instead of $\delta$** because the next layer's $\sigma'$ belongs inside what you push back; omitting it misscales every earlier layer, once per layer (§3, §8).
@@ -531,7 +577,8 @@ The result is **not** the class mean — compare the rows. It maps what the *wei
 | Scenario | Use this | Not that | Why |
 |----------|----------|----------|-----|
 | A layer has stopped learning | Ask which of the three factors is zero (§1) | Sweeping the learning rate | A rate scales a gradient; it cannot resurrect a zero |
-| Hidden activation for a new net | ReLU (or GELU) + He init | Sigmoid/tanh | ≥4× gradient loss per layer, measured at 490,000× over 8 (§6) |
+| Needing depth to add expressiveness at all | Any nonlinearity between layers | Stacked `nn.Linear` with nothing between | Composed linear maps collapse to one matrix (§2) |
+| Hidden activation for a new net | ReLU (or GELU) + He init | Sigmoid/tanh | Both break linearity; only ReLU keeps the gradient — 490,000× vs 5.8× over 8 layers (§6) |
 | Output + loss for classification | Raw logits + `CrossEntropyLoss` | Sigmoid/softmax + squared error | Cancels the $\sigma'$ that kills the gradient when confidently wrong (§7) |
 | Output + loss for regression | Linear output + MSE | Anything squashed | No bounded activation to saturate; MSE is the right likelihood |
 | One unit never activates | LeakyReLU/GELU, lower LR, re-init | More epochs | A dead unit's gradient is exactly 0 — more steps of zero is zero (§6) |
