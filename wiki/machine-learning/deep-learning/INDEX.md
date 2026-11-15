@@ -36,3 +36,7 @@ Study guides for deep-learning courses: own explanations, original diagrams (`as
 ## Practical Deep Learning with PyTorch (Udemy)
 
 - [pytorch-cheatsheet](pytorch-cheatsheet.md) — task-indexed PyTorch API reference: tensors and the numpy bridge, autograd and why gradients accumulate, the canonical training loop, conv/pool output arithmetic checked against the library, recurrent layer shapes and the `batch_first` asymmetry, plus a 22-row map from the course's dead API (`Variable`, `volatile`, `loss.data[0]`, `.cuda()`) to its modern equivalent.
+
+## Make Your Own Neural Network — Tariq Rashid (book)
+
+- [neural-networks-from-scratch](neural-networks-from-scratch.md) — the maths derived by hand, then mapped onto PyTorch: per-node sums collapsing into `W.I` and why `W` is (next × this), backprop as proportional blame and why the matrix form drops the denominators, the full chain-rule derivation of `dE/dw` read as error × responsiveness × signal, input/target scaling against sigmoid saturation, `N(0, 1/√fan_in)` init, a 64-100-10 net in numpy vs the same net in `nn.Sequential`, and back-querying through the logit to see what the network thinks a digit looks like. Flags where the book's hidden-layer gradient is not the gradient (missing `σ'(net_k)`, 5× inflated, cosine 0.9996) and where its code contradicts its own init rule.

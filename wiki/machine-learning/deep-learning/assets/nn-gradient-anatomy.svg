@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 588" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="588" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >THE WEIGHT UPDATE</text><text x="30" y="62" class="h1" text-anchor="start" >Three factors, one for each link in the chain</text><line x1="30" y1="72" x2="705" y2="72" class="uline"/><text x="30" y="110" class="h2" text-anchor="start" >dE/dw(j,k)  =  -( t(k) - o(k) )  *  sig(net k) ( 1 - sig(net k) )  *  o(j)</text><rect x="40" y="140" width="280" height="56" rx="6" class="pnk"/><text x="180.0" y="174" class="numb" text-anchor="middle" >( t(k) - o(k) )</text><text x="40" y="220" class="ink" text-anchor="start" >how wrong the</text><text x="40" y="238" class="ink" text-anchor="start" >output node is</text><text x="40" y="266" class="num" text-anchor="start" >dE/do(k)</text><text x="40" y="294" class="mut" text-anchor="start" >0 when correct, so a</text><text x="40" y="310" class="mut" text-anchor="start" >correct node stops pulling</text><rect x="348" y="140" width="280" height="56" rx="6" class="yel"/><text x="488.0" y="174" class="numb" text-anchor="middle" >sig(net) (1 - sig(net))</text><text x="348" y="220" class="ink" text-anchor="start" >how responsive the</text><text x="348" y="238" class="ink" text-anchor="start" >node is right now</text><text x="348" y="266" class="num" text-anchor="start" >do(k)/dnet(k)</text><text x="348" y="294" class="mut" text-anchor="start" >peaks at 0.25, ~0 when</text><text x="348" y="310" class="mut" text-anchor="start" >saturated: a stuck node</text><rect x="656" y="140" width="274" height="56" rx="6" class="grn"/><text x="793.0" y="174" class="numb" text-anchor="middle" >o(j)</text><text x="656" y="220" class="ink" text-anchor="start" >how loud the incoming</text><text x="656" y="238" class="ink" text-anchor="start" >signal was</text><text x="656" y="266" class="num" text-anchor="start" >dnet(k)/dw(j,k)</text><text x="656" y="294" class="mut" text-anchor="start" >0 input means 0 update,</text><text x="656" y="310" class="mut" text-anchor="start" >whatever the error was</text><text x="328" y="174" class="ink" text-anchor="middle" >x</text><text x="636" y="174" class="ink" text-anchor="middle" >x</text><path d="M40,330 L930,330" class="lnd"/><text x="40" y="358" class="h2" text-anchor="start" >Three ways one weight can stop learning</text><text x="46" y="384" class="num" text-anchor="start" >the node is already right  (factor 1 is 0)</text><text x="46" y="402" class="num" text-anchor="start" >the node is saturated      (factor 2 is ~0)</text><text x="46" y="420" class="num" text-anchor="start" >the input was silent       (factor 3 is 0)</text><text x="500" y="384" class="hand" text-anchor="start" >This is why the book scales inputs to 0.01-1.0</text><text x="500" y="402" class="hand" text-anchor="start" >and targets to 0.01-0.99: a 0 input kills</text><text x="500" y="420" class="hand" text-anchor="start" >factor 3, and a target of 1 is unreachable,</text><text x="500" y="438" class="hand" text-anchor="start" >so it drives weights up forever chasing it.</text><text x="40" y="466" class="numb" text-anchor="start" >w(j,k) &lt;- w(j,k) - alpha * dE/dw(j,k)</text><text x="330" y="466" class="mut" text-anchor="start" >minus, because we walk DOWN the slope</text><rect x="30" y="492" width="900" height="80" rx="6" class="note"/><text x="44" y="514" class="h2" text-anchor="start" >The one idea</text><text x="44" y="534" class="handk" text-anchor="start" >Every gradient in a neural net is a product of three local quantities, and a zero anywhere kills it.</text><text x="44" y="552" class="handk" text-anchor="start" >Read the formula as error x responsiveness x signal and you can predict what will fail to learn.</text></svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 636" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="636" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >FORWARD PASS</text><text x="30" y="62" class="h1" text-anchor="start" >Many little sums are one matrix multiply</text><line x1="30" y1="72" x2="630" y2="72" class="uline"/><text x="30" y="112" class="h2" text-anchor="start" >A. what the picture says</text><circle cx="100" cy="160" r="19" class="blu"/><text x="100" y="165" class="num" text-anchor="middle" >i1</text><circle cx="100" cy="224" r="19" class="blu"/><text x="100" y="229" class="num" text-anchor="middle" >i2</text><circle cx="100" cy="288" r="19" class="blu"/><text x="100" y="293" class="num" text-anchor="middle" >i3</text><circle cx="280" cy="160" r="19" class="grn"/><text x="280" y="165" class="num" text-anchor="middle" >h1</text><circle cx="280" cy="224" r="19" class="grn"/><text x="280" y="229" class="num" text-anchor="middle" >h2</text><circle cx="280" cy="288" r="19" class="grn"/><text x="280" y="293" class="num" text-anchor="middle" >h3</text><path d="M119,160 L261,160" class="lnd"/><path d="M119,160 L261,224" class="lnd"/><path d="M119,160 L261,288" class="lnd"/><path d="M119,224 L261,160" class="lnd"/><path d="M119,224 L261,224" class="lnd"/><path d="M119,224 L261,288" class="lnd"/><path d="M119,288 L261,160" class="lnd"/><path d="M119,288 L261,224" class="lnd"/><path d="M119,288 L261,288" class="lnd"/><text x="190" y="136" class="mut" text-anchor="middle" >w(j,i)</text><text x="36" y="330" class="mut" text-anchor="start" >every link carries input i, scaled</text><text x="36" y="346" class="mut" text-anchor="start" >by w(j,i); each node sums what</text><text x="36" y="362" class="mut" text-anchor="start" >arrives, then squashes it</text><path d="M360,100 L360,382" class="lnd"/><text x="382" y="112" class="h2" text-anchor="start" >B. the same thing, written out</text><text x="388" y="146" class="num" text-anchor="start" >net(1) = w(1,1) i1 + w(1,2) i2 + w(1,3) i3</text><text x="388" y="166" class="num" text-anchor="start" >net(2) = w(2,1) i1 + w(2,2) i2 + w(2,3) i3</text><text x="388" y="186" class="num" text-anchor="start" >net(3) = w(3,1) i1 + w(3,2) i2 + w(3,3) i3</text><text x="388" y="228" class="hand" text-anchor="start" >the i's repeat down every row and the w's</text><text x="388" y="246" class="hand" text-anchor="start" >across - that pattern IS a matrix product</text><rect x="388" y="264" width="200" height="74" rx="6" class="grey"/><text x="488" y="294" class="h2" text-anchor="middle" >X = W . I</text><text x="488" y="318" class="num" text-anchor="middle" >O = sigmoid(X)</text><text x="614" y="290" class="mut" text-anchor="start" >one line, any layer size,</text><text x="614" y="306" class="mut" text-anchor="start" >and numpy hands it to a</text><text x="614" y="322" class="mut" text-anchor="start" >BLAS kernel instead of</text><text x="614" y="338" class="mut" text-anchor="start" >a Python loop</text><path d="M30,398 L930,398" class="lnd"/><text x="30" y="426" class="h2" text-anchor="start" >C. the shape rule</text><rect x="36" y="446" width="70" height="54" rx="4" class="yel"/><text x="71" y="470" class="numb" text-anchor="middle" >W</text><text x="71" y="488" class="num" text-anchor="middle" >3 x 3</text><text x="116" y="478" class="ink" text-anchor="middle" >.</text><rect x="126" y="446" width="40" height="54" rx="4" class="blu"/><text x="146" y="470" class="numb" text-anchor="middle" >I</text><text x="146" y="488" class="num" text-anchor="middle" >3 x 1</text><text x="176" y="478" class="ink" text-anchor="middle" >=</text><rect x="186" y="446" width="40" height="54" rx="4" class="grn"/><text x="206" y="470" class="numb" text-anchor="middle" >X</text><text x="206" y="488" class="num" text-anchor="middle" >3 x 1</text><text x="252" y="462" class="num" text-anchor="start" >W is (nodes in the NEXT layer) x (nodes in THIS layer),</text><text x="252" y="480" class="num" text-anchor="start" >so W.I - get it backwards and the shapes refuse to line up.</text><text x="252" y="500" class="mut" text-anchor="start" >PyTorch stores it transposed and computes I @ W.T, which is why nn.Linear reads (in_features, out_features)</text><text x="252" y="516" class="mut" text-anchor="start" >while the weight it allocates has shape (out_features, in_features).</text><rect x="30" y="540" width="900" height="80" rx="6" class="note"/><text x="44" y="562" class="h2" text-anchor="start" >The one idea</text><text x="44" y="582" class="handk" text-anchor="start" >The matrix form is not a different algorithm - it is the same per-node sums, stacked.</text><text x="44" y="600" class="handk" text-anchor="start" >Write it once as W.I and the code stops caring whether the layer has 3 nodes or 3,000.</text></svg>
