@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 612" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="612" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >BACKPROPAGATION</text><text x="30" y="62" class="h1" text-anchor="start" >Each gradient is where the two passes meet</text><line x1="30" y1="72" x2="660" y2="72" class="uline"/><text x="30" y="124" class="h2" text-anchor="start" >1. FORWARD - and keep every activation</text><rect x="90" y="142" width="100" height="44" rx="6" class="blu"/><text x="140" y="162" class="numb" text-anchor="middle" >i</text><text x="140" y="178" class="mut" text-anchor="middle" >input</text><rect x="400" y="142" width="100" height="44" rx="6" class="grn"/><text x="450" y="162" class="numb" text-anchor="middle" >h</text><text x="450" y="178" class="mut" text-anchor="middle" >hidden</text><rect x="710" y="142" width="100" height="44" rx="6" class="pnk"/><text x="760" y="162" class="numb" text-anchor="middle" >o</text><text x="760" y="178" class="mut" text-anchor="middle" >output</text><line x1="190" y1="164" x2="400" y2="164" class="ln" marker-end="url(#ar)"/><text x="245" y="154" class="num" text-anchor="middle" >W1</text><text x="245" y="182" class="mut" text-anchor="middle" >then sigmoid</text><line x1="500" y1="164" x2="710" y2="164" class="ln" marker-end="url(#ar)"/><text x="555" y="154" class="num" text-anchor="middle" >W2</text><text x="555" y="182" class="mut" text-anchor="middle" >then sigmoid</text><text x="820" y="164" class="hand" text-anchor="start" >compare to t</text><text x="186" y="208" class="mut" text-anchor="middle" >i kept</text><text x="496" y="208" class="mut" text-anchor="middle" >h kept</text><text x="30" y="248" class="h2" text-anchor="start" >3. THE JUNCTION</text><rect x="150" y="266" width="190" height="48" rx="6" class="yel"/><text x="245" y="296" class="numb" text-anchor="middle" >dE/dW1 = d1 . i</text><path d="M186,216 L210,266" class="lnd" marker-end="url(#ar)"/><path d="M450,372 L300,314" class="lnr" marker-end="url(#arr)"/><rect x="460" y="266" width="190" height="48" rx="6" class="yel"/><text x="555" y="296" class="numb" text-anchor="middle" >dE/dW2 = d2 . h</text><path d="M496,216 L520,266" class="lnd" marker-end="url(#ar)"/><path d="M760,372 L610,314" class="lnr" marker-end="url(#arr)"/><text x="30" y="356" class="h2" text-anchor="start" >2. BACKWARD - push d back, re-scale at every layer</text><rect x="710" y="372" width="200" height="48" rx="6" class="pnk"/><text x="810" y="394" class="numb" text-anchor="middle" >d2 = (o - t) * sig'</text><rect x="340" y="372" width="250" height="48" rx="6" class="grn"/><text x="465" y="394" class="numb" text-anchor="middle" >d1 = (W2.T . d2) * sig'</text><line x1="710" y1="396" x2="598" y2="396" class="lnr" marker-end="url(#arr)"/><text x="654" y="386" class="num" text-anchor="middle" >W2.T</text><text x="36" y="386" class="hand" text-anchor="start" >W.T is not a trick: forward</text><text x="36" y="404" class="hand" text-anchor="start" >you sum over THIS layer,</text><text x="36" y="422" class="hand" text-anchor="start" >backward over the NEXT.</text><path d="M30,448 L930,448" class="lnd"/><text x="30" y="474" class="num" text-anchor="start" >d is the error at a node's INPUT side, so it already carries that layer's sigmoid'.</text><text x="30" y="494" class="num" text-anchor="start" >Push d back - never the raw error - and these same two lines work at any depth.</text><rect x="30" y="516" width="900" height="80" rx="6" class="note"/><text x="44" y="538" class="h2" text-anchor="start" >The one idea</text><text x="44" y="558" class="handk" text-anchor="start" >A weight's gradient needs the activation below it (forward) and the delta above it (backward).</text><text x="44" y="576" class="handk" text-anchor="start" >That is why training stores the forward pass, and why inference needs far less memory.</text></svg>

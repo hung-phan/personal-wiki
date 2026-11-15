@@ -1193,9 +1193,9 @@ if want("slidewin"):
 # ---------------- Rashid 1: the forward pass collapses into one matrix multiply ----------------
 if want("fwdmat"):
     b = [header("FORWARD PASS", "Many little sums are one matrix multiply", 960)]
-    # Panel A: the network, drawn node by node
-    b.append(T(30, 112, "A. what the picture says", "h2"))
-    ins, hid = [(100, 160), (100, 224), (100, 288)], [(280, 160), (280, 224), (280, 288)]
+    # Panel A: the network as drawn
+    b.append(T(30, 116, "what the picture says", "h2"))
+    ins, hid = [(110, 170), (110, 234), (110, 298)], [(300, 170), (300, 234), (300, 298)]
     for k, (x, y) in enumerate(ins):
         b.append(C(x, y, 19, "blu")); b.append(T(x, y + 5, "i%d" % (k + 1), "num", "middle"))
     for k, (x, y) in enumerate(hid):
@@ -1203,127 +1203,119 @@ if want("fwdmat"):
     for (x1, y1) in ins:
         for (x2, y2) in hid:
             b.append(P("M%d,%d L%d,%d" % (x1 + 19, y1, x2 - 19, y2), "lnd"))
-    b.append(T(190, 136, "w(j,i)", "mut", "middle"))
-    b.append(T(36, 330, "every link carries input i, scaled", "mut"))
-    b.append(T(36, 346, "by w(j,i); each node sums what", "mut"))
-    b.append(T(36, 362, "arrives, then squashes it", "mut"))
-    # Panel B: written out, then collapsed
-    b.append(P("M360,100 L360,382", "lnd"))
-    b.append(T(382, 112, "B. the same thing, written out", "h2"))
+    b.append(T(205, 142, "w(j,i)", "mut", "middle"))
+    b.append(T(36, 346, "each node sums what arrives,", "mut"))
+    b.append(T(36, 362, "then squashes it", "mut"))
+    # Panel B: written out
+    b.append(T(400, 116, "what that means, written out", "h2"))
     for k, r in enumerate(["net(1) = w(1,1) i1 + w(1,2) i2 + w(1,3) i3",
                            "net(2) = w(2,1) i1 + w(2,2) i2 + w(2,3) i3",
                            "net(3) = w(3,1) i1 + w(3,2) i2 + w(3,3) i3"]):
-        b.append(T(388, 146 + k * 20, r, "num"))
-    b.append(T(388, 228, "the i's repeat down every row and the w's", "hand"))
-    b.append(T(388, 246, "across - that pattern IS a matrix product", "hand"))
-    b.append(R(388, 264, 200, 74, "grey", 6))
-    b.append(T(488, 294, "X = W . I", "h2", "middle"))
-    b.append(T(488, 318, "O = sigmoid(X)", "num", "middle"))
-    b.append(T(614, 290, "one line, any layer size,", "mut"))
-    b.append(T(614, 306, "and numpy hands it to a", "mut"))
-    b.append(T(614, 322, "BLAS kernel instead of", "mut"))
-    b.append(T(614, 338, "a Python loop", "mut"))
-    # Band C: shapes
-    b.append(P("M30,398 L930,398", "lnd"))
-    b.append(T(30, 426, "C. the shape rule", "h2"))
-    b.append(R(36, 446, 70, 54, "yel", 4)); b.append(T(71, 470, "W", "numb", "middle")); b.append(T(71, 488, "3 x 3", "num", "middle"))
-    b.append(T(116, 478, ".", "ink", "middle"))
-    b.append(R(126, 446, 40, 54, "blu", 4)); b.append(T(146, 470, "I", "numb", "middle")); b.append(T(146, 488, "3 x 1", "num", "middle"))
-    b.append(T(176, 478, "=", "ink", "middle"))
-    b.append(R(186, 446, 40, 54, "grn", 4)); b.append(T(206, 470, "X", "numb", "middle")); b.append(T(206, 488, "3 x 1", "num", "middle"))
-    b.append(T(252, 462, "W is (nodes in the NEXT layer) x (nodes in THIS layer),", "num"))
-    b.append(T(252, 480, "so W.I - get it backwards and the shapes refuse to line up.", "num"))
-    b.append(T(252, 500, "PyTorch stores it transposed and computes I @ W.T, which is why nn.Linear reads (in_features, out_features)", "mut"))
-    b.append(T(252, 516, "while the weight it allocates has shape (out_features, in_features).", "mut"))
-    b.append(note(30, 540, 900, 80, "The one idea",
+        b.append(T(406, 152 + k * 22, r, "num"))
+    b.append(T(406, 240, "the i's repeat down the rows, the w's across", "hand"))
+    b.append(P("M620,254 L620,280", "lnr", "arr"))
+    b.append(R(406, 290, 430, 76, "grey", 6))
+    b.append(T(621, 322, "X = W . I", "h1", "middle"))
+    b.append(T(621, 350, "O = sigmoid(X)", "num", "middle"))
+    # Band: the shape rule
+    b.append(P("M30,390 L930,390" , "lnd"))
+    b.append(T(30, 418, "and the shape is forced", "h2"))
+    b.append(R(36, 438, 70, 54, "yel", 4)); b.append(T(71, 462, "W", "numb", "middle")); b.append(T(71, 480, "3 x 3", "num", "middle"))
+    b.append(T(116, 470, ".", "ink", "middle"))
+    b.append(R(126, 438, 40, 54, "blu", 4)); b.append(T(146, 462, "I", "numb", "middle")); b.append(T(146, 480, "3 x 1", "num", "middle"))
+    b.append(T(176, 470, "=", "ink", "middle"))
+    b.append(R(186, 438, 40, 54, "grn", 4)); b.append(T(206, 462, "X", "numb", "middle")); b.append(T(206, 480, "3 x 1", "num", "middle"))
+    b.append(T(256, 456, "the sum runs over THIS layer, so this layer must be the", "num"))
+    b.append(T(256, 476, "index that cancels - W is (next layer x this layer).", "num"))
+    b.append(note(30, 508, 900, 80, "The one idea",
                   ["The matrix form is not a different algorithm - it is the same per-node sums, stacked.",
                    "Write it once as W.I and the code stops caring whether the layer has 3 nodes or 3,000."], "handk"))
-    svg("nn-forward-as-matmul.svg", 960, 636, "".join(b))
+    svg("nn-forward-as-matmul.svg", 960, 604, "".join(b))
 
 # ---------------- Rashid 2: two stories about backprop, one of them exact ----------------
 if want("bpstory"):
-    b = [header("BACKPROPAGATION", "Two stories about blame, and which one is the gradient", 960)]
-    # Panel A: proportional split
-    b.append(T(30, 112, "A. the book's intuition", "h2"))
-    b.append(T(30, 134, "split the blame by weight", "mut"))
-    b.append(C(90, 190, 18, "grn")); b.append(T(90, 195, "h1", "num", "middle"))
-    b.append(C(90, 266, 18, "grn")); b.append(T(90, 271, "h2", "num", "middle"))
-    b.append(C(250, 228, 18, "pnk")); b.append(T(250, 233, "o1", "num", "middle"))
-    b.append(A(108, 190, 232, 222)); b.append(A(108, 266, 232, 234))
-    b.append(T(165, 186, "w=3", "num", "middle")); b.append(T(165, 272, "w=1", "num", "middle"))
-    b.append(T(282, 233, "e1", "numb")); b.append(T(282, 251, "error", "mut"))
-    b.append(T(36, 316, "the bigger weight did more of the damage,", "mut"))
-    b.append(T(36, 332, "so give it more of the blame:", "mut"))
-    b.append(T(36, 358, "e(h1) = e1 * 3/(3+1) = 0.75 e1", "num"))
-    b.append(T(36, 376, "e(h2) = e1 * 1/(3+1) = 0.25 e1", "num"))
-    b.append(T(36, 404, "the shares add to 1 - it is a split", "hand"))
-    # Panel B: what the code does
-    b.append(P("M330,100 L330,440", "lnd"))
-    b.append(T(352, 112, "B. what the code does", "h2"))
-    b.append(T(358, 146, "e(hidden) = W.T . e(output)", "numb"))
-    b.append(R(358, 164, 230, 64, "grey", 6))
-    b.append(T(473, 188, "e(h1) = 3 e1", "num", "middle"))
-    b.append(T(473, 208, "e(h2) = 1 e1", "num", "middle"))
-    b.append(T(358, 256, "the denominators are GONE.", "hand"))
-    b.append(T(358, 274, "these are 4x the shares in A.", "hand"))
-    b.append(T(358, 302, "The book switches from one to the", "mut"))
-    b.append(T(358, 318, "other without saying so. The split", "mut"))
-    b.append(T(358, 334, "story is a mnemonic for the SHAPE", "mut"))
-    b.append(T(358, 350, "of the answer, W.T, not for its size.", "mut"))
-    b.append(T(358, 378, "A per-node denominator is not a", "mut"))
-    b.append(T(358, 394, "constant, so the learning rate", "mut"))
-    b.append(T(358, 410, "cannot absorb it.", "mut"))
-    # Panel C: the gradient
-    b.append(P("M612,100 L612,440", "lnd"))
-    b.append(T(634, 112, "C. the actual gradient", "h2"))
-    b.append(T(640, 146, "dE/do(j) = sum over k of", "num"))
-    b.append(R(640, 164, 290, 48, "yel", 6))
-    b.append(T(785, 194, "e(k) * sig'(net k) * w(j,k)", "numb", "middle"))
-    b.append(T(640, 240, "the chain rule puts sig'(net k)", "hand"))
-    b.append(T(640, 258, "INSIDE the sum. The book", "hand"))
-    b.append(T(640, 276, "leaves it out.", "hand"))
-    b.append(T(640, 306, "Measured on one hidden layer:", "mut"))
-    b.append(T(640, 328, "cosine vs true gradient  0.9996", "num"))
-    b.append(T(640, 346, "magnitude                5.17x", "num"))
-    b.append(T(640, 374, "Right direction, wrong length -", "mut"))
-    b.append(T(640, 390, "which is why the book's network", "mut"))
-    b.append(T(640, 406, "trains anyway and nobody notices.", "mut"))
-    b.append(note(30, 456, 900, 80, "The one idea",
-                  ["All three stories agree that blame flows back through W transposed. They disagree on the factor.",
-                   "Only C is the derivative of the loss; A and B are useful pictures that happen to point the same way."], "handk"))
-    svg("nn-backprop-two-stories.svg", 960, 552, "".join(b))
+    b = [header("BACKPROPAGATION", "Each gradient is where the two passes meet", 960)]
+    LX = [90, 400, 710]
+    NAMES = [("i", "blu", "input"), ("h", "grn", "hidden"), ("o", "pnk", "output")]
+    # ---- 1. forward
+    b.append(T(30, 124, "1. FORWARD - and keep every activation", "h2"))
+    for x, (nm, c, lab) in zip(LX, NAMES):
+        b.append(R(x, 142, 100, 44, c, 6))
+        b.append(T(x + 50, 162, nm, "numb", "middle")); b.append(T(x + 50, 178, lab, "mut", "middle"))
+    for k in (0, 1):
+        b.append(A(LX[k] + 100, 164, LX[k + 1], 164))
+        b.append(T(LX[k] + 155, 154, "W%d" % (k + 1), "num", "middle"))
+        b.append(T(LX[k] + 155, 182, "then sigmoid", "mut", "middle"))
+    b.append(T(820, 164, "compare to t", "hand"))
+    for k in (0, 1):
+        b.append(T(LX[k] + 96, 208, ["i", "h"][k] + " kept", "mut", "middle"))
+    # ---- 3. the junction
+    b.append(T(30, 248, "3. THE JUNCTION", "h2"))
+    for k in (0, 1):
+        x = LX[k] + 60
+        b.append(R(x, 266, 190, 48, "yel", 6))
+        b.append(T(x + 95, 296, "dE/dW%d = d%d . %s" % (k + 1, k + 1, ["i", "h"][k]), "numb", "middle"))
+        b.append(P("M%d,216 L%d,266" % (LX[k] + 96, x + 60), "lnd", "ar"))     # cached activation, down
+        b.append(P("M%d,372 L%d,314" % (LX[k + 1] + 50, x + 150), "lnr", "arr"))  # delta, up
+    # ---- 2. backward
+    b.append(T(30, 356, "2. BACKWARD - push d back, re-scale at every layer", "h2"))
+    b.append(R(710, 372, 200, 48, "pnk", 6))
+    b.append(T(810, 394, "d2 = (o - t) * sig'", "numb", "middle"))
+    b.append(R(340, 372, 250, 48, "grn", 6))
+    b.append(T(465, 394, "d1 = (W2.T . d2) * sig'", "numb", "middle"))
+    b.append(A(710, 396, 598, 396, "lnr", "arr"))
+    b.append(T(654, 386, "W2.T", "num", "middle"))
+    b.append(T(36, 386, "W.T is not a trick: forward", "hand"))
+    b.append(T(36, 404, "you sum over THIS layer,", "hand"))
+    b.append(T(36, 422, "backward over the NEXT.", "hand"))
+    b.append(P("M30,448 L930,448", "lnd"))
+    b.append(T(30, 474, "d is the error at a node's INPUT side, so it already carries that layer's sigmoid'.", "num"))
+    b.append(T(30, 494, "Push d back - never the raw error - and these same two lines work at any depth.", "num"))
+    b.append(note(30, 516, 900, 80, "The one idea",
+                  ["A weight's gradient needs the activation below it (forward) and the delta above it (backward).",
+                   "That is why training stores the forward pass, and why inference needs far less memory."], "handk"))
+    svg("nn-backprop-delta-flow.svg", 960, 612, "".join(b))
 
 # ---------------- Rashid 3: anatomy of one weight's gradient ----------------
 if want("gradanat"):
-    b = [header("THE WEIGHT UPDATE", "Three factors, one for each link in the chain", 960)]
-    b.append(T(30, 110, "dE/dw(j,k)  =  -( t(k) - o(k) )  *  sig(net k) ( 1 - sig(net k) )  *  o(j)", "h2"))
-    cols = [(40, 280, "pnk", "( t(k) - o(k) )", "how wrong the", "output node is",
-             "dE/do(k)", "0 when correct, so a", "correct node stops pulling"),
-            (348, 280, "yel", "sig(net) (1 - sig(net))", "how responsive the", "node is right now",
-             "do(k)/dnet(k)", "peaks at 0.25, ~0 when", "saturated: a stuck node"),
-            (656, 274, "grn", "o(j)", "how loud the incoming", "signal was",
-             "dnet(k)/dw(j,k)", "0 input means 0 update,", "whatever the error was")]
-    for x, w, c, head, l1, l2, deriv, n1, n2 in cols:
-        b.append(R(x, 140, w, 56, c, 6))
-        b.append(T(x + w / 2, 174, head, "numb", "middle"))
-        b.append(T(x, 220, l1, "ink")); b.append(T(x, 238, l2, "ink"))
-        b.append(T(x, 266, deriv, "num"))
-        b.append(T(x, 294, n1, "mut")); b.append(T(x, 310, n2, "mut"))
-    for x in (328, 636):
-        b.append(T(x, 174, "x", "ink", "middle"))
-    b.append(P("M40,330 L930,330", "lnd"))
-    b.append(T(40, 358, "Three ways one weight can stop learning", "h2"))
-    for k, s in enumerate(["the node is already right  (factor 1 is 0)",
-                           "the node is saturated      (factor 2 is ~0)",
-                           "the input was silent       (factor 3 is 0)"]):
-        b.append(T(46, 384 + k * 18, s, "num"))
-    b.append(T(500, 384, "This is why the book scales inputs to 0.01-1.0", "hand"))
-    b.append(T(500, 402, "and targets to 0.01-0.99: a 0 input kills", "hand"))
-    b.append(T(500, 420, "factor 3, and a target of 1 is unreachable,", "hand"))
-    b.append(T(500, 438, "so it drives weights up forever chasing it.", "hand"))
-    b.append(T(40, 466, "w(j,k) <- w(j,k) - alpha * dE/dw(j,k)", "numb"))
-    b.append(T(330, 466, "minus, because we walk DOWN the slope", "mut"))
-    b.append(note(30, 492, 900, 80, "The one idea",
-                  ["Every gradient in a neural net is a product of three local quantities, and a zero anywhere kills it.",
-                   "Read the formula as error x responsiveness x signal and you can predict what will fail to learn."], "handk"))
-    svg("nn-gradient-anatomy.svg", 960, 588, "".join(b))
+    b = [header("THE ONE LAW", "A gradient is three numbers multiplied", 960)]
+    COLS = [("pnk", "error", "how wrong"), ("yel", "responsiveness", "how reactive"), ("grn", "signal", "how loud")]
+    XS, W_, H_ = [120, 400, 680], 190, 58
+    # the live row
+    b.append(T(30, 112, "one weight, one training example", "mut"))
+    for (x, (c, nm, sub)) in zip(XS, COLS):
+        b.append(R(x, 126, W_, H_, c, 6))
+        b.append(T(x + W_ / 2, 150, nm, "numb", "middle"))
+        b.append(T(x + W_ / 2, 168, sub, "mut", "middle"))
+    for x in (XS[0] + W_ + 20, XS[1] + W_ + 20):
+        b.append(T(x, 162, "x", "h2", "middle"))
+    b.append(T(30, 162, "dE", "numb", "middle")); b.append(T(30, 176, "dw", "numb", "middle"))
+    b.append(P("M20,166 L42,166", "ln"))
+    b.append(T(70, 162, "=", "h2", "middle"))
+    b.append(A(878, 155, 918, 155)); b.append(T(926, 150, "the", "mut")); b.append(T(926, 166, "step", "mut"))
+    for (x, (c, nm, sub)) in zip(XS, COLS):
+        b.append(T(x + W_ / 2, 204, "dE/do   do/dnet   dnet/dw".split("   ")[XS.index(x)], "num", "middle"))
+    # the kill rows
+    b.append(P("M30,226 L930,226", "lnd"))
+    b.append(T(30, 252, "A product dies if ANY factor dies - so there are exactly three failures", "h2"))
+    rows = [("all three alive", ["0.40", "0.24", "0.80"], None, "0.077", "the weight moves"),
+            ("this output is already right", ["0.00", "0.24", "0.80"], 0, "0", "fine - nothing to fix"),
+            ("the node is saturated / dead", ["0.40", "0.00", "0.80"], 1, "0", "FROZEN - the real bug"),
+            ("the input on this link is 0", ["0.40", "0.24", "0.00"], 2, "0", "FROZEN - never updates")]
+    for r, (label, vals, dead, res, verdict) in enumerate(rows):
+        y = 282 + r * 50
+        b.append(T(36, y + 22, label, "num"))
+        for k, v in enumerate(vals):
+            x = 320 + k * 92
+            b.append(R(x, y, 78, 34, "grey" if dead == k else COLS[k][0], 4))
+            b.append(T(x + 39, y + 22, v, "numb" if dead == k else "num", "middle"))
+            if k < 2:
+                b.append(T(x + 85, y + 22, "x", "ink", "middle"))
+        b.append(T(596, y + 22, "=", "ink", "middle"))
+        b.append(R(612, y, 60, 34, "blu" if dead is None else "note", 4))
+        b.append(T(642, y + 22, res, "numb", "middle"))
+        b.append(T(690, y + 22, verdict, "hand" if dead in (1, 2) else "mut"))
+    b.append(note(30, 488, 900, 80, "The one idea",
+                  ["Read it as error x responsiveness x signal and you can name what will fail before you train.",
+                   "Scaling, initialisation, ReLU and cross-entropy are all ways of keeping one of these off zero."], "handk"))
+    svg("nn-gradient-anatomy.svg", 960, 584, "".join(b))
