@@ -1,6 +1,6 @@
 ---
 name: neural-networks-from-scratch
-description: "How a neural network learns, written in ASD-STE100 Simplified Technical English. The gradient of one weight is three numbers multiplied together: error, response and signal. A weight stops to learn if any one of the three is zero. This note derives that law and then explains the standard choices as effects of it. Topics: a layer as a matrix multiplication and why W is (next layer x this layer); why stacked linear layers collapse into one matrix, so any activation function breaks linearity but does not tell you which one to use; backpropagation as delta at the output, W transposed, and the local derivative; why older code scales inputs to 0.01-1.0 and targets to 0.01-0.99, and why cross-entropy removes the need; where the LeCun, Xavier and He initialisation formulas come from; sigmoid against ReLU measured as 491,943 times against 5.8 times gradient loss across 8 layers; squared error against cross-entropy measured on a very wrong output as 0.002 against 1.0; dead units and small gradients as the same failure; why a wrong gradient still trains a network and is difficult to find; where each term is in nn.Linear and autograd; back-query through the logit function. The derivation follows Tariq Rashid's Make Your Own Neural Network."
+description: "How a neural network learns, in ASD-STE100 Simplified Technical English. The gradient of one weight is three numbers multiplied together: error, response and signal. A weight stops to learn if any one of the three becomes zero. This note derives that law. Then it explains the standard choices as effects of the law. A layer is a matrix multiplication, and W has the shape (next layer x this layer). Stacked linear layers collapse into one matrix. Therefore any activation function breaks linearity, but that fact does not tell you which function to use. Backpropagation is delta at the output, then W transposed, then the local derivative. Old code scales inputs to 0.01-1.0 and targets to 0.01-0.99. Cross-entropy removes the need for the target rule. The LeCun, Xavier and He initialisation formulas all come from one line about variance. Sigmoid against ReLU, measured: 491,943 times against 5.8 times gradient loss across 8 layers. Squared error against cross-entropy, measured on a very wrong output: 0.002 against 1.0. Dead units and small gradients are the same failure. A wrong gradient still trains a network, so it is difficult to find. The note also maps each term to nn.Linear and autograd, and uses back-query through the logit function. The derivation follows Tariq Rashid, Make Your Own Neural Network."
 created: 2026-11-14
 updated: 2026-11-15
 tags: [deep-learning, neural-networks, backpropagation, gradient-descent, chain-rule, vanishing-gradients, initialization, numpy, pytorch, simplified-technical-english]
@@ -18,7 +18,7 @@ tags: [deep-learning, neural-networks, backpropagation, gradient-descent, chain-
 
 ## Why This Exists
 
-**Problem.** You can call `loss.backward()` for years and still not repair a layer that stops to learn. All the failures look the same from outside. The loss stays flat. The accuracy stays low.
+**Problem.** You can call `loss.backward()` for years and still not know why a layer stops to learn. All the failures look the same from outside. The loss stays flat. The accuracy stays low.
 
 The usual advice is a list of rules with no reasons. Scale your data to [0, 1]. Use He initialisation. Do not use sigmoid. Use cross-entropy. If you do not know the reason for each rule, you must try them in a random order.
 
@@ -44,7 +44,7 @@ A product becomes zero if **any** one factor becomes zero. Therefore a weight ca
 
 This diagram gives the law of section 1 and the three failures that the law predicts.
 
-![One weight's gradient as three multiplied factors - error, response, signal - then four rows showing that a zero in any one factor stops the weight](assets/nn-gradient-anatomy.svg)
+![The gradient of one weight is three factors multiplied together. They are error, response and signal. Four rows show that a zero in any one factor stops the weight.](assets/nn-gradient-anatomy.svg)
 
 Three more diagrams are with the sections that they explain. Section 2 has the forward pass as a matrix multiplication. Section 2 also has the reason for an activation function. Section 3 has the two passes of backpropagation.
 
@@ -142,7 +142,7 @@ The first task of an activation function is to stop this collapse.
 
 Then additional layers make the network more powerful.
 
-![Two stacked weight matrices with nothing between them folding into a single matrix; the same pair with an activation between them refusing to fold; and the XOR points with a line failing to separate them](assets/nn-why-activation.svg)
+![Two weight matrices with nothing between them fold into one matrix. The same pair with an activation between them does not fold. A line cannot separate the four XOR points.](assets/nn-why-activation.svg)
 
 ```python
 import torch, torch.nn as nn
@@ -187,7 +187,7 @@ Keep this result. **Any** activation function breaks linearity. Therefore this r
 
 Keep the two questions apart. Then you can explain why GELU and SiLU replaced ReLU in transformers. All three functions break linearity in the same way.
 
-![Three per-node weighted sums written out as equations and collapsed into the single matrix product X = W.I, with the shape rule shown as blocks](assets/nn-forward-as-matmul.svg)
+![Three weighted sums appear as equations. They collapse into one matrix product, X = W.I. Blocks show the shape rule.](assets/nn-forward-as-matmul.svg)
 
 **Why the backward pass uses a transpose.** In the forward pass you sum across *this* layer and you produce the next layer. In the backward pass you have one value for each node of the *next* layer. You want one value for each node of *this* layer. Therefore you sum across the other index of the same matrix. A transpose does exactly that:
 
@@ -207,13 +207,13 @@ The error at the output is easy. It is $e_k = t_k - o_k$. The problem is the hid
 
 This explanation is useful, and it gives the correct shape. The blame moves backward through $W^\top$. **But the explanation and $W^\top e$ are not the same calculation.**
 
-The explanation divides by $w_{11} + w_{21}$. The matrix form does not divide. The divisor is also not a constant, because it changes for each node. Therefore a learning rate cannot correct it.
+The explanation divides by $w_{11} + w_{21}$. The matrix form does not divide. The divisor is also not a constant, because it changes for each node. Therefore a learning rate cannot remove it.
 
 Many books mix the explanation and the derivation. Rashid's book changes from one to the other with no comment.
 
 Use the explanation for the direction. Use the derivation below for the value.
 
-![Backpropagation as two passes meeting: the forward pass keeping each activation, the backward pass pushing delta through W transposed, and each weight's gradient sitting at the junction of the two](assets/nn-backprop-delta-flow.svg)
+![Backpropagation has two passes. The forward pass keeps each activation. The backward pass moves delta through W transposed. Each weight gradient is at the junction of the two passes.](assets/nn-backprop-delta-flow.svg)
 
 **The derivation.** At the output layer, $E = \sum_k (t_k - o_k)^2$. The sum disappears immediately. Most books do not show this step. The output $o_n$ depends only on the weights that go into node $n$. Therefore all terms except term $k$ are constants for the weight $w_{j,k}$.
 
@@ -275,7 +275,7 @@ Both loss functions push the node into saturation. But only one loss function ca
 
 The gradient of cross-entropy is $(o - t)$. The $\sigma'$ factor is not in it. Therefore saturation costs cross-entropy nothing.
 
-**Keep one rule and remove the other.** The 0.01/0.99 rule corrects a problem of *squared error with a squashed output*. Use cross-entropy with logits, and a target of exactly 1 is correct. Keep the input scaling, because the signal factor is real for all loss functions. Optimisers also work better when all inputs have a similar size. Remove the target rule.
+**Keep one rule and remove the other.** The 0.01/0.99 rule exists because of a problem with *squared error on a squashed output*. Use cross-entropy with logits, and a target of exactly 1 is correct. Keep the input scaling, because the signal factor is real for all loss functions. Optimisers also work better when all inputs have a similar size. Remove the target rule.
 
 ## 5. Effect: Why Initialisation Has A Formula
 
@@ -358,11 +358,11 @@ print("sigmoid' <= 0.25, so every layer multiplies the gradient by at most a qua
 # ... trimmed
 ```
 
-The test uses 8 identical layers and identical initialisation. In the sigmoid network, the first layer receives a gradient approximately **490,000 times** smaller than the last layer. In the ReLU network the difference is less than 6 times. The first layers of the sigmoid network do not train. No learning rate corrects this. A rate that is correct for layer 1 is much too large for layer 8.
+The test uses 8 identical layers and identical initialisation. In the sigmoid network, the first layer receives a gradient approximately **490,000 times** smaller than the last layer. In the ReLU network the difference is less than 6 times. The first layers of the sigmoid network do not train. No learning rate removes this. A rate that is correct for layer 1 is much too large for layer 8.
 
 **The failure of ReLU is the same law.** The pre-activation value of a ReLU unit can be negative for *all* inputs. Then its derivative is 0. That is the response factor again. No gradient can make the unit active again. This is a **dead unit**.
 
-All the repairs keep the response factor away from zero. They are LeakyReLU, GELU, careful initialisation and a smaller learning rate. Therefore the repairs are equally good in practice.
+Four solutions keep the response factor away from zero. They are LeakyReLU, GELU, careful initialisation and a smaller learning rate. All four work equally well in practice.
 
 **The law also explains the other modern parts.** Normalisation layers keep the sums inside the responsive area. Then the response factor cannot move away. Residual connections add a path with a local derivative of exactly 1. Then the product has a route that does not decrease. Both parts change the same factor.
 
@@ -444,7 +444,7 @@ print("add sigmoid'(net_k) inside the sum  ->  matches:", np.allclose(dWih_true,
 # add sigmoid'(net_k) inside the sum  ->  matches: True
 ```
 
-The output layer is exact. The hidden layer is wrong. But the cosine against the true gradient is **0.9996**, and the length is only **5.17 times** too large. On a sigmoid network that larger length is a small help. It corrects part of the loss from section 6, like a larger learning rate on the first layer. Put both rules into the same network and measure the result:
+The output layer is exact. The hidden layer is wrong. But the cosine against the true gradient is **0.9996**, and the length is only **5.17 times** too large. On a sigmoid network that larger length is a small help. It cancels part of the loss from section 6, like a larger learning rate on the first layer. Put both rules into the same network and measure the result:
 
 ```python
 import numpy as np
@@ -609,17 +609,17 @@ They are activation maximisation with gradient *ascent* on the input, saliency m
 ## Trade-offs
 
 - **The three-factor law against the full Jacobian.** The three factors are exactly correct for one weight in a feedforward network. The law is also easy to remember. It is not exact when layers share weights, as in convolutional and recurrent networks. There a weight gradient is a *sum* of such products across positions or time steps. The diagnosis stays correct. The arithmetic takes one more sum.
-- **A derivation by hand against `backward()`.** A derivation gives you knowledge for repairs and nothing else. It gives no accuracy and no speed. It is useful the first time that a layer stops to learn.
+- **A derivation by hand against `backward()`.** A derivation gives you the knowledge to find a fault and nothing else. It gives no accuracy and no speed. It is useful the first time that a layer stops to learn.
 - **Sigmoid against ReLU.** Sigmoid gives a limited output, a simple derivative, and an inverse for section 10. It costs a factor of 4 or more of the gradient at each layer, as section 6 shows. For hidden layers this is not a difficult choice.
 - **Squared error against cross-entropy.** Squared error makes the derivation possible by hand. It is also correct for regression. For classification with a squashed output it causes the problem of section 7.
-- **Three ways to repair the response factor.** Activation function, initialisation and normalisation layers all change the same factor. They also overlap. Good initialisation is less important with normalisation layers. Normalisation layers are less important with residual paths. Use them in that order. Start with the activation function, because it costs nothing.
+- **Three ways to keep the response factor alive.** Activation function, initialisation and normalisation layers all change the same factor. They also overlap. Good initialisation is less important with normalisation layers. Normalisation layers are less important with residual paths. Use them in that order. Start with the activation function, because it costs nothing.
 - **8x8 digits against real MNIST.** All the code here runs offline in seconds on the small data set of scikit-learn. The cost is more noise in the back-query pictures. The accuracies are also a little high, because the problem is easier.
 
 ## Common Pitfalls
 
 - **Do not think that the task of ReLU is to break linearity.** That is the task of *any* activation function, so it does not separate them. Sigmoid breaks linearity equally well, and it solves XOR equally well (§2). ReLU is better because of gradient flow (§6). GELU and SiLU are better again for the same type of reason.
 - **Do not read a flat loss curve as "the model converged".** A dead factor is a much more common cause. Look at the activations for a flat area before you change the learning rate.
-- **Do not use "divide the error across the weights" as the derivation.** It is a memory aid for the *shape* $W^\top$, and it does not agree with it in value. Its divisors are in no program, and a learning rate cannot correct a value that is not constant (§3).
+- **Do not use "divide the error across the weights" as the derivation.** It is a memory aid for the *shape* $W^\top$, and it does not agree with it in value. Its divisors are in no program, and a learning rate cannot remove a value that is not constant (§3).
 - **Do not move the raw error backward instead of $\delta$.** The $g'$ of the next layer belongs inside the value that you move. If you remove it, all earlier layers receive a wrong scale, one time for each layer (§3, §8).
 - **Do not trust a hand-written gradient because the network trains.** A gradient with a cosine of 0.9996 and a length 5 times too large still descends. Compare it against autograd (§8).
 - **Do not put `Softmax` or `Sigmoid` before `CrossEntropyLoss` or `BCEWithLogitsLoss`.** Those loss functions squash the values inside. Two applications give a worse result, and the code shows no error (§7).
@@ -634,7 +634,7 @@ They are activation maximisation with gradient *ascent* on the input, saliency m
 
 | Scenario | Use this | Not that | Why |
 |----------|----------|----------|-----|
-| A layer stops to learn | Find which of the three factors is zero (§1) | A sweep of the learning rate | A rate multiplies a gradient. It cannot repair a zero |
+| A layer stops to learn | Find which of the three factors is zero (§1) | A sweep of the learning rate | A rate multiplies a gradient. It cannot restore a zero |
 | Depth must add expressive power | Any activation function between the layers | `nn.Linear` layers with nothing between them | Linear maps together become one matrix (§2) |
 | Hidden activation for a new network | ReLU or GELU, with He initialisation | Sigmoid or tanh | Both break linearity. Only ReLU keeps the gradient: 490,000 times against 5.8 times across 8 layers (§6) |
 | Output and loss for classification | Raw logits with `CrossEntropyLoss` | Sigmoid or softmax with squared error | It removes the $\sigma'$ that stops the gradient (§7) |
