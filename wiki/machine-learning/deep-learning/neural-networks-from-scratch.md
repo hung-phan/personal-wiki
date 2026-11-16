@@ -265,47 +265,21 @@ This is also the reason that old code scales its targets to 0.01 and 0.99. That 
 
 Step 5 gives you the error at the output. Now you must give a share of that error to **every** weight, including the weights of the hidden layer. The hidden layer has no target of its own, so you must calculate its share.
 
-**The symbols.** This step uses more notation than the others, so read the two tables first.
+**One reading rule, before the symbols arrive.** A **superscript** says which layer. A **subscript** says which unit inside that layer. So $w^2_{kj}$ is a weight in layer 2, and $z^1_j$ belongs to hidden unit $j$. The superscript is never a power in this step.
 
-A **superscript** says which layer. A **subscript** says which unit inside that layer. So $w^2_{kj}$ is a weight in layer 2, and $z^1_j$ is the pre-activation of hidden unit $j$. The superscript is never a power in this step.
-
-| Letter | Meaning | Example |
-|---|---|---|
-| $x_i$ | input number $i$ | one pixel |
-| $w^1_{ji}$ | the weight from input $i$ to hidden unit $j$ | layer 1, one number |
-| $z^1_j$ | the **pre-activation** of hidden unit $j$, before the squash | $z^1_j = \sum_i w^1_{ji} x_i$ |
-| $a^1_j$ | the **activation** of hidden unit $j$, after the squash | $a^1_j = g(z^1_j)$ |
-| $w^2_{kj}$ | the weight from hidden unit $j$ to output node $k$ | layer 2, one number |
-| $z^2_k$ | the pre-activation of output node $k$ | the raw score |
-| $p_k$ | the probability that the network gives to class $k$ | the softmax of §5 |
-| $y_k$ | the target for class $k$ | 1 for the true class, 0 elsewhere |
-| $E$ | the error of this example | the cross-entropy of §5 |
-| $g$ | the activation function | ReLU here |
-| $g'$ | the derivative of $g$ | 1 or 0 for ReLU |
-| $\delta_k$ | the error at the pre-activation of node $k$ | §6.4 defines it |
-| $\alpha$ | the learning rate | 0.5 in §7 |
-
-The operators are fewer, and three of them do all the work:
-
-| Operator | Name | What it does here |
-|---|---|---|
-| $\dfrac{\partial E}{\partial w}$ | partial derivative | How much $E$ changes when you change $w$ and nothing else. The slope of §2 |
-| $\partial$ | "partial" | It is a $d$ for a function of many variables. A network has thousands, so every derivative here is partial |
-| $\sum_k$ | sum over $k$ | Add the expression for every value of $k$. In §6.2 it adds up the output nodes |
-| $W^\top$ | transpose | Exchange the rows and the columns of $W$. §6.3 shows why the backward pass needs it |
-| $a^\top$ | transpose of a column | It makes a column into a row, so $\delta\, a^\top$ gives a matrix |
-| $\odot$ | elementwise product | Multiply matching entries. It is **not** a matrix product. In numpy it is `*` |
-| $\cdot$ | times | Plain multiplication of two numbers, or a dot product of two vectors |
-
-Two of those need care. $W^\top \delta$ is a **matrix** product, so it mixes values together. $\odot\, g'(z)$ is an **elementwise** product, so each node keeps its own value. The backward pass does one of each, in that order, and §6.4 explains why.
+This note introduces every other symbol where it first appears.
 
 ### 6.1 The easy case: a weight in the last layer
 
-Take the weight $w^2_{kj}$. It changes one value only: the pre-activation $z^2_k$ of its own output node. Therefore the chain rule has two links:
+Take the weight $w^2_{kj}$. It changes one value only: the pre-activation $z^2_k$ of its own output node. Step 1 gives those two names. The pre-activation is the sum before the squash, and the activation after it is $a$.
+
+Write the error of this example as $E$. You want to know how much $E$ changes when you change this one weight. The notation for that is $\partial E / \partial w$. The $\partial$ sign is a $d$ for a function of many variables. A network has thousands of them, so every derivative here is a partial one. Read $\partial E / \partial w$ as the slope that step 2 measured.
+
+The chain rule says that you can walk the path in two links and multiply them. The $\cdot$ sign below is plain multiplication:
 
 $$\frac{\partial E}{\partial w^2_{kj}} = \frac{\partial E}{\partial z^2_k} \cdot \frac{\partial z^2_k}{\partial w^2_{kj}}$$
 
-You know both parts. Step 5 measured the first part: it is $p_k - y_k$. The second part is $a^1_j$, because $z^2_k = \sum_j w^2_{kj} a^1_j$ and all the other terms are constants. So:
+You know both parts. Step 5 measured the first part: it is $p_k - y_k$. Here $p_k$ is the probability that the softmax gives to class $k$, and $y_k$ is the target for that class. The target is 1 for the true class and 0 for the others. The second part is $a^1_j$. To see why, write out what $z^2_k$ is. The $\sum$ sign means "add the expression that follows, one time for each value of the letter below the sign". So $z^2_k = \sum_j w^2_{kj} a^1_j$ adds one term for each hidden unit $j$. Only one of those terms holds $w^2_{kj}$, and the others are constants. So:
 
 $$\frac{\partial E}{\partial w^2_{kj}} = (p_k - y_k)\, a^1_j$$
 
@@ -317,11 +291,15 @@ Now take the weight $w^1_{ji}$. Here the easy case fails, and the reason is the 
 
 That weight changes $z^1_j$, and $z^1_j$ changes $a^1_j$. But hidden unit $j$ sends $a^1_j$ to **every** output node. Therefore one change to $w^1_{ji}$ changes every output, and it causes a share of the error at each one.
 
-**So the chain rule needs a sum.** You must add up what the weight caused along every path out of hidden unit $j$:
+**So the chain rule needs a sum.** You must add up what the weight caused along every path out of hidden unit $j$.
+
+The sum sign appears again, but it now counts something different. In §6.1 the letter below it was $j$, and it ran over the hidden units. Here it is $k$, and it runs over the output nodes. So the sum has one term for each path out of unit $j$:
 
 $$\frac{\partial E}{\partial w^1_{ji}} = \underbrace{\left(\sum_k \frac{\partial E}{\partial z^2_k}\, w^2_{kj}\right)}_{\text{add up every path out of unit } j} \cdot\, \underbrace{g'(z^1_j)}_{\text{response}} \cdot\, \underbrace{x_i}_{\text{signal}}$$
 
-Read the sum. For each output node $k$, take the error that arrives there. Multiply it by the weight on the path from unit $j$ to node $k$. A thick path carries more of the blame. Then add the paths together.
+The other two factors are the response and the signal of step 2. The function $g$ is the activation function, which is ReLU here. So $g'$ is its derivative, and it is 1 or 0 for ReLU. The signal is the input $x_i$ on this link.
+
+Read the sum itself. For each output node $k$, take the error that arrives there. Multiply it by the weight on the path from unit $j$ to node $k$. A thick path carries more of the blame. Then add the paths together.
 
 Count the paths by hand and compare the total with one matrix operation:
 
@@ -370,9 +348,13 @@ The sum above appears again at every layer. Give it a name, and the algorithm be
 
 $$\delta_k = \frac{\partial E}{\partial z_k}$$
 
-Then three lines hold at any depth:
+Then three lines hold at any depth. They use two **different** kinds of product, and the difference matters. $W^\top \delta$ is a **matrix** product, so it mixes values together. The $\odot$ sign is an **elementwise** product: multiply the matching entries, and each node keeps its own value. In numpy that sign is `*` and not `@`.
 
 $$\delta_{\text{output}} = p - y, \qquad \delta_{\text{layer}} = \big(W^\top \delta_{\text{next}}\big) \odot g'(z), \qquad \frac{\partial E}{\partial W} = \delta\, a_{\text{prev}}^\top$$
+
+The middle line does one of each, in that order. First the matrix product adds up the paths, which is the sum of §6.3. Then the elementwise product asks each node how much it can react.
+
+In the last line, $a^\top$ turns a column of activations into a row. Therefore $\delta\, a^\top$ gives a matrix with the shape of $W$, which is what you need.
 
 ![Backpropagation has two passes. The forward pass keeps each activation. The backward pass moves delta through W transposed. Each weight gradient is at the junction of the two passes.](assets/nn-backprop-delta-flow.svg)
 
