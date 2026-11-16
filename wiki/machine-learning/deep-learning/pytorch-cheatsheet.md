@@ -1,89 +1,85 @@
 ---
 name: pytorch-cheatsheet
-description: Task-indexed PyTorch API reference — make a tensor, pick a dtype, from_numpy vs torch.tensor, view vs reshape, requires_grad and backward, why .grad is None after zero_grad, model.train vs model.eval, no_grad for evaluation, DataLoader and TensorDataset, nn.Linear/Conv2d/MaxPool2d/LSTM argument order, conv output size with floor and padding='same', batch_first hidden-state layout, state_dict save and reload, and the translation table from pre-0.4 course code (Variable, volatile, loss.data[0], .cuda()) to modern PyTorch 2.x.
+description: "Task-indexed PyTorch 2.x API reference, in ASD-STE100 Simplified Technical English. Look up the call you need by the task that stopped you. Tensors: which creation call copies and which shares memory, view against reshape, dtype pairings, the Long-against-Float label error. Autograd: requires_grad, backward, why .grad is None after zero_grad, no_grad and detach. Models: the argument order of nn.Linear, nn.Conv2d, nn.MaxPool2d, nn.LSTM, nn.MultiheadAttention and nn.TransformerEncoderLayer. Losses: which one wants logits and which wants probabilities. Also the canonical five-line training loop, the conv output-size formula with its floor, recurrent layer shapes and the batch_first asymmetry, and state_dict save and reload. The transformer section gives four traps that cost the most time. batch_first defaults to False and gives a wrong answer with no error. attn_mask is (L, L) and key_padding_mask is (N, L), and True means hide in both. F.scaled_dot_product_attention uses the opposite mask sign, takes (N, heads, L, head width), and has an is_causal flag. norm_first=True gives pre-LN, and the feed-forward block holds more weights than attention. PyTorch 2.x calls only, with no legacy spellings."
 created: 2026-11-13
-updated: 2026-11-13
-tags: [pytorch, deep-learning, api-reference, cheatsheet, autograd, training-loop, tensors]
+updated: 2026-11-16
+tags: [pytorch, deep-learning, api-reference, cheatsheet, autograd, training-loop, tensors, transformers, attention, simplified-technical-english]
 ---
 
 # PyTorch Cheatsheet
 
-> **How to read this note.** Unlike its neighbours this is a *reference*, not a walkthrough: it is indexed by the task you are stuck on, not by the order a course teaches. It distils **"Practical Deep Learning with PyTorch"** (Ritchie Ng / Deep Learning Wizard, 58 lectures, 11 sections), and because the course spends six of those sections building the *same* training loop around a bigger model each time, the material collapses onto far fewer headings than the curriculum has. Where each section went:
+> **How to read this note.** This note is a **reference** and not a tutorial. Its neighbours teach in order. This note puts the task that stopped you in the heading. Go to the section with your task in its heading, then read the table.
 >
-> | Course section | Lands in |
-> |----------------|----------|
-> | 1 Introduction, 2 Software Requirements, 11 What's Next? | §Setup, Devices, Reproducibility — plus the course's `conda install pytorch` line, now outdated |
-> | 3 PyTorch Fundamentals: Matrices (7 lectures) | §Tensors: Creation, Dtypes, Shapes |
-> | 4 Variables and Gradients (3) | §Autograd — including the course's wrong claim that `requires_grad` defaults to `True` |
-> | 5 Linear Regression (4), 6 Logistic Regression (6), 7 Feedforward NN (6) | §Building Models, §Losses and Optimizers, §The Canonical Training Loop. These three sections are one loop with `nn.Linear` → `nn.Linear`+`CrossEntropyLoss` → a hidden layer added; the *models* belong to [regression-models](../classical-ml/regression-models.md) and [classification-models](../classical-ml/classification-models.md), the loop is here |
-> | 8 CNN with PyTorch (14) | §Conv and Pool Output Shapes — the course's `28→14→7` chain is worked through for calibration |
-> | 9 RNN (5), 10 LSTM (6) | §Recurrent Layer Shapes — `batch_first`, hidden-state layout, and why the course's manual zero-init of `h0`/`c0` is unnecessary |
-> | The "From CPU to GPU in PyTorch" lecture repeated in sections 8, 9 and 10 | §Setup, Devices, Reproducibility (once — `.to(device)`, not the course's per-tensor `.cuda()` branching) |
+> Every API fact here applies to **PyTorch 2.x**. This note gives no legacy spellings and no translation tables. If you must port old code, read the current call in the table and write that instead.
 >
-> **Know this before you start.** The course is **PyTorch 0.1.12-era** and nearly every snippet in it needs translating — `Variable`, `volatile=True`, `loss.data[0]`, `.cuda()` branches. §Course API → Modern Equivalent is that translation table, and §What the Course Predates lists the features (`torch.compile`, AMP, MPS) that did not exist when it was recorded. The API facts here were checked against the PyTorch 2.14 docs, not taken from the lectures.
+> This note follows the [ASD-STE100](https://www.asd-ste100.org/) Simplified Technical English rules. The sentences are short. The voice is active. There is one exception. The heading "Don't reach for this when" keeps its contraction, because all 72 notes in this wiki use that exact heading.
+>
+> This note explains no theory. For the mechanisms, read [neural-networks-from-scratch](neural-networks-from-scratch.md), [convolutional-neural-networks](convolutional-neural-networks.md), [recurrent-neural-networks](recurrent-neural-networks.md) and [transformer-forward-pass](../math-for-ml/transformer-forward-pass.md).
 
 ## Why This Exists
 
-**Problem.** Deep-learning theory and PyTorch spelling are two different skills. You know what a convolution does and still lose twenty minutes to `view` vs `reshape`, to a `.grad` that is `None` instead of zero, or to an `h0` whose batch dimension sits in a different place than the input's. Worse: most PyTorch material you learned from — including "Practical Deep Learning with PyTorch" (Ritchie Ng), which this note distils — was recorded against PyTorch 0.1.x/0.3, where half the idioms are now dead API.
+**Problem.** Deep-learning theory and PyTorch spelling are two different skills. You know what a convolution does, and you still lose twenty minutes to `view` against `reshape`. You know what attention does, and `nn.MultiheadAttention` still gives you the wrong answer with no error message.
 
-**Key insight.** Modern PyTorch is a small surface: tensors with an optional `requires_grad` flag, modules that are callables with parameters, and one five-line loop (`zero_grad → forward → loss → backward → step`). Everything else is argument order, which is what a cheatsheet is for.
+**Key insight.** Modern PyTorch has a small surface. There are tensors with an optional `requires_grad` flag. There are modules, which are callables that hold parameters. There is one five-line loop: `zero_grad`, forward, loss, `backward`, `step`.
+
+Everything else is argument order and tensor shape. That is what a cheatsheet is for.
 
 **Reach for this when:**
-- You are writing training code right now and want the argument order of `nn.Conv2d` / `nn.LSTM` / `CrossEntropyLoss` without opening ten doc tabs.
-- You are porting code from an older tutorial, book or course and hit `Variable`, `volatile=True`, `loss.data[0]` or `.cuda()` branching.
-- A shape error: conv output size, flatten before a linear layer, hidden-state layout, logits vs probabilities.
-- You need to know which call makes gradients appear, accumulate, or vanish.
+- You write training code now, and you want the argument order of a layer or a loss.
+- You have a shape error: conv output size, a flatten before a linear layer, a hidden state layout, or an attention mask.
+- You must know which call makes gradients appear, add up, or stop.
+- Your attention layer runs without an error and gives nonsense.
 
 **Don't reach for this when:**
-- You want to understand *why* backprop, convolution or an LSTM gate works — read [artificial-neural-networks](artificial-neural-networks.md), [convolutional-neural-networks](convolutional-neural-networks.md), [recurrent-neural-networks](recurrent-neural-networks.md) instead. This note deliberately explains no theory.
-- You want linear/logistic regression *as models* — [regression-models](../classical-ml/regression-models.md) and [classification-models](../classical-ml/classification-models.md) own those.
-- You want distributed training, quantisation, custom autograd functions, or torchvision/torchtext pipelines. Not covered.
+- You want to know *why* backpropagation, convolution or attention works. Read the notes above.
+- You want linear or logistic regression *as models*. Read [regression-models](../classical-ml/regression-models.md) and [classification-models](../classical-ml/classification-models.md).
+- You want distributed training, quantisation, custom autograd functions or torchvision pipelines. This note does not cover them.
 
 ## Diagrams
 
 ![Anatomy of one PyTorch training step: which call creates, accumulates, clears and consumes gradients](assets/pytorch-training-step.svg)
-<!-- DIAGRAM SPEC: name=pytorch-training-step | one horizontal strip, 5 numbered boxes left to right: (1) "opt.zero_grad()" (2) "out = model(xb)" (3) "loss = lossf(out, yb)" (4) "loss.backward()" (5) "opt.step()". Below the strip a thin second lane labelled "p.grad for each parameter p" showing its state under each box: under (1) "None", under (2) "None", under (3) "None", under (4) "filled (ADDS to whatever was there)", under (5) "unchanged - step only reads it". Above boxes (2) and (3) a bracket labelled "graph is built here; torch.no_grad() suppresses it". Above box (4) a small note "graph is freed after backward (retain_graph=True to keep)". Right of box (5) a dashed box labelled "model.eval() + torch.no_grad() for evaluation: boxes 1, 4, 5 are skipped". labels ASCII only, use "->" for arrows. The one idea it must land: gradients are ADDITIVE state living on the parameters, so zero_grad() is not bookkeeping politeness - skip it and step 4 sums this batch's gradient onto the last batch's. -->
 
 ## Setup, Devices, Reproducibility
 
-Install with `pip install torch torchvision` (the course's `conda install pytorch torchvision -c soumith` is dead — the channel no longer exists and 0.1.12 is unobtainable).
+Install with `pip install torch torchvision`.
 
-| Task | Modern call |
+| Task | Call |
 |---|---|
-| Pick a device once, portably | `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')` — add an `mps` branch on Apple silicon |
-| Move a tensor / model | `x = x.to(device)` (returns a new tensor), `model.to(device)` (in place for modules) |
-| Check availability | `torch.cuda.is_available()`, `torch.backends.mps.is_available()` |
-| Seed everything | `torch.manual_seed(0)` (also seeds CUDA), `np.random.seed(0)`, `random.seed(0)` |
-| Seed a single sampler | `torch.Generator().manual_seed(0)`, passed to `randperm` / `DataLoader(generator=...)` |
-| Force deterministic kernels | `torch.use_deterministic_algorithms(True)` plus `CUBLAS_WORKSPACE_CONFIG=:16:8` (cuDNN RNNs are non-deterministic otherwise) |
-| One-line speedup | `model = torch.compile(model)` |
-| Mixed precision | `with torch.autocast(device_type='cuda', dtype=torch.bfloat16):` around the forward, plus `torch.amp.GradScaler` for fp16 |
+| Pick a device one time | `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')`. Add an `mps` branch on Apple silicon |
+| Move a tensor | `x = x.to(device)`. This returns a new tensor |
+| Move a model | `model.to(device)`. This changes the module in place |
+| Check what the machine has | `torch.cuda.is_available()` and `torch.backends.mps.is_available()` |
+| Seed everything | `torch.manual_seed(0)`, which also seeds CUDA. Add `np.random.seed(0)` and `random.seed(0)` |
+| Seed one sampler | `torch.Generator().manual_seed(0)`, then give it to `randperm` or to `DataLoader(generator=...)` |
+| Force deterministic kernels | `torch.use_deterministic_algorithms(True)`, plus the environment variable `CUBLAS_WORKSPACE_CONFIG=:16:8` |
+| Make it faster in one line | `model = torch.compile(model)` |
+| Use mixed precision | `with torch.autocast(device_type='cuda', dtype=torch.bfloat16):` around the forward pass. Add `torch.amp.GradScaler` for fp16 |
 
-Threads and determinism matter more than they look: without a seed, two runs of the same model differ by enough to invert a model comparison (see Common Pitfalls).
+Seeds matter more than they look. Two runs of the same model can differ by enough to invert a comparison between two models.
 
 ## Tensors: Creation, Dtypes, Shapes
 
-The three creation routes that behave differently, and the two reshapes that are not the same function:
+Three creation calls behave differently. Two reshape calls are not the same function.
 
 | Want | Call | Note |
 |---|---|---|
-| Tensor from Python data | `torch.tensor([[1,2],[3,4]])` | dtype **inferred** (ints → `int64`); pass `dtype=torch.float32` to force |
-| Tensor from a numpy array, no copy | `torch.from_numpy(arr)` | **shares storage** — editing the array edits the tensor |
-| Tensor from a numpy array, copy | `torch.tensor(arr)` | independent memory |
-| Avoid a copy when possible | `torch.as_tensor(x)` | keeps autograd history, no copy when dtype/device already match |
-| Copy an existing tensor | `t.detach().clone()` | not `torch.tensor(t)`, which warns |
-| Back to numpy | `t.numpy()` | also shares storage; needs CPU and `detach()` first if it requires grad |
-| Zeros / ones / range / random | `torch.zeros(2,3)`, `torch.ones_like(t)`, `torch.arange(6.)`, `torch.randn(2,3)` | all take `dtype=`, `device=`, `requires_grad=` |
-| Shape | `t.shape` or `t.size()`; `t.size(0)` for one axis | `t.numel()` for element count |
-| Reshape (contiguous only, no copy) | `t.view(2, 3)` | errors on a non-contiguous tensor, e.g. after `.transpose()` |
-| Reshape (always works) | `t.reshape(3, 2)` | copies if it must; the safe default |
-| Flatten all but batch | `nn.Flatten()` as a layer, or `t.flatten(1)` | replaces the course's `out.view(out.size(0), -1)` |
-| In-place anything | trailing underscore: `a.add_(b)`, `t.clamp_(0)` | mutates `a`; breaks autograd if `a` is needed for backward |
-| Read one number out | `t.item()` | only on a 1-element tensor |
+| A tensor from Python data | `torch.tensor([[1,2],[3,4]])` | It **infers** the dtype, so integers give `int64`. Pass `dtype=torch.float32` to force one |
+| A tensor from a numpy array, with no copy | `torch.from_numpy(arr)` | It **shares the memory**. An edit to the array changes the tensor |
+| A tensor from a numpy array, with a copy | `torch.tensor(arr)` | The memory is separate |
+| No copy when possible | `torch.as_tensor(x)` | It keeps the autograd history. It makes no copy when the dtype and the device already match |
+| A copy of a tensor | `t.detach().clone()` | Do not use `torch.tensor(t)`, which gives a warning |
+| Back to numpy | `t.numpy()` | It also shares the memory. The tensor must be on the CPU, and you must call `detach()` first if it needs a gradient |
+| Zeros, ones, a range, random values | `torch.zeros(2,3)`, `torch.ones_like(t)`, `torch.arange(6.)`, `torch.randn(2,3)` | All of them take `dtype=`, `device=` and `requires_grad=` |
+| The shape | `t.shape`, or `t.size()`, or `t.size(0)` for one axis | `t.numel()` gives the number of elements |
+| Reshape, with no copy | `t.view(2, 3)` | It gives an error on a tensor that is not contiguous, for example after `.transpose()` |
+| Reshape, always | `t.reshape(3, 2)` | It copies when it must. Use this one by default |
+| Flatten all axes except the batch | `nn.Flatten()` as a layer, or `t.flatten(1)` | |
+| Any operation, in place | Add an underscore: `a.add_(b)`, `t.clamp_(0)` | It changes `a`. It breaks autograd if the backward pass needs `a` |
+| One number out of a tensor | `t.item()` | The tensor must hold exactly one element |
 
-Dtype pairings worth memorising: images and weights are `float32`; class labels for `CrossEntropyLoss` must be `int64` (`torch.long`); masks are `bool`. A `RuntimeError: expected scalar type Long but found Float` is almost always a label-dtype problem.
+Remember three dtype pairings. Images and weights are `float32`. Class labels for `CrossEntropyLoss` must be `int64`, which is `torch.long`. Masks are `bool`.
 
-This snippet answers: which creation call copies, which shares, and does `view` differ from `reshape` in practice?
+A `RuntimeError: expected scalar type Long but found Float` is almost always a label dtype problem.
 
 ```python
 import numpy as np, torch
@@ -113,24 +109,26 @@ print("portable device placement:", torch.zeros(2).to(dev).device)   # .to(dev) 
 # portable device placement: mps:0
 ```
 
-The interesting line is the shared-memory one: after `n[0] = 99` the `from_numpy` tensor reports 99 while the `torch.tensor` copy still reports 1.0 — same source array, two different answers, and a silent bug if you assumed a copy. `nn.Flatten()` turns `(8, 3, 4, 4)` into `(8, 48)`: batch dim preserved, everything else collapsed. The device line prints whatever this machine has; on this Mac it resolves to `mps:0`, which is exactly the point of writing `.to(device)` instead of `.cuda()` — the same file runs on CUDA, MPS and CPU untouched.
+Read the shared-memory line. After `n[0] = 99` the `from_numpy` tensor gives 99, and the `torch.tensor` copy still gives 1.0. The same source array gives two different answers.
+
+`nn.Flatten()` turns `(8, 3, 4, 4)` into `(8, 48)`. It keeps the batch axis and collapses the rest. The device line gives whatever this machine has, which is the reason to write `.to(device)` instead of `.cuda()`.
 
 ## Autograd
 
 | Task | Call |
 |---|---|
-| Make a tensor trainable | `torch.tensor([2.0], requires_grad=True)` — **the default is `False`** |
-| Flip it later | `t.requires_grad_(True)` (leaf tensors only) |
-| Compute gradients | `loss.backward()` on a scalar; `y.backward(gradient=v)` for a non-scalar |
-| Read a gradient | `p.grad` — same shape as `p`, or `None` |
-| Clear gradients | `opt.zero_grad()` or `model.zero_grad()` |
-| Turn off graph building | `with torch.no_grad():` block, or `@torch.no_grad()` decorator |
+| Make a tensor trainable | `torch.tensor([2.0], requires_grad=True)`. **The default is `False`** |
+| Change the flag later | `t.requires_grad_(True)`, on leaf tensors only |
+| Calculate the gradients | `loss.backward()` on a scalar. Use `y.backward(gradient=v)` when `y` is not a scalar |
+| Read a gradient | `p.grad`, which has the shape of `p`, or is `None` |
+| Clear the gradients | `opt.zero_grad()` or `model.zero_grad()` |
+| Stop the graph | A `with torch.no_grad():` block, or the `@torch.no_grad()` decorator |
 | Cut one tensor out of the graph | `t.detach()` |
-| Keep the graph for a second backward | `loss.backward(retain_graph=True)` |
-| Gradient of an output w.r.t. arbitrary inputs | `torch.autograd.grad(out, inputs)` |
-| Clip exploding gradients | `torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)` after `backward()`, before `step()` |
+| Keep the graph for a second backward pass | `loss.backward(retain_graph=True)` |
+| A gradient of an output against any input | `torch.autograd.grad(out, inputs)` |
+| Limit a large gradient | `torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)`, after `backward()` and before `step()` |
 
-Three facts that cause most autograd confusion, all demonstrated below: `requires_grad` defaults to `False`; `.grad` **accumulates** rather than overwrites; and since PyTorch 2.x `zero_grad()` defaults to `set_to_none=True`, so after clearing, `.grad` is `None`, not a zero tensor.
+Three facts cause most autograd confusion. First, `requires_grad` defaults to `False`. Second, `.grad` **adds** to itself and does not overwrite. Third, `zero_grad()` defaults to `set_to_none=True`, so `.grad` becomes `None` and not a tensor of zeros.
 
 ```python
 import torch
@@ -143,10 +141,10 @@ print("gradients ACCUMULATE, so now 24:", w.grad.item(), "-> call opt.zero_grad(
 opt = torch.optim.SGD([w], lr=0.1)
 opt.zero_grad()                                          # set_to_none=True is the default in PyTorch 2.x
 print("after zero_grad, .grad is", w.grad, "(None, not a zero tensor)")
-with torch.no_grad():                                    # replaces the old volatile=True
+with torch.no_grad():                                    # no graph is built inside this block
     print("inside no_grad, results need no graph:", (w * 2).requires_grad)
 print("detach() cuts one tensor out of the graph:", (w * 2).detach().requires_grad)
-print("read a scalar with .item():", (w * 2).item(), "- the old loss.data[0] no longer works")
+print("read one number with .item():", (w * 2).item(), "- use this for a log message")
 # Expected output:
 # requires_grad defaults to False: False
 # dy/dw at w=2 (expect 12): 12.0
@@ -154,91 +152,95 @@ print("read a scalar with .item():", (w * 2).item(), "- the old loss.data[0] no 
 # after zero_grad, .grad is None (None, not a zero tensor)
 # inside no_grad, results need no graph: False
 # detach() cuts one tensor out of the graph: False
-# read a scalar with .item(): 4.0 - the old loss.data[0] no longer works
+# read one number with .item(): 4.0 - use this for a log message
 ```
 
-For `y = 3w²` at `w = 2` the gradient is `6w = 12`, which is what the first `backward()` writes. Running the *same* forward and backward again prints **24**, not 12 — the second gradient was added to the first. That accumulation is the whole reason `zero_grad()` exists, and it is also the feature that lets you emulate a large batch by summing gradients over several small ones. After `opt.zero_grad()` the printout is literally `None`: any code that does `p.grad.norm()` or `p.grad.zero_()` right after a `zero_grad()` call will raise `AttributeError` on `None` unless you pass `set_to_none=False`. The last three lines show the three escape hatches from the graph — a `no_grad()` block (results carry `requires_grad=False`), `detach()` on a single tensor, and `.item()` to pull a Python float out for logging.
+For `y = 3w²` at `w = 2` the gradient is `6w`, which is 12. The second `backward()` on the same computation gives **24** and not 12, because it added the new gradient to the old one.
 
-The course's claim that `requires_grad` defaults to `True` is wrong, and was wrong when it was recorded; the snippet's second line is the disproof.
+That behaviour is the reason that `zero_grad()` exists. It is also the feature that lets you imitate a large batch with several small ones.
+
+After `opt.zero_grad()` the printout is `None`. Any code that calls `p.grad.norm()` straight after `zero_grad()` raises `AttributeError`. Pass `set_to_none=False` if you need zeros.
+
+The last three lines give the three ways out of the graph. A `no_grad()` block gives results with `requires_grad=False`. `detach()` cuts one tensor. `.item()` gives you a Python float for a log message.
 
 ## Building Models
 
-A module is a class with `__init__` (declare layers) and `forward` (use them); calling `model(x)` dispatches to `forward` plus hooks — never call `model.forward(x)` yourself.
+A module is a class with two methods. `__init__` declares the layers, and `forward` uses them. Call `model(x)` and never `model.forward(x)`, because the call form also runs the hooks.
 
 **Layers, by job:**
 
-| Job | Layer | Argument order / note |
+| Job | Layer | Argument order and notes |
 |---|---|---|
-| Fully connected | `nn.Linear(in_features, out_features, bias=True)` | input `(N, ..., in_features)` |
-| 2-D convolution | `nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True)` | `out_channels` = number of kernels; `padding='same'` legal at stride 1 |
-| 1-D convolution | `nn.Conv1d(...)` same signature | input `(N, C, L)` |
-| Transposed conv | `nn.ConvTranspose2d(...)` | upsampling |
-| Max / average pooling | `nn.MaxPool2d(kernel_size, stride=None, padding=0)`, `nn.AvgPool2d(...)` | **`stride` defaults to `kernel_size`** |
-| Pool to a fixed size | `nn.AdaptiveAvgPool2d((1,1))` | the modern "global average pool" head |
+| Fully connected | `nn.Linear(in_features, out_features, bias=True)` | Input is `(N, ..., in_features)` |
+| 2-D convolution | `nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True)` | `out_channels` is the number of kernels. `padding='same'` is legal at stride 1 |
+| 1-D convolution | `nn.Conv1d(...)`, with the same signature | Input is `(N, C, L)` |
+| Transposed convolution | `nn.ConvTranspose2d(...)` | It makes the input larger |
+| Max or average pooling | `nn.MaxPool2d(kernel_size, stride=None, padding=0)` and `nn.AvgPool2d(...)` | **`stride` defaults to `kernel_size`** |
+| Pool to a chosen size | `nn.AdaptiveAvgPool2d((1,1))` | The usual global average pooling head |
 | Flatten before a linear head | `nn.Flatten()` | `start_dim=1` by default |
-| Normalisation | `nn.BatchNorm2d(num_features)`, `nn.BatchNorm1d`, `nn.LayerNorm(shape)` | behaviour differs between `train()` and `eval()` |
-| Regularisation | `nn.Dropout(p=0.5)`, `nn.Dropout2d` | **off** in `eval()` |
-| Activations (as layers) | `nn.ReLU()`, `nn.LeakyReLU()`, `nn.GELU()`, `nn.Tanh()`, `nn.Sigmoid()`, `nn.Softmax(dim=1)` | functional twins in `torch.nn.functional` |
-| Recurrent | `nn.RNN(input_size, hidden_size, num_layers, nonlinearity='tanh', batch_first=False, dropout=0, bidirectional=False)` | `'relu'` is the other `nonlinearity` |
-| LSTM / GRU | `nn.LSTM(input_size, hidden_size, num_layers, batch_first=False, bidirectional=False, proj_size=0)`, `nn.GRU(...)` | LSTM takes no activation argument |
-| Lookup table | `nn.Embedding(num_embeddings, embedding_dim)` | input is `int64` indices |
-| Straight-line stack | `nn.Sequential(nn.Linear(64,100), nn.ReLU(), nn.Linear(100,10))` | no custom class needed when `forward` is just a chain |
-| List of layers | `nn.ModuleList([...])`, `nn.ModuleDict({...})` | a plain Python list hides parameters from the optimizer |
+| Normalisation | `nn.BatchNorm2d(num_features)`, `nn.BatchNorm1d`, `nn.LayerNorm(shape)` | The behaviour differs between `train()` and `eval()` |
+| Regularisation | `nn.Dropout(p=0.5)`, `nn.Dropout2d` | It is **off** in `eval()` |
+| Activation, as a layer | `nn.ReLU()`, `nn.GELU()`, `nn.SiLU()`, `nn.LeakyReLU()`, `nn.Tanh()`, `nn.Sigmoid()` | Each one has a twin in `torch.nn.functional` |
+| Recurrent | `nn.RNN(input_size, hidden_size, num_layers, nonlinearity='tanh', batch_first=False, dropout=0, bidirectional=False)` | The other `nonlinearity` is `'relu'` |
+| LSTM or GRU | `nn.LSTM(input_size, hidden_size, num_layers, batch_first=False, bidirectional=False, proj_size=0)` and `nn.GRU(...)` | LSTM takes no activation argument |
+| Attention | `nn.MultiheadAttention(embed_dim, num_heads, batch_first=False)` | See the transformer section. Always pass `batch_first=True` |
+| Transformer block | `nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=2048, batch_first=False, norm_first=False)` | See the transformer section |
+| Lookup table | `nn.Embedding(num_embeddings, embedding_dim)` | The input is `int64` indices |
+| A straight chain | `nn.Sequential(nn.Linear(64,100), nn.ReLU(), nn.Linear(100,10))` | You need no class when the forward pass is a chain |
+| A list of layers | `nn.ModuleList([...])` and `nn.ModuleDict({...})` | A plain Python list hides the parameters from the optimizer |
 
-**Module introspection:**
+**How to look inside a module:**
 
 | Task | Call |
 |---|---|
 | Print the architecture | `print(model)` |
-| Count parameter tensors | `len(list(model.parameters()))` |
-| Count scalars | `sum(p.numel() for p in model.parameters())` |
-| Named parameters | `for name, p in model.named_parameters():` |
-| Train vs eval mode | `model.train()` / `model.eval()` — toggles dropout and batch-norm statistics only |
-| Freeze a submodule | `for p in sub.parameters(): p.requires_grad = False` |
+| Count the parameter tensors | `len(list(model.parameters()))` |
+| Count the single numbers | `sum(p.numel() for p in model.parameters())` |
+| Walk the named parameters | `for name, p in model.named_parameters():` |
+| Change the mode | `model.train()` and `model.eval()`. They change dropout and batch-norm statistics only |
+| Freeze a part of the model | `for p in sub.parameters(): p.requires_grad = False` |
 
 ## Losses and Optimizers
 
-The single most common beginner error is feeding a loss the wrong kind of number. What each one expects:
+The most common error is a loss that receives the wrong kind of number.
 
-| Loss | Model output it wants | Target it wants |
+| Loss | The model output it wants | The target it wants |
 |---|---|---|
-| `nn.CrossEntropyLoss()` | raw **logits** `(N, C)` — it applies log-softmax internally | class indices `(N,)` `int64`, or class probabilities |
-| `nn.NLLLoss()` | **log**-probabilities (i.e. after `log_softmax`) | class indices |
-| `nn.BCEWithLogitsLoss()` | raw logits, any shape | floats in [0,1], same shape |
-| `nn.BCELoss()` | probabilities (after sigmoid) | floats in [0,1] |
-| `nn.MSELoss()` | predictions | same shape as predictions |
-| `nn.L1Loss()`, `nn.SmoothL1Loss()` | predictions | same shape |
+| `nn.CrossEntropyLoss()` | Raw **logits**, shape `(N, C)`. It applies log-softmax inside | Class indices, shape `(N,)`, dtype `int64`. It also accepts class probabilities |
+| `nn.NLLLoss()` | **Log** probabilities, so apply `log_softmax` first | Class indices |
+| `nn.BCEWithLogitsLoss()` | Raw logits, any shape | Floats from 0 to 1, with the same shape |
+| `nn.BCELoss()` | Probabilities, so apply sigmoid first | Floats from 0 to 1 |
+| `nn.MSELoss()` | Predictions | The same shape as the predictions |
+| `nn.L1Loss()` and `nn.SmoothL1Loss()` | Predictions | The same shape |
 
-So: never put a `Softmax` or `Sigmoid` layer in front of `CrossEntropyLoss` / `BCEWithLogitsLoss`. Do apply `softmax(dim=1)` yourself if you want probabilities to display.
+Never put a `Softmax` or a `Sigmoid` layer before `CrossEntropyLoss` or `BCEWithLogitsLoss`. Apply `softmax(dim=1)` yourself only when you must show probabilities to a user.
 
-| Optimizer / schedule | Call |
+| Optimizer or schedule | Call |
 |---|---|
 | Plain SGD | `torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0)` |
-| Default modern choice | `torch.optim.Adam(model.parameters(), lr=1e-3)` |
-| Adam with correct weight decay | `torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)` |
-| Per-group learning rates | `optim.SGD([{'params': head.parameters(), 'lr': 1e-2}, {'params': body.parameters(), 'lr': 1e-4}])` |
-| Step / cosine / plateau / one-cycle schedules | `optim.lr_scheduler.StepLR`, `CosineAnnealingLR`, `ReduceLROnPlateau`, `OneCycleLR` — call `sched.step()` once per epoch (per batch for `OneCycleLR`) |
-| Current learning rate | `opt.param_groups[0]['lr']` |
-
-The course uses SGD at `lr=0.01` and nothing else — no momentum, no scheduler, no other optimizer. That is a teaching simplification, not a recommendation.
+| The default modern choice | `torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)` |
+| Adam with the original weight decay | `torch.optim.Adam(model.parameters(), lr=1e-3)` |
+| A rate for each group | `optim.SGD([{'params': head.parameters(), 'lr': 1e-2}, {'params': body.parameters(), 'lr': 1e-4}])` |
+| Schedules | `optim.lr_scheduler.StepLR`, `CosineAnnealingLR`, `ReduceLROnPlateau`, `OneCycleLR`. Call `sched.step()` one time for each epoch, or for each batch with `OneCycleLR` |
+| The rate now | `opt.param_groups[0]['lr']` |
 
 ## Data Pipeline
 
 | Task | Call |
 |---|---|
-| Wrap tensors already in memory | `TensorDataset(X, y)` from `torch.utils.data` |
-| Custom dataset | subclass `Dataset`, implement `__len__` and `__getitem__` |
-| Batch, shuffle, parallel-load | `DataLoader(ds, batch_size=64, shuffle=True, num_workers=4, pin_memory=True, drop_last=False)` |
-| Train/val split | `torch.utils.data.random_split(ds, [0.8, 0.2])` |
-| Built-in vision datasets | `torchvision.datasets.MNIST(root='./data', train=True, transform=..., download=True)` |
-| Dataset tensors / labels | `ds.data`, `ds.targets` (the old `train_data` / `train_labels` names were removed) |
-| Standard image transform | `transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])` |
+| Wrap tensors that are already in memory | `TensorDataset(X, y)` from `torch.utils.data` |
+| Write your own dataset | Subclass `Dataset`, then write `__len__` and `__getitem__` |
+| Batch, shuffle and load in parallel | `DataLoader(ds, batch_size=64, shuffle=True, num_workers=4, pin_memory=True, drop_last=False)` |
+| Split into train and validation | `torch.utils.data.random_split(ds, [0.8, 0.2])` |
+| Use a supplied vision dataset | `torchvision.datasets.MNIST(root='./data', train=True, transform=..., download=True)` |
+| Reach the tensors and the labels | `ds.data` and `ds.targets` |
+| The usual image transform | `transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])` |
 
-`shuffle=True` on train, `False` on val/test. Epoch arithmetic, if you prefer to think in iterations (the course's framing): `num_epochs = n_iters // (len(train_dataset) // batch_size)` — with 60 000 samples and `batch_size=100`, 3000 iterations is 5 epochs. Note the integer division; the course's `/` returns a float in Python 3.
+Pass `shuffle=True` for training data. Pass `shuffle=False` for validation and test data.
 
 ## The Canonical Training Loop
 
-Everything above assembles into one shape that does not change between architectures. This snippet is the whole thing end to end — dataset, loader, train/eval modes, `no_grad()` evaluation, a baseline to compare against, save and reload — on scikit-learn's 8x8 digits so it runs in seconds.
+Everything above assembles into one shape. That shape does not change between architectures.
 
 ```python
 import torch, torch.nn as nn
@@ -268,21 +270,25 @@ print("reload:", clone.load_state_dict(torch.load("/tmp/m.pt")))
 # reload: <All keys matched successfully>
 ```
 
-Read it as five blocks. (1) `TensorDataset` + `DataLoader` turn two tensors into shuffled batches. (2) `nn.Sequential` replaces a custom class because the forward pass is a plain chain. (3) The inner loop is the only part you must know by heart: `opt.zero_grad()`, forward, loss, `backward()`, `opt.step()`. (4) `model.train()` / `model.eval()` bracket the two phases, and the evaluation sits inside `torch.no_grad()` — the course never calls either, which happens to be harmless for its models (no dropout, no batch norm) and silently wrong the moment you add one. (5) `state_dict` persistence: `torch.save(model.state_dict(), path)`, then `clone.load_state_dict(torch.load(path))`, whose return value prints `<All keys matched successfully>` when the architectures agree.
+Read it as five blocks. First, `TensorDataset` and `DataLoader` turn two tensors into shuffled batches. Second, `nn.Sequential` replaces a class, because the forward pass is a chain.
 
-The numbers: test accuracy **0.924** against a majority-class baseline of **0.116**. Always print that second number. An accuracy quoted with no baseline is uninterpretable — on a balanced 10-class problem chance is ~0.10, so 0.924 is real learning; on a 95%-negative problem the same loop printing 0.95 would mean the model learned nothing.
+Third, the inner loop is the part to know from memory: `opt.zero_grad()`, forward, loss, `backward()`, `opt.step()`. Fourth, `model.train()` and `model.eval()` separate the two phases, and the evaluation sits inside `torch.no_grad()`.
 
-Evaluation that needs gradients off but *stats* on (e.g. you want per-class accuracy) still needs `model.eval()`: `no_grad()` only stops graph building, it does not disable dropout.
+Fifth, `state_dict` holds the weights. Save with `torch.save(model.state_dict(), path)`. Load with `clone.load_state_dict(torch.load(path))`, which gives `<All keys matched successfully>` when the two architectures agree.
+
+Always print a baseline next to an accuracy. An accuracy with no baseline tells you nothing. Chance on a balanced 10-class problem is about 0.10, so 0.924 is real learning. On a problem with 95% negatives, the same number would mean the model learned nothing.
+
+`no_grad()` and `eval()` do different jobs. `no_grad()` stops the graph. `eval()` stops dropout and freezes the batch-norm statistics. Evaluation needs both.
 
 ## Conv and Pool Output Shapes
 
-The shape chain is the one piece of CNN arithmetic you cannot avoid, because the first `nn.Linear` after the convolutions needs its `in_features` spelled out. The real formula per spatial dimension:
+You cannot avoid this arithmetic, because the first `nn.Linear` after the convolutions needs its `in_features` as a number.
 
 ```text
 O = floor( (W + 2P - D*(K-1) - 1) / S ) + 1
 ```
 
-with `W` input size, `K` kernel, `P` padding, `S` stride, `D` dilation. At `D=1` this reduces to the course's `O = (W - K + 2P)/S + 1` — **with a floor the course omits**. This snippet checks the formula against PyTorch over five configurations, including the stride-3 case where the floor actually bites:
+Here `W` is the input size, `K` is the kernel, `P` is the padding, `S` is the stride and `D` is the dilation. The **floor** matters. Without it the formula gives a fraction at stride 2 or more.
 
 ```python
 import warnings; warnings.filterwarnings("ignore")   # padding="same" with an even kernel warns about a padded copy
@@ -314,21 +320,19 @@ print("  pool K=2:", nn.MaxPool2d(2)(torch.zeros(1, 1, 28, 28)).shape[-1], " con
 # ... trimmed
 ```
 
-What it establishes. The floored formula matches `nn.Conv2d` for all five `(W,K,P,S)` rows, including `(28,4,0,3)` where the unfloored expression gives a fraction. The "same padding" block shows `P=(K-1)/2` returning 28 for `K=3` and `K=5` but **not** for `K=4` — with an even kernel there is no symmetric integer padding that preserves size, so the course's `P=(K-1)/2` is a rule for odd kernels at stride 1 only. PyTorch will do the asymmetric padding for you if you write `padding='same'` (stride 1 only), which the course predates. The last line is the subtlety behind the course's separate pooling shortcut `O = W/K`: `nn.MaxPool2d(2)` halves 28 to 14 because pooling **defaults `stride=kernel_size`**, whereas `nn.Conv2d` defaults `stride=1`, so a `K=2` conv at stride 1 gives 27, not 14. Same window size, different default stride — the shortcut is a property of the default, not of pooling.
-
-Worked chain for the course's CNN, for calibration: `28 →(K=5,P=2) 28 →pool 14 →(K=5,P=2) 14 →pool 7`, so the head is `nn.Linear(32*7*7, 10)`. With `padding=0` instead: `28 → 24 → 12 → 8 → 4`, so `nn.Linear(32*4*4, 10)`. Change a kernel and you must change that number too — or use `nn.AdaptiveAvgPool2d((1,1))` and stop caring.
+Two rules that people over-use. `P = (K-1)/2` preserves the size only for an **odd** kernel at **stride 1**. `O = W/K` works for pooling only, and only because `MaxPool2d` and `AvgPool2d` default `stride` to `kernel_size`. `nn.Conv2d` defaults `stride` to 1, so the same reasoning gives the wrong answer.
 
 ## Recurrent Layer Shapes
 
-`nn.RNN`, `nn.LSTM` and `nn.GRU` share one layout convention and one trap.
+`nn.RNN`, `nn.LSTM` and `nn.GRU` share one layout rule and one trap.
 
 | Tensor | Default layout | With `batch_first=True` |
 |---|---|---|
 | input | `(L, N, H_in)` | `(N, L, H_in)` |
 | output | `(L, N, D*H_out)` | `(N, L, D*H_out)` |
-| `h0` / `hn` (and `c0`/`cn`) | `(D*num_layers, N, H_out)` | **unchanged** |
+| `h0` and `hn`, also `c0` and `cn` | `(D*num_layers, N, H_out)` | **unchanged** |
 
-with `L` timesteps, `N` batch, `D = 2` if `bidirectional` else 1. Forward signatures: `out, hn = rnn(x, h0)` and `out, (hn, cn) = lstm(x, (h0, c0))`; the state arguments are optional and default to zeros.
+Here `L` is the number of timesteps, `N` is the batch, and `D` is 2 for a bidirectional layer and 1 otherwise. The forward calls are `out, hn = rnn(x, h0)` and `out, (hn, cn) = lstm(x, (h0, c0))`. The state arguments are optional and default to zeros.
 
 ```python
 import torch, torch.nn as nn
@@ -353,149 +357,271 @@ print("for a bi-LSTM out[:, -1] is NOT h[-1]:", torch.allclose(out2[:, -1, :H], 
 # for a bi-LSTM out[:, -1] is NOT h[-1]: True (forward half matches h2[-2], the reverse half lives at out2[:, 0, H:])
 ```
 
-Three things it proves. First, with `batch_first=True` the input and output are batch-first `(4, 28, 16)` while `h` stays layers-first `(2, 4, 16)` — that asymmetry is the most common `nn.LSTM` shape bug, and the course uses `batch_first=True` without ever flagging it. Second, the states were never passed: `h0`/`c0` default to zeros, so the course's hand-built `torch.zeros(layer_dim, x.size(0), hidden_dim)` (and the `.cuda()` branch it needs) is code you can delete. Third, for the unidirectional stack `out[:, -1, :]` and `h[-1]` are the same tensor — but flip `bidirectional=True` and they diverge: `out` grows to `(4, 28, 32)`, and `out[:, -1, :H]` matches `h2[-2]` (the final *forward* state) while the reverse direction's final state lives at `out[:, 0, H:]`. So `out[:, -1]` on a bi-directional model silently feeds your classifier the reverse direction's *first* step. Use `torch.cat([h[-2], h[-1]], dim=1)`, or pool over time.
+The snippet proves three things. First, `batch_first=True` moves the batch axis of the input and the output, but **not** of the hidden state. That asymmetry is the most common `nn.LSTM` shape bug.
 
-Related: when you carry hidden state across batches, detach it (`h = h.detach()`) or backward will try to walk the entire history; and `clip_grad_norm_` is the standard guard for exploding gradients, which matters most for `nn.RNN(nonlinearity='relu')` unrolled over many steps. The course covers neither.
+Second, the code never passes the states, because `h0` and `c0` default to zeros.
+
+Third, `out[:, -1, :]` equals `h[-1]` for a one-direction stack. For a bidirectional stack they differ. `out[:, -1, :H]` holds the final **forward** state, and the final reverse state sits at `out[:, 0, H:]`. So `out[:, -1]` gives your classifier the reverse direction's **first** step. Use `torch.cat([h[-2], h[-1]], dim=1)` instead, or pool across time.
+
+Two more rules. Detach a hidden state that you carry between batches with `h = h.detach()`, or the backward pass walks the whole history. Use `clip_grad_norm_` against a large gradient, which matters most for `nn.RNN(nonlinearity='relu')` across many steps.
+
+## Transformers and Attention
+
+For the mathematics of attention, read [transformer-forward-pass](../math-for-ml/transformer-forward-pass.md). This section gives the API only, and it gives the four traps that cost the most time.
+
+| Task | Call |
+|---|---|
+| One attention block | `nn.MultiheadAttention(embed_dim, num_heads, dropout=0.0, batch_first=False)` |
+| Call it | `out, weights = mha(query, key, value)`. Give the same tensor three times for self-attention |
+| Attention with no module | `F.scaled_dot_product_attention(q, k, v)`. The shape is `(N, heads, L, head_width)` |
+| One encoder block | `nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=2048, batch_first=True, norm_first=True)` |
+| A stack of blocks | `nn.TransformerEncoder(layer, num_layers=6)` |
+| One decoder block | `nn.TransformerDecoderLayer(...)`, then `nn.TransformerDecoder(layer, num_layers=6)` |
+| A causal mask | `nn.Transformer.generate_square_subsequent_mask(L)`, or `is_causal=True` on the fast path |
+| Position information | Write your own. PyTorch supplies no positional encoding layer |
+
+### Trap 1: batch_first defaults to False
+
+`nn.MultiheadAttention` and every `nn.Transformer*` layer default to `batch_first=False`. They then read your `(batch, length, width)` tensor as `(length, batch, width)`.
+
+```python
+import torch, torch.nn as nn
+torch.manual_seed(0)
+L, N, E, H = 5, 2, 8, 4                      # sequence length, batch, embedding width, heads
+x = torch.randn(N, L, E)                     # the shape you almost always have: batch first
+mha_default = nn.MultiheadAttention(E, H)                      # batch_first defaults to False
+mha_batched = nn.MultiheadAttention(E, H, batch_first=True)
+out_b, w_b = mha_batched(x, x, x)            # correct: it reads x as (batch, length, width)
+out_d, w_d = mha_default(x, x, x)            # silent bug: it reads x as (length, batch, width)
+print(f"input                        {tuple(x.shape)}   = (batch {N}, length {L}, width {E})")
+print(f"batch_first=True  -> output  {tuple(out_b.shape)}   weights {tuple(w_b.shape)}")
+print(f"batch_first=False -> output  {tuple(out_d.shape)}   weights {tuple(w_d.shape)}")
+print("the second call raises no error. it attends across the BATCH and not across the sequence.")
+print("so always pass batch_first=True, for MultiheadAttention and for every Transformer layer.")
+# Expected output:
+# input                        (2, 5, 8)   = (batch 2, length 5, width 8)
+# batch_first=True  -> output  (2, 5, 8)   weights (2, 5, 5)
+# batch_first=False -> output  (2, 5, 8)   weights (5, 2, 2)
+# the second call raises no error. it attends across the BATCH and not across the sequence.
+# so always pass batch_first=True, for MultiheadAttention and for every Transformer layer.
+```
+
+Look at the output shapes. They are the same in both calls, so no error appears. Only the attention weights show the fault. The shape `(5, 2, 2)` means the layer attended across the batch of 2, and not across the sequence of 5.
+
+Always pass `batch_first=True`.
+
+### Trap 2: two masks, and True means hide
+
+There are two mask arguments, and they do different jobs. `attn_mask` has the shape `(L, L)` and shapes the pattern, for example a causal pattern. `key_padding_mask` has the shape `(N, L)` and removes whole positions, for example padding.
+
+In both of them, a `True` value means **hide this**. Most people guess the opposite.
+
+```python
+import torch, torch.nn as nn
+torch.manual_seed(0)
+L, N, E, H = 4, 1, 8, 2
+x = torch.randn(N, L, E)
+mha = nn.MultiheadAttention(E, H, batch_first=True)
+# Mask 1: attn_mask hides positions from each other. True means "not allowed to look".
+causal = torch.triu(torch.ones(L, L, dtype=torch.bool), diagonal=1)   # hide the future
+_, w_causal = mha(x, x, x, attn_mask=causal, need_weights=True, average_attn_weights=True)
+# Mask 2: key_padding_mask hides whole positions from everybody. True means "this is padding".
+pad = torch.tensor([[False, False, False, True]])                      # position 3 is padding
+_, w_pad = mha(x, x, x, key_padding_mask=pad)
+print("causal attn_mask, row = the position doing the looking:")
+print(w_causal[0].detach().round(decimals=2))
+print("  row 0 can see only position 0. row 3 can see all four. the upper triangle is zero.")
+print("\nkey_padding_mask with position 3 marked as padding:")
+print(w_pad[0].detach().round(decimals=2))
+print("  the whole last COLUMN is zero: nobody looks at a pad, including the pad itself.")
+print("\nso attn_mask is (L, L) and shapes the pattern. key_padding_mask is (N, L) and drops tokens.")
+print("in both, True means HIDE. that sign is the opposite of what most people guess.")
+# Expected output:
+# causal attn_mask, row = the position doing the looking:
+# tensor([[1.0000, 0.0000, 0.0000, 0.0000],
+#         [0.5500, 0.4500, 0.0000, 0.0000],
+#         [0.3700, 0.2600, 0.3700, 0.0000],
+#         [0.2900, 0.2400, 0.1900, 0.2800]])
+#   row 0 can see only position 0. row 3 can see all four. the upper triangle is zero.
+# 
+# key_padding_mask with position 3 marked as padding:
+# tensor([[0.3600, 0.3000, 0.3400, 0.0000],
+#         [0.4000, 0.3200, 0.2800, 0.0000],
+# ... trimmed
+```
+
+Read the two tables of weights. The causal mask gives zeros above the diagonal, so each row sees only itself and the positions before it. The padding mask gives a zero **column**, so no position looks at the pad.
+
+### Trap 3: the fast path uses the opposite sign
+
+`F.scaled_dot_product_attention` is the fused kernel under the modules. Use it when you write your own block. It takes `(N, heads, L, head_width)` and not `(N, L, width)`.
+
+Its boolean `attn_mask` means **keep**, which is the opposite of `nn.MultiheadAttention`.
+
+```python
+import torch, torch.nn.functional as F
+torch.manual_seed(0)
+N, H, L, D = 2, 4, 6, 16                      # batch, heads, length, width per head
+q, k, v = (torch.randn(N, H, L, D) for _ in range(3))   # note the shape: heads are a real axis
+# The formula from the maths note, written out.
+scores = q @ k.transpose(-2, -1) / D ** 0.5   # divide by sqrt(head width), not by sqrt(E)
+manual = F.softmax(scores, dim=-1) @ v
+fused = F.scaled_dot_product_attention(q, k, v)         # one call, and it picks a fast kernel
+print("manual formula equals the fused call:", torch.allclose(manual, fused, atol=1e-6))
+# A causal model needs the future hidden. The flag is cheaper than building a mask tensor.
+causal_mask = torch.triu(torch.ones(L, L, dtype=torch.bool), diagonal=1)
+by_mask = F.scaled_dot_product_attention(q, k, v, attn_mask=~causal_mask)   # True means KEEP here
+by_flag = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+print("is_causal=True equals a hand-built mask:", torch.allclose(by_mask, by_flag, atol=1e-6))
+print(f"shapes: q {tuple(q.shape)} -> out {tuple(fused.shape)}  (batch, heads, length, head width)")
+print("watch the sign: a bool attn_mask here means KEEP, but in MultiheadAttention it means HIDE.")
+# Expected output:
+# manual formula equals the fused call: True
+# is_causal=True equals a hand-built mask: True
+# shapes: q (2, 4, 6, 16) -> out (2, 4, 6, 16)  (batch, heads, length, head width)
+# watch the sign: a bool attn_mask here means KEEP, but in MultiheadAttention it means HIDE.
+```
+
+Prefer `is_causal=True` to a mask tensor for a causal model. It is clearer and it needs no memory.
+
+Two more notes on speed. `need_weights=True` on `nn.MultiheadAttention` turns the fast kernel off, so pass `need_weights=False` unless you must inspect the weights. The division is by the square root of the **head** width, which is `embed_dim // num_heads`, and not by the square root of `embed_dim`.
+
+### Trap 4: norm_first and where the parameters sit
+
+`norm_first=True` gives pre-layer-normalisation, which trains more easily. The default `False` gives the post-normalisation order of the 2017 paper.
+
+```python
+import warnings, torch, torch.nn as nn
+warnings.filterwarnings("ignore")             # nested-tensor notice, harmless with norm_first
+torch.manual_seed(0)
+E, H, FF, L, N = 32, 4, 64, 7, 2
+layer = nn.TransformerEncoderLayer(d_model=E, nhead=H, dim_feedforward=FF,
+                                   batch_first=True, norm_first=True)   # norm_first = pre-LN
+encoder = nn.TransformerEncoder(layer, num_layers=3)                    # 3 stacked copies
+x = torch.randn(N, L, E)
+attn = 4 * E * E + 4 * E                      # Q, K, V and the output projection, plus biases
+ff = 2 * E * FF + FF + E                      # two linear layers, plus biases
+norms = 2 * 2 * E                             # two LayerNorms, each with a weight and a bias
+print(f"in {tuple(x.shape)} -> out {tuple(encoder(x).shape)}   the shape never changes")
+print(f"attention {attn:,} + feed-forward {ff:,} + 2 LayerNorms {norms} = {attn + ff + norms:,}")
+print(f"parameters actually in one layer:                        {sum(p.numel() for p in layer.parameters()):,}")
+print(f"here FF = 2E, so the two blocks are nearly equal. above FF = 2E the feed-forward wins.")
+causal = nn.Transformer.generate_square_subsequent_mask(L)   # float mask: 0 keeps, -inf hides
+print(f"\ngenerate_square_subsequent_mask({L}) row 0: {causal[0].tolist()}")
+print("that helper returns a FLOAT mask of 0 and -inf, which attention ADDS to the scores.")
+print("norm_first=True is pre-LN, and it trains more easily. The 2017 paper used post-LN.")
+# Expected output:
+# in (2, 7, 32) -> out (2, 7, 32)   the shape never changes
+# attention 4,224 + feed-forward 4,192 + 2 LayerNorms 128 = 8,544
+# parameters actually in one layer:                        8,544
+# here FF = 2E, so the two blocks are nearly equal. above FF = 2E the feed-forward wins.
+# 
+# generate_square_subsequent_mask(7) row 0: [0.0, -inf, -inf, -inf, -inf, -inf, -inf]
+# that helper returns a FLOAT mask of 0 and -inf, which attention ADDS to the scores.
+# norm_first=True is pre-LN, and it trains more easily. The 2017 paper used post-LN.
+```
+
+The shape never changes across a transformer block. That property is the reason that you can stack the blocks without any shape arithmetic.
+
+The parameter count splits in a useful way. Attention holds `4 * d_model²` weights, for Q, K, V and the output projection. The feed-forward block holds `2 * d_model * dim_feedforward`. So the feed-forward block holds more weights as soon as `dim_feedforward` is more than twice `d_model`, and the usual ratio is four.
 
 ## Save, Load, Resume
 
 | Task | Call |
 |---|---|
-| Save weights | `torch.save(model.state_dict(), 'net.pt')` |
-| Load weights | `model.load_state_dict(torch.load('net.pt', weights_only=True))` → `<All keys matched successfully>` |
-| Save a resumable checkpoint | `torch.save({'model': model.state_dict(), 'opt': opt.state_dict(), 'epoch': e}, 'ckpt.pt')` |
+| Save the weights | `torch.save(model.state_dict(), 'net.pt')` |
+| Load the weights | `model.load_state_dict(torch.load('net.pt', weights_only=True))` |
+| Save a checkpoint you can resume from | `torch.save({'model': model.state_dict(), 'opt': opt.state_dict(), 'epoch': e}, 'ckpt.pt')` |
 | Load onto a different device | `torch.load(path, map_location='cpu')` |
-| Partial / renamed load | `model.load_state_dict(sd, strict=False)` — returns missing and unexpected keys |
+| Load only a part | `model.load_state_dict(sd, strict=False)`, which gives the missing and the unexpected keys |
 
-Save the `state_dict`, not the module object: pickling the model ties the file to your class definition and import paths. `weights_only=True` is the safe default for untrusted checkpoints. Use `.pt`/`.pth`, not the course's `.pkl`.
-
-## Course API → Modern Equivalent
-
-The course is PyTorch 0.1.12-era. Nearly every snippet in it needs translation; this is the table.
-
-| Course spelling | Modern equivalent | Why it changed |
-|---|---|---|
-| `from torch.autograd import Variable`; `Variable(t, requires_grad=True)` | `torch.tensor(..., requires_grad=True)` — drop the wrapper | `Variable` and `Tensor` merged in 0.4; `Variable(t)` just returns a tensor now. Deprecated. |
-| "`requires_grad` defaults to `True`" (lecture claim) | It defaults to **`False`** | Never true. Only the leaves you mark participate in autograd — see the autograd snippet above. |
-| `torch.Tensor(arr)` | `torch.tensor(arr, dtype=..., device=...)` | The legacy constructor always produces float (even from ints) and takes no `dtype`/`device`. |
-| `Variable(x, volatile=True)` for inference | `with torch.no_grad():` | `volatile` removed in 0.4; `no_grad()` is a context manager (or decorator) and composes. |
-| `loss.data[0]` | `loss.item()` | 0-dim tensors became real in 0.4; indexing one now raises. |
-| `t.data` to escape autograd | `t.detach()`, or a `no_grad()` block | `.data` bypasses autograd's correctness tracking silently; `detach()` is tracked. |
-| `if torch.cuda.is_available(): x = Variable(x.cuda()) else: ...` per tensor | `device = torch.device(...)` once, then `x = x.to(device)` | `.to()` also covers `mps` / `xpu` / `cpu` and removes every if/else the course writes by hand. |
-| `correct += (predicted.cpu() == labels.cpu()).sum()` | `correct += (pred == labels).sum().item()` | The `.cpu()` calls were needed only because the two operands were on different devices. The course's reason — "`.sum()` is a Python function" / "doesn't work on GPU" — is wrong; reductions run on GPU, and the round-trip forces a needless sync. |
-| `accuracy = 100 * correct / total` | `... / total` then `.item()`, or accumulate floats | `(a == b).sum()` is a tensor, so the whole expression stays a tensor. |
-| `train_dataset.train_data`, `.train_labels`, `.test_data`, `.test_labels` | `ds.data`, `ds.targets` | Renamed in torchvision 0.2.2; old names removed. |
-| no `model.train()` / `model.eval()` anywhere | bracket training and evaluation with them | Harmless for the course's models; wrong the moment you add dropout or batch norm. |
-| evaluation loop with no `torch.no_grad()` | wrap it | Otherwise you build a graph you never use — slower, and needless memory. |
-| `out.view(out.size(0), -1)` to flatten | `nn.Flatten()` as a layer, or `t.flatten(1)` | Added later; `view` also fails on non-contiguous input where `reshape` would not. |
-| `padding=2` computed via `P=(K-1)/2` | `padding='same'` (stride 1) | String padding arrived in PyTorch 1.9 and handles even kernels. |
-| `h0 = Variable(torch.zeros(layers, x.size(0), hidden))` | omit it — `rnn(x)` | `h0`/`c0` default to zeros. Deletes one line plus its `.cuda()` branch. |
-| `torch.max(outputs.data, 1)` | `outputs.argmax(dim=1)` | Clearer when you only want the index. |
-| `isinstance(train_loader, collections.Iterable)` | delete it | `collections.Iterable` was removed in Python 3.10 (`collections.abc.Iterable`); it was pedagogical anyway. |
-| `torch.save(model.state_dict(), 'x.pkl')` | same call, `.pt` + `weights_only=True` on load | Practice unchanged; conventions and safety flags moved on. |
-| `conda install pytorch torchvision -c soumith` | `pip install torch torchvision` | The `soumith` channel is gone; the CUDA 7.5/8.0, cuDNN 6.0, g2.2xlarge and macOS-source-build instructions are all obsolete. |
-
-## What the Course Predates
-
-Five things a 2026 reader gets for free that are absent from the course:
-
-- **`torch.compile(model)`** — one-line graph compilation and speedup. [docs](https://docs.pytorch.org/docs/stable/generated/torch.compile.html)
-- **Mixed precision** — `torch.autocast` plus `torch.amp.GradScaler`, roughly halving memory on modern accelerators. [docs](https://docs.pytorch.org/docs/stable/amp.html)
-- **`nn.Flatten`** — a layer, so a plain `nn.Sequential` can go from conv stack to linear head. [docs](https://docs.pytorch.org/docs/2.14/generated/torch.nn.modules.flatten.Flatten.html)
-- **`padding='same'` / `'valid'`** as string arguments to `nn.Conv2d`. [docs](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Conv2d.html)
-- **The MPS backend** — Apple-silicon GPU acceleration, which is why `.to(device)` beats `.cuda()` and why the course's "compile PyTorch from source for macOS GPU" lecture is dead. [docs](https://docs.pytorch.org/docs/stable/notes/mps.html)
-
-Also never covered, and all one-liners you will want: `nn.Dropout`, `nn.BatchNorm*`, `bidirectional=True`, `nn.Sequential`, `torch.nn.functional`, `clip_grad_norm_`, learning-rate schedulers, any optimizer besides SGD, weight initialisation, a validation split, and `transforms.Normalize`.
+Save the `state_dict` and not the module object. A pickled module ties the file to your class definition and to your import paths. Use `weights_only=True` for any checkpoint that you did not make.
 
 ## Trade-offs
 
 | Choice | What you gain | What you give up |
 |---|---|---|
-| `reshape` everywhere instead of `view` | never debug a contiguity error | a silent copy you did not budget for in a hot loop |
-| `nn.Sequential` instead of a `Module` subclass | three lines instead of fifteen | any non-chain forward pass: skip connections, multiple inputs, intermediate returns |
-| `padding='same'` instead of a computed integer | kernel size becomes a free parameter | the shape chain is no longer visible in the code; stride 1 only |
-| `AdaptiveAvgPool2d((1,1))` head instead of `Linear(C*H*W, ...)` | input size stops mattering; no shape arithmetic | you discard spatial layout the dense head could have used |
-| `set_to_none=True` (the default) for `zero_grad` | less memory; unused params are provably `None` | any code reading `p.grad` must handle `None` |
-| `torch.compile` | real speedup, one line | long first-call compile, harder tracebacks, occasional graph breaks |
-| `from_numpy` instead of `torch.tensor` | zero-copy | aliasing bugs: mutate either side and both change |
-| `num_workers > 0` | the loader stops being the bottleneck | process-startup cost, trickier debugging, platform quirks |
-| Deterministic algorithms + seeds | reproducible runs and trustworthy comparisons | some kernels get slower or raise where no deterministic version exists |
+| `reshape` everywhere instead of `view` | You never debug a contiguity error | A copy that you did not plan for in a hot loop |
+| `nn.Sequential` instead of a class | Three lines instead of fifteen | Any forward pass that is not a chain, such as a skip connection |
+| `padding='same'` instead of a number | The kernel size becomes a free choice | The shape chain is no longer visible in the code, and it works at stride 1 only |
+| An `AdaptiveAvgPool2d((1,1))` head | The input size stops to matter | The spatial layout, which a dense head could have used |
+| `set_to_none=True`, the default | Less memory, and an unused parameter is provably `None` | Any code that reads `p.grad` must handle `None` |
+| `torch.compile` | A real speed increase, in one line | A slow first call, harder tracebacks and occasional graph breaks |
+| `from_numpy` instead of `torch.tensor` | No copy | Aliasing faults, because an edit to either side changes both |
+| `num_workers > 0` | The loader stops to be the bottleneck | Process start-up cost and harder debugging |
+| Deterministic kernels and seeds | Runs that repeat, and comparisons you can trust | Some kernels become slower, and some raise an error |
+| `nn.MultiheadAttention` instead of `F.scaled_dot_product_attention` | It gives you the projections, the heads and the dropout | Control of the shapes, and the fast path when you ask for weights |
 
 ## Common Pitfalls
 
 **Autograd and the loop**
-- **Forgetting `opt.zero_grad()`** adds this batch's gradient to the previous one, so the effective learning rate creeps upward. The snippet above prints 12 then 24 for the identical computation — that is the bug in miniature.
-- **Reading `p.grad` right after `zero_grad()`** gives `None` in PyTorch 2.x, not zeros, because `set_to_none=True` is the default. Guard for `None` or pass `set_to_none=False`.
-- **Evaluating without `torch.no_grad()`** builds a graph you discard: slower and memory-hungry. **Evaluating without `model.eval()`** leaves dropout active and batch-norm updating its running statistics, so your reported accuracy is wrong *and* your model has been mutated by the evaluation.
-- **Accumulating `loss` instead of `loss.item()`** keeps every batch's graph alive and leaks memory until the epoch ends.
-- **Appending a `Softmax` layer before `CrossEntropyLoss`** applies softmax twice, flattening the gradients. `CrossEntropyLoss` wants logits.
+- **Do not forget `opt.zero_grad()`.** The new gradient adds to the old one, so the effective learning rate grows. The autograd snippet prints 12 and then 24 for the same computation.
+- **Do not read `p.grad` straight after `zero_grad()`.** It is `None` and not zeros. Guard for `None`, or pass `set_to_none=False`.
+- **Do not evaluate without `torch.no_grad()`.** You build a graph and then throw it away, which is slower and uses more memory.
+- **Do not evaluate without `model.eval()`.** Dropout stays active and batch norm keeps updating its statistics, so your number is wrong and the evaluation changed your model.
+- **Do not add `loss` to a running total.** Add `loss.item()`. The tensor keeps the whole graph alive and the memory grows across the epoch.
+- **Do not put a `Softmax` layer before `CrossEntropyLoss`.** The loss applies log-softmax inside. Two applications flatten the gradients.
 
 **Shapes**
-- **The course's output-size formula `O = (W - K + 2P)/S + 1` has no floor.** With stride > 1 and non-divisible sizes it returns a fraction; PyTorch floors. Use `floor((W + 2P - D*(K-1) - 1)/S) + 1`.
-- **`P = (K-1)/2` is not a universal same-padding rule.** It assumes an **odd** kernel and **stride 1**; for even `K` no symmetric integer padding preserves size, and at stride > 1 the idea does not apply. Prefer `padding='same'`.
-- **`O = W/K` is a pooling-only shortcut** and only because `nn.MaxPool2d`/`AvgPool2d` default `stride=kernel_size`. `nn.Conv2d` defaults `stride=1`, so the same reasoning gives the wrong answer for convolution. The course states the two formulas side by side without explaining the asymmetry.
-- **`batch_first=True` does not move the hidden state's batch axis.** Inputs and outputs become `(N, L, H)`; `h0`/`c0` remain `(num_layers*D, N, H)`. The course relies on this and never says so.
-- **`out[:, -1]` is not `h[-1]` for a bidirectional RNN.** It is the forward direction's last step concatenated with the *reverse direction's first* step. Concatenate `h[-2]` and `h[-1]` instead.
-- **Forgetting to flatten before `nn.Linear`** raises a matmul shape error; `nn.Flatten()` in the stack is the fix.
+- **Do not use an output-size formula without the floor.** At a stride of more than 1 the formula gives a fraction, and PyTorch takes the floor.
+- **Do not treat `P = (K-1)/2` as a general rule.** It needs an odd kernel and a stride of 1. Use `padding='same'`.
+- **Do not expect `batch_first=True` to move the hidden state.** The input and the output become `(N, L, H)`, and `h0` stays `(num_layers*D, N, H)`.
+- **Do not read `out[:, -1]` as the last state of a bidirectional RNN.** It joins the forward direction's last step to the reverse direction's **first** step.
+- **Do not forget to flatten before `nn.Linear`.** Put `nn.Flatten()` in the stack.
 
-**Reading the course's numbers**
-- **Every accuracy in the course is a test-set accuracy that was also used to choose between models.** There is no validation split anywhere, so the reported figures are optimistic and the "model A beats model B" conclusions are selection on the test set.
-- **The activation ranking is a single unseeded run.** Sigmoid 91.95%, tanh 95.02%, ReLU 95.91% on the same 1-hidden-layer MNIST net. The ordering matches conventional wisdom, but with no seed, no repeats and no variance estimate these margins do not establish it — reshuffling alone moves numbers by that much.
-- **"Max pooling beats average pooling" rests on one comparison too** (97.04% vs 93%). Do not generalise: modern architectures routinely use global *average* pooling as the final reduction. The 93% figure is doubly suspect — see the next item.
-- **Do not copy the average-pooling class as shown.** In that lecture `__init__` is renamed to `avgpool1`/`avgpool2` while `forward()` still calls `self.maxpool1`/`self.maxpool2`; run as displayed it raises `AttributeError`. (It is left as a deliberate fix-it exercise, but it means the 93% came from code the viewer never sees.)
-- **"Beyond two or three RNN layers performance degrades, I don't know why"** is an acknowledged gap in the course (LSTM: 96.05% at 1 layer, 95.5% at 2, 91.2% at 3). Part of the answer is gradients through depth *and* time with nothing counteracting them — and the standard remedy, gradient clipping, is never mentioned.
-- **82% for logistic regression on MNIST is not that model's ceiling** — it reflects the deliberately small learning rate and 3000-iteration budget, not a limit of linear softmax regression.
-- **"LSTM for any recurrent structure"** was fair advice in 2017. GRU is a cheaper near-equal, and for sequence modelling at scale Transformers displaced recurrent nets; the course mentions neither attention nor GRU.
+**Transformers**
+- **Do not leave `batch_first` at its default.** The call gives the correct output shape and the wrong answer, with no error (§Trap 1).
+- **Do not guess the direction of a mask.** `True` means hide in `nn.MultiheadAttention`, and `True` means keep in `F.scaled_dot_product_attention` (§Trap 2, §Trap 3).
+- **Do not confuse the two masks.** `attn_mask` is `(L, L)` and shapes the pattern. `key_padding_mask` is `(N, L)` and removes tokens.
+- **Do not leave `need_weights=True` in training code.** It turns the fast kernel off.
+- **Do not forget the positional information.** Attention alone cannot tell you the order of the tokens, and PyTorch supplies no layer for it.
+- **Do not divide the scores by the square root of `embed_dim`.** Divide by the square root of the head width.
+
+**Measurement**
+- **Do not report an accuracy with no baseline.** A number with no baseline cannot be read.
+- **Do not choose a model on the test set.** Keep a validation split. A test set that you use for selection gives an optimistic number.
+- **Do not trust a comparison from one unseeded run.** A reshuffle alone can move a number by more than the margin you measured.
 
 ## Decision Table
 
 | Scenario | Use this | Not that | Why |
 |---|---|---|---|
-| Tensor from a numpy array you will keep mutating | `torch.tensor(arr)` | `torch.from_numpy(arr)` | `from_numpy` shares storage; later edits silently change your tensor |
-| Zero-copy hand-off of a large array | `torch.from_numpy(arr)` | `torch.tensor(arr)` | avoids duplicating the buffer |
-| Reshaping output of a transpose/permute | `reshape` | `view` | `view` requires contiguous memory and will raise |
-| Flattening conv output for a linear head | `nn.Flatten()` | `out.view(out.size(0), -1)` | a layer, so it composes in `nn.Sequential`, and no contiguity trap |
-| Multiclass classification head | `nn.Linear(...)` + `CrossEntropyLoss` | `Softmax` + `NLLLoss` hand-rolled | one fused, numerically stable op |
-| Single-label binary classification | `BCEWithLogitsLoss` | `Sigmoid` + `BCELoss` | fused log-sum-exp avoids overflow |
-| Running inference / evaluating | `model.eval()` **and** `torch.no_grad()` | either alone | `eval()` fixes dropout/batch norm; `no_grad()` stops graph building — different jobs |
-| Choosing between architectures | a held-out validation split, reported with a baseline | the test set (what the course does) | reusing test data for selection inflates the number you report |
-| Conv where you want the size preserved | `padding='same'` | computing `(K-1)/2` | correct for even kernels too, and the intent is readable |
-| Classifier head independent of input size | `nn.AdaptiveAvgPool2d((1,1))` | hand-computed `Linear(C*H*W, ...)` | no shape chain to recompute when a kernel changes |
-| Picking an optimizer with no time to tune | `AdamW(lr=1e-3)` | `SGD(lr=0.01)` (course default) | works at the default on most problems; SGD+momentum needs tuning to beat it |
-| Last state of a bidirectional RNN | `torch.cat([h[-2], h[-1]], dim=1)` | `out[:, -1, :]` | the last timestep mixes the forward end with the reverse *start* |
-| Moving work to an accelerator | `.to(device)` | `.cuda()` with an if/else | one code path across CUDA, MPS, XPU and CPU |
-| Persisting a model | `state_dict` + `.pt` | pickling the module | a pickled module breaks when your class or import path moves |
-| Exploding loss in a deep RNN | `clip_grad_norm_` + a smaller learning rate | more layers | depth does not fix an unstable gradient; clipping bounds it |
+| A numpy array that you will change later | `torch.tensor(arr)` | `torch.from_numpy(arr)` | `from_numpy` shares the memory, so a later edit changes your tensor |
+| A hand-off of a large array | `torch.from_numpy(arr)` | `torch.tensor(arr)` | It makes no second copy of the buffer |
+| Reshape the output of a transpose | `reshape` | `view` | `view` needs contiguous memory and raises an error |
+| Flatten a conv output | `nn.Flatten()` | `out.view(out.size(0), -1)` | It is a layer, so it fits in `nn.Sequential`, and it has no contiguity trap |
+| A multiclass head | `nn.Linear(...)` with `CrossEntropyLoss` | `Softmax` with `NLLLoss` | One fused operation, and it is numerically stable |
+| A binary head | `BCEWithLogitsLoss` | `Sigmoid` with `BCELoss` | The fused form avoids an overflow |
+| Evaluation | `model.eval()` **and** `torch.no_grad()` | Either one alone | They do different jobs |
+| A choice between architectures | A validation split, reported with a baseline | The test set | Selection on test data inflates the number you report |
+| A convolution that keeps the size | `padding='same'` | A computed `(K-1)/2` | It is correct for an even kernel, and the intent is readable |
+| A head that ignores the input size | `nn.AdaptiveAvgPool2d((1,1))` | A computed `Linear(C*H*W, ...)` | There is no shape chain to calculate again |
+| An optimizer, with no time to tune | `AdamW(lr=1e-3)` | `SGD(lr=0.01)` | It works at its default on most problems |
+| The last state of a bidirectional RNN | `torch.cat([h[-2], h[-1]], dim=1)` | `out[:, -1, :]` | The last timestep mixes the forward end with the reverse start |
+| Work on an accelerator | `.to(device)` | `.cuda()` with a branch | One code path for CUDA, MPS, XPU and CPU |
+| A saved model | `state_dict` and a `.pt` file | A pickled module | A pickled module breaks when your class or import path moves |
+| A large loss in a deep RNN | `clip_grad_norm_` and a lower rate | More layers | Depth does not make an unstable gradient stable |
+| Self-attention inside your own block | `F.scaled_dot_product_attention` | A hand-written softmax of `q @ k.T` | It picks a fused kernel and uses far less memory |
+| A standard encoder | `nn.TransformerEncoderLayer(..., norm_first=True)` | A block that you write | Pre-normalisation trains more easily, and PyTorch tests the layer |
+| A causal model | `is_causal=True` | A mask tensor that you build | No mask tensor in memory, and the intent is readable |
 
 ## References
 
-- `torch.Tensor` and creation semantics — https://docs.pytorch.org/docs/2.14/tensors.html
-- `torch.tensor` (copies, `dtype`, `requires_grad`) — https://docs.pytorch.org/docs/2.14/generated/torch.tensor.html
-- Autograd mechanics; `Variable` is deprecated — https://docs.pytorch.org/docs/2.14/autograd.html
-- `torch.no_grad` (replaces `volatile=True`) — https://docs.pytorch.org/docs/2.14/generated/torch.no_grad.html
-- `Optimizer.zero_grad` and `set_to_none=True` — https://docs.pytorch.org/docs/2.14/generated/torch.optim.Optimizer.zero_grad.html
-- CUDA semantics and device placement — https://docs.pytorch.org/docs/2.14/notes/cuda.html
-- MPS (Apple silicon) backend — https://docs.pytorch.org/docs/stable/notes/mps.html
-- `nn.Conv2d`, output-size formula and `padding='same'` — https://docs.pytorch.org/docs/2.14/generated/torch.nn.Conv2d.html
-- `nn.Flatten` — https://docs.pytorch.org/docs/2.14/generated/torch.nn.modules.flatten.Flatten.html
-- `nn.LSTM` (shapes, defaults, bidirectional states) — https://docs.pytorch.org/docs/2.14/generated/torch.nn.LSTM.html
-- `nn.RNN` — https://docs.pytorch.org/docs/2.14/generated/torch.nn.RNN.html
-- `nn.CrossEntropyLoss` (expects logits) — https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
-- `nn.Dropout` (`train()` vs `eval()` behaviour) — https://docs.pytorch.org/docs/stable/generated/torch.nn.Dropout.html
-- `nn.Sequential` — https://docs.pytorch.org/docs/stable/generated/torch.nn.Sequential.html
-- Optimizers and learning-rate schedulers — https://docs.pytorch.org/docs/stable/optim.html
-- `clip_grad_norm_` — https://docs.pytorch.org/docs/stable/generated/torch.nn.utils.clip_grad_norm_.html
-- `Dataset` / `DataLoader` — https://docs.pytorch.org/docs/stable/data.html
-- Saving and loading modules (`state_dict`) — https://docs.pytorch.org/docs/2.14/notes/modules.html
-- `torch.compile` — https://docs.pytorch.org/docs/stable/generated/torch.compile.html
-- Automatic mixed precision (`autocast`, `GradScaler`) — https://docs.pytorch.org/docs/stable/amp.html
-- Reproducibility and deterministic algorithms — https://docs.pytorch.org/docs/stable/notes/randomness.html
-- Course: "Practical Deep Learning with PyTorch", Ritchie Ng (Udemy) — the source this note translates; recorded against PyTorch 0.1.12.
+- [`torch.Tensor` and creation semantics](https://docs.pytorch.org/docs/stable/tensors.html) · [`torch.tensor`](https://docs.pytorch.org/docs/stable/generated/torch.tensor.html)
+- [Autograd mechanics](https://docs.pytorch.org/docs/stable/autograd.html) · [`torch.no_grad`](https://docs.pytorch.org/docs/stable/generated/torch.no_grad.html) · [`Optimizer.zero_grad`](https://docs.pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html)
+- [CUDA semantics](https://docs.pytorch.org/docs/stable/notes/cuda.html) · [MPS backend](https://docs.pytorch.org/docs/stable/notes/mps.html) · [Reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html)
+- [`nn.Conv2d`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv2d.html) · [`nn.Flatten`](https://docs.pytorch.org/docs/stable/generated/torch.nn.modules.flatten.Flatten.html) · [`nn.LSTM`](https://docs.pytorch.org/docs/stable/generated/torch.nn.LSTM.html) · [`nn.RNN`](https://docs.pytorch.org/docs/stable/generated/torch.nn.RNN.html)
+- [`nn.MultiheadAttention`](https://docs.pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html) · [`F.scaled_dot_product_attention`](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html) · [`nn.TransformerEncoderLayer`](https://docs.pytorch.org/docs/stable/generated/torch.nn.TransformerEncoderLayer.html) · [`nn.Transformer`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Transformer.html)
+- [`nn.CrossEntropyLoss`](https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) · [`nn.Dropout`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Dropout.html) · [`nn.Sequential`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Sequential.html)
+- [Optimizers and schedulers](https://docs.pytorch.org/docs/stable/optim.html) · [`clip_grad_norm_`](https://docs.pytorch.org/docs/stable/generated/torch.nn.utils.clip_grad_norm_.html) · [`Dataset` and `DataLoader`](https://docs.pytorch.org/docs/stable/data.html)
+- [Saving and loading modules](https://docs.pytorch.org/docs/stable/notes/modules.html) · [`torch.compile`](https://docs.pytorch.org/docs/stable/generated/torch.compile.html) · [Mixed precision](https://docs.pytorch.org/docs/stable/amp.html)
+- [ASD-STE100 Simplified Technical English](https://www.asd-ste100.org/) — the specification for the language of this note.
 
 ## See Also
 
-- [artificial-neural-networks](artificial-neural-networks.md) — neurons, activations, gradient descent, backprop and the training recipe as *theory*; this note is the API for it.
-- [convolutional-neural-networks](convolutional-neural-networks.md) — convolution, pooling and output-size arithmetic from first principles.
-- [recurrent-neural-networks](recurrent-neural-networks.md) — RNN/LSTM cells, vanishing gradients, the gate equations.
-- [seq2seq-bidirectional-rnns](seq2seq-bidirectional-rnns.md) — what bidirectional actually buys you, beyond the shape rules here.
+- [neural-networks-from-scratch](neural-networks-from-scratch.md) — write the forward and the backward pass yourself, then find each line in this table.
+- [transformer-forward-pass](../math-for-ml/transformer-forward-pass.md) — the mathematics behind the transformer section.
+- [convolutional-neural-networks](convolutional-neural-networks.md) — convolution, pooling and the output-size arithmetic from first principles.
+- [recurrent-neural-networks](recurrent-neural-networks.md) — the RNN and LSTM cells, and the gate equations.
+- [rnn-attention](rnn-attention.md) — attention before transformers, which explains what the mask arguments are for.
 - [regression-models](../classical-ml/regression-models.md) and [classification-models](../classical-ml/classification-models.md) — linear and logistic regression as models.
