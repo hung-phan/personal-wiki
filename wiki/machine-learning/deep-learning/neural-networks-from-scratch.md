@@ -263,23 +263,96 @@ This is also the reason that old code scales its targets to 0.01 and 0.99. That 
 
 ## Step 6. The Backward Pass
 
-You now have the output error from step 5. You must give a share of it to every weight in the network, including the weights of the hidden layer. The hidden layer has no target of its own.
+Step 5 gives you the error at the output. Now you must give a share of that error to **every** weight, including the weights of the hidden layer. The hidden layer has no target of its own, so you must calculate its share.
 
-The method has two passes. The forward pass calculates each layer in order, and keeps each activation. The backward pass starts at the output and moves to the first layer.
+Use the notation of the small network in this step. The weight $w^2_{kj}$ joins hidden unit $j$ to output node $k$. The weight $w^1_{ji}$ joins input $i$ to hidden unit $j$.
+
+### 6.1 The easy case: a weight in the last layer
+
+Take the weight $w^2_{kj}$. It changes one value only: the pre-activation $z^2_k$ of its own output node. Therefore the chain rule has two links:
+
+$$\frac{\partial E}{\partial w^2_{kj}} = \frac{\partial E}{\partial z^2_k} \cdot \frac{\partial z^2_k}{\partial w^2_{kj}}$$
+
+You know both parts. Step 5 measured the first part: it is $p_k - y_k$. The second part is $a^1_j$, because $z^2_k = \sum_j w^2_{kj} a^1_j$ and all the other terms are constants. So:
+
+$$\frac{\partial E}{\partial w^2_{kj}} = (p_k - y_k)\, a^1_j$$
+
+That is the three-part law of step 2 again. The error and the response are both inside $(p_k - y_k)$, because softmax and cross-entropy cancelled the response. The signal is $a^1_j$.
+
+### 6.2 The hard case: a weight in the hidden layer
+
+Now take the weight $w^1_{ji}$. Here the easy case fails, and the reason is the whole of backpropagation.
+
+That weight changes $z^1_j$, and $z^1_j$ changes $a^1_j$. But hidden unit $j$ sends $a^1_j$ to **every** output node. Therefore one change to $w^1_{ji}$ changes every output, and it causes a share of the error at each one.
+
+**So the chain rule needs a sum.** You must add up what the weight caused along every path out of hidden unit $j$:
+
+$$\frac{\partial E}{\partial w^1_{ji}} = \underbrace{\left(\sum_k \frac{\partial E}{\partial z^2_k}\, w^2_{kj}\right)}_{\text{add up every path out of unit } j} \cdot\, \underbrace{g'(z^1_j)}_{\text{response}} \cdot\, \underbrace{x_i}_{\text{signal}}$$
+
+Read the sum. For each output node $k$, take the error that arrives there. Multiply it by the weight on the path from unit $j$ to node $k$. A thick path carries more of the blame. Then add the paths together.
+
+Count the paths by hand and compare the total with one matrix operation:
+
+```python
+import numpy as np
+rng = np.random.default_rng(0)
+# One hidden unit sends its output to EVERY output node. So it causes error in all of them.
+W2 = rng.normal(0, 0.5, (3, 4))            # 3 output nodes, 4 hidden units
+d2 = np.array([0.6, -0.8, 0.2])            # the error at each output node (p - y from step 5)
+J = 1                                      # look at hidden unit number 1
+# Walk every path out of hidden unit 1 by hand, and add up what it caused.
+by_hand = 0.0
+for k in range(3):
+    contribution = d2[k] * W2[k, J]        # this output node's error, times the weight on the path
+    by_hand += contribution
+    print(f"  path to output {k}: error {d2[k]:+.2f} x weight {W2[k, J]:+.4f} = {contribution:+.5f}")
+print(f"total error charged to hidden unit {J}: {by_hand:+.5f}")
+print(f"column {J} of W2, dotted with d2:      {W2[:, J] @ d2:+.5f}")
+print(f"entry {J} of (W2.T @ d2):              {(W2.T @ d2)[J]:+.5f}")
+print("all three are the same number. the transpose IS that sum, done for every hidden unit at once.")
+# Expected output:
+#   path to output 0: error +0.60 x weight -0.0661 = -0.03963
+#   path to output 1: error -0.80 x weight +0.1808 = -0.14464
+#   path to output 2: error +0.20 x weight -0.6327 = -0.12654
+# total error charged to hidden unit 1: -0.31081
+# column 1 of W2, dotted with d2:      -0.31081
+# entry 1 of (W2.T @ d2):              -0.31081
+# all three are the same number. the transpose IS that sum, done for every hidden unit at once.
+```
+
+### 6.3 That sum is a transpose
+
+Look at the sum again: $\sum_k \delta_k w^2_{kj}$. It walks down **column** $j$ of $W^2$. The forward pass walks along the **rows**.
+
+A transpose exchanges rows and columns. Therefore the sum for all the hidden units at once is one product:
+
+$$\left(\sum_k \delta_k w^2_{kj}\right)_{\!j} = W^{2\top}\delta$$
+
+Check the shapes. $W^2$ is (3 outputs x 4 hidden). So $W^{2\top}$ is (4 x 3), and $W^{2\top}\delta$ has 4 values. That is one value for each hidden unit, which is what you need.
+
+$W^\top$ is not a trick, and it is not a convention. It is the sum over paths, written as a matrix.
+
+### 6.4 Give the repeated part a name
+
+The sum above appears again at every layer. Give it a name, and the algorithm becomes short. Let $\delta$ be the error at the **pre-activation** of a node:
+
+$$\delta_k = \frac{\partial E}{\partial z_k}$$
+
+Then three lines hold at any depth:
+
+$$\delta_{\text{output}} = p - y, \qquad \delta_{\text{layer}} = \big(W^\top \delta_{\text{next}}\big) \odot g'(z), \qquad \frac{\partial E}{\partial W} = \delta\, a_{\text{prev}}^\top$$
 
 ![Backpropagation has two passes. The forward pass keeps each activation. The backward pass moves delta through W transposed. Each weight gradient is at the junction of the two passes.](assets/nn-backprop-delta-flow.svg)
 
-Three lines describe the backward pass at any depth. Let $\delta$ be the error at the pre-activation of a node:
+Three details in those lines matter.
 
-$$\delta_{\text{output}} = p - y, \qquad \delta_{\text{layer}} = \big(W^\top \delta_{\text{next}}\big) \odot g'(\text{net}), \qquad \frac{\partial E}{\partial W} = \delta\, a_{\text{prev}}^\top$$
+**Why $\delta$ sits at the pre-activation.** The pre-activation is the point where the path from above joins the path from below. Above it, $\delta$ collects the sum over paths. Below it, the gradient needs only one more multiplication by the stored activation.
 
-Look at the three lines against step 2. The last line *is* the three-part law. The value $\delta$ holds the error part and the response part. The value $a_{\text{prev}}$ is the signal part.
+**Where $g'$ goes.** It multiplies **after** the transpose. First you add up the paths, then you ask how much this node can react. Many hand-written programs move the raw error backward instead of $\delta$, so they lose this factor. That is the most common error in such programs.
 
-**Why the backward pass uses a transpose.** In the forward pass you sum across *this* layer and you produce the next layer. In the backward pass you have one value for each node of the *next* layer. You want one value for each node of *this* layer. Therefore you sum across the other index of the same matrix. A transpose does exactly that.
+**Why this is fast.** Without $\delta$ you would add up the paths again for every single weight. The number of paths through a deep network grows with the power of the depth. With $\delta$ you calculate each layer's share one time, then use it twice: once for its own weights, and once for the layer below. The backward pass then costs about the same as the forward pass.
 
-$W^\top$ is not a trick. It is the only shape that is correct.
-
-Now write those three lines for a real network and check every number:
+### 6.5 Write it, then check every number
 
 ```python
 import numpy as np, torch
@@ -313,9 +386,37 @@ print("four lines, and they are exact. backpropagation is not an approximation."
 # four lines, and they are exact. backpropagation is not an approximation.
 ```
 
-Note the position of $g'$. It multiplies **after** the transpose. The $\delta$ that you move backward already holds the $g'$ of the next layer. Many hand-written programs move the raw error backward instead of $\delta$. That is the most common error in such programs.
+Note the line for ReLU. The derivative of ReLU is 1 where the unit was active and 0 elsewhere, so the code is `d1 = (W2.T @ d2) * (z1 > 0)`. You need the **pre-activation** `z1` for that test, not the activation `a1`. This is the reason for the two names in step 1.
 
-Note also the line for ReLU. Its derivative is 1 where the unit was active and 0 elsewhere, so the code is `dz1 = da1 * (z1 > 0)`. You need the *pre-activation* `z1` for that test. This is the reason for the two names in step 1.
+### 6.6 From one example to a batch
+
+The derivation above uses one example. The program in step 7 uses 32 at a time, and its code has no loop over them. One line explains why.
+
+For one example the gradient is an outer product, $\delta\, a^\top$. For a batch you want the sum of those outer products, because the gradient of a sum is the sum of the gradients. A matrix multiplication **is** a sum of outer products, so the batch sum needs no loop:
+
+```python
+import numpy as np
+rng = np.random.default_rng(0)
+BATCH = 5
+A1 = rng.normal(size=(BATCH, 4))                 # the hidden activations of 5 examples
+D2 = rng.normal(size=(BATCH, 3))                 # the output errors of the same 5 examples
+# One example at a time: each gives a full gradient for W2, and you add them up.
+one_at_a_time = np.zeros((3, 4))
+for i in range(BATCH):
+    one_at_a_time += np.outer(D2[i], A1[i])      # the step 6 rule, applied to example i
+batched = D2.T @ A1                              # the same thing as one matrix multiply
+print("sum of 5 outer products equals one matmul:", np.allclose(one_at_a_time, batched))
+print("shapes:", D2.T.shape, "@", A1.shape, "->", batched.shape, "= the shape of W2")
+print("a matmul IS a sum of outer products, so the batch sum is already inside it.")
+print("that is why the code says D2.T @ A1 and has no loop over the batch.")
+# Expected output:
+# sum of 5 outer products equals one matmul: True
+# shapes: (3, 5) @ (5, 4) -> (3, 4) = the shape of W2
+# a matmul IS a sum of outer products, so the batch sum is already inside it.
+# that is why the code says D2.T @ A1 and has no loop over the batch.
+```
+
+Divide that sum by the number of examples to get a mean. Step 7 does this in the line `d2 = (p - wanted) / len(batch)`. Without the division, your step size changes when you change the batch size.
 
 ## Step 7. The Complete Network
 
