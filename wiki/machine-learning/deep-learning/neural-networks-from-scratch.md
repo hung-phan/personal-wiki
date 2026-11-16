@@ -265,7 +265,39 @@ This is also the reason that old code scales its targets to 0.01 and 0.99. That 
 
 Step 5 gives you the error at the output. Now you must give a share of that error to **every** weight, including the weights of the hidden layer. The hidden layer has no target of its own, so you must calculate its share.
 
-Use the notation of the small network in this step. The weight $w^2_{kj}$ joins hidden unit $j$ to output node $k$. The weight $w^1_{ji}$ joins input $i$ to hidden unit $j$.
+**The symbols.** This step uses more notation than the others, so read the two tables first.
+
+A **superscript** says which layer. A **subscript** says which unit inside that layer. So $w^2_{kj}$ is a weight in layer 2, and $z^1_j$ is the pre-activation of hidden unit $j$. The superscript is never a power in this step.
+
+| Letter | Meaning | Example |
+|---|---|---|
+| $x_i$ | input number $i$ | one pixel |
+| $w^1_{ji}$ | the weight from input $i$ to hidden unit $j$ | layer 1, one number |
+| $z^1_j$ | the **pre-activation** of hidden unit $j$, before the squash | $z^1_j = \sum_i w^1_{ji} x_i$ |
+| $a^1_j$ | the **activation** of hidden unit $j$, after the squash | $a^1_j = g(z^1_j)$ |
+| $w^2_{kj}$ | the weight from hidden unit $j$ to output node $k$ | layer 2, one number |
+| $z^2_k$ | the pre-activation of output node $k$ | the raw score |
+| $p_k$ | the probability that the network gives to class $k$ | the softmax of §5 |
+| $y_k$ | the target for class $k$ | 1 for the true class, 0 elsewhere |
+| $E$ | the error of this example | the cross-entropy of §5 |
+| $g$ | the activation function | ReLU here |
+| $g'$ | the derivative of $g$ | 1 or 0 for ReLU |
+| $\delta_k$ | the error at the pre-activation of node $k$ | §6.4 defines it |
+| $\alpha$ | the learning rate | 0.5 in §7 |
+
+The operators are fewer, and three of them do all the work:
+
+| Operator | Name | What it does here |
+|---|---|---|
+| $\dfrac{\partial E}{\partial w}$ | partial derivative | How much $E$ changes when you change $w$ and nothing else. The slope of §2 |
+| $\partial$ | "partial" | It is a $d$ for a function of many variables. A network has thousands, so every derivative here is partial |
+| $\sum_k$ | sum over $k$ | Add the expression for every value of $k$. In §6.2 it adds up the output nodes |
+| $W^\top$ | transpose | Exchange the rows and the columns of $W$. §6.3 shows why the backward pass needs it |
+| $a^\top$ | transpose of a column | It makes a column into a row, so $\delta\, a^\top$ gives a matrix |
+| $\odot$ | elementwise product | Multiply matching entries. It is **not** a matrix product. In numpy it is `*` |
+| $\cdot$ | times | Plain multiplication of two numbers, or a dot product of two vectors |
+
+Two of those need care. $W^\top \delta$ is a **matrix** product, so it mixes values together. $\odot\, g'(z)$ is an **elementwise** product, so each node keeps its own value. The backward pass does one of each, in that order, and §6.4 explains why.
 
 ### 6.1 The easy case: a weight in the last layer
 
