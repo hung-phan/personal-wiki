@@ -2,7 +2,7 @@
 name: artificial-neural-networks
 description: "Artificial neural networks from scratch with runnable PyTorch and Keras code — the neuron (weighted sum + activation), step/sigmoid/tanh/ReLU, hidden layers as learned feature combinations, cost functions, gradient descent and learning rate (too small, good, diverging), batch vs mini-batch vs stochastic gradient descent, backpropagation checked against the chain rule, preprocessing without leakage (one-hot, scaling fit on train only), bank-churn classifier with confusion matrix, majority baseline, decision threshold, single-customer prediction, logistic regression comparison. Study guide for Deep Learning A-Z Part 1 and the ML-basics annex (sections 1, 3–5, 26–29). Annex: simple and multiple linear regression with ordinary least squares, logistic regression (sigmoid, log-odds, maximum likelihood, threshold, predict vs predict_proba), train/test split, normalisation vs standardisation, SimpleImputer + OneHotEncoder + LabelEncoder template, confusion matrix and decision boundary. Also covers Machine Learning A-Z Part 8 (sections 35–36): the real Churn_Modelling results (86% accuracy, confusion matrix, P = 0.038 homework customer) and the R h2o.deeplearning build."
 created: 2026-11-13
-updated: 2026-11-13
+updated: 2026-11-17
 tags: [ml-a-z, deep-learning, neural-networks, gradient-descent, backpropagation, classification, pytorch, keras, study-guide, deep-learning-a-z]
 ---
 # Artificial Neural Networks
@@ -147,7 +147,7 @@ print("W1 grads match:", torch.allclose(W1.grad, grad_W1))
 **The task.** Predict which bank customers leave (`Exited` = 1) from credit score, country, gender, age, tenure, balance, number of products, activity and salary. About 19% of customers leave — remember that number.
 
 **Preprocessing rules** (from the annex, applied here):
-- One-hot encode text categories (`Geography`, `Gender`).
+- One-hot encode text categories (`Geography`, `Gender`). That's fine for a few values. For a column with thousands of values (city, product ID), use an embedding instead: see [embedding-training](../ml-systems/embedding-training.md) §9.
 - Split train/test **before** scaling, then `fit` the scaler on train only and `transform` test. Fitting on everything leaks test information into training.
 
 ### Keras
