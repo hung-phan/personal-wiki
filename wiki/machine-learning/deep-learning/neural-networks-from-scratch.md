@@ -2,7 +2,7 @@
 name: neural-networks-from-scratch
 description: "Write a working neural network in numpy, in nine steps, then replace it with PyTorch. Each step runs on its own and explains the part that it adds. Step 1 is one neuron: a weighted sum and a squash. Step 2 measures the slope of the error by finite differences. The slope is three local numbers multiplied together: error, response and signal. A weight stops to learn if any one of the three becomes zero. Step 3 replaces the loop over nodes with one matrix multiplication, so W has the shape (next layer x this layer). Step 4 shows that stacked linear layers collapse into one matrix, so a layer needs an activation function. Step 5 builds the softmax output and the cross-entropy loss, and shows by measurement that the gradient is one subtraction, p minus y. Step 6 is the complete backward pass in five lines, checked against autograd. Step 7 is the whole program: 64-32-10, ReLU, mini-batch SGD with shuffling, 0.9741 against a 0.1018 baseline. Step 8 covers the sqrt(1/fan_in) initialisation, ReLU against sigmoid measured as 491,943 times against 5.8 times gradient loss across 8 layers, and momentum. Step 9 maps every line to nn.Linear, CrossEntropyLoss and autograd. Also: how to check your own gradient. Written in ASD-STE100 Simplified Technical English."
 created: 2026-11-14
-updated: 2026-11-15
+updated: 2026-11-16
 tags: [deep-learning, neural-networks, backpropagation, numpy, pytorch, from-scratch, softmax, cross-entropy, tutorial, simplified-technical-english]
 ---
 
@@ -751,6 +751,6 @@ Use the second method when you can. It is exact, and it is eight lines.
 - [artificial-neural-networks](artificial-neural-networks.md) — the practical note. It has the list of activation functions, data preparation and a complete Keras and PyTorch classifier. Start there to build a model.
 - [calculus](../math-for-ml/calculus.md) — the chain rule. Step 6 is an application of it.
 - [linear-algebra](../math-for-ml/linear-algebra.md) — matrix shapes and transposes. They are the tools of step 3.
-- [pytorch-cheatsheet](pytorch-cheatsheet.md) — argument order, autograd behaviour, and the reason that `.grad` is `None`. It is the map of step 9 at the level of the keyboard.
+- [pytorch-study-guide](pytorch-study-guide.md) — the same ground from the framework side. It explains autograd, Modules, the five lines of the training loop, and the reason that `.grad` is `None`. Read it after step 9, because each PyTorch call there replaces a line that you derived here.
 - [convolutional-neural-networks](convolutional-neural-networks.md) — the same three parts with shared weights. Each gradient becomes a sum across positions.
 - [recurrent-neural-networks](recurrent-neural-networks.md) — the factors of step 8 multiply across *time* and not across depth. This is the reason for the LSTM.
