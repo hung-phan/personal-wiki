@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, DejaVu Sans, sans-serif" font-size="13">
+  <style>
+    .bg    { fill: #f7f0e1; }
+    .ink   { fill: #2b2b2b; }
+    .mut   { fill: #6b6256; font-size: 11px; }
+    .h1    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 24px; font-weight: 700; }
+    .h2    { fill: #2b2b2b; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 15px; font-weight: 700; }
+    .kick  { fill: #6b6256; font-family: 'Courier New', Courier, 'DejaVu Sans Mono', monospace; font-size: 13px; }
+    .hand  { fill: #b3261e; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .handk { fill: #2b2b2b; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', 'DejaVu Sans', cursive; font-size: 13px; }
+    .num   { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .numb  { fill: #2b2b2b; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; font-weight: 700; }
+    .numf  { fill: #a39a8c; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 11px; }
+    .red   { fill: #b3261e; }
+    .uline { stroke: #b3261e; stroke-width: 2; }
+    .ln    { stroke: #2b2b2b; stroke-width: 1.4; fill: none; }
+    .lnr   { stroke: #b3261e; stroke-width: 1.8; fill: none; }
+    .lnd   { stroke: #6b6256; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+    .cell  { fill: #fbf7ee; stroke: #8a8174; stroke-width: 0.8; }
+    .grey  { fill: #e3dccd; stroke: #8a8174; stroke-width: 0.8; }
+    .pur   { fill: #e7dcf3; stroke: #7b5ea7; stroke-width: 1; }
+    .grn   { fill: #e1edd5; stroke: #5f8a3a; stroke-width: 1; }
+    .yel   { fill: #fbe9c4; stroke: #b8860b; stroke-width: 1; }
+    .blu   { fill: #dce8f5; stroke: #3d6fa8; stroke-width: 1; }
+    .pnk   { fill: #f6d9d4; stroke: #b3261e; stroke-width: 1; }
+    .hi    { fill: none; stroke: #b3261e; stroke-width: 2.2; }
+    .note  { fill: #fdf9f0; stroke: #8a8174; stroke-width: 1; stroke-dasharray: 6 4; }
+    .bar   { fill: #7b5ea7; }
+    .barr  { fill: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1f1d1a; }
+      .ink, .h1, .h2, .handk, .num, .numb { fill: #ece6d9; }
+      .mut, .kick { fill: #b5ab9b; }
+      .numf { fill: #6f675c; }
+      .hand, .red { fill: #f28b82; }
+      .uline, .lnr, .hi { stroke: #f28b82; }
+      .ln { stroke: #ece6d9; }
+      .lnd { stroke: #b5ab9b; }
+      .cell { fill: #2a2723; stroke: #6f675c; }
+      .grey { fill: #3a362f; stroke: #6f675c; }
+      .note { fill: #26231f; stroke: #8a8174; }
+      .pur { fill: #3b2d52; stroke: #b39ddb; }
+      .grn { fill: #2c3f22; stroke: #9ccc65; }
+      .yel { fill: #4a3a14; stroke: #e0b44c; }
+      .blu { fill: #1d3550; stroke: #7fb0e6; }
+      .pnk { fill: #4d2420; stroke: #f28b82; }
+      .bar { fill: #b39ddb; }
+      .barr { fill: #f28b82; }
+    }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8174"/>
+    </marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="960" height="560" rx="0" class="bg"/><text x="30" y="32" class="kick" text-anchor="start" >EXPLORATION</text><text x="30" y="62" class="h1" text-anchor="start" >Three things a recommender can be uncertain about</text><line x1="30" y1="72" x2="765" y2="72" class="uline"/><rect x="30" y="92" width="250" height="300" rx="8" class="note"/><text x="155" y="118" class="h2" text-anchor="middle" >Reward uncertainty</text><text x="155" y="136" class="mut" text-anchor="middle" >UCB, Thompson sampling</text><text x="155" y="160" class="hand" text-anchor="middle" >"Will THIS item pay off?"</text><text x="46" y="334" class="mut" text-anchor="start" >widens the confidence</text><text x="46" y="349" class="mut" text-anchor="start" >band on one arm;</text><text x="46" y="364" class="mut" text-anchor="start" >says nothing about</text><text x="46" y="379" class="mut" text-anchor="start" >the rest of the catalogue</text><rect x="355" y="92" width="250" height="300" rx="8" class="note"/><text x="480" y="118" class="h2" text-anchor="middle" >Surface difference</text><text x="480" y="136" class="mut" text-anchor="middle" >diversity, novelty</text><text x="480" y="160" class="hand" text-anchor="middle" >"Is this unlike what I just showed?"</text><text x="371" y="334" class="mut" text-anchor="start" >a property of the slate,</text><text x="371" y="349" class="mut" text-anchor="start" >computed from features;</text><text x="371" y="364" class="mut" text-anchor="start" >no model of the user</text><text x="371" y="379" class="mut" text-anchor="start" >enters the decision</text><rect x="680" y="92" width="250" height="300" rx="8" class="note"/><text x="805" y="118" class="h2" text-anchor="middle" >Belief shift</text><text x="805" y="136" class="mut" text-anchor="middle" >epistemic gain</text><text x="805" y="160" class="hand" text-anchor="middle" >"What would the ANSWER teach me?"</text><text x="696" y="334" class="mut" text-anchor="start" >re-encodes the user both ways</text><text x="696" y="349" class="mut" text-anchor="start" >and measures how far the</text><text x="696" y="364" class="mut" text-anchor="start" >WHOLE catalogue's relevance</text><text x="696" y="379" class="mut" text-anchor="start" >distribution moves</text><text x="46" y="200" class="mut" text-anchor="start" >A</text><rect x="70" y="190" width="150" height="20" rx="3" class="cell"/><rect x="131" y="190" width="28" height="20" rx="3" class="blu"/><circle cx="145" cy="200" r="3" class="ink"/><text x="46" y="240" class="mut" text-anchor="start" >B</text><rect x="70" y="230" width="150" height="20" rx="3" class="cell"/><rect x="93" y="230" width="104" height="20" rx="3" class="blu"/><circle cx="145" cy="240" r="3" class="ink"/><text x="46" y="280" class="mut" text-anchor="start" >C</text><rect x="70" y="270" width="150" height="20" rx="3" class="cell"/><rect x="135" y="270" width="20" height="20" rx="3" class="blu"/><circle cx="145" cy="280" r="3" class="ink"/><text x="46" y="312" class="handk" text-anchor="start" >B is unexplored -&gt; show B</text><circle cx="420" cy="210" r="11" class="yel"/><circle cx="520" cy="196" r="11" class="yel"/><circle cx="470" cy="262" r="11" class="yel"/><circle cx="560" cy="266" r="11" class="yel"/><circle cx="405" cy="286" r="11" class="yel"/><path d="M420,210 L520,196" class="lnd"/><path d="M520,196 L470,262" class="lnd"/><path d="M470,262 L560,266" class="lnd"/><path d="M560,266 L405,286" class="lnd"/><text x="371" y="312" class="handk" text-anchor="start" >spread the slate -&gt; show the odd one</text><text x="700" y="211" class="mut" text-anchor="start" >now</text><rect x="762" y="193" width="18" height="26" rx="2" class="cell"/><rect x="786" y="209" width="18" height="10" rx="2" class="cell"/><rect x="810" y="214" width="18" height="5" rx="2" class="cell"/><rect x="834" y="215" width="18" height="4" rx="2" class="cell"/><rect x="858" y="216" width="18" height="3" rx="2" class="cell"/><path d="M758,221 L882,221" class="lnd"/><text x="700" y="274" class="mut" text-anchor="start" >if engaged</text><rect x="762" y="267" width="18" height="15" rx="2" class="pnk"/><rect x="786" y="273" width="18" height="9" rx="2" class="pnk"/><rect x="810" y="262" width="18" height="20" rx="2" class="pnk"/><rect x="834" y="275" width="18" height="7" rx="2" class="pnk"/><rect x="858" y="270" width="18" height="12" rx="2" class="pnk"/><path d="M758,284 L882,284" class="lnd"/><line x1="884" y1="226" x2="884" y2="252" class="lnr" marker-end="url(#arr)"/><text x="696" y="312" class="handk" text-anchor="start" >how far it moved = EG</text><rect x="30" y="404" width="900" height="140" rx="6" class="note"/><text x="44" y="426" class="h2" text-anchor="start" >The distinction that matters</text><text x="44" y="446" class="handk" text-anchor="start" >A bandit asks about the item it is about to show. Epistemic gain asks about every OTHER item:</text><text x="44" y="464" class="handk" text-anchor="start" >one answer re-encodes the user, which moves the predicted relevance of the whole catalogue.</text><text x="44" y="482" class="handk" text-anchor="start" >EG = JS(now, if-engaged)  [+ JS(now, if-ignored), which is 0 when the model only records positives]</text><text x="44" y="500" class="handk" text-anchor="start" >Caveat it cannot fix: EG scores how far the belief MOVES, never whether it moves toward the truth.</text></svg>

@@ -183,4 +183,5 @@ So the smoothing trick is not a hack with a hand-tuned fudge factor. It is **exa
 
 - [rl-foundations-mc-td](rl-foundations-mc-td.md) §4 — ε-greedy on a bandit.
 - [q-learning](q-learning.md) — when actions change the state.
+- [exploration-for-recommenders](../ml-systems/exploration-for-recommenders.md) — a second exploration axis for recommenders: epistemic gain, which these bandits can carry as one extra context feature.
 - [statistics-and-probability](../math-for-ml/statistics-and-probability.md) — Beta distributions and Bayesian updating.

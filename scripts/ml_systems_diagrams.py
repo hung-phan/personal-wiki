@@ -167,3 +167,47 @@ if want("als"):
         "Freeze one side and every row of the other is an exact convex ridge solve, so the loss can only go down.",
         "Price: ALS promises a stationary point, not the global optimum - different seeds land in different places."], "handk"))
     svg("mf-als-alternation.svg", 960, 590, "".join(b))
+
+# ---------------- Exploration: three things you can be uncertain about ----------------
+if want("eg"):
+    b = [header("EXPLORATION", "Three things a recommender can be uncertain about", 960)]
+    panels = [(30, "Reward uncertainty", "UCB, Thompson sampling", "blu",
+               "\"Will THIS item pay off?\"", ["widens the confidence", "band on one arm;", "says nothing about", "the rest of the catalogue"]),
+              (355, "Surface difference", "diversity, novelty", "yel",
+               "\"Is this unlike what I just showed?\"", ["a property of the slate,", "computed from features;", "no model of the user", "enters the decision"]),
+              (680, "Belief shift", "epistemic gain", "pnk",
+               "\"What would the ANSWER teach me?\"", ["re-encodes the user both ways", "and measures how far the", "WHOLE catalogue's relevance", "distribution moves"])]
+    for x, title, sub, col, q, lines in panels:
+        b.append(R(x, 92, 250, 300, "note", 8))
+        b.append(T(x + 125, 118, title, "h2", "middle")); b.append(T(x + 125, 136, sub, "mut", "middle"))
+        b.append(T(x + 125, 160, q, "hand", "middle"))
+        for k, l in enumerate(lines): b.append(T(x + 16, 334 + k * 15, l, "mut"))
+    # panel 1: one arm with a wide band, others narrow
+    for k, (w, lab) in enumerate([(14, "A"), (52, "B"), (10, "C")]):
+        y = 196 + k * 40
+        b.append(T(46, y + 4, lab, "mut"))
+        b.append(R(70, y - 6, 150, 20, "cell", 3))
+        b.append(R(145 - w, y - 6, 2 * w, 20, "blu", 3))
+        b.append(C(145, y + 4, 3, "ink"))
+    b.append(T(46, 312, "B is unexplored -> show B", "handk"))
+    # panel 2: spread-out slate
+    pts = [(420, 210), (520, 196), (470, 262), (560, 266), (405, 286)]
+    for px, py in pts: b.append(C(px, py, 11, "yel"))
+    for i in range(len(pts) - 1):
+        b.append(P(f"M{pts[i][0]},{pts[i][1]} L{pts[i+1][0]},{pts[i+1][1]}", "lnd"))
+    b.append(T(371, 312, "spread the slate -> show the odd one", "handk"))
+    # panel 3: two distributions, before and after
+    for row, (yy, lab, hs, col) in enumerate([(205, "now", [26, 10, 5, 4, 3], "cell"),
+                                              (268, "if engaged", [15, 9, 20, 7, 12], "pnk")]):
+        b.append(T(700, yy + 6, lab, "mut"))
+        for k, h in enumerate(hs):
+            b.append(R(762 + k * 24, yy + 14 - h, 18, h, col, 2))
+        b.append(P(f"M758,{yy + 16} L{762 + 5 * 24},{yy + 16}", "lnd"))
+    b.append(A(884, 226, 884, 252, "lnr", "arr"))
+    b.append(T(696, 312, "how far it moved = EG", "handk"))
+    b.append(note(30, 404, 900, 140, "The distinction that matters",
+                  ["A bandit asks about the item it is about to show. Epistemic gain asks about every OTHER item:",
+                   "one answer re-encodes the user, which moves the predicted relevance of the whole catalogue.",
+                   "EG = JS(now, if-engaged)  [+ JS(now, if-ignored), which is 0 when the model only records positives]",
+                   "Caveat it cannot fix: EG scores how far the belief MOVES, never whether it moves toward the truth."], "handk"))
+    svg("rs-exploration-targets.svg", 960, 560, "".join(b))

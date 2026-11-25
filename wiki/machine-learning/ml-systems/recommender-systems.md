@@ -438,6 +438,7 @@ The MovieLens dataset the course uses is **MovieLens 20M**: 20,000,263 ratings f
 - [behavioral-embeddings](behavioral-embeddings.md) — implicit feedback, weighted ALS, BPR, two-tower retrieval, item2vec/SASRec, graph methods, cold start, time-split evaluation and the popularity baseline.
 - [matrix-factorization-recommenders](matrix-factorization-recommenders.md) — matrix factorization, the deep-learning recommenders and RBMs.
 - [multi-armed-bandits](../reinforcement-learning/multi-armed-bandits.md) — explore/exploit, UCB and Thompson sampling in full.
+- [exploration-for-recommenders](exploration-for-recommenders.md) — the other answer to §6's "too accurate" problem: explore to resolve uncertainty about the *user*, not about an item's rating.
 - [statistics-and-probability](../math-for-ml/statistics-and-probability.md) — distributions, confidence intervals and conjugate priors.
 - [association-rules](../classical-ml/association-rules.md) — support, confidence and lift as a framework.
 - [markov-chains](../math-for-ml/markov-chains.md) — PageRank as a limiting distribution, the other non-personalised score the course covers.

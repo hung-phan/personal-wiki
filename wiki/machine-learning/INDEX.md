@@ -9,7 +9,7 @@ Everything about machine learning, from the maths up to LLM systems. Each subfol
 | [deep-learning](deep-learning/INDEX.md) | Deep Learning A-Z, Advanced NLP & RNNs, GANs & VAEs, Advanced Computer Vision and PyTorch: ANNs, CNNs, RNNs/LSTMs, SOMs, Boltzmann machines, autoencoders, text classification, seq2seq, attention, memory networks, VAEs and GANs, transfer learning and CNN architectures, object detection, style transfer, a PyTorch cheatsheet, and a nine-step numpy build of a neural network from scratch, with the modern defaults derived from it (in Simplified Technical English). | 17 |
 | [reinforcement-learning](reinforcement-learning/INDEX.md) | AI A-Z, Deep RL in Python, Cutting-Edge AI and ML A-Z Part 6: bandits, MC and TD, Q-learning, function approximation and TD(λ), policy gradients, DQN, actor-critic/A3C/A2C, PPO, SAC, DDPG and evolution strategies. | 9 |
 | [llm-engineering](llm-engineering/INDEX.md) | LLM Engineering and AI A-Z generative parts: APIs and tools, open models, choosing models, RAG, fine-tuning and QLoRA, agents, prompting, responsible AI. | 10 |
-| [ml-systems](ml-systems/INDEX.md) | Applied systems: embedding training, behavioural embeddings, and recommenders from ranking formulas to matrix factorization at cluster scale. | 4 |
+| [ml-systems](ml-systems/INDEX.md) | Applied systems: embedding training, behavioural embeddings, recommenders from ranking formulas to matrix factorization at cluster scale, and exploration that discovers latent interests. | 5 |
 
 ## Suggested reading order
 
